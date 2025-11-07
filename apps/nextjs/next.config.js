@@ -14,6 +14,7 @@ const config = {
     "@acme/db",
     "@acme/ui",
     "@acme/validators",
+    "@acme/zen-v3",
   ],
 
   /** We already do linting and typechecking as separate tasks in CI */

@@ -1,0 +1,46 @@
+{
+  "name": "@acme/zen-v3",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts",
+    "./zenstack": "./src/zenstack/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "clean": "git clean -xdf node_modules .turbo .cache dist && rm -rf .cache",
+    "db:down": "docker compose down",
+    "db:generate": "zen generate -o ./src/zenstack",
+    "db:migrate": "zen migrate dev",
+    "db:push": "zen db push",
+    "db:start": "docker compose up -d",
+    "db:stop": "docker compose stop",
+    "db:studio": "bun drizzle-kit studio",
+    "db:watch": "docker compose up",
+    "dev": "tsc",
+    "generate:component": "turbo gen react-component",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "@zenstackhq/orm": "^3.0.0-beta.19",
+    "@zenstackhq/plugin-policy": "^3.0.0-beta.19",
+    "@zenstackhq/tanstack-query": "^3.0.0-beta.19",
+    "kysely": "^0.27.6",
+    "pg": "^8.16.3",
+    "postgres": "^3.4.7",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
+    "@faker-js/faker": "^10.1.0",
+    "@types/node": "catalog:",
+    "@types/pg": "^8.15.6",
+    "@zenstackhq/cli": "^3.0.0-beta.19",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.6",
+    "prisma": "^6.19.0",
+    "typescript": "catalog:"
+  }
+}

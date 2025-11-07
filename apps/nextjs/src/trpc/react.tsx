@@ -9,6 +9,7 @@ import {
   loggerLink,
 } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
+import { QuerySettingsProvider } from "@zenstackhq/tanstack-query/react";
 import SuperJSON from "superjson";
 
 import type { AppRouter } from "@acme/api";
@@ -56,7 +57,9 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
-        {props.children}
+        <QuerySettingsProvider value={{ endpoint: "/api/model" }}>
+          {props.children}
+        </QuerySettingsProvider>
       </TRPCProvider>
     </QueryClientProvider>
   );

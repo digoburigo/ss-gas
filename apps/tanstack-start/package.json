@@ -4,19 +4,21 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "pnpm with-env vite dev",
     "build": "vite build",
-    "start": "vite start",
+    "dev": "pnpm with-env vite dev",
     "format": "prettier --check . --ignore-path ../../.gitignore --ignore-path .prettierignore",
     "lint": "eslint --flag unstable_native_nodejs_ts_config",
+    "start": "vite start",
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"
   },
+  "prettier": "@acme/prettier-config",
   "dependencies": {
     "@acme/api": "workspace:*",
     "@acme/auth": "workspace:*",
     "@acme/db": "workspace:*",
     "@acme/ui": "workspace:*",
+    "@acme/zen-v3": "workspace:*",
     "@fontsource-variable/geist": "^5.2.8",
     "@fontsource-variable/geist-mono": "^5.2.7",
     "@t3-oss/env-core": "^0.13.8",
@@ -29,6 +31,8 @@
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "@trpc/tanstack-react-query": "catalog:",
+    "@zenstackhq/server": "^3.0.0-beta.19",
+    "@zenstackhq/tanstack-query": "^3.0.0-beta.19",
     "better-auth": "catalog:",
     "nitro": "npm:nitro-nightly@latest",
     "react": "catalog:react19",
@@ -52,6 +56,5 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "^5.1.4"
-  },
-  "prettier": "@acme/prettier-config"
+  }
 }

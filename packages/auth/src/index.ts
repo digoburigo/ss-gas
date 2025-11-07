@@ -5,6 +5,9 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oAuthProxy } from "better-auth/plugins";
 
 import { db } from "@acme/db/client";
+import { db as zenDb } from "@acme/zen-v3";
+
+console.log(`🚀 -> zenDb:`, zenDb);
 
 export function initAuth<
   TExtraPlugins extends BetterAuthPlugin[] = [],
@@ -18,6 +21,7 @@ export function initAuth<
   extraPlugins?: TExtraPlugins;
 }) {
   const config = {
+    // database: zenDb,
     database: drizzleAdapter(db, {
       provider: "pg",
     }),
