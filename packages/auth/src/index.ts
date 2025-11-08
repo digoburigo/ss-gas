@@ -3,11 +3,17 @@ import { expo } from "@better-auth/expo";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oAuthProxy } from "better-auth/plugins";
+// import { db as zenDb } from "@acme/zen-v3";
+
+// console.log(`🚀 -> zenDb:`, zenDb);
+
+import { Pool } from "pg";
 
 import { db } from "@acme/db/client";
-import { db as zenDb } from "@acme/zen-v3";
 
-console.log(`🚀 -> zenDb:`, zenDb);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 export function initAuth<
   TExtraPlugins extends BetterAuthPlugin[] = [],
@@ -21,10 +27,10 @@ export function initAuth<
   extraPlugins?: TExtraPlugins;
 }) {
   const config = {
-    // database: zenDb,
-    database: drizzleAdapter(db, {
-      provider: "pg",
-    }),
+    database: pool,
+    // database: drizzleAdapter(db, {
+    //   provider: "pg",
+    // }),
     baseURL: options.baseUrl,
     secret: options.secret,
     plugins: [

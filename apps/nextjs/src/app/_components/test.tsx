@@ -6,7 +6,7 @@ import { schema } from "@acme/zen-v3/zenstack/schema";
 
 export function Test() {
   const client = useClientQueries(schema);
-  const { data, error } = client.todo.useFindMany();
+  const { data, error } = client.post.useFindMany();
   console.log("🚀 -> data:", data);
   console.log(`🚀 -> error:`, error);
   if (error) {

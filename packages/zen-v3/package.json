@@ -14,6 +14,7 @@
     "db:down": "docker compose down",
     "db:generate": "zen generate -o ./src/zenstack",
     "db:migrate": "zen migrate dev",
+    "db:reset": "zen migrate reset",
     "db:push": "zen db push",
     "db:start": "docker compose up -d",
     "db:stop": "docker compose stop",

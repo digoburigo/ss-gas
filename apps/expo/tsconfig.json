@@ -14,7 +14,8 @@
     "*.js",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "nativewind-env.d.ts"
+    "nativewind-env.d.ts",
+    "postcss.config.mjs"
   ],
   "exclude": ["node_modules"]
 }

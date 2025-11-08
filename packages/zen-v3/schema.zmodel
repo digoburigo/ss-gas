@@ -16,210 +16,212 @@ type Auth {
   @@auth
 }
 
-enum UserRole {
-  ADMIN
-  USER
-}
-
 model User {
-  id              String          @id @default(nanoid())
-  name            String
-  email           String
-  emailVerified   Boolean 
-  image           String?
-  createdAt       DateTime        @default(now()) 
-  updatedAt       DateTime        @updatedAt 
-  sessions        Session[]
-  accounts        Account[]
-  members         Member[]
-  invitations     Invitation[]
-
-  username        String?
-  displayUsername String? 
-  role            UserRole?       @default(USER)
-  banned          Boolean?
-  banReason       String? 
-  banExpires      DateTime? 
-
-  changePassword  Boolean? @default(false) 
-
-  // createdTodos Todo[] @relation("createdTodos") 
-  // updatedTodos Todo[] @relation("updatedTodos") 
-  // deletedTodos Todo[] @relation("deletedTodos") 
-
-  @@allow('create,read', true)
-
-  // only the user can update or delete their own profile
-  @@allow('update,delete', auth().userId == id)
-
-  @@unique([email])
-  
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    email     String   @unique
+    name      String?
+    posts     Post[]
 }
 
-model Session {
-  id                   String   @id @default(nanoid())
-  expiresAt            DateTime 
-  token                String
-  createdAt            DateTime @default(now()) 
-  updatedAt            DateTime @updatedAt 
-  ipAddress            String? 
-  userAgent            String? 
-  userId               String 
-  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  impersonatedBy       String? 
-  activeOrganizationId String? 
-
-  @@unique([token])
-  
-}
-
-model Account {
-  id                    String    @id @default(nanoid())
-  accountId             String 
-  providerId            String 
-  userId                String 
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String? 
-  refreshToken          String? 
-  idToken               String? 
-  accessTokenExpiresAt  DateTime? 
-  refreshTokenExpiresAt DateTime? 
-  scope                 String?
-  password              String?   @ignore
-  createdAt             DateTime  @default(now()) 
-  updatedAt             DateTime  @updatedAt 
-
-  
-}
-
-model Verification {
-  id         String   @id @default(nanoid())
-  identifier String
-  value      String
-  expiresAt  DateTime 
-  createdAt  DateTime @default(now()) 
-  updatedAt  DateTime @updatedAt 
-
-  
-}
-
-model Organization {
-  id                          String                       @id @default(nanoid())
-  name                        String
-  slug                        String?
-  logo                        String?
-  createdAt                   DateTime                     @default(now()) 
-  updatedAt                   DateTime                     @updatedAt 
-  metadata                    String? // address, phone, email, website, etc.
-
-  members                     Member[]
-  invitations                 Invitation[]
-
-  // todos Todo[]
-
-  @@unique([slug])
-
-  @@allow('create,read', true)
-
-  
-}
-
-enum MemberRole {
-  OWNER
-  ADMIN
-  SECRETARY
-  PATIENT
-  MEMBER
-}
-
-model Member {
-  id             String       @id @default(nanoid())
-  organizationId String 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String 
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role           String 
-  createdAt      DateTime     @default(now()) 
-  updatedAt      DateTime     @updatedAt 
-
-  // deny anonymous users
-  @@deny('all', auth() == null)
-
-  // deny access to members that don't belong to the user's active organization
-  @@deny('all', auth().organizationId != organizationId)
-
-  // allow read access to members that belong to the user's active organization
-  @@allow('read', auth().organizationId == organizationId)
-
-  
-}
-
-model Invitation {
-  id             String       @id @default(nanoid())
-  organizationId String 
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  email          String
-  role           String?
-  status         String 
-  expiresAt      DateTime 
-  createdAt      DateTime     @default(now()) 
-  updatedAt      DateTime?     @updatedAt 
-  inviterId      String 
-  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
-
-  // allow read access to invitations that belong to the user's active organization and the user is the inviter
-  @@allow('read', auth().userId == inviterId && auth().organizationId == organizationId)
-}
-
-// BUSINESS MODELS ======================================================
-
-model Todo {
-    id        String   @id @default(nanoid())
-
-    title String
-    description String?
-    completed Boolean @default(false)
-    dueDate DateTime? 
-    priority String?
-
-    // createdAt DateTime @default(now()) 
-    // createdById String  @default(auth().userId) 
-    // createdByUser User @relation('createdTodos', fields: [createdById], references: [id], onDelete: Cascade)
-
-    // updatedAt DateTime @updatedAt 
-    // updatedById String?  @default(auth().userId) 
-    // updatedByUser User? @relation('updatedTodos', fields: [updatedById], references: [id], onDelete: Cascade)
-
-    // deletedById String? 
-    // deletedByUser User? @relation('deletedTodos', fields: [deletedById], references: [id], onDelete: Cascade)
-    // deletedAt DateTime? 
-    // deletedReason String? 
-
-    // organizationId String? @default(auth().userId) 
-    // organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-    // @@deny('read', deletedAt != null)
+model Post {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    title     String
+    published Boolean  @default(false)
+    author    User     @relation(fields: [authorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    authorId  String
 }
 
 
 
+// enum UserRole {
+//   ADMIN
+//   USER
+// }
 
-// old code
 // model User {
-//     id    Int    @id @default(autoincrement())
-//     email String @unique
-//     name  String
-//     posts Post[]
+//   id              String          @id @default(nanoid())
+//   name            String
+//   email           String
+//   emailVerified   Boolean 
+//   image           String?
+//   createdAt       DateTime        @default(now()) 
+//   updatedAt       DateTime        @updatedAt 
+//   sessions        Session[]
+//   accounts        Account[]
+//   members         Member[]
+//   invitations     Invitation[]
+
+//   username        String?
+//   displayUsername String? 
+//   role            UserRole?       @default(USER)
+//   banned          Boolean?
+//   banReason       String? 
+//   banExpires      DateTime? 
+
+//   changePassword  Boolean? @default(false) 
+
+//   // createdTodos Todo[] @relation("createdTodos") 
+//   // updatedTodos Todo[] @relation("updatedTodos") 
+//   // deletedTodos Todo[] @relation("deletedTodos") 
+
+//   @@allow('create,read', true)
+
+//   // only the user can update or delete their own profile
+//   @@allow('update,delete', auth().userId == id)
+
+//   @@unique([email])
+  
 // }
 
-// model Post {
-//     id    Int    @id @default(autoincrement())
-//     createdAt DateTime @default(now())
-//     updatedAt DateTime @updatedAt
-//     title     String
-//     content   String
-//     published Boolean  @default(false)
-//     author    User     @relation(fields: [authorId], references: [id])
-//     authorId  Int
+// model Session {
+//   id                   String   @id @default(nanoid())
+//   expiresAt            DateTime 
+//   token                String
+//   createdAt            DateTime @default(now()) 
+//   updatedAt            DateTime @updatedAt 
+//   ipAddress            String? 
+//   userAgent            String? 
+//   userId               String 
+//   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   impersonatedBy       String? 
+//   activeOrganizationId String? 
+
+//   @@unique([token])
+  
 // }
+
+// model Account {
+//   id                    String    @id @default(nanoid())
+//   accountId             String 
+//   providerId            String 
+//   userId                String 
+//   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   accessToken           String? 
+//   refreshToken          String? 
+//   idToken               String? 
+//   accessTokenExpiresAt  DateTime? 
+//   refreshTokenExpiresAt DateTime? 
+//   scope                 String?
+//   password              String?   @ignore
+//   createdAt             DateTime  @default(now()) 
+//   updatedAt             DateTime  @updatedAt 
+
+  
+// }
+
+// model Verification {
+//   id         String   @id @default(nanoid())
+//   identifier String
+//   value      String
+//   expiresAt  DateTime 
+//   createdAt  DateTime @default(now()) 
+//   updatedAt  DateTime @updatedAt 
+
+  
+// }
+
+// model Organization {
+//   id                          String                       @id @default(nanoid())
+//   name                        String
+//   slug                        String?
+//   logo                        String?
+//   createdAt                   DateTime                     @default(now()) 
+//   updatedAt                   DateTime                     @updatedAt 
+//   metadata                    String? // address, phone, email, website, etc.
+
+//   members                     Member[]
+//   invitations                 Invitation[]
+
+//   // todos Todo[]
+
+//   @@unique([slug])
+
+//   @@allow('create,read', true)
+
+  
+// }
+
+// enum MemberRole {
+//   OWNER
+//   ADMIN
+//   SECRETARY
+//   PATIENT
+//   MEMBER
+// }
+
+// model Member {
+//   id             String       @id @default(nanoid())
+//   organizationId String 
+//   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+//   userId         String 
+//   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   role           String 
+//   createdAt      DateTime     @default(now()) 
+//   updatedAt      DateTime     @updatedAt 
+
+//   // deny anonymous users
+//   @@deny('all', auth() == null)
+
+//   // deny access to members that don't belong to the user's active organization
+//   @@deny('all', auth().organizationId != organizationId)
+
+//   // allow read access to members that belong to the user's active organization
+//   @@allow('read', auth().organizationId == organizationId)
+
+  
+// }
+
+// model Invitation {
+//   id             String       @id @default(nanoid())
+//   organizationId String 
+//   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+//   email          String
+//   role           String?
+//   status         String 
+//   expiresAt      DateTime 
+//   createdAt      DateTime     @default(now()) 
+//   updatedAt      DateTime?     @updatedAt 
+//   inviterId      String 
+//   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+//   // allow read access to invitations that belong to the user's active organization and the user is the inviter
+//   @@allow('read', auth().userId == inviterId && auth().organizationId == organizationId)
+// }
+
+// // BUSINESS MODELS ======================================================
+
+// model Todo {
+//     id        String   @id @default(nanoid())
+
+//     title String
+//     description String?
+//     completed Boolean @default(false)
+//     dueDate DateTime? 
+//     priority String?
+
+//     // createdAt DateTime @default(now()) 
+//     // createdById String  @default(auth().userId) 
+//     // createdByUser User @relation('createdTodos', fields: [createdById], references: [id], onDelete: Cascade)
+
+//     // updatedAt DateTime @updatedAt 
+//     // updatedById String?  @default(auth().userId) 
+//     // updatedByUser User? @relation('updatedTodos', fields: [updatedById], references: [id], onDelete: Cascade)
+
+//     // deletedById String? 
+//     // deletedByUser User? @relation('deletedTodos', fields: [deletedById], references: [id], onDelete: Cascade)
+//     // deletedAt DateTime? 
+//     // deletedReason String? 
+
+//     // organizationId String? @default(auth().userId) 
+//     // organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+//     // @@deny('read', deletedAt != null)
+// }
+
+
+
