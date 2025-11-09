@@ -26,7 +26,8 @@
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add",
     "android": "expo run:android",
-    "ios": "expo run:ios"
+    "ios": "expo run:ios",
+    "ruler:apply": "pnpm dlx @intellectronica/ruler@latest apply --local-only"
   },
   "devDependencies": {
     "@acme/prettier-config": "workspace:*",

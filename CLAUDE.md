@@ -1,0 +1,70 @@
+<!-- Source: .ruler/bts.md -->
+
+# Project Rules
+
+## Project Structure
+
+This is a monorepo with the following structure using Turborepo:
+
+- **`apps/web/`** - Frontend application (React with TanStack Router)
+
+- **`apps/server/`** - Backend server (Elysia)
+
+- **`packages/api/`** - Shared API logic and types with tRPC
+- **`packages/auth/`** - Authentication logic and utilities with better-auth
+- **`packages/zen-v3/`** - Database schema and utilities with ZenStack v3
+
+- **`apps/expo/`** - React Native mobile app (with NativeWind)
+
+## Available Scripts
+
+- `pnpm run dev` - Start all apps in development mode
+- `pnpm run dev:spa` - Start only the server and web app
+
+## Database Commands
+
+All database operations should be run from the server workspace:
+
+- `pnpm run db:push` - Push schema changes to database (ZenStack v3 push)
+- `pnpm run db:studio` - Open database studio (drizzle-kit studio)
+- `pnpm run db:generate` - Generate ZenStack v3 files
+- `pnpm run db:migrate` - Run database migrations (ZenStack v3 prisma like migrations)
+
+Database schema files are located in `packages/zen-v3/schema.zmodel`
+
+## API Structure
+
+- Controllers for Elysia endpoints are in `apps/server/src/modules/`
+- Client-side Elysia Treaty utils are in `apps/web/src/clients/api-client.ts`
+- Client-side ZenStack v3 client can be imported from `@zenstackhq/tanstack-query/react` and `@zenstackhq/tanstack-query/server` and be used in the components like this:
+
+```ts
+import { schema } from "@acme/zen-v3/zenstack/schema";
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
+
+export function Model() {
+const client = useClientQueries(schema);
+const { data, error } = client.model.useFindMany();
+
+if (error) {
+  return <div>Error: {error.message}</div>;
+}
+return <div>Model: {data.map((model) => model.prop)}</div>;
+}
+```
+
+## Authentication
+
+Authentication is enabled in this project:
+
+- Server auth logic is in `apps/server/src/plugins/better-auth.ts`
+- Web app auth client is in `apps/web/src/clients/auth-client.ts`
+- Native app auth client is in `apps/native/src/utils/auth.ts`
+
+## Key Points
+
+- This is a Turborepo monorepo using pnpm workspaces
+- Each app has its own `package.json` and dependencies
+- Run commands from the root to execute across all workspaces
+- Run workspace-specific commands with `pnpm run command-name`
+- Turborepo handles build caching and parallel execution
