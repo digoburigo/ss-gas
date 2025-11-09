@@ -27,7 +27,9 @@
     "ui-add": "turbo run ui-add",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "ruler:apply": "pnpm dlx @intellectronica/ruler@latest apply --local-only"
+    "ruler:apply": "pnpm dlx @intellectronica/ruler@latest apply --local-only",
+    "pkgs:check": "pnpm dlx npm-check-updates --deep --concurrency 16",
+    "pkgs:update": "pnpm dlx npm-check-updates --deep --concurrency 16 --upgrade"
   },
   "devDependencies": {
     "@acme/prettier-config": "workspace:*",
