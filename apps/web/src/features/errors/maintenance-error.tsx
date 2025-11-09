@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@acme/ui/button'
 
 export function MaintenanceError() {
   return (

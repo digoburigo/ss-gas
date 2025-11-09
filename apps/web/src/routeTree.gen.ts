@@ -11,14 +11,38 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as AuthLayoutRouteImport } from './routes/auth/layout'
+import { Route as AuthenticatedLayoutRouteImport } from './routes/_authenticated/layout'
 import { Route as appLayoutRouteImport } from './routes/(app)/layout'
-import { Route as appIndexRouteImport } from './routes/(app)/index'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as errors503RouteImport } from './routes/(errors)/503'
+import { Route as errors500RouteImport } from './routes/(errors)/500'
+import { Route as errors404RouteImport } from './routes/(errors)/404'
+import { Route as errors403RouteImport } from './routes/(errors)/403'
+import { Route as errors401RouteImport } from './routes/(errors)/401'
+import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
+import { Route as authSignIn2RouteImport } from './routes/(auth)/sign-in-2'
+import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as authOtpRouteImport } from './routes/(auth)/otp'
+import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as appTodosRouteImport } from './routes/(app)/todos'
 import { Route as appProductsRouteImport } from './routes/(app)/products'
+import { Route as appOldHomeRouteImport } from './routes/(app)/old-home'
 import { Route as appDashRouteImport } from './routes/(app)/dash'
+import { Route as AuthenticatedSettingsLayoutRouteImport } from './routes/_authenticated/settings/layout'
+import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
+import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
+import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
+import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
 import { Route as appProductsIndexRouteImport } from './routes/(app)/products/index'
+import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
+import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
+import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
+import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
+import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as appProductsNewRouteImport } from './routes/(app)/products/new'
 import { Route as appProductsIdRouteImport } from './routes/(app)/products/$id'
 
@@ -32,14 +56,18 @@ const AuthLayoutRoute = AuthLayoutRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedLayoutRoute = AuthenticatedLayoutRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const appLayoutRoute = appLayoutRouteImport.update({
   id: '/(app)',
   getParentRoute: () => rootRouteImport,
 } as any)
-const appIndexRoute = appIndexRouteImport.update({
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => appLayoutRoute,
+  getParentRoute: () => AuthenticatedLayoutRoute,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/register',
@@ -51,6 +79,56 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthLayoutRoute,
 } as any)
+const errors503Route = errors503RouteImport.update({
+  id: '/(errors)/503',
+  path: '/503',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const errors500Route = errors500RouteImport.update({
+  id: '/(errors)/500',
+  path: '/500',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const errors404Route = errors404RouteImport.update({
+  id: '/(errors)/404',
+  path: '/404',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const errors403Route = errors403RouteImport.update({
+  id: '/(errors)/403',
+  path: '/403',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const errors401Route = errors401RouteImport.update({
+  id: '/(errors)/401',
+  path: '/401',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authSignUpRoute = authSignUpRouteImport.update({
+  id: '/(auth)/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authSignIn2Route = authSignIn2RouteImport.update({
+  id: '/(auth)/sign-in-2',
+  path: '/sign-in-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authSignInRoute = authSignInRouteImport.update({
+  id: '/(auth)/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authOtpRoute = authOtpRouteImport.update({
+  id: '/(auth)/otp',
+  path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
+  id: '/(auth)/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const appTodosRoute = appTodosRouteImport.update({
   id: '/todos',
   path: '/todos',
@@ -61,16 +139,89 @@ const appProductsRoute = appProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => appLayoutRoute,
 } as any)
+const appOldHomeRoute = appOldHomeRouteImport.update({
+  id: '/old-home',
+  path: '/old-home',
+  getParentRoute: () => appLayoutRoute,
+} as any)
 const appDashRoute = appDashRouteImport.update({
   id: '/dash',
   path: '/dash',
   getParentRoute: () => appLayoutRoute,
+} as any)
+const AuthenticatedSettingsLayoutRoute =
+  AuthenticatedSettingsLayoutRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedLayoutRoute,
+  } as any)
+const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AuthenticatedLayoutRoute,
+} as any)
+const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
+  id: '/tasks/',
+  path: '/tasks/',
+  getParentRoute: () => AuthenticatedLayoutRoute,
+} as any)
+const AuthenticatedSettingsIndexRoute =
+  AuthenticatedSettingsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+  } as any)
+const AuthenticatedHelpCenterIndexRoute =
+  AuthenticatedHelpCenterIndexRouteImport.update({
+    id: '/help-center/',
+    path: '/help-center/',
+    getParentRoute: () => AuthenticatedLayoutRoute,
+  } as any)
+const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
+  id: '/chats/',
+  path: '/chats/',
+  getParentRoute: () => AuthenticatedLayoutRoute,
+} as any)
+const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexRouteImport.update({
+  id: '/apps/',
+  path: '/apps/',
+  getParentRoute: () => AuthenticatedLayoutRoute,
 } as any)
 const appProductsIndexRoute = appProductsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => appProductsRoute,
 } as any)
+const AuthenticatedSettingsNotificationsRoute =
+  AuthenticatedSettingsNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+  } as any)
+const AuthenticatedSettingsDisplayRoute =
+  AuthenticatedSettingsDisplayRouteImport.update({
+    id: '/display',
+    path: '/display',
+    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+  } as any)
+const AuthenticatedSettingsAppearanceRoute =
+  AuthenticatedSettingsAppearanceRouteImport.update({
+    id: '/appearance',
+    path: '/appearance',
+    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+  } as any)
+const AuthenticatedSettingsAccountRoute =
+  AuthenticatedSettingsAccountRouteImport.update({
+    id: '/account',
+    path: '/account',
+    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+  } as any)
+const AuthenticatedErrorsErrorRoute =
+  AuthenticatedErrorsErrorRouteImport.update({
+    id: '/errors/$error',
+    path: '/errors/$error',
+    getParentRoute: () => AuthenticatedLayoutRoute,
+  } as any)
 const appProductsNewRoute = appProductsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -85,89 +236,238 @@ const appProductsIdRoute = appProductsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/auth': typeof AuthLayoutRouteWithChildren
   '/test': typeof TestRoute
+  '/settings': typeof AuthenticatedSettingsLayoutRouteWithChildren
   '/dash': typeof appDashRoute
+  '/old-home': typeof appOldHomeRoute
   '/products': typeof appProductsRouteWithChildren
   '/todos': typeof appTodosRoute
+  '/forgot-password': typeof authForgotPasswordRoute
+  '/otp': typeof authOtpRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-in-2': typeof authSignIn2Route
+  '/sign-up': typeof authSignUpRoute
+  '/401': typeof errors401Route
+  '/403': typeof errors403Route
+  '/404': typeof errors404Route
+  '/500': typeof errors500Route
+  '/503': typeof errors503Route
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/': typeof appIndexRoute
+  '/': typeof AuthenticatedIndexRoute
   '/products/$id': typeof appProductsIdRoute
   '/products/new': typeof appProductsNewRoute
+  '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/settings/account': typeof AuthenticatedSettingsAccountRoute
+  '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
+  '/settings/display': typeof AuthenticatedSettingsDisplayRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/products/': typeof appProductsIndexRoute
+  '/apps': typeof AuthenticatedAppsIndexRoute
+  '/chats': typeof AuthenticatedChatsIndexRoute
+  '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/users': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthLayoutRouteWithChildren
   '/test': typeof TestRoute
   '/dash': typeof appDashRoute
+  '/old-home': typeof appOldHomeRoute
   '/todos': typeof appTodosRoute
+  '/forgot-password': typeof authForgotPasswordRoute
+  '/otp': typeof authOtpRoute
+  '/sign-in': typeof authSignInRoute
+  '/sign-in-2': typeof authSignIn2Route
+  '/sign-up': typeof authSignUpRoute
+  '/401': typeof errors401Route
+  '/403': typeof errors403Route
+  '/404': typeof errors404Route
+  '/500': typeof errors500Route
+  '/503': typeof errors503Route
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/': typeof appIndexRoute
+  '/': typeof AuthenticatedIndexRoute
   '/products/$id': typeof appProductsIdRoute
   '/products/new': typeof appProductsNewRoute
+  '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/settings/account': typeof AuthenticatedSettingsAccountRoute
+  '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
+  '/settings/display': typeof AuthenticatedSettingsDisplayRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/products': typeof appProductsIndexRoute
+  '/apps': typeof AuthenticatedAppsIndexRoute
+  '/chats': typeof AuthenticatedChatsIndexRoute
+  '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/users': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)': typeof appLayoutRouteWithChildren
+  '/_authenticated': typeof AuthenticatedLayoutRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
   '/test': typeof TestRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsLayoutRouteWithChildren
   '/(app)/dash': typeof appDashRoute
+  '/(app)/old-home': typeof appOldHomeRoute
   '/(app)/products': typeof appProductsRouteWithChildren
   '/(app)/todos': typeof appTodosRoute
+  '/(auth)/forgot-password': typeof authForgotPasswordRoute
+  '/(auth)/otp': typeof authOtpRoute
+  '/(auth)/sign-in': typeof authSignInRoute
+  '/(auth)/sign-in-2': typeof authSignIn2Route
+  '/(auth)/sign-up': typeof authSignUpRoute
+  '/(errors)/401': typeof errors401Route
+  '/(errors)/403': typeof errors403Route
+  '/(errors)/404': typeof errors404Route
+  '/(errors)/500': typeof errors500Route
+  '/(errors)/503': typeof errors503Route
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/(app)/': typeof appIndexRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
   '/(app)/products/$id': typeof appProductsIdRoute
   '/(app)/products/new': typeof appProductsNewRoute
+  '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
+  '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
+  '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
+  '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/(app)/products/': typeof appProductsIndexRoute
+  '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
+  '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
+  '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
+  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/auth'
     | '/test'
+    | '/settings'
     | '/dash'
+    | '/old-home'
     | '/products'
     | '/todos'
+    | '/forgot-password'
+    | '/otp'
+    | '/sign-in'
+    | '/sign-in-2'
+    | '/sign-up'
+    | '/401'
+    | '/403'
+    | '/404'
+    | '/500'
+    | '/503'
     | '/auth/login'
     | '/auth/register'
     | '/'
     | '/products/$id'
     | '/products/new'
+    | '/errors/$error'
+    | '/settings/account'
+    | '/settings/appearance'
+    | '/settings/display'
+    | '/settings/notifications'
     | '/products/'
+    | '/apps'
+    | '/chats'
+    | '/help-center'
+    | '/settings/'
+    | '/tasks'
+    | '/users'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
     | '/test'
     | '/dash'
+    | '/old-home'
     | '/todos'
+    | '/forgot-password'
+    | '/otp'
+    | '/sign-in'
+    | '/sign-in-2'
+    | '/sign-up'
+    | '/401'
+    | '/403'
+    | '/404'
+    | '/500'
+    | '/503'
     | '/auth/login'
     | '/auth/register'
     | '/'
     | '/products/$id'
     | '/products/new'
+    | '/errors/$error'
+    | '/settings/account'
+    | '/settings/appearance'
+    | '/settings/display'
+    | '/settings/notifications'
     | '/products'
+    | '/apps'
+    | '/chats'
+    | '/help-center'
+    | '/settings'
+    | '/tasks'
+    | '/users'
   id:
     | '__root__'
     | '/(app)'
+    | '/_authenticated'
     | '/auth'
     | '/test'
+    | '/_authenticated/settings'
     | '/(app)/dash'
+    | '/(app)/old-home'
     | '/(app)/products'
     | '/(app)/todos'
+    | '/(auth)/forgot-password'
+    | '/(auth)/otp'
+    | '/(auth)/sign-in'
+    | '/(auth)/sign-in-2'
+    | '/(auth)/sign-up'
+    | '/(errors)/401'
+    | '/(errors)/403'
+    | '/(errors)/404'
+    | '/(errors)/500'
+    | '/(errors)/503'
     | '/auth/login'
     | '/auth/register'
-    | '/(app)/'
+    | '/_authenticated/'
     | '/(app)/products/$id'
     | '/(app)/products/new'
+    | '/_authenticated/errors/$error'
+    | '/_authenticated/settings/account'
+    | '/_authenticated/settings/appearance'
+    | '/_authenticated/settings/display'
+    | '/_authenticated/settings/notifications'
     | '/(app)/products/'
+    | '/_authenticated/apps/'
+    | '/_authenticated/chats/'
+    | '/_authenticated/help-center/'
+    | '/_authenticated/settings/'
+    | '/_authenticated/tasks/'
+    | '/_authenticated/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   appLayoutRoute: typeof appLayoutRouteWithChildren
+  AuthenticatedLayoutRoute: typeof AuthenticatedLayoutRouteWithChildren
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
   TestRoute: typeof TestRoute
+  authForgotPasswordRoute: typeof authForgotPasswordRoute
+  authOtpRoute: typeof authOtpRoute
+  authSignInRoute: typeof authSignInRoute
+  authSignIn2Route: typeof authSignIn2Route
+  authSignUpRoute: typeof authSignUpRoute
+  errors401Route: typeof errors401Route
+  errors403Route: typeof errors403Route
+  errors404Route: typeof errors404Route
+  errors500Route: typeof errors500Route
+  errors503Route: typeof errors503Route
 }
 
 declare module '@tanstack/react-router' {
@@ -186,6 +486,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(app)': {
       id: '/(app)'
       path: ''
@@ -193,12 +500,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(app)/': {
-      id: '/(app)/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof appIndexRouteImport
-      parentRoute: typeof appLayoutRoute
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
     }
     '/auth/register': {
       id: '/auth/register'
@@ -214,6 +521,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthLayoutRoute
     }
+    '/(errors)/503': {
+      id: '/(errors)/503'
+      path: '/503'
+      fullPath: '/503'
+      preLoaderRoute: typeof errors503RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(errors)/500': {
+      id: '/(errors)/500'
+      path: '/500'
+      fullPath: '/500'
+      preLoaderRoute: typeof errors500RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(errors)/404': {
+      id: '/(errors)/404'
+      path: '/404'
+      fullPath: '/404'
+      preLoaderRoute: typeof errors404RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(errors)/403': {
+      id: '/(errors)/403'
+      path: '/403'
+      fullPath: '/403'
+      preLoaderRoute: typeof errors403RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(errors)/401': {
+      id: '/(errors)/401'
+      path: '/401'
+      fullPath: '/401'
+      preLoaderRoute: typeof errors401RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/sign-up': {
+      id: '/(auth)/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof authSignUpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/sign-in-2': {
+      id: '/(auth)/sign-in-2'
+      path: '/sign-in-2'
+      fullPath: '/sign-in-2'
+      preLoaderRoute: typeof authSignIn2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/sign-in': {
+      id: '/(auth)/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof authSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/otp': {
+      id: '/(auth)/otp'
+      path: '/otp'
+      fullPath: '/otp'
+      preLoaderRoute: typeof authOtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/forgot-password': {
+      id: '/(auth)/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof authForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(app)/todos': {
       id: '/(app)/todos'
       path: '/todos'
@@ -228,6 +605,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appProductsRouteImport
       parentRoute: typeof appLayoutRoute
     }
+    '/(app)/old-home': {
+      id: '/(app)/old-home'
+      path: '/old-home'
+      fullPath: '/old-home'
+      preLoaderRoute: typeof appOldHomeRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
     '/(app)/dash': {
       id: '/(app)/dash'
       path: '/dash'
@@ -235,12 +619,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appDashRouteImport
       parentRoute: typeof appLayoutRoute
     }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsLayoutRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
+    }
+    '/_authenticated/users/': {
+      id: '/_authenticated/users/'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
+    }
+    '/_authenticated/tasks/': {
+      id: '/_authenticated/tasks/'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
+    }
+    '/_authenticated/settings/': {
+      id: '/_authenticated/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+    }
+    '/_authenticated/help-center/': {
+      id: '/_authenticated/help-center/'
+      path: '/help-center'
+      fullPath: '/help-center'
+      preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
+    }
+    '/_authenticated/chats/': {
+      id: '/_authenticated/chats/'
+      path: '/chats'
+      fullPath: '/chats'
+      preLoaderRoute: typeof AuthenticatedChatsIndexRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
+    }
+    '/_authenticated/apps/': {
+      id: '/_authenticated/apps/'
+      path: '/apps'
+      fullPath: '/apps'
+      preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
+    }
     '/(app)/products/': {
       id: '/(app)/products/'
       path: '/'
       fullPath: '/products/'
       preLoaderRoute: typeof appProductsIndexRouteImport
       parentRoute: typeof appProductsRoute
+    }
+    '/_authenticated/settings/notifications': {
+      id: '/_authenticated/settings/notifications'
+      path: '/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
+      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+    }
+    '/_authenticated/settings/display': {
+      id: '/_authenticated/settings/display'
+      path: '/display'
+      fullPath: '/settings/display'
+      preLoaderRoute: typeof AuthenticatedSettingsDisplayRouteImport
+      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+    }
+    '/_authenticated/settings/appearance': {
+      id: '/_authenticated/settings/appearance'
+      path: '/appearance'
+      fullPath: '/settings/appearance'
+      preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
+      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+    }
+    '/_authenticated/settings/account': {
+      id: '/_authenticated/settings/account'
+      path: '/account'
+      fullPath: '/settings/account'
+      preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
+      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+    }
+    '/_authenticated/errors/$error': {
+      id: '/_authenticated/errors/$error'
+      path: '/errors/$error'
+      fullPath: '/errors/$error'
+      preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
     }
     '/(app)/products/new': {
       id: '/(app)/products/new'
@@ -277,21 +745,70 @@ const appProductsRouteWithChildren = appProductsRoute._addFileChildren(
 
 interface appLayoutRouteChildren {
   appDashRoute: typeof appDashRoute
+  appOldHomeRoute: typeof appOldHomeRoute
   appProductsRoute: typeof appProductsRouteWithChildren
   appTodosRoute: typeof appTodosRoute
-  appIndexRoute: typeof appIndexRoute
 }
 
 const appLayoutRouteChildren: appLayoutRouteChildren = {
   appDashRoute: appDashRoute,
+  appOldHomeRoute: appOldHomeRoute,
   appProductsRoute: appProductsRouteWithChildren,
   appTodosRoute: appTodosRoute,
-  appIndexRoute: appIndexRoute,
 }
 
 const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(
   appLayoutRouteChildren,
 )
+
+interface AuthenticatedSettingsLayoutRouteChildren {
+  AuthenticatedSettingsAccountRoute: typeof AuthenticatedSettingsAccountRoute
+  AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
+  AuthenticatedSettingsDisplayRoute: typeof AuthenticatedSettingsDisplayRoute
+  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
+  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
+}
+
+const AuthenticatedSettingsLayoutRouteChildren: AuthenticatedSettingsLayoutRouteChildren =
+  {
+    AuthenticatedSettingsAccountRoute: AuthenticatedSettingsAccountRoute,
+    AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
+    AuthenticatedSettingsDisplayRoute: AuthenticatedSettingsDisplayRoute,
+    AuthenticatedSettingsNotificationsRoute:
+      AuthenticatedSettingsNotificationsRoute,
+    AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
+  }
+
+const AuthenticatedSettingsLayoutRouteWithChildren =
+  AuthenticatedSettingsLayoutRoute._addFileChildren(
+    AuthenticatedSettingsLayoutRouteChildren,
+  )
+
+interface AuthenticatedLayoutRouteChildren {
+  AuthenticatedSettingsLayoutRoute: typeof AuthenticatedSettingsLayoutRouteWithChildren
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
+  AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
+  AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
+  AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
+  AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+}
+
+const AuthenticatedLayoutRouteChildren: AuthenticatedLayoutRouteChildren = {
+  AuthenticatedSettingsLayoutRoute:
+    AuthenticatedSettingsLayoutRouteWithChildren,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
+  AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
+  AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
+  AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
+  AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+}
+
+const AuthenticatedLayoutRouteWithChildren =
+  AuthenticatedLayoutRoute._addFileChildren(AuthenticatedLayoutRouteChildren)
 
 interface AuthLayoutRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
@@ -309,8 +826,19 @@ const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   appLayoutRoute: appLayoutRouteWithChildren,
+  AuthenticatedLayoutRoute: AuthenticatedLayoutRouteWithChildren,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
   TestRoute: TestRoute,
+  authForgotPasswordRoute: authForgotPasswordRoute,
+  authOtpRoute: authOtpRoute,
+  authSignInRoute: authSignInRoute,
+  authSignIn2Route: authSignIn2Route,
+  authSignUpRoute: authSignUpRoute,
+  errors401Route: errors401Route,
+  errors403Route: errors403Route,
+  errors404Route: errors404Route,
+  errors500Route: errors500Route,
+  errors503Route: errors503Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

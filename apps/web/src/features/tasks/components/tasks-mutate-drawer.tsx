@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { Button } from '@/components/ui/button'
+import { showSubmittedData } from '~/lib/show-submitted-data'
+import { Button } from '@acme/ui/button'
 import {
   Form,
   FormControl,
@@ -10,9 +10,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+} from '@acme/ui/form'
+import { Input } from '@acme/ui/input'
+import { RadioGroup, RadioGroupItem } from '@acme/ui/radio-group'
 import {
   Sheet,
   SheetClose,
@@ -21,8 +21,8 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { SelectDropdown } from '@/components/select-dropdown'
+} from '@acme/ui/sheet'
+import { SelectDropdown } from '~/components/select-dropdown'
 import { type Task } from '../data/schema'
 
 type TaskMutateDrawerProps = {

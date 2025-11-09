@@ -2,9 +2,9 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { showSubmittedData } from '~/lib/show-submitted-data'
+import { cn } from '@acme/ui'
+import { Button } from '@acme/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -12,7 +12,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from '@acme/ui/command'
 import {
   Form,
   FormControl,
@@ -21,14 +21,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from '@acme/ui/form'
+import { Input } from '@acme/ui/input'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import { DatePicker } from '@/components/date-picker'
+} from '@acme/ui/popover'
+import { DatePicker } from '~/components/date-picker'
 
 const languages = [
   { label: 'English', value: 'en' },

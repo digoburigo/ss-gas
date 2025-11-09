@@ -3,9 +3,9 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { showSubmittedData } from '~/lib/show-submitted-data'
+import { cn } from '@acme/ui'
+import { Button } from '@acme/ui/button'
 import {
   Form,
   FormControl,
@@ -13,13 +13,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from '@acme/ui/form'
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
   InputOTPSeparator,
-} from '@/components/ui/input-otp'
+} from '@acme/ui/input-otp'
 
 const formSchema = z.object({
   otp: z

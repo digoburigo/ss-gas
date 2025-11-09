@@ -1,7 +1,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
 import { Trash2, UserPen } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@acme/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@acme/ui/dropdown-menu'
 import { type User } from '../data/schema'
 import { useUsers } from './users-provider'
 

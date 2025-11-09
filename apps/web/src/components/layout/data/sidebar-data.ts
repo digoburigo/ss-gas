@@ -1,159 +1,160 @@
 import {
-  Construction,
-  LayoutDashboard,
-  Monitor,
-  Bug,
-  ListTodo,
-  FileX,
-  HelpCircle,
-  Lock,
+  AudioWaveform,
   Bell,
+  Bug,
+  Command,
+  Construction,
+  FileX,
+  GalleryVerticalEnd,
+  HelpCircle,
+  LayoutDashboard,
+  ListTodo,
+  Lock,
+  MessagesSquare,
+  Monitor,
   Package,
   Palette,
   ServerOff,
   Settings,
-  Wrench,
-  UserCog,
-  UserX,
-  Users,
-  MessagesSquare,
   ShieldCheck,
-  AudioWaveform,
-  Command,
-  GalleryVerticalEnd,
-} from 'lucide-react'
-import { ClerkLogo } from '~/components/assets/clerk-logo'
-import { type SidebarData } from '../types'
+  UserCog,
+  Users,
+  UserX,
+  Wrench,
+} from "lucide-react";
+
+import { ClerkLogo } from "~/assets/clerk-logo";
+import { type SidebarData } from "../types";
 
 export const sidebarData: SidebarData = {
   user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
-    avatar: '/avatars/shadcn.jpg',
+    name: "satnaing",
+    email: "satnaingdev@gmail.com",
+    avatar: "/avatars/shadcn.jpg",
   },
   teams: [
     {
-      name: 'Shadcn Admin',
+      name: "Shadcn Admin",
       logo: Command,
-      plan: 'Vite + ShadcnUI',
+      plan: "Vite + ShadcnUI",
     },
     {
-      name: 'Acme Inc',
+      name: "Acme Inc",
       logo: GalleryVerticalEnd,
-      plan: 'Enterprise',
+      plan: "Enterprise",
     },
     {
-      name: 'Acme Corp.',
+      name: "Acme Corp.",
       logo: AudioWaveform,
-      plan: 'Startup',
+      plan: "Startup",
     },
   ],
   navGroups: [
     {
-      title: 'General',
+      title: "General",
       items: [
         {
-          title: 'Dashboard',
-          url: '/',
+          title: "Dashboard",
+          url: "/",
           icon: LayoutDashboard,
         },
         {
-          title: 'Tasks',
-          url: '/tasks',
+          title: "Tasks",
+          url: "/tasks",
           icon: ListTodo,
         },
         {
-          title: 'Apps',
-          url: '/apps',
+          title: "Apps",
+          url: "/apps",
           icon: Package,
         },
         {
-          title: 'Chats',
-          url: '/chats',
-          badge: '3',
+          title: "Chats",
+          url: "/chats",
+          badge: "3",
           icon: MessagesSquare,
         },
         {
-          title: 'Users',
-          url: '/users',
+          title: "Users",
+          url: "/users",
           icon: Users,
         },
         {
-          title: 'Secured by Clerk',
+          title: "Secured by Clerk",
           icon: ClerkLogo,
           items: [
             {
-              title: 'Sign In',
-              url: '/clerk/sign-in',
+              title: "Sign In",
+              url: "/clerk/sign-in",
             },
             {
-              title: 'Sign Up',
-              url: '/clerk/sign-up',
+              title: "Sign Up",
+              url: "/clerk/sign-up",
             },
             {
-              title: 'User Management',
-              url: '/clerk/user-management',
+              title: "User Management",
+              url: "/clerk/user-management",
             },
           ],
         },
       ],
     },
     {
-      title: 'Pages',
+      title: "Pages",
       items: [
         {
-          title: 'Auth',
+          title: "Auth",
           icon: ShieldCheck,
           items: [
             {
-              title: 'Sign In',
-              url: '/sign-in',
+              title: "Sign In",
+              url: "/sign-in",
             },
             {
-              title: 'Sign In (2 Col)',
-              url: '/sign-in-2',
+              title: "Sign In (2 Col)",
+              url: "/sign-in-2",
             },
             {
-              title: 'Sign Up',
-              url: '/sign-up',
+              title: "Sign Up",
+              url: "/sign-up",
             },
             {
-              title: 'Forgot Password',
-              url: '/forgot-password',
+              title: "Forgot Password",
+              url: "/forgot-password",
             },
             {
-              title: 'OTP',
-              url: '/otp',
+              title: "OTP",
+              url: "/otp",
             },
           ],
         },
         {
-          title: 'Errors',
+          title: "Errors",
           icon: Bug,
           items: [
             {
-              title: 'Unauthorized',
-              url: '/errors/unauthorized',
+              title: "Unauthorized",
+              url: "/errors/unauthorized",
               icon: Lock,
             },
             {
-              title: 'Forbidden',
-              url: '/errors/forbidden',
+              title: "Forbidden",
+              url: "/errors/forbidden",
               icon: UserX,
             },
             {
-              title: 'Not Found',
-              url: '/errors/not-found',
+              title: "Not Found",
+              url: "/errors/not-found",
               icon: FileX,
             },
             {
-              title: 'Internal Server Error',
-              url: '/errors/internal-server-error',
+              title: "Internal Server Error",
+              url: "/errors/internal-server-error",
               icon: ServerOff,
             },
             {
-              title: 'Maintenance Error',
-              url: '/errors/maintenance-error',
+              title: "Maintenance Error",
+              url: "/errors/maintenance-error",
               icon: Construction,
             },
           ],
@@ -161,45 +162,45 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: 'Other',
+      title: "Other",
       items: [
         {
-          title: 'Settings',
+          title: "Settings",
           icon: Settings,
           items: [
             {
-              title: 'Profile',
-              url: '/settings',
+              title: "Profile",
+              url: "/settings",
               icon: UserCog,
             },
             {
-              title: 'Account',
-              url: '/settings/account',
+              title: "Account",
+              url: "/settings/account",
               icon: Wrench,
             },
             {
-              title: 'Appearance',
-              url: '/settings/appearance',
+              title: "Appearance",
+              url: "/settings/appearance",
               icon: Palette,
             },
             {
-              title: 'Notifications',
-              url: '/settings/notifications',
+              title: "Notifications",
+              url: "/settings/notifications",
               icon: Bell,
             },
             {
-              title: 'Display',
-              url: '/settings/display',
+              title: "Display",
+              url: "/settings/display",
               icon: Monitor,
             },
           ],
         },
         {
-          title: 'Help Center',
-          url: '/help-center',
+          title: "Help Center",
+          url: "/help-center",
           icon: HelpCircle,
         },
       ],
     },
   ],
-}
+};

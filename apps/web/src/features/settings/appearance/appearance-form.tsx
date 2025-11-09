@@ -2,12 +2,12 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { ChevronDownIcon } from '@radix-ui/react-icons'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { fonts } from '@/config/fonts'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { cn } from '@/lib/utils'
-import { useFont } from '@/context/font-provider'
-import { useTheme } from '@/context/theme-provider'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { fonts } from '~/config/fonts'
+import { showSubmittedData } from '~/lib/show-submitted-data'
+import { cn } from '@acme/ui'
+import { useFont } from '~/context/font-provider'
+import { useTheme } from '~/context/theme-provider'
+import { Button, buttonVariants } from '@acme/ui/button'
 import {
   Form,
   FormControl,
@@ -16,8 +16,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+} from '@acme/ui/form'
+import { RadioGroup, RadioGroupItem } from '@acme/ui/radio-group'
 
 const appearanceFormSchema = z.object({
   theme: z.enum(['light', 'dark']),

@@ -1,9 +1,9 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
+import { showSubmittedData } from '~/lib/show-submitted-data'
+import { Button } from '@acme/ui/button'
+import { Checkbox } from '@acme/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -12,7 +12,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from '@acme/ui/form'
 
 const items = [
   {

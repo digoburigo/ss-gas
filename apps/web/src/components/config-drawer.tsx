@@ -16,16 +16,16 @@ import {
 import { useSidebar } from "@acme/ui/sidebar";
 
 import type { Collapsible } from "~/context/layout-provider";
-import { IconDir } from "~/components/assets/custom/icon-dir";
-import { IconLayoutCompact } from "~/components/assets/custom/icon-layout-compact";
-import { IconLayoutDefault } from "~/components/assets/custom/icon-layout-default";
-import { IconLayoutFull } from "~/components/assets/custom/icon-layout-full";
-import { IconSidebarFloating } from "~/components/assets/custom/icon-sidebar-floating";
-import { IconSidebarInset } from "~/components/assets/custom/icon-sidebar-inset";
-import { IconSidebarSidebar } from "~/components/assets/custom/icon-sidebar-sidebar";
-import { IconThemeDark } from "~/components/assets/custom/icon-theme-dark";
-import { IconThemeLight } from "~/components/assets/custom/icon-theme-light";
-import { IconThemeSystem } from "~/components/assets/custom/icon-theme-system";
+import { IconDir } from "~/assets/custom/icon-dir";
+import { IconLayoutCompact } from "~/assets/custom/icon-layout-compact";
+import { IconLayoutDefault } from "~/assets/custom/icon-layout-default";
+import { IconLayoutFull } from "~/assets/custom/icon-layout-full";
+import { IconSidebarFloating } from "~/assets/custom/icon-sidebar-floating";
+import { IconSidebarInset } from "~/assets/custom/icon-sidebar-inset";
+import { IconSidebarSidebar } from "~/assets/custom/icon-sidebar-sidebar";
+import { IconThemeDark } from "~/assets/custom/icon-theme-dark";
+import { IconThemeLight } from "~/assets/custom/icon-theme-light";
+import { IconThemeSystem } from "~/assets/custom/icon-theme-system";
 import { useDirection } from "~/context/direction-provider";
 import { useLayout } from "~/context/layout-provider";
 import { useTheme } from "~/context/theme-provider";

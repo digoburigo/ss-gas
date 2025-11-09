@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Check, X } from 'lucide-react'
-import { showSubmittedData } from '@/lib/show-submitted-data'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { showSubmittedData } from '~/lib/show-submitted-data'
+import { Badge } from '@acme/ui/badge'
+import { Button } from '@acme/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -10,13 +10,13 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from '@acme/ui/command'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@acme/ui/dialog'
 import { type ChatUser } from '../data/chat-types'
 
 type User = Omit<ChatUser, 'messages'>

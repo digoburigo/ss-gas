@@ -4,7 +4,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from '@acme/ui/card'
 import { AnalyticsChart } from './analytics-chart'
 
 export function Analytics() {

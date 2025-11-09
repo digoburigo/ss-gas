@@ -4,7 +4,7 @@ import { ActivityHistory } from "~/components/dash/activity-history";
 import { ChartAreaInteractive } from "~/components/dash/chart-area-interactive";
 import { SectionCards } from "~/components/dash/section-cards";
 
-export const Route = createFileRoute("/(app)/")({
+export const Route = createFileRoute("/(app)/old-home")({
   component: RouteComponent,
 });
 
