@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import {
   Building2Icon,
   CheckIcon,
@@ -32,23 +31,8 @@ export function OrganizationSwitcher() {
   const { data: activeOrganization, isPending: isLoadingActiveOrganization } =
     authClient.useActiveOrganization();
 
-  const { data: organizations, isPending: isLoadingOrganizations } = useQuery({
-    queryKey: ["organizations"],
-    queryFn: async () => {
-      const response = await authClient.organization.list(
-        {
-          query: {
-            limit: 100,
-          },
-        },
-        {
-          throw: true,
-        },
-      );
-
-      return response;
-    },
-  });
+  const { data: organizations, isPending: isLoadingOrganizations } =
+    authClient.useListOrganizations();
 
   const handleSelectOrganization = async (organizationId: string) => {
     try {
@@ -56,6 +40,8 @@ export function OrganizationSwitcher() {
         organizationId,
       });
       toast.success("Organization switched successfully");
+      // Refresh the browser to refetch all queries
+      window.location.reload();
     } catch (error) {
       toast.error(
         error instanceof Error

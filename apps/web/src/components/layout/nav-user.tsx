@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   BadgeCheck,
   Bell,
@@ -6,9 +6,9 @@ import {
   CreditCard,
   LogOut,
   Sparkles,
-} from 'lucide-react'
-import useDialogState from '~/hooks/use-dialog-state'
-import { Avatar, AvatarFallback, AvatarImage } from '@acme/ui/avatar'
+} from "lucide-react";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@acme/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,26 +17,36 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@acme/ui/dropdown-menu'
+} from "@acme/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@acme/ui/sidebar'
-import { SignOutDialog } from '~/components/sign-out-dialog'
+} from "@acme/ui/sidebar";
+
+import { authClient } from "~/clients/auth-client";
+import { SignOutDialog } from "~/components/sign-out-dialog";
+import useDialogState from "~/hooks/use-dialog-state";
 
 type NavUserProps = {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}
+    name: string;
+    email: string;
+    avatar: string;
+  };
+};
 
 export function NavUser({ user }: NavUserProps) {
-  const { isMobile } = useSidebar()
-  const [open, setOpen] = useDialogState()
+  const { isMobile } = useSidebar();
+  const [open, setOpen] = useDialogState();
+  const navigate = useNavigate();
+
+  const getUserInitials = () => {
+    if (!user.name) return "U";
+    const parts = user.name.split(" ");
+    return (parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "");
+  };
 
   return (
     <>
@@ -45,35 +55,39 @@ export function NavUser({ user }: NavUserProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
-                size='lg'
-                className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+                size="lg"
+                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                <Avatar className='h-8 w-8 rounded-lg'>
+                <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className='rounded-lg'>SN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {getUserInitials()}
+                  </AvatarFallback>
                 </Avatar>
-                <div className='grid flex-1 text-start text-sm leading-tight'>
-                  <span className='truncate font-semibold'>{user.name}</span>
-                  <span className='truncate text-xs'>{user.email}</span>
+                <div className="grid flex-1 text-start text-sm leading-tight">
+                  <span className="truncate font-semibold">{user.name}</span>
+                  <span className="truncate text-xs">{user.email}</span>
                 </div>
-                <ChevronsUpDown className='ms-auto size-4' />
+                <ChevronsUpDown className="ms-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
-              side={isMobile ? 'bottom' : 'right'}
-              align='end'
+              className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+              side={isMobile ? "bottom" : "right"}
+              align="end"
               sideOffset={4}
             >
-              <DropdownMenuLabel className='p-0 font-normal'>
-                <div className='flex items-center gap-2 px-1 py-1.5 text-start text-sm'>
-                  <Avatar className='h-8 w-8 rounded-lg'>
+              <DropdownMenuLabel className="p-0 font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                  <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className='rounded-lg'>SN</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">
+                      {getUserInitials()}
+                    </AvatarFallback>
                   </Avatar>
-                  <div className='grid flex-1 text-start text-sm leading-tight'>
-                    <span className='truncate font-semibold'>{user.name}</span>
-                    <span className='truncate text-xs'>{user.email}</span>
+                  <div className="grid flex-1 text-start text-sm leading-tight">
+                    <span className="truncate font-semibold">{user.name}</span>
+                    <span className="truncate text-xs">{user.email}</span>
                   </div>
                 </div>
               </DropdownMenuLabel>
@@ -87,19 +101,19 @@ export function NavUser({ user }: NavUserProps) {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                  <Link to='/settings/account'>
+                  <Link to="/settings/account">
                     <BadgeCheck />
                     Account
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to='/settings'>
+                  <Link to="/settings">
                     <CreditCard />
                     Billing
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to='/settings/notifications'>
+                  <Link to="/settings/notifications">
                     <Bell />
                     Notifications
                   </Link>
@@ -107,8 +121,11 @@ export function NavUser({ user }: NavUserProps) {
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                variant='destructive'
-                onClick={() => setOpen(true)}
+                variant="destructive"
+                onClick={async () => {
+                  await authClient.signOut();
+                  navigate({ to: "/auth/login" });
+                }}
               >
                 <LogOut />
                 Sign out
@@ -120,5 +137,5 @@ export function NavUser({ user }: NavUserProps) {
 
       <SignOutDialog open={!!open} onOpenChange={setOpen} />
     </>
-  )
+  );
 }

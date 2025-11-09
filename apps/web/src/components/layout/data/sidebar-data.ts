@@ -80,6 +80,11 @@ export const sidebarData: SidebarData = {
           icon: Users,
         },
         {
+          title: "Produtos",
+          url: "/products",
+          icon: Package,
+        },
+        {
           title: "Secured by Clerk",
           icon: ClerkLogo,
           items: [

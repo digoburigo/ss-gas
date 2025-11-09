@@ -1,32 +1,60 @@
-import * as React from 'react'
-import { ChevronsUpDown, Plus } from 'lucide-react'
+import { Building2Icon, ChevronsUpDown, Plus } from "lucide-react";
+import { toast } from "sonner";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@acme/ui/dropdown-menu'
+} from "@acme/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@acme/ui/sidebar'
+} from "@acme/ui/sidebar";
+import { Skeleton } from "@acme/ui/skeleton";
 
-type TeamSwitcherProps = {
-  teams: {
-    name: string
-    logo: React.ElementType
-    plan: string
-  }[]
-}
+import { authClient } from "~/clients/auth-client";
 
-export function TeamSwitcher({ teams }: TeamSwitcherProps) {
-  const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+export function TeamSwitcher() {
+  const { isMobile } = useSidebar();
+  const { data: activeOrganization, isPending: isLoadingActiveOrganization } =
+    authClient.useActiveOrganization();
+
+  const { data: organizations, isPending: isLoadingOrganizations } =
+    authClient.useListOrganizations();
+
+  const handleSelectOrganization = async (organizationId: string) => {
+    try {
+      await authClient.organization.setActive({
+        organizationId,
+      });
+      toast.success("Organization switched successfully");
+      // Refresh the browser to refetch all queries
+      window.location.reload();
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to switch organization",
+      );
+    }
+  };
+
+  if (isLoadingActiveOrganization || isLoadingOrganizations) {
+    return (
+      <div className="flex items-center gap-2">
+        <Skeleton className="size-8 rounded-md" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-3 w-3/4" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <SidebarMenu>
@@ -34,53 +62,59 @@ export function TeamSwitcher({ teams }: TeamSwitcherProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size='lg'
-              className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className='bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg'>
-                <activeTeam.logo className='size-4' />
+              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                <Building2Icon className="size-4" />
               </div>
-              <div className='grid flex-1 text-start text-sm leading-tight'>
-                <span className='truncate font-semibold'>
-                  {activeTeam.name}
+              <div className="grid flex-1 text-start text-sm leading-tight">
+                <span className="truncate font-semibold">
+                  {activeOrganization?.name ?? "Select organization"}
                 </span>
-                <span className='truncate text-xs'>{activeTeam.plan}</span>
+                <span className="truncate text-xs">
+                  {organizations?.length ?? 0} organization
+                  {organizations?.length !== 1 ? "s" : ""}
+                </span>
               </div>
-              <ChevronsUpDown className='ms-auto' />
+              <ChevronsUpDown className="ms-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className='w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg'
-            align='start'
-            side={isMobile ? 'bottom' : 'right'}
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            align="start"
+            side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenuLabel className='text-muted-foreground text-xs'>
-              Teams
+            <DropdownMenuLabel className="text-muted-foreground text-xs">
+              Organizations
             </DropdownMenuLabel>
-            {teams.map((team, index) => (
+            {organizations?.map((org) => (
               <DropdownMenuItem
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
-                className='gap-2 p-2'
+                key={org.id}
+                onClick={() => {
+                  handleSelectOrganization(org.id);
+                }}
+                className="cursor-pointer gap-2 p-2"
               >
-                <div className='flex size-6 items-center justify-center rounded-sm border'>
-                  <team.logo className='size-4 shrink-0' />
+                <div className="flex size-6 items-center justify-center rounded-sm border">
+                  <Building2Icon className="size-4 shrink-0" />
                 </div>
-                {team.name}
-                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                {org.name}
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className='gap-2 p-2'>
-              <div className='bg-background flex size-6 items-center justify-center rounded-md border'>
-                <Plus className='size-4' />
+            <DropdownMenuItem className="gap-2 p-2">
+              <div className="bg-background flex size-6 items-center justify-center rounded-md border">
+                <Plus className="size-4" />
               </div>
-              <div className='text-muted-foreground font-medium'>Add team</div>
+              <div className="text-muted-foreground font-medium">
+                Add organization
+              </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

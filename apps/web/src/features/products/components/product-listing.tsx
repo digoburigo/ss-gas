@@ -4,9 +4,7 @@ import { fakeProducts, Product } from "~/constants/mock-api";
 import { ProductTable } from "./product-tables";
 import { columns } from "./product-tables/columns";
 
-type ProductListingPage = {};
-
-export default function ProductListingPage({}: ProductListingPage) {
+export default function ProductListingPage() {
   const [data, setData] = useState<any[]>([]);
 
   const filters = {
