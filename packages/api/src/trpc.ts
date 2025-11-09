@@ -11,7 +11,7 @@ import superjson from "superjson";
 import { z, ZodError } from "zod/v4";
 
 import type { Auth } from "@acme/auth";
-import { db } from "@acme/db/client";
+import { db } from "@acme/zen-v3";
 
 /**
  * 1. CONTEXT
@@ -34,6 +34,9 @@ export const createTRPCContext = async (opts: {
   const session = await authApi.getSession({
     headers: opts.headers,
   });
+
+  // TODO: add db context zen-v3
+
   return {
     authApi,
     session,

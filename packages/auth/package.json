@@ -17,7 +17,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@acme/db": "workspace:*",
     "@acme/zen-v3": "workspace:*",
     "@better-auth/expo": "catalog:",
     "@t3-oss/env-core": "^0.13.8",

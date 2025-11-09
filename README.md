@@ -1,28 +1,28 @@
 # zen-t3-turbo
 
-## Installation
+## Instalação
 
 > [!NOTE]
 >
-> Make sure to follow the system requirements specified in [`package.json#engines`](./package.json#L4) before proceeding.
+> Certifique-se de seguir os requisitos do sistema especificados em [`package.json#engines`](./package.json#L4) antes de prosseguir.
 
-## About
+## Sobre
 
-It uses [Turborepo](https://turborepo.com) and contains:
+Utiliza [Turborepo](https://turborepo.com) e contém:
 
 ```text
 .github
   └─ workflows
-        └─ CI with pnpm cache setup
+        └─ CI com configuração de cache do pnpm
 .vscode
-  └─ Recommended extensions and settings for VSCode users
+  └─ Extensões e configurações recomendadas para usuários do VSCode
 apps
   ├─ expo
   │   ├─ Expo SDK 54
-  │   ├─ React Native 0.81 using React 19
-  │   ├─ Navigation using Expo Router
-  │   ├─ Tailwind CSS v4 using NativeWind v5
-  │   └─ Typesafe API calls using tRPC
+  │   ├─ React Native 0.81 usando React 19
+  │   ├─ Navegação usando Expo Router
+  │   ├─ Tailwind CSS v4 usando NativeWind v5
+  │   └─ Chamadas de API com tipagem segura usando tRPC
   ├─ server
   │   ├─ Elysia 1.4.15
   │   ├─ ZenStack v3
@@ -31,240 +31,236 @@ apps
   │   ├─ Tanstack Router
   │   ├─ Tanstack Query
   │   ├─ Tanstack Table
-  │   └─ ZenStack v3 (E2E Typesafe API Server & Client)
+  │   └─ ZenStack v3 (API E2E com Tipagem Segura para Server & Client)
 
 packages
   ├─ api
-  │   └─ tRPC v11 router definition
+  │   └─ Definição de roteador tRPC v11
   ├─ auth
-  │   └─ Authentication using better-auth.
-  ├─ db
-  │   └─ Typesafe db calls using Drizzle & Supabase
+  │   └─ Autenticação usando better-auth.
   ├─ email
-  │   └─ Email templates. Emails are built with React Email.
+  │   └─ Templates de email. Os emails são construídos com React Email.
   ├─ validators
-  │   └─ Typesafe validation using Zod
+  │   └─ Validação com tipagem segura usando Zod
   ├─ zen-v3
-  │   └─ Database schema and utilities with ZenStack v3
+  │   └─ Schema de banco de dados e utilitários com ZenStack v3
   └─ ui
-      └─ Start of a UI package for the webapp using shadcn-ui and baseui
+      └─ Início de um pacote de UI para a webapp usando shadcn-ui e baseui
 tooling
   ├─ eslint
-  │   └─ shared, fine-grained, eslint presets
+  │   └─ presets compartilhados e refinados do eslint
   ├─ prettier
-  │   └─ shared prettier configuration
+  │   └─ configuração compartilhada do prettier
   ├─ tailwind
-  │   └─ shared tailwind theme and configuration
+  │   └─ tema e configuração compartilhada do tailwind
   └─ typescript
-      └─ shared tsconfig you can extend from
+      └─ tsconfig compartilhado que você pode estender
 ```
 
-> In this template, we use `@acme` as a placeholder for package names. As a user, you might want to replace it with your own organization or project name. You can use find-and-replace to change all the instances of `@acme` to something like `@my-company` or `@project-name`.
+> Neste template, usamos `@acme` como um placeholder para nomes de pacotes. Como usuário, você pode querer substituí-lo pelo nome da sua organização ou projeto. Você pode usar localizar-e-substituir para alterar todas as instâncias de `@acme` para algo como `@minha-empresa` ou `@nome-do-projeto`.
 
-## Quick Start
+## Início Rápido
 
-> **Note**
-> The [db](./packages/db) package is preconfigured to use Supabase and is **edge-bound** with the [Vercel Postgres](https://github.com/vercel/storage/tree/main/packages/postgres) driver. If you're using something else, make the necessary modifications to the [schema](./packages/db/src/schema.ts) as well as the [client](./packages/db/src/index.ts) and the [drizzle config](./packages/db/drizzle.config.ts). If you want to switch to non-edge database driver, remove `export const runtime = "edge";` [from all pages and api routes](https://github.com/t3-oss/create-t3-turbo/issues/634#issuecomment-1730240214).
+> **Nota**
+> O pacote [zen-v3](./packages/zen-v3) está pré-configurado para usar PostgreSQL com uma configuração local do Docker Compose. O schema do banco de dados é definido em `packages/zen-v3/schema.zmodel` usando ZenStack v3. Para iniciar o banco de dados PostgreSQL local, execute `pnpm db:start` no diretório raiz, que iniciará os serviços do Docker Compose definidos no pacote zen-v3. Se você quiser usar um provedor de banco de dados diferente, faça as modificações necessárias no [arquivo de schema](./packages/zen-v3/schema.zmodel) e atualize a configuração de conexão do banco de dados.
 
-To get it running, follow the steps below:
+Para colocá-lo em execução, siga os passos abaixo:
 
-### 1. Setup dependencies
-
-> [!NOTE]
->
-> While the repo does contain both a Next.js and Tanstack Start version of a web app, you can pick which one you like to use and delete the other folder before starting the setup.
+### 1. Configurar dependências
 
 ```bash
-# Install dependencies
+# Instalar dependências
 pnpm i
 
-# Configure environment variables
-# There is an `.env.example` in the root directory you can use for reference
+# Configurar variáveis de ambiente
+# Há um arquivo `.env.example` no diretório raiz que você pode usar como referência
 cp .env.example .env
 
-# Push the Drizzle schema to the database
+# Iniciar docker compose no pacote zen-v3 para PostgreSQL local
+pnpm db:start
+
+# Enviar o schema do ZenStack v3 para o banco de dados
 pnpm db:push
 ```
 
-### 2. Generate Better Auth Schema
+### 2. Gerar Schema do Better Auth
 
-This project uses [Better Auth](https://www.better-auth.com) for authentication. The auth schema needs to be generated using the Better Auth CLI before you can use the authentication features.
+Este projeto usa [Better Auth](https://www.better-auth.com) para autenticação. O schema de autenticação precisa ser gerado usando a CLI do Better Auth antes que você possa usar os recursos de autenticação.
 
 ```bash
-# Generate the Better Auth schema
+# Gerar o schema do Better Auth
 pnpm --filter @acme/auth generate
 ```
 
-This command runs the Better Auth CLI with the following configuration:
+Este comando executa a CLI do Better Auth com a seguinte configuração:
 
-- **Config file**: `packages/auth/script/auth-cli.ts` - A CLI-only configuration file (isolated from src to prevent imports)
-- **Output**: `packages/db/src/auth-schema.ts` - Generated Drizzle schema for authentication tables
+- **Arquivo de configuração**: `packages/auth/script/auth-cli.ts` - Um arquivo de configuração exclusivo para CLI (isolado do src para prevenir importações)
+- É necessário criar os models manualmente no arquivo `schema.zmodel` no pacote `packages/zen-v3`
 
-The generation process:
+O processo de geração:
 
-1. Reads the Better Auth configuration from `packages/auth/script/auth-cli.ts`
-2. Generates the appropriate database schema based on your auth setup
-3. Outputs a Drizzle-compatible schema file to the `@acme/db` package
+1. Lê a configuração do Better Auth de `packages/auth/script/auth-cli.ts`
+2. Gera o schema de banco de dados apropriado baseado na sua configuração de autenticação
 
-> **Note**: The `auth-cli.ts` file is placed in the `script/` directory (instead of `src/`) to prevent accidental imports from other parts of the codebase. This file is exclusively for CLI schema generation and should **not** be used directly in your application. For runtime authentication, use the configuration from `packages/auth/src/index.ts`.
+> **Nota**: O arquivo `auth-cli.ts` é colocado no diretório `script/` (ao invés de `src/`) para prevenir importações acidentais de outras partes do código. Este arquivo é exclusivamente para geração de schema via CLI e **não** deve ser usado diretamente na sua aplicação. Para autenticação em tempo de execução, use a configuração de `packages/auth/src/index.ts`.
 
-For more information about the Better Auth CLI, see the [official documentation](https://www.better-auth.com/docs/concepts/cli#generate).
+Para mais informações sobre a CLI do Better Auth, veja a [documentação oficial](https://www.better-auth.com/docs/concepts/cli#generate).
 
-### 3. Configure Expo `dev`-script
+### 3. Configurar script `dev` do Expo
 
-#### Use iOS Simulator
+#### Usar Simulador iOS
 
-1. Make sure you have XCode and XCommand Line Tools installed [as shown on expo docs](https://docs.expo.dev/workflow/ios-simulator).
+1. Certifique-se de ter o XCode e XCommand Line Tools instalados [conforme mostrado na documentação do expo](https://docs.expo.dev/workflow/ios-simulator).
 
-   > **NOTE:** If you just installed XCode, or if you have updated it, you need to open the simulator manually once. Run `npx expo start` from `apps/expo`, and then enter `I` to launch Expo Go. After the manual launch, you can run `pnpm dev` in the root directory.
+   > **NOTA:** Se você acabou de instalar o XCode, ou se o atualizou, você precisa abrir o simulador manualmente uma vez. Execute `npx expo start` a partir de `apps/expo`, e então digite `I` para iniciar o Expo Go. Após a inicialização manual, você pode executar `pnpm dev` no diretório raiz.
 
    ```diff
    +  "dev": "expo start --ios",
    ```
 
-2. Run `pnpm dev` at the project root folder.
+2. Execute `pnpm dev` na pasta raiz do projeto.
 
-#### Use Android Emulator
+#### Usar Emulador Android
 
-1. Install Android Studio tools [as shown on expo docs](https://docs.expo.dev/workflow/android-studio-emulator).
+1. Instale as ferramentas do Android Studio [conforme mostrado na documentação do expo](https://docs.expo.dev/workflow/android-studio-emulator).
 
-2. Change the `dev` script at `apps/expo/package.json` to open the Android emulator.
+2. Altere o script `dev` em `apps/expo/package.json` para abrir o emulador Android.
 
    ```diff
    +  "dev": "expo start --android",
    ```
 
-3. Run `pnpm dev` at the project root folder.
+3. Execute `pnpm dev` na pasta raiz do projeto.
 
-### 4. Configuring Better-Auth to work with Expo
+### 4. Configurar Better-Auth para funcionar com Expo
 
-In order to get Better-Auth to work with Expo, you must either:
+Para fazer o Better-Auth funcionar com Expo, você deve:
 
-#### Deploy the Auth Proxy (RECOMMENDED)
+#### Fazer Deploy do Auth Proxy (RECOMENDADO)
 
-Better-auth comes with an [auth proxy plugin](https://www.better-auth.com/docs/plugins/oauth-proxy). By deploying the Next.js app, you can get OAuth working in preview deployments and development for Expo apps.
+O Better-auth vem com um [plugin de proxy de autenticação](https://www.better-auth.com/docs/plugins/oauth-proxy). Ao fazer deploy do app Next.js, você pode fazer o OAuth funcionar em deployments de preview e desenvolvimento para apps Expo.
 
-By using the proxy plugin, the Next.js apps will forward any auth requests to the proxy server, which will handle the OAuth flow and then redirect back to the Next.js app. This makes it easy to get OAuth working since you'll have a stable URL that is publicly accessible and doesn't change for every deployment and doesn't rely on what port the app is running on. So if port 3000 is taken and your Next.js app starts at port 3001 instead, your auth should still work without having to reconfigure the OAuth provider.
+Ao usar o plugin de proxy, os apps Next.js encaminharão quaisquer requisições de autenticação para o servidor proxy, que lidará com o fluxo OAuth e então redirecionará de volta para o app Next.js. Isso facilita fazer o OAuth funcionar, pois você terá uma URL estável que é publicamente acessível e não muda a cada deployment e não depende de qual porta o app está rodando. Então, se a porta 3000 estiver ocupada e seu app Next.js iniciar na porta 3001, sua autenticação ainda funcionará sem ter que reconfigurar o provedor OAuth.
 
-#### Add your local IP to your OAuth provider
+#### Adicionar seu IP local ao seu provedor OAuth
 
-You can alternatively add your local IP (e.g. `192.168.x.y:$PORT`) to your OAuth provider. This may not be as reliable as your local IP may change when you change networks. Some OAuth providers may also only support a single callback URL for each app making this approach unviable for some providers (e.g. GitHub).
+Você pode alternativamente adicionar seu IP local (ex: `192.168.x.y:$PORT`) ao seu provedor OAuth. Isso pode não ser tão confiável pois seu IP local pode mudar quando você trocar de rede. Alguns provedores OAuth também podem suportar apenas uma única URL de callback para cada app, tornando essa abordagem inviável para alguns provedores (ex: GitHub).
 
-### 5a. When it's time to add a new UI component
+### 5a. Quando for hora de adicionar um novo componente de UI
 
-Run the `ui-add` script to add a new UI component using the interactive `shadcn/ui` CLI:
+Execute o script `ui-add` para adicionar um novo componente de UI usando a CLI interativa do `shadcn/ui`:
 
 ```bash
 pnpm ui-add
 ```
 
-When the component(s) has been installed, you should be good to go and start using it in your app.
+Quando o(s) componente(s) for(em) instalado(s), você estará pronto para começar a usá-lo(s) em seu app.
 
-### 5b. When it's time to add a new package
+### 5b. Quando for hora de adicionar um novo pacote
 
-To add a new package, simply run `pnpm turbo gen init` in the monorepo root. This will prompt you for a package name as well as if you want to install any dependencies to the new package (of course you can also do this yourself later).
+Para adicionar um novo pacote, simplesmente execute `pnpm turbo gen init` na raiz do monorepo. Isso solicitará um nome de pacote, bem como se você deseja instalar quaisquer dependências no novo pacote (é claro que você também pode fazer isso você mesmo mais tarde).
 
-The generator sets up the `package.json`, `tsconfig.json` and a `index.ts`, as well as configures all the necessary configurations for tooling around your package such as formatting, linting and typechecking. When the package is created, you're ready to go build out the package.
+O gerador configura o `package.json`, `tsconfig.json` e um `index.ts`, além de configurar todas as configurações necessárias para ferramentas em torno do seu pacote, como formatação, linting e verificação de tipos. Quando o pacote for criado, você estará pronto para construir o pacote.
 
 ## FAQ
 
-### Does this pattern leak backend code to my client applications?
+### Este padrão vaza código backend para minhas aplicações cliente?
 
-No, it does not. The `api` package should only be a production dependency in the Next.js application where it's served. The Expo app, and all other apps you may add in the future, should only add the `api` package as a dev dependency. This lets you have full typesafety in your client applications, while keeping your backend code safe.
+Não, não vaza. O pacote `api` deve ser apenas uma dependência de produção na aplicação Next.js onde é servido. O app Expo, e todos os outros apps que você possa adicionar no futuro, devem adicionar o pacote `api` apenas como uma dependência de desenvolvimento. Isso permite que você tenha tipagem completa em suas aplicações cliente, mantendo seu código backend seguro.
 
-If you need to share runtime code between the client and server, such as input validation schemas, you can create a separate `shared` package for this and import it on both sides.
+Se você precisar compartilhar código em tempo de execução entre cliente e servidor, como schemas de validação de entrada, você pode criar um pacote `shared` separado para isso e importá-lo em ambos os lados.
 
-## Deployment
+## Deploy
 
 ### Next.js
 
-#### Prerequisites
+#### Pré-requisitos
 
-> **Note**
-> Please note that the Next.js application with tRPC must be deployed in order for the Expo app to communicate with the server in a production environment.
+> **Nota**
+> Por favor, note que a aplicação Next.js com tRPC deve ser deployada para que o app Expo possa se comunicar com o servidor em um ambiente de produção.
 
-#### Deploy to Vercel
+#### Deploy para Vercel
 
-Let's deploy the Next.js application to [Vercel](https://vercel.com). If you've never deployed a Turborepo app there, don't worry, the steps are quite straightforward. You can also read the [official Turborepo guide](https://vercel.com/docs/concepts/monorepos/turborepo) on deploying to Vercel.
+Vamos fazer o deploy da aplicação Next.js para a [Vercel](https://vercel.com). Se você nunca fez deploy de um app Turborepo lá, não se preocupe, os passos são bastante diretos. Você também pode ler o [guia oficial do Turborepo](https://vercel.com/docs/concepts/monorepos/turborepo) sobre deploy para Vercel.
 
-1. Create a new project on Vercel, select the `apps/nextjs` folder as the root directory. Vercel's zero-config system should handle all configurations for you.
+1. Crie um novo projeto na Vercel, selecione a pasta `apps/nextjs` como diretório raiz. O sistema de configuração zero da Vercel deve lidar com todas as configurações para você.
 
-2. Add your `POSTGRES_URL` environment variable.
+2. Adicione sua variável de ambiente `POSTGRES_URL`.
 
-3. Done! Your app should successfully deploy. Assign your domain and use that instead of `localhost` for the `url` in the Expo app so that your Expo app can communicate with your backend when you are not in development.
+3. Pronto! Seu app deve fazer deploy com sucesso. Atribua seu domínio e use-o ao invés de `localhost` para a `url` no app Expo para que seu app Expo possa se comunicar com seu backend quando você não estiver em desenvolvimento.
 
 ### Auth Proxy
 
-The auth proxy comes as a better-auth plugin. This is required for the Next.js app to be able to authenticate users in preview deployments. The auth proxy is not used for OAuth request in production deployments. The easiest way to get it running is to deploy the Next.js app to vercel.
+O proxy de autenticação vem como um plugin do better-auth. Isso é necessário para que o app Next.js possa autenticar usuários em deployments de preview. O proxy de autenticação não é usado para requisições OAuth em deployments de produção. A maneira mais fácil de colocá-lo em execução é fazer deploy do app Next.js para a vercel.
 
 ### Expo
 
-Deploying your Expo application works slightly differently compared to Next.js on the web. Instead of "deploying" your app online, you need to submit production builds of your app to app stores, like [Apple App Store](https://www.apple.com/app-store) and [Google Play](https://play.google.com/store/apps). You can read the full [guide to distributing your app](https://docs.expo.dev/distribution/introduction), including best practices, in the Expo docs.
+O deploy de sua aplicação Expo funciona de forma ligeiramente diferente em comparação ao Next.js na web. Em vez de "deployar" seu app online, você precisa enviar builds de produção do seu app para lojas de aplicativos, como [Apple App Store](https://www.apple.com/app-store) e [Google Play](https://play.google.com/store/apps). Você pode ler o [guia completo de distribuição do seu app](https://docs.expo.dev/distribution/introduction), incluindo melhores práticas, na documentação do Expo.
 
-1. Make sure to modify the `getBaseUrl` function to point to your backend's production URL:
+1. Certifique-se de modificar a função `getBaseUrl` para apontar para a URL de produção do seu backend:
 
    <https://github.com/t3-oss/create-t3-turbo/blob/656965aff7db271e5e080242c4a3ce4dad5d25f8/apps/expo/src/utils/api.tsx#L20-L37>
 
-2. Let's start by setting up [EAS Build](https://docs.expo.dev/build/introduction), which is short for Expo Application Services. The build service helps you create builds of your app, without requiring a full native development setup. The commands below are a summary of [Creating your first build](https://docs.expo.dev/build/setup).
+2. Vamos começar configurando o [EAS Build](https://docs.expo.dev/build/introduction), que é abreviação de Expo Application Services. O serviço de build ajuda você a criar builds do seu app, sem exigir uma configuração completa de desenvolvimento nativo. Os comandos abaixo são um resumo de [Criando seu primeiro build](https://docs.expo.dev/build/setup).
 
    ```bash
-   # Install the EAS CLI
+   # Instalar a CLI do EAS
    pnpm add -g eas-cli
 
-   # Log in with your Expo account
+   # Fazer login com sua conta Expo
    eas login
 
-   # Configure your Expo app
+   # Configurar seu app Expo
    cd apps/expo
    eas build:configure
    ```
 
-3. After the initial setup, you can create your first build. You can build for Android and iOS platforms and use different [`eas.json` build profiles](https://docs.expo.dev/build-reference/eas-json) to create production builds or development, or test builds. Let's make a production build for iOS.
+3. Após a configuração inicial, você pode criar seu primeiro build. Você pode fazer build para plataformas Android e iOS e usar diferentes [perfis de build do `eas.json`](https://docs.expo.dev/build-reference/eas-json) para criar builds de produção ou desenvolvimento, ou builds de teste. Vamos fazer um build de produção para iOS.
 
    ```bash
    eas build --platform ios --profile production
    ```
 
-   > If you don't specify the `--profile` flag, EAS uses the `production` profile by default.
+   > Se você não especificar a flag `--profile`, o EAS usa o perfil `production` por padrão.
 
-4. Now that you have your first production build, you can submit this to the stores. [EAS Submit](https://docs.expo.dev/submit/introduction) can help you send the build to the stores.
+4. Agora que você tem seu primeiro build de produção, você pode enviá-lo para as lojas. O [EAS Submit](https://docs.expo.dev/submit/introduction) pode ajudá-lo a enviar o build para as lojas.
 
    ```bash
    eas submit --platform ios --latest
    ```
 
-   > You can also combine build and submit in a single command, using `eas build ... --auto-submit`.
+   > Você também pode combinar build e submit em um único comando, usando `eas build ... --auto-submit`.
 
-5. Before you can get your app in the hands of your users, you'll have to provide additional information to the app stores. This includes screenshots, app information, privacy policies, etc. _While still in preview_, [EAS Metadata](https://docs.expo.dev/eas/metadata) can help you with most of this information.
+5. Antes de colocar seu app nas mãos dos seus usuários, você terá que fornecer informações adicionais para as lojas de aplicativos. Isso inclui screenshots, informações do app, políticas de privacidade, etc. _Ainda em preview_, o [EAS Metadata](https://docs.expo.dev/eas/metadata) pode ajudá-lo com a maioria dessas informações.
 
-6. Once everything is approved, your users can finally enjoy your app. Let's say you spotted a small typo; you'll have to create a new build, submit it to the stores, and wait for approval before you can resolve this issue. In these cases, you can use EAS Update to quickly send a small bugfix to your users without going through this long process. Let's start by setting up EAS Update.
+6. Uma vez que tudo esteja aprovado, seus usuários finalmente poderão aproveitar seu app. Digamos que você detectou um pequeno erro de digitação; você terá que criar um novo build, enviá-lo para as lojas e aguardar aprovação antes de poder resolver esse problema. Nesses casos, você pode usar o EAS Update para enviar rapidamente uma pequena correção de bug para seus usuários sem passar por esse longo processo. Vamos começar configurando o EAS Update.
 
-   The steps below summarize the [Getting started with EAS Update](https://docs.expo.dev/eas-update/getting-started/#configure-your-project) guide.
+   Os passos abaixo resumem o guia [Começando com EAS Update](https://docs.expo.dev/eas-update/getting-started/#configure-your-project).
 
    ```bash
-   # Add the `expo-updates` library to your Expo app
+   # Adicionar a biblioteca `expo-updates` ao seu app Expo
    cd apps/expo
    pnpm expo install expo-updates
 
-   # Configure EAS Update
+   # Configurar EAS Update
    eas update:configure
    ```
 
-7. Before we can send out updates to your app, you have to create a new build and submit it to the app stores. For every change that includes native APIs, you have to rebuild the app and submit the update to the app stores. See steps 2 and 3.
+7. Antes de podermos enviar atualizações para seu app, você tem que criar um novo build e enviá-lo para as lojas de aplicativos. Para cada mudança que inclui APIs nativas, você tem que reconstruir o app e enviar a atualização para as lojas de aplicativos. Veja os passos 2 e 3.
 
-8. Now that everything is ready for updates, let's create a new update for `production` builds. With the `--auto` flag, EAS Update uses your current git branch name and commit message for this update. See [How EAS Update works](https://docs.expo.dev/eas-update/how-eas-update-works/#publishing-an-update) for more information.
+8. Agora que tudo está pronto para atualizações, vamos criar uma nova atualização para builds de `production`. Com a flag `--auto`, o EAS Update usa o nome da sua branch git atual e mensagem de commit para esta atualização. Veja [Como o EAS Update funciona](https://docs.expo.dev/eas-update/how-eas-update-works/#publishing-an-update) para mais informações.
 
    ```bash
    cd apps/expo
    eas update --auto
    ```
 
-   > Your OTA (Over The Air) updates must always follow the app store's rules. You can't change your app's primary functionality without getting app store approval. But this is a fast way to update your app for minor changes and bug fixes.
+   > Suas atualizações OTA (Over The Air) devem sempre seguir as regras da loja de aplicativos. Você não pode alterar a funcionalidade principal do seu app sem obter aprovação da loja de aplicativos. Mas esta é uma maneira rápida de atualizar seu app para pequenas mudanças e correções de bugs.
 
-9. Done! Now that you have created your production build, submitted it to the stores, and installed EAS Update, you are ready for anything!
+9. Pronto! Agora que você criou seu build de produção, enviou-o para as lojas e instalou o EAS Update, você está pronto para qualquer coisa!
 
-## References
+## Referências
 
-The stack originates from [create-t3-app](https://github.com/t3-oss/create-t3-app).
+A stack origina-se de [create-t3-app](https://github.com/t3-oss/create-t3-app).
 
-A [blog post](https://jumr.dev/blog/t3-turbo) where I wrote how to migrate a T3 app into this.
+Um [post de blog](https://jumr.dev/blog/t3-turbo) onde escrevi como migrar um app T3 para isso.

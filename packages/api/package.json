@@ -20,7 +20,6 @@
   "prettier": "@acme/prettier-config",
   "dependencies": {
     "@acme/auth": "workspace:*",
-    "@acme/db": "workspace:*",
     "@acme/validators": "workspace:*",
     "@acme/zen-v3": "workspace:*",
     "@trpc/server": "catalog:",

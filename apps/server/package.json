@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@acme/auth": "workspace:*",
-    "@acme/db": "workspace:*",
     "@acme/zen-v3": "workspace:*",
     "@elysiajs/cors": "^1.4.0",
     "@elysiajs/node": "^1.4.2",
