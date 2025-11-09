@@ -16,6 +16,7 @@ export type Member = $ModelResult<$Schema, "Member">;
 export type Invitation = $ModelResult<$Schema, "Invitation">;
 export type Todo = $ModelResult<$Schema, "Todo">;
 export type Test = $ModelResult<$Schema, "Test">;
+export type Product = $ModelResult<$Schema, "Product">;
 /**
  * Shape of the `auth()` function
  */

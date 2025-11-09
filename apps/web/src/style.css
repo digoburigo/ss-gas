@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 @import "@acme/tailwind-config/theme";
 
 @import "@fontsource-variable/geist";

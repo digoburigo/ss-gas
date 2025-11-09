@@ -188,7 +188,11 @@ function Sidebar({
     return (
       <Sheet onOpenChange={setOpenMobile} open={openMobile} {...props}>
         <SheetContent
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className={cn(
+            "bg-sidebar text-sidebar-foreground p-0 [&>button]:hidden",
+            "!w-[var(--sidebar-width)]",
+            className,
+          )}
           data-mobile="true"
           data-sidebar="sidebar"
           data-slot="sidebar"
@@ -404,8 +408,8 @@ function SidebarGroupLabel({
   return (
     <Comp
       className={cn(
-        "text-primary-foreground/90 text-xs uppercase",
-        "ring-sidebar-ring flex h-10 shrink-0 items-center rounded-md px-2 text-xs font-medium outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        "text-sidebar-foreground/70 text-xs uppercase font-medium",
+        "ring-sidebar-ring flex h-10 shrink-0 items-center rounded-md px-2 outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
         "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
         className,
       )}

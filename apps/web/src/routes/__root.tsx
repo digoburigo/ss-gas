@@ -30,10 +30,7 @@ function RootComponent() {
 
   return (
     <>
-      {/* <Navbar session={session} /> */}
-      <div className="p-2 md:p-4">
-        <Outlet />
-      </div>
+      <Outlet />
       <Toaster />
       <TanStackDevtools
         config={{

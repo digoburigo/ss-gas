@@ -154,6 +154,27 @@ export const schema = {
                     array: true,
                     attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("deletedTests") }] }],
                     relation: { opposite: "deletedByUser", name: "deletedTests" }
+                },
+                createdProducts: {
+                    name: "createdProducts",
+                    type: "Product",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdProducts") }] }],
+                    relation: { opposite: "createdByUser", name: "createdProducts" }
+                },
+                updatedProducts: {
+                    name: "updatedProducts",
+                    type: "Product",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("updatedProducts") }] }],
+                    relation: { opposite: "updatedByUser", name: "updatedProducts" }
+                },
+                deletedProducts: {
+                    name: "deletedProducts",
+                    type: "Product",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("deletedProducts") }] }],
+                    relation: { opposite: "deletedByUser", name: "deletedProducts" }
                 }
             },
             attributes: [
@@ -429,6 +450,12 @@ export const schema = {
                 tests: {
                     name: "tests",
                     type: "Test",
+                    array: true,
+                    relation: { opposite: "organization" }
+                },
+                products: {
+                    name: "products",
+                    type: "Product",
                     array: true,
                     relation: { opposite: "organization" }
                 }
@@ -722,10 +749,10 @@ export const schema = {
             fields: {
                 id: {
                     name: "id",
-                    type: "Int",
+                    type: "String",
                     id: true,
-                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("autoincrement") }] }],
-                    default: ExpressionUtils.call("autoincrement")
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
                 },
                 name: {
                     name: "name",
@@ -826,7 +853,159 @@ export const schema = {
             ],
             idFields: ["id"],
             uniqueFields: {
-                id: { type: "Int" }
+                id: { type: "String" }
+            }
+        },
+        Product: {
+            name: "Product",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                code: {
+                    name: "code",
+                    type: "String"
+                },
+                name: {
+                    name: "name",
+                    type: "String"
+                },
+                category: {
+                    name: "category",
+                    type: "String",
+                    optional: true
+                },
+                unit: {
+                    name: "unit",
+                    type: "String",
+                    optional: true
+                },
+                costPrice: {
+                    name: "costPrice",
+                    type: "Float",
+                    optional: true
+                },
+                salePrice: {
+                    name: "salePrice",
+                    type: "Float",
+                    optional: true
+                },
+                minimumStock: {
+                    name: "minimumStock",
+                    type: "Int",
+                    optional: true
+                },
+                storageLocation: {
+                    name: "storageLocation",
+                    type: "String",
+                    optional: true
+                },
+                active: {
+                    name: "active",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(true) }] }],
+                    default: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "createdByUser"
+                    ]
+                },
+                createdByUser: {
+                    name: "createdByUser",
+                    type: "User",
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdProducts") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("createdById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "createdProducts", name: "createdProducts", fields: ["createdById"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                },
+                updatedById: {
+                    name: "updatedById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "updatedByUser"
+                    ]
+                },
+                updatedByUser: {
+                    name: "updatedByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("updatedProducts") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("updatedById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "updatedProducts", name: "updatedProducts", fields: ["updatedById"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                },
+                deletedById: {
+                    name: "deletedById",
+                    type: "String",
+                    optional: true,
+                    foreignKeyFor: [
+                        "deletedByUser"
+                    ]
+                },
+                deletedByUser: {
+                    name: "deletedByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("deletedProducts") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("deletedById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "deletedProducts", name: "deletedProducts", fields: ["deletedById"], references: ["id"], onDelete: "Cascade" }
+                },
+                deletedAt: {
+                    name: "deletedAt",
+                    type: "DateTime",
+                    optional: true
+                },
+                deletedReason: {
+                    name: "deletedReason",
+                    type: "String",
+                    optional: true
+                },
+                organizationId: {
+                    name: "organizationId",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]),
+                    foreignKeyFor: [
+                        "organization"
+                    ]
+                },
+                organization: {
+                    name: "organization",
+                    type: "Organization",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("organizationId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "products", fields: ["organizationId"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                }
+            },
+            attributes: [
+                { name: "@@deny", args: [{ name: "operation", value: ExpressionUtils.literal("read") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.field("deletedAt"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("product") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
             }
         }
     },

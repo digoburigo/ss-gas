@@ -49,7 +49,11 @@ model User {
 
   createdTests Test[] @relation("createdTests") 
   updatedTests Test[] @relation("updatedTests") 
-  deletedTests Test[] @relation("deletedTests") 
+  deletedTests Test[] @relation("deletedTests")
+
+  createdProducts Product[] @relation("createdProducts") 
+  updatedProducts Product[] @relation("updatedProducts") 
+  deletedProducts Product[] @relation("deletedProducts") 
 
   @@allow('create,read', true)
 
@@ -125,6 +129,7 @@ model Organization {
 
   todos Todo[]
   tests Test[]
+  products Product[]
 
   @@unique([slug])
 
@@ -243,4 +248,41 @@ model Test {
     @@allow('read,update,delete', auth().organizationId == organizationId)
 
     @@map("test")
+}
+
+model Product {
+    id        String   @id @default(dbgenerated("uuidv7()"))
+
+    code String
+    name String
+    category String?
+    unit String?
+    costPrice Float?
+    salePrice Float?
+    minimumStock Int?
+    storageLocation String?
+    active Boolean @default(true)
+
+    createdAt DateTime @default(now()) 
+    createdById String  @default(auth().userId) 
+    createdByUser User @relation('createdProducts', fields: [createdById], references: [id], onDelete: Cascade)
+
+    updatedAt DateTime @updatedAt 
+    updatedById String?  @default(auth().userId) 
+    updatedByUser User? @relation('updatedProducts', fields: [updatedById], references: [id], onDelete: Cascade)
+
+    deletedById String? 
+    deletedByUser User? @relation('deletedProducts', fields: [deletedById], references: [id], onDelete: Cascade)
+    deletedAt DateTime? 
+    deletedReason String? 
+
+    organizationId String? @default(auth().organizationId) 
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@deny('read', deletedAt != null)
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+
+    @@map("product")
 }

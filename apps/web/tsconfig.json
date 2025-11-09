@@ -5,7 +5,8 @@
     "jsx": "preserve",
     "paths": {
       "~/*": ["./src/*"]
-    }
+    },
+    "types": ["unplugin-icons/types/react"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

@@ -5,6 +5,7 @@ import { devtools } from "@tanstack/devtools-vite";
 import tanstackRouter from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { reactGrab } from "react-grab/plugins/vite";
+import Icons from "unplugin-icons/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import tsConfigPaths from "vite-tsconfig-paths";
@@ -79,6 +80,7 @@ export default defineConfig({
       pwaAssets: { disabled: false, config: true },
       devOptions: { enabled: true },
     }),
+    Icons({ compiler: "jsx", jsx: "react" }),
   ],
   // base: env.PUBLIC_BASE_PATH,
   envPrefix: "PUBLIC_",
