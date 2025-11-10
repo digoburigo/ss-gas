@@ -1,5 +1,4 @@
 :root {
-  /* plate ui brand color */
   --brand: oklch(0.623 0.214 259.815);
 
   --background: oklch(0.9842 0.0034 247.8575);
@@ -68,7 +67,6 @@
   --warning-foreground: oklch(0.555 0.163 48.998);
 
   @variant dark {
-    /* plate ui brand color */
     --brand: oklch(0.707 0.165 254.624);
 
     --info: oklch(0.623 0.214 259.815);
@@ -202,16 +200,4 @@
   --tracking-wide: calc(var(--tracking-normal) + 0.025em);
   --tracking-wider: calc(var(--tracking-normal) + 0.05em);
   --tracking-widest: calc(var(--tracking-normal) + 0.1em);
-
-  --animate-skeleton: skeleton 2s -1s infinite linear;
-  @keyframes skeleton {
-    to {
-      background-position: -200% 0;
-    }
-  }
-  @keyframes skeleton {
-    to {
-      background-position: -200% 0;
-    }
-  }
 }

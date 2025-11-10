@@ -16,6 +16,8 @@
     "dev": "turbo watch dev --continue",
     "dev:spa": "turbo watch dev -F @acme/web... -F @acme/server...",
     "dev:start": "turbo watch dev -F @acme/tanstack-start...",
+    "dev:expo:ios": "turbo watch dev:ios -F @acme/expo...",
+    "dev:expo:android": "turbo watch dev:android -F @acme/expo...",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
@@ -38,5 +40,10 @@
     "turbo": "^2.6.0",
     "typescript": "catalog:"
   },
-  "prettier": "@acme/prettier-config"
+  "prettier": "@acme/prettier-config",
+  "pnpm": {
+    "overrides": {
+      "lightningcss": "1.30.1"
+    }
+  }
 }
