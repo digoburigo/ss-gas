@@ -1,10 +1,9 @@
-"use no memo"
+"use no memo";
 
-import { useEffect, useState } from 'react'
-import { getRouteApi } from '@tanstack/react-router'
+import type { SortingState, VisibilityState } from "@tanstack/react-table";
+import { useEffect, useState } from "react";
+import { getRouteApi } from "@tanstack/react-router";
 import {
-  type SortingState,
-  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -13,9 +12,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { cn } from '@acme/ui'
-import { useTableUrlState } from '~/hooks/use-table-url-state'
+} from "@tanstack/react-table";
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
+
+import type { Product } from "@acme/zen-v3/zenstack/models";
+import { cn } from "@acme/ui";
 import {
   Table,
   TableBody,
@@ -23,33 +24,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@acme/ui/table'
-import { DataTablePagination, DataTableToolbar } from '~/components/data-table'
-import { useClientQueries } from '@zenstackhq/tanstack-query/react'
-import { schema } from '@acme/zen-v3/zenstack/schema'
-import { authClient } from '~/clients/auth-client'
-import type { Product } from '@acme/zen-v3/zenstack/models'
-import { activeStatuses } from '../data/data'
-import { DataTableBulkActions } from './data-table-bulk-actions'
-import { productsColumns as columns } from './products-columns'
+} from "@acme/ui/table";
+import { schema } from "@acme/zen-v3/zenstack/schema";
 
-const route = getRouteApi('/_authenticated/products/')
+import { authClient } from "~/clients/auth-client";
+import { DataTablePagination, DataTableToolbar } from "~/components/data-table";
+import { useTableUrlState } from "~/hooks/use-table-url-state";
+import { activeStatuses } from "../data/data";
+import { DataTableBulkActions } from "./data-table-bulk-actions";
+import { productsColumns as columns } from "./products-columns";
+
+const route = getRouteApi("/_authenticated/products/");
 
 export function ProductsTable() {
-  const { data: activeOrganization } = authClient.useActiveOrganization()
-  const client = useClientQueries(schema)
+  const { data: activeOrganization } = authClient.useActiveOrganization();
+  const client = useClientQueries(schema);
 
   const { data: products = [], isFetching } = client.product.useFindMany(
     {},
     {
       enabled: !!activeOrganization?.id,
-    }
-  )
+    },
+  );
 
   // Local UI-only states
-  const [rowSelection, setRowSelection] = useState({})
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   // Synced with URL states
   const {
@@ -64,20 +65,20 @@ export function ProductsTable() {
     search: route.useSearch(),
     navigate: route.useNavigate(),
     pagination: { defaultPage: 1, defaultPageSize: 10 },
-    globalFilter: { enabled: true, key: 'filter' },
+    globalFilter: { enabled: true, key: "filter" },
     columnFilters: [
-      { columnId: 'category', searchKey: 'category', type: 'array' },
-      { columnId: 'active', searchKey: 'active', type: 'array' },
+      { columnId: "category", searchKey: "category", type: "array" },
+      { columnId: "active", searchKey: "active", type: "array" },
     ],
-  })
+  });
 
   // Get unique categories for filter
   const categories = Array.from(
-    new Set(products.map((p) => p.category).filter(Boolean) as string[])
+    new Set(products.map((p) => p.category).filter(Boolean) as string[]),
   ).map((cat) => ({
     label: cat,
     value: cat,
-  }))
+  }));
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -96,11 +97,11 @@ export function ProductsTable() {
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     globalFilterFn: (row, _columnId, filterValue) => {
-      const code = String(row.getValue('code')).toLowerCase()
-      const name = String(row.getValue('name')).toLowerCase()
-      const searchValue = String(filterValue).toLowerCase()
+      const code = String(row.getValue("code")).toLowerCase();
+      const name = String(row.getValue("name")).toLowerCase();
+      const searchValue = String(filterValue).toLowerCase();
 
-      return code.includes(searchValue) || name.includes(searchValue)
+      return code.includes(searchValue) || name.includes(searchValue);
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -111,40 +112,40 @@ export function ProductsTable() {
     onPaginationChange,
     onGlobalFilterChange,
     onColumnFiltersChange,
-  })
+  });
 
-  const pageCount = table.getPageCount()
+  const pageCount = table.getPageCount();
   useEffect(() => {
-    ensurePageInRange(pageCount)
-  }, [pageCount, ensurePageInRange])
+    ensurePageInRange(pageCount);
+  }, [pageCount, ensurePageInRange]);
 
   if (isFetching) {
     return (
-      <div className='flex flex-1 items-center justify-center py-8'>
+      <div className="flex flex-1 items-center justify-center py-8">
         <p>Carregando produtos...</p>
       </div>
-    )
+    );
   }
 
   return (
     <div
       className={cn(
         'max-sm:has-[div[role="toolbar"]]:mb-16', // Add margin bottom to the table on mobile when the toolbar is visible
-        'flex flex-1 flex-col gap-4'
+        "flex flex-1 flex-col gap-4",
       )}
     >
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Filtrar por código ou nome...'
+        searchPlaceholder="Filtrar por código ou nome..."
         filters={[
           {
-            columnId: 'category',
-            title: 'Categoria',
+            columnId: "category",
+            title: "Categoria",
             options: categories,
           },
           {
-            columnId: 'active',
-            title: 'Status',
+            columnId: "active",
+            title: "Status",
             options: activeStatuses.map((s) => ({
               label: s.label,
               value: s.value,
@@ -152,7 +153,7 @@ export function ProductsTable() {
           },
         ]}
       />
-      <div className='overflow-hidden rounded-md border'>
+      <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -164,17 +165,17 @@ export function ProductsTable() {
                       colSpan={header.colSpan}
                       className={cn(
                         header.column.columnDef.meta?.className,
-                        header.column.columnDef.meta?.thClassName
+                        header.column.columnDef.meta?.thClassName,
                       )}
                     >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -184,19 +185,19 @@ export function ProductsTable() {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
+                  data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
                       className={cn(
                         cell.column.columnDef.meta?.className,
-                        cell.column.columnDef.meta?.tdClassName
+                        cell.column.columnDef.meta?.tdClassName,
                       )}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -206,7 +207,7 @@ export function ProductsTable() {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className="h-24 text-center"
                 >
                   Nenhum resultado.
                 </TableCell>
@@ -215,9 +216,8 @@ export function ProductsTable() {
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} className='mt-auto' />
+      <DataTablePagination table={table} className="mt-auto" />
       <DataTableBulkActions table={table} />
     </div>
-  )
+  );
 }
-

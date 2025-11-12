@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link, Stack } from "expo-router";
+import { Link, router, Stack } from "expo-router";
 import { LegendList } from "@legendapp/list";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { RouterOutputs } from "~/utils/api";
+import { Button } from "~/components/button";
+import { Text as RUText } from "~/components/text";
 import { trpc } from "~/utils/api";
 import { authClient } from "~/utils/auth";
 
@@ -140,6 +142,9 @@ export default function Index() {
       {/* Changes page title visible on the header */}
       <Stack.Screen options={{ title: "Home Page" }} />
       <View className="bg-background h-full w-full p-4">
+        <Button onPress={() => router.push("/auth/login")}>
+          <RUText>Go to login</RUText>
+        </Button>
         <Text className="text-foreground pb-2 text-center text-5xl font-bold">
           Nice oh yeah
         </Text>

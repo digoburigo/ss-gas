@@ -1,7 +1,6 @@
 {
   "name": "@acme/api",
   "private": true,
-  "license": "MIT",
   "type": "module",
   "exports": {
     ".": {

@@ -1,6 +1,7 @@
 import { useColorScheme } from "react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { PortalHost } from "@rn-primitives/portal";
 import { QueryClientProvider } from "@tanstack/react-query";
 
 import { queryClient } from "~/utils/api";
@@ -17,6 +18,8 @@ export default function RootLayout() {
           The Stack component displays the current page.
           It also allows you to configure your screens 
         */}
+      <StatusBar />
+
       <Stack
         screenOptions={{
           headerStyle: {
@@ -27,7 +30,7 @@ export default function RootLayout() {
           },
         }}
       />
-      <StatusBar />
+      <PortalHost />
     </QueryClientProvider>
   );
 }

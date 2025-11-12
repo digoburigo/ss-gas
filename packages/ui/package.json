@@ -1,7 +1,6 @@
 {
   "name": "@acme/ui",
   "private": true,
-  "license": "MIT",
   "type": "module",
   "exports": {
     ".": {
@@ -61,10 +60,10 @@
   },
   "prettier": "@acme/prettier-config",
   "dependencies": {
-    "@ai-sdk/react": "^2.0.90",
+    "@ai-sdk/react": "^2.0.92",
     "@ariakit/react": "^0.4.19",
     "@base-ui-components/react": "1.0.0-beta.4",
-    "@better-upload/client": "^3.0.0",
+    "@better-upload/client": "^3.0.1",
     "@emoji-mart/data": "^1.2.1",
     "@faker-js/faker": "^10.1.0",
     "@platejs/ai": "^51.0.1",
@@ -128,7 +127,7 @@
     "@tiptap/starter-kit": "^3.10.5",
     "@udecode/cn": "^49.0.15",
     "@uploadthing/react": "^7.3.3",
-    "ai": "^5.0.90",
+    "ai": "^5.0.92",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
