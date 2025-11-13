@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { Check, Moon, Sun } from "lucide-react";
+// import { useTheme } from "~/context/theme-provider";
+import { useTheme } from "next-themes";
 
 import { cn } from "@acme/ui";
 import { Button } from "@acme/ui/button";
@@ -10,18 +12,17 @@ import {
   DropdownMenuTrigger,
 } from "@acme/ui/dropdown-menu";
 
-import { useTheme } from "~/context/theme-provider";
-
 export function ThemeSwitch() {
+  // const { theme, setTheme } = useTheme();
   const { theme, setTheme } = useTheme();
 
   /* Update theme-color meta tag
    * when theme is updated */
-  useEffect(() => {
-    const themeColor = theme === "dark" ? "#020817" : "#fff";
-    const metaThemeColor = document.querySelector("meta[name='theme-color']");
-    if (metaThemeColor) metaThemeColor.setAttribute("content", themeColor);
-  }, [theme]);
+  // useEffect(() => {
+  //   const themeColor = theme === "dark" ? "#020817" : "#fff";
+  //   const metaThemeColor = document.querySelector("meta[name='theme-color']");
+  //   if (metaThemeColor) metaThemeColor.setAttribute("content", themeColor);
+  // }, [theme]);
 
   return (
     <DropdownMenu modal={false}>

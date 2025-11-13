@@ -293,8 +293,8 @@ importers:
         specifier: ^0.34.41
         version: 0.34.41
       '@zenstackhq/server':
-        specifier: ^3.0.0-beta.21
-        version: 3.0.0-beta.21(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)
+        specifier: ^3.0.0-beta.22
+        version: 3.0.0-beta.22(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)
       elysia:
         specifier: ^1.4.16
         version: 1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
@@ -378,11 +378,11 @@ importers:
         specifier: 'catalog:'
         version: 11.7.1(@tanstack/react-query@5.90.8(react@19.1.1))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)
       '@zenstackhq/server':
-        specifier: ^3.0.0-beta.21
-        version: 3.0.0-beta.21(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)
+        specifier: ^3.0.0-beta.22
+        version: 3.0.0-beta.22(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)
       '@zenstackhq/tanstack-query':
-        specifier: ^3.0.0-beta.21
-        version: 3.0.0-beta.21(@tanstack/react-query@5.90.8(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
+        specifier: ^3.0.0-beta.22
+        version: 3.0.0-beta.22(@tanstack/react-query@5.90.8(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
       better-auth:
         specifier: 'catalog:'
         version: 1.4.0-beta.20(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.10)
@@ -517,8 +517,8 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@zenstackhq/tanstack-query':
-        specifier: ^3.0.0-beta.21
-        version: 3.0.0-beta.21(@tanstack/react-query@5.90.8(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
+        specifier: ^3.0.0-beta.22
+        version: 3.0.0-beta.22(@tanstack/react-query@5.90.8(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
       better-auth:
         specifier: 'catalog:'
         version: 1.4.0-beta.20(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.10)
@@ -1162,14 +1162,14 @@ importers:
   packages/zen-v3:
     dependencies:
       '@zenstackhq/orm':
-        specifier: ^3.0.0-beta.21
-        version: 3.0.0-beta.21(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
+        specifier: ^3.0.0-beta.22
+        version: 3.0.0-beta.22(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
       '@zenstackhq/plugin-policy':
-        specifier: ^3.0.0-beta.21
-        version: 3.0.0-beta.21(better-sqlite3@12.4.1)(kysely@0.28.8)(pg@8.16.3)(zod@4.1.12)
+        specifier: ^3.0.0-beta.22
+        version: 3.0.0-beta.22(better-sqlite3@12.4.1)(kysely@0.28.8)(pg@8.16.3)(zod@4.1.12)
       '@zenstackhq/tanstack-query':
-        specifier: ^3.0.0-beta.21
-        version: 3.0.0-beta.21(@tanstack/react-query@5.90.8(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
+        specifier: ^3.0.0-beta.22
+        version: 3.0.0-beta.22(@tanstack/react-query@5.90.8(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -1199,11 +1199,11 @@ importers:
         specifier: ^8.15.6
         version: 8.15.6
       '@zenstackhq/cli':
-        specifier: ^3.0.0-beta.21
-        version: 3.0.0-beta.21(prisma@6.19.0(typescript@5.9.3))
+        specifier: ^3.0.0-beta.22
+        version: 3.0.0-beta.22(prisma@6.19.0(typescript@5.9.3))
       drizzle-kit:
-        specifier: ^0.31.6
-        version: 0.31.6
+        specifier: ^0.31.7
+        version: 0.31.7
       prisma:
         specifier: ^6.19.0
         version: 6.19.0(typescript@5.9.3)
@@ -6955,20 +6955,20 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@zenstackhq/cli@3.0.0-beta.21':
-    resolution: {integrity: sha512-ZUhFnFErKvid/H6HYupFmukiIu1V3J7eId3xXh6Q+2ss5JIEO36zQkWVbT+ETM0SvVatKcvnNp4xsz76k420Ug==}
+  '@zenstackhq/cli@3.0.0-beta.22':
+    resolution: {integrity: sha512-WgO2pUmxeNcf8UlTlod8Fmsl4u7tLDqq4J3JmCWHQ1fbFnui4FkoI2gDR0Mqm3GeDYa8cLyWLXT9FBoRqIui+w==}
     hasBin: true
     peerDependencies:
       prisma: ^6.10.0
 
-  '@zenstackhq/common-helpers@3.0.0-beta.21':
-    resolution: {integrity: sha512-fiwSzbnYM9i2vygt+6vamUJwYlpcEyn8V6KOORfHumbTwKR/jKHLDMs3pqjsGVzJG+Wb9SEcPrakgzAYWfDc4A==}
+  '@zenstackhq/common-helpers@3.0.0-beta.22':
+    resolution: {integrity: sha512-PBS/VZKC8UgkdLMTtIPiXKV94V6hXmeapLg1nVTlIf7oFsDIEKkd5lCxGLMPFaSVL2HthlK9Pm7X68RWzHsa2g==}
 
-  '@zenstackhq/language@3.0.0-beta.21':
-    resolution: {integrity: sha512-jRHaC/1Uk/KK2NJX4fs2uXRJl40rht/at+lldqmjRHgHzZbwmyTnnPxvivAhIn1QHAj1y9dsAJlMj/6YC4uTFQ==}
+  '@zenstackhq/language@3.0.0-beta.22':
+    resolution: {integrity: sha512-741CMjjmXwQnwUXVljvrjqRMHuIgVkZICS/NdfOvpEE1Sx2FXWOCp3OLJnUwi9bEA1Lr1dNPyPYwRMrxkV6EKg==}
 
-  '@zenstackhq/orm@3.0.0-beta.21':
-    resolution: {integrity: sha512-SUMB/JQd4A7hph5dWkbuuSSU9sooB+HMHrt6YptJvhpu9d+DPjrZXYUdZDlG0kYKX+HJ4zQJDCkn235UHaA10Q==}
+  '@zenstackhq/orm@3.0.0-beta.22':
+    resolution: {integrity: sha512-o8DLQ0y80SIVd8slJ9SNznDHZNUkC2aVxgq8O0hgdtjPYcaBvojAzN5yppvXVHCRqon65JKahiGS4ZYEoDyB/A==}
     peerDependencies:
       better-sqlite3: ^12.2.0
       pg: ^8.13.1
@@ -6979,19 +6979,19 @@ packages:
       pg:
         optional: true
 
-  '@zenstackhq/plugin-policy@3.0.0-beta.21':
-    resolution: {integrity: sha512-rzzeC/cZmHyKcB1cWkAfJ7mMumDKXVN2T0/JH/q7QDISQ2BYnpd/qenS7sFnwjHwGDzBw1knhwaByp/DzatKug==}
+  '@zenstackhq/plugin-policy@3.0.0-beta.22':
+    resolution: {integrity: sha512-Z1MUtqAoi5Y45pDS4S3MkxyMQIYH9UAIZURfW792N0aIyRoYuF9KDoaNqof5m9/FIvPZZp+0pYR4pjUGlzhDcQ==}
     peerDependencies:
       kysely: ~0.28.8
 
-  '@zenstackhq/schema@3.0.0-beta.21':
-    resolution: {integrity: sha512-uZmOPOEFsh1MFcXvNDTiGiCHC5Zo69Ab1JuCTM8fUgah7lQKjFK+ChQXKRagPid/FtNC/ovPMWEUL5Ci4TmAvQ==}
+  '@zenstackhq/schema@3.0.0-beta.22':
+    resolution: {integrity: sha512-s82nm0EivbFzldf+cO22E91ph+cxPfORKccYY2PvzJGAVH+dtHqrHzCrVN6MuMUrj7WbA4NqMIg2VQaufyy3Dg==}
 
-  '@zenstackhq/sdk@3.0.0-beta.21':
-    resolution: {integrity: sha512-VxboicFkyCy0kKhQP4WtCOGJL03GH9UAkO2G5GbhBjUtK+kM+DwkpAMwB9rwrISvxWMIXayCwzymJu8pWO5UJQ==}
+  '@zenstackhq/sdk@3.0.0-beta.22':
+    resolution: {integrity: sha512-UCjUi6PRLULRVaTly7+gagDXRSkOT7F6/97e9f2B7qLX06hX2mD/DFCmsnUMFrDqifP1kM8vSzek0UtcAAti8g==}
 
-  '@zenstackhq/server@3.0.0-beta.21':
-    resolution: {integrity: sha512-vdpOUwD1q0BjkSDoM2e96/TqAXJi2FYheEFh8f4qQWNyEtHnzgHNACYoEAYGwOJaFdRpMKoxfAOEdaJDnLjg7A==}
+  '@zenstackhq/server@3.0.0-beta.22':
+    resolution: {integrity: sha512-BP0g57H26LsRUUWSnlbH0CTC6VHav1IUZsA5QgZr9JcLecWUmooIXoouKQ/Zh61Pqipk9RkaG38O4blFLsqLyg==}
     peerDependencies:
       '@sveltejs/kit': ^2.0.0
       elysia: ^1.3.0
@@ -7020,8 +7020,8 @@ packages:
       nuxt:
         optional: true
 
-  '@zenstackhq/tanstack-query@3.0.0-beta.21':
-    resolution: {integrity: sha512-VEnbIvq6DHtNTR9mQMkFhTjyTLedngwBCg/1e/hkjtRXY47kxwH5s/Uf1L1geal1eTQd8FHka0g89HUeqTFB4w==}
+  '@zenstackhq/tanstack-query@3.0.0-beta.22':
+    resolution: {integrity: sha512-5UJV4C9wSBTdcR5qT5T7hl46bn4zcSyZ7q7PfQ0CBxQd4wtC7HW1cCN6P/az9Jg3HHU+DCMFIoMZ2kd39GzV9w==}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
       '@tanstack/svelte-query': ^5.0.0
@@ -8389,8 +8389,8 @@ packages:
     resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
     engines: {node: '>=12'}
 
-  drizzle-kit@0.31.6:
-    resolution: {integrity: sha512-/B4e/4pwnx25QwD5xXgdpo1S+077a2VZdosXbItE/oNmUgQwZydGDz9qJYmnQl/b+5IX0rLfwRhrPnroGtrg8Q==}
+  drizzle-kit@0.31.7:
+    resolution: {integrity: sha512-hOzRGSdyKIU4FcTSFYGKdXEjFsncVwHZ43gY3WU5Bz9j5Iadp6Rh6hxLSQ1IWXpKLBKt/d5y1cpSPcV+FcoQ1A==}
     hasBin: true
 
   drizzle-orm@0.33.0:
@@ -20822,11 +20822,11 @@ snapshots:
   '@xtuc/long@4.2.2':
     optional: true
 
-  '@zenstackhq/cli@3.0.0-beta.21(prisma@6.19.0(typescript@5.9.3))':
+  '@zenstackhq/cli@3.0.0-beta.22(prisma@6.19.0(typescript@5.9.3))':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.21
-      '@zenstackhq/language': 3.0.0-beta.21
-      '@zenstackhq/sdk': 3.0.0-beta.21
+      '@zenstackhq/common-helpers': 3.0.0-beta.22
+      '@zenstackhq/language': 3.0.0-beta.22
+      '@zenstackhq/sdk': 3.0.0-beta.22
       colors: 1.4.0
       commander: 8.3.0
       langium: 3.5.0
@@ -20839,20 +20839,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@zenstackhq/common-helpers@3.0.0-beta.21': {}
+  '@zenstackhq/common-helpers@3.0.0-beta.22': {}
 
-  '@zenstackhq/language@3.0.0-beta.21':
+  '@zenstackhq/language@3.0.0-beta.22':
     dependencies:
       langium: 3.5.0
       pluralize: 8.0.0
       ts-pattern: 5.9.0
       vscode-languageserver: 9.0.1
 
-  '@zenstackhq/orm@3.0.0-beta.21(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)':
+  '@zenstackhq/orm@3.0.0-beta.22(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)':
     dependencies:
       '@paralleldrive/cuid2': 2.3.1
-      '@zenstackhq/common-helpers': 3.0.0-beta.21
-      '@zenstackhq/schema': 3.0.0-beta.21
+      '@zenstackhq/common-helpers': 3.0.0-beta.22
+      '@zenstackhq/schema': 3.0.0-beta.22
       decimal.js: 10.6.0
       json-stable-stringify: 1.3.0
       kysely: 0.28.8
@@ -20867,10 +20867,10 @@ snapshots:
       better-sqlite3: 12.4.1
       pg: 8.16.3
 
-  '@zenstackhq/plugin-policy@3.0.0-beta.21(better-sqlite3@12.4.1)(kysely@0.28.8)(pg@8.16.3)(zod@4.1.12)':
+  '@zenstackhq/plugin-policy@3.0.0-beta.22(better-sqlite3@12.4.1)(kysely@0.28.8)(pg@8.16.3)(zod@4.1.12)':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.21
-      '@zenstackhq/orm': 3.0.0-beta.21(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
+      '@zenstackhq/common-helpers': 3.0.0-beta.22
+      '@zenstackhq/orm': 3.0.0-beta.22(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
       kysely: 0.28.8
       ts-pattern: 5.9.0
     transitivePeerDependencies:
@@ -20878,22 +20878,22 @@ snapshots:
       - pg
       - zod
 
-  '@zenstackhq/schema@3.0.0-beta.21':
+  '@zenstackhq/schema@3.0.0-beta.22':
     dependencies:
       decimal.js: 10.6.0
 
-  '@zenstackhq/sdk@3.0.0-beta.21':
+  '@zenstackhq/sdk@3.0.0-beta.22':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.21
-      '@zenstackhq/language': 3.0.0-beta.21
+      '@zenstackhq/common-helpers': 3.0.0-beta.22
+      '@zenstackhq/language': 3.0.0-beta.22
       langium: 3.5.0
       ts-pattern: 5.9.0
       typescript: 5.9.3
 
-  '@zenstackhq/server@3.0.0-beta.21(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)':
+  '@zenstackhq/server@3.0.0-beta.22(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.21
-      '@zenstackhq/orm': 3.0.0-beta.21(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
+      '@zenstackhq/common-helpers': 3.0.0-beta.22
+      '@zenstackhq/orm': 3.0.0-beta.22(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
       decimal.js: 10.6.0
       superjson: 2.2.5
       ts-japi: 1.12.1
@@ -20908,11 +20908,11 @@ snapshots:
       - better-sqlite3
       - pg
 
-  '@zenstackhq/tanstack-query@3.0.0-beta.21(@tanstack/react-query@5.90.8(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)':
+  '@zenstackhq/tanstack-query@3.0.0-beta.22(@tanstack/react-query@5.90.8(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.21
-      '@zenstackhq/orm': 3.0.0-beta.21(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
-      '@zenstackhq/schema': 3.0.0-beta.21
+      '@zenstackhq/common-helpers': 3.0.0-beta.22
+      '@zenstackhq/orm': 3.0.0-beta.22(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
+      '@zenstackhq/schema': 3.0.0-beta.22
       decimal.js: 10.6.0
       superjson: 2.2.5
     optionalDependencies:
@@ -22404,7 +22404,7 @@ snapshots:
 
   dotenv@17.2.3: {}
 
-  drizzle-kit@0.31.6:
+  drizzle-kit@0.31.7:
     dependencies:
       '@drizzle-team/brocli': 0.10.2
       '@esbuild-kit/esm-loader': 2.6.5

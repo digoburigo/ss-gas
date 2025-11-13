@@ -7,7 +7,6 @@ import ReactDOM from "react-dom/client";
 
 import { DirectionProvider } from "~/context/direction-provider";
 import { FontProvider } from "~/context/font-provider";
-import { ThemeProvider as CustomThemeProvider } from "~/context/theme-provider";
 import { createRouter } from "~/router";
 
 const ROOT_ELEMENT_ID = "app";
@@ -31,13 +30,11 @@ if (!rootElement.innerHTML) {
         enableSystem
         disableTransitionOnChange
       >
-        <CustomThemeProvider>
-          <FontProvider>
-            <DirectionProvider>
-              <RouterProvider router={router} />
-            </DirectionProvider>
-          </FontProvider>
-        </CustomThemeProvider>
+        <FontProvider>
+          <DirectionProvider>
+            <RouterProvider router={router} />
+          </DirectionProvider>
+        </FontProvider>
       </ThemeProvider>
     </React.StrictMode>,
   );

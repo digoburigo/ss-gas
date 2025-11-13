@@ -55,9 +55,9 @@ export default defineConfig({
     tsConfigPaths({
       projects: ["./tsconfig.json"],
     }),
-    reactGrab({
-      enabled: true,
-    }),
+    // reactGrab({
+    //   enabled: true,
+    // }),
     devtools(),
     tanstackRouter({
       routeToken: "layout",
