@@ -102,6 +102,7 @@ function CreatePost() {
 
 function MobileAuth() {
   const { data: session } = authClient.useSession();
+  console.log(`🚀 -> session:`, session);
 
   return (
     <>

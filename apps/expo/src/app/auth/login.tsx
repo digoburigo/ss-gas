@@ -4,7 +4,9 @@ import type { TextInput } from "react-native";
 import * as React from "react";
 import { Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { useForm } from "@tanstack/react-form";
+import * as z from "zod";
 
 import {
   Accordion,
@@ -25,6 +27,14 @@ import { Input } from "~/components/input";
 import { Label } from "~/components/label";
 import { Separator } from "~/components/separator";
 import { Text } from "~/components/text";
+import { authClient } from "~/utils/auth";
+
+const loginSchema = z.object({
+  email: z.email({ error: "Email inválido" }),
+  password: z
+    .string()
+    .min(8, { error: "Senha deve ter pelo menos 8 caracteres" }),
+});
 
 export function AccordionPreview() {
   return (
@@ -88,22 +98,43 @@ export function AccordionPreview() {
 }
 
 export default function Login() {
+  const router = useRouter();
+
   const passwordInputRef = React.useRef<TextInput>(null);
 
   function onEmailSubmitEditing() {
     passwordInputRef.current?.focus();
   }
 
-  function onSubmit() {
-    // TODO: Submit form and navigate to protected screen if successful
-  }
+  const form = useForm({
+    defaultValues: {
+      email: "a@a.com",
+      password: "12345678",
+    },
+    onSubmit: async ({ value }) => {
+      await authClient.signIn.email(
+        {
+          email: value.email,
+          password: value.password,
+        },
+        {
+          onSuccess: () => {
+            router.push("/");
+          },
+          onError: (error) => {},
+        },
+      );
+    },
+    validators: {
+      onSubmit: loginSchema,
+    },
+  });
 
   return (
     <SafeAreaView>
       <Stack.Screen options={{ title: "Login" }} />
-
-      <View className="p-6">
-        <AccordionPreview />
+      <View className="px-4">
+        {/* <AccordionPreview /> */}
 
         <Card>
           <CardHeader>
@@ -116,47 +147,73 @@ export default function Login() {
           </CardHeader>
           <CardContent className="gap-6">
             <View className="gap-6">
-              <View className="gap-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  placeholder="m@example.com"
-                  keyboardType="email-address"
-                  autoComplete="email"
-                  autoCapitalize="none"
-                  onSubmitEditing={onEmailSubmitEditing}
-                  returnKeyType="next"
-                  submitBehavior="submit"
-                />
-              </View>
-              <View className="gap-1.5">
-                <View className="flex-row items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="web:h-fit ml-auto h-4 px-1 py-0 sm:h-4"
-                    onPress={() => {
-                      // TODO: Navigate to forgot password screen
-                    }}
-                  >
-                    <Text className="leading-4 font-normal">
-                      Forgot your password?
-                    </Text>
-                  </Button>
-                </View>
-                <Input
-                  ref={passwordInputRef}
-                  id="password"
-                  secureTextEntry
-                  returnKeyType="send"
-                  onSubmitEditing={onSubmit}
-                />
-              </View>
-              <Button className="w-full" onPress={onSubmit}>
-                <Text>Continue</Text>
-              </Button>
+              <form.Field name="email">
+                {(field) => (
+                  <View className="gap-1.5">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      placeholder="m@example.com"
+                      keyboardType="email-address"
+                      autoComplete="email"
+                      autoCapitalize="none"
+                      onSubmitEditing={onEmailSubmitEditing}
+                      returnKeyType="next"
+                      submitBehavior="submit"
+                      value={field.state.value}
+                      onChangeText={field.handleChange}
+                    />
+                  </View>
+                )}
+              </form.Field>
+
+              <form.Field name="password">
+                {(field) => (
+                  <View className="gap-1.5">
+                    <View className="flex-row items-center">
+                      <Label htmlFor="password">Password</Label>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="web:h-fit ml-auto h-4 px-1 py-0 sm:h-4"
+                        onPress={() => {
+                          // TODO: Navigate to forgot password screen
+                        }}
+                      >
+                        <Text className="leading-4 font-normal">
+                          Forgot your password?
+                        </Text>
+                      </Button>
+                    </View>
+                    <Input
+                      // ref={passwordInputRef}
+                      id="password"
+                      secureTextEntry
+                      returnKeyType="send"
+                      onSubmitEditing={() => form.handleSubmit()}
+                      value={field.state.value}
+                      onChangeText={field.handleChange}
+                    />
+                  </View>
+                )}
+              </form.Field>
+
+              <form.Subscribe>
+                {(state) => (
+                  <View>
+                    <Button
+                      className="w-full"
+                      onPress={() => form.handleSubmit()}
+                    >
+                      <Text>
+                        {state.isSubmitting ? "Entrando..." : "Entrar"}
+                      </Text>
+                    </Button>
+                  </View>
+                )}
+              </form.Subscribe>
             </View>
+
             <View className="flex-row items-center">
               <Text className="text-center text-sm">
                 Don&apos;t have an account?{" "}

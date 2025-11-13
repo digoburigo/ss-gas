@@ -23,9 +23,9 @@ export const getBaseUrl = () => {
     );
   }
 
-  if (process.env.EXPO_PUBLIC_SERVER_URL) {
-    return process.env.EXPO_PUBLIC_SERVER_URL;
-  }
+  // if (process.env.EXPO_PUBLIC_SERVER_URL) {
+  //   return process.env.EXPO_PUBLIC_SERVER_URL;
+  // }
 
   return `http://${localhost}:3000`;
 };

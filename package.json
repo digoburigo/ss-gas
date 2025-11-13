@@ -15,6 +15,8 @@
     "db:studio": "turbo -F @acme/zen-v3 studio",
     "dev": "turbo watch dev --continue",
     "dev:spa": "turbo watch dev -F @acme/web... -F @acme/server...",
+    "dev:web": "turbo watch dev -F @acme/web...",
+    "dev:server": "turbo watch dev -F @acme/server...",
     "dev:start": "turbo watch dev -F @acme/tanstack-start...",
     "dev:expo:ios": "turbo watch dev:ios -F @acme/expo...",
     "dev:expo:android": "turbo watch dev:android -F @acme/expo...",
