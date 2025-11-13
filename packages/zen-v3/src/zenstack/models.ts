@@ -21,7 +21,7 @@ export type Product = $ModelResult<$Schema, "Product">;
  * Shape of the `auth()` function
  */
 export type Auth = $TypeDefResult<$Schema, "Auth">;
-export const UserRole = $schema.enums.UserRole;
+export const UserRole = $schema.enums.UserRole.values;
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
-export const MemberRole = $schema.enums.MemberRole;
+export const MemberRole = $schema.enums.MemberRole.values;
 export type MemberRole = (typeof MemberRole)[keyof typeof MemberRole];

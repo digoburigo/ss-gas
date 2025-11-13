@@ -1036,15 +1036,19 @@ export const schema = {
     },
     enums: {
         UserRole: {
-            admin: "admin",
-            user: "user"
+            values: {
+                admin: "admin",
+                user: "user"
+            }
         },
         MemberRole: {
-            owner: "owner",
-            admin: "admin",
-            secretary: "secretary",
-            patient: "patient",
-            member: "member"
+            values: {
+                owner: "owner",
+                admin: "admin",
+                secretary: "secretary",
+                patient: "patient",
+                member: "member"
+            }
         }
     },
     authType: "Auth",
