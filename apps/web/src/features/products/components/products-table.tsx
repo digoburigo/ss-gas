@@ -48,7 +48,6 @@ export function ProductsTable() {
       enabled: !!activeOrganization?.id,
     },
   );
-  console.log(`🚀 -> products:`, products);
 
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
