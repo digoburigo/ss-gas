@@ -44,10 +44,10 @@ export const app = new Elysia({
   .use(betterUpload)
   .use(zenstackController)
   .get("/", () => ({ message: "Hello Elysia!" }))
-  .get("/healthcheck", () => ({ message: "OK" }), {
+  .get("/healthcheck", () => ({ qualquercoisa: "OK 1" }), {
     response: {
       200: t.Object({
-        message: t.String(),
+        qualquercoisa: t.String(),
       }),
     },
   })

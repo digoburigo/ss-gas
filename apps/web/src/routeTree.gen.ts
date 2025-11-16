@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteImport } from './routes/test'
+import { Route as PlateRouteImport } from './routes/plate'
 import { Route as AuthLayoutRouteImport } from './routes/auth/layout'
 import { Route as AuthenticatedLayoutRouteImport } from './routes/_authenticated/layout'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
@@ -27,11 +28,13 @@ import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsLayoutRouteImport } from './routes/_authenticated/settings/layout'
 import { Route as AuthenticatedProductsLayoutRouteImport } from './routes/_authenticated/products/layout'
+import { Route as AuthenticatedClientsLayoutRouteImport } from './routes/_authenticated/clients/layout'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
+import { Route as AuthenticatedClientsIndexRouteImport } from './routes/_authenticated/clients/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
@@ -41,10 +44,17 @@ import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_auth
 import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated/products/new'
 import { Route as AuthenticatedProductsProductIdRouteImport } from './routes/_authenticated/products/$productId'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedClientsNewRouteImport } from './routes/_authenticated/clients/new'
+import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients/$clientId'
 
 const TestRoute = TestRouteImport.update({
   id: '/test',
   path: '/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlateRoute = PlateRouteImport.update({
+  id: '/plate',
+  path: '/plate',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
@@ -133,6 +143,12 @@ const AuthenticatedProductsLayoutRoute =
     path: '/products',
     getParentRoute: () => AuthenticatedLayoutRoute,
   } as any)
+const AuthenticatedClientsLayoutRoute =
+  AuthenticatedClientsLayoutRouteImport.update({
+    id: '/clients',
+    path: '/clients',
+    getParentRoute: () => AuthenticatedLayoutRoute,
+  } as any)
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -160,6 +176,12 @@ const AuthenticatedHelpCenterIndexRoute =
     id: '/help-center/',
     path: '/help-center/',
     getParentRoute: () => AuthenticatedLayoutRoute,
+  } as any)
+const AuthenticatedClientsIndexRoute =
+  AuthenticatedClientsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedClientsLayoutRoute,
   } as any)
 const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
   id: '/chats/',
@@ -213,10 +235,23 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedLayoutRoute,
   } as any)
+const AuthenticatedClientsNewRoute = AuthenticatedClientsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthenticatedClientsLayoutRoute,
+} as any)
+const AuthenticatedClientsClientIdRoute =
+  AuthenticatedClientsClientIdRouteImport.update({
+    id: '/$clientId',
+    path: '/$clientId',
+    getParentRoute: () => AuthenticatedClientsLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/plate': typeof PlateRoute
   '/test': typeof TestRoute
+  '/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
   '/products': typeof AuthenticatedProductsLayoutRouteWithChildren
   '/settings': typeof AuthenticatedSettingsLayoutRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
@@ -232,6 +267,8 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof AuthenticatedIndexRoute
+  '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/clients/new': typeof AuthenticatedClientsNewRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
@@ -241,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
+  '/clients/': typeof AuthenticatedClientsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/products/': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -249,6 +287,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/plate': typeof PlateRoute
   '/test': typeof TestRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
@@ -263,6 +302,8 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof AuthenticatedIndexRoute
+  '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/clients/new': typeof AuthenticatedClientsNewRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
@@ -272,6 +313,7 @@ export interface FileRoutesByTo {
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
+  '/clients': typeof AuthenticatedClientsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
@@ -282,7 +324,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedLayoutRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/plate': typeof PlateRoute
   '/test': typeof TestRoute
+  '/_authenticated/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
   '/_authenticated/products': typeof AuthenticatedProductsLayoutRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsLayoutRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
@@ -298,6 +342,8 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/_authenticated/clients/new': typeof AuthenticatedClientsNewRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
@@ -307,6 +353,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
+  '/_authenticated/clients/': typeof AuthenticatedClientsIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -317,7 +364,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/auth'
+    | '/plate'
     | '/test'
+    | '/clients'
     | '/products'
     | '/settings'
     | '/forgot-password'
@@ -333,6 +382,8 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/'
+    | '/clients/$clientId'
+    | '/clients/new'
     | '/errors/$error'
     | '/products/$productId'
     | '/products/new'
@@ -342,6 +393,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/apps'
     | '/chats'
+    | '/clients/'
     | '/help-center'
     | '/products/'
     | '/settings/'
@@ -350,6 +402,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/plate'
     | '/test'
     | '/forgot-password'
     | '/otp'
@@ -364,6 +417,8 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/'
+    | '/clients/$clientId'
+    | '/clients/new'
     | '/errors/$error'
     | '/products/$productId'
     | '/products/new'
@@ -373,6 +428,7 @@ export interface FileRouteTypes {
     | '/settings/notifications'
     | '/apps'
     | '/chats'
+    | '/clients'
     | '/help-center'
     | '/products'
     | '/settings'
@@ -382,7 +438,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/auth'
+    | '/plate'
     | '/test'
+    | '/_authenticated/clients'
     | '/_authenticated/products'
     | '/_authenticated/settings'
     | '/(auth)/forgot-password'
@@ -398,6 +456,8 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/_authenticated/'
+    | '/_authenticated/clients/$clientId'
+    | '/_authenticated/clients/new'
     | '/_authenticated/errors/$error'
     | '/_authenticated/products/$productId'
     | '/_authenticated/products/new'
@@ -407,6 +467,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/notifications'
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
+    | '/_authenticated/clients/'
     | '/_authenticated/help-center/'
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
@@ -417,6 +478,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedLayoutRoute: typeof AuthenticatedLayoutRouteWithChildren
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
+  PlateRoute: typeof PlateRoute
   TestRoute: typeof TestRoute
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authOtpRoute: typeof authOtpRoute
@@ -437,6 +499,13 @@ declare module '@tanstack/react-router' {
       path: '/test'
       fullPath: '/test'
       preLoaderRoute: typeof TestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plate': {
+      id: '/plate'
+      path: '/plate'
+      fullPath: '/plate'
+      preLoaderRoute: typeof PlateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -558,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductsLayoutRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
     }
+    '/_authenticated/clients': {
+      id: '/_authenticated/clients'
+      path: '/clients'
+      fullPath: '/clients'
+      preLoaderRoute: typeof AuthenticatedClientsLayoutRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
+    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
@@ -592,6 +668,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/help-center'
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
+    }
+    '/_authenticated/clients/': {
+      id: '/_authenticated/clients/'
+      path: '/'
+      fullPath: '/clients/'
+      preLoaderRoute: typeof AuthenticatedClientsIndexRouteImport
+      parentRoute: typeof AuthenticatedClientsLayoutRoute
     }
     '/_authenticated/chats/': {
       id: '/_authenticated/chats/'
@@ -656,8 +739,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
     }
+    '/_authenticated/clients/new': {
+      id: '/_authenticated/clients/new'
+      path: '/new'
+      fullPath: '/clients/new'
+      preLoaderRoute: typeof AuthenticatedClientsNewRouteImport
+      parentRoute: typeof AuthenticatedClientsLayoutRoute
+    }
+    '/_authenticated/clients/$clientId': {
+      id: '/_authenticated/clients/$clientId'
+      path: '/$clientId'
+      fullPath: '/clients/$clientId'
+      preLoaderRoute: typeof AuthenticatedClientsClientIdRouteImport
+      parentRoute: typeof AuthenticatedClientsLayoutRoute
+    }
   }
 }
+
+interface AuthenticatedClientsLayoutRouteChildren {
+  AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRoute
+  AuthenticatedClientsNewRoute: typeof AuthenticatedClientsNewRoute
+  AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
+}
+
+const AuthenticatedClientsLayoutRouteChildren: AuthenticatedClientsLayoutRouteChildren =
+  {
+    AuthenticatedClientsClientIdRoute: AuthenticatedClientsClientIdRoute,
+    AuthenticatedClientsNewRoute: AuthenticatedClientsNewRoute,
+    AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
+  }
+
+const AuthenticatedClientsLayoutRouteWithChildren =
+  AuthenticatedClientsLayoutRoute._addFileChildren(
+    AuthenticatedClientsLayoutRouteChildren,
+  )
 
 interface AuthenticatedProductsLayoutRouteChildren {
   AuthenticatedProductsProductIdRoute: typeof AuthenticatedProductsProductIdRoute
@@ -701,6 +816,7 @@ const AuthenticatedSettingsLayoutRouteWithChildren =
   )
 
 interface AuthenticatedLayoutRouteChildren {
+  AuthenticatedClientsLayoutRoute: typeof AuthenticatedClientsLayoutRouteWithChildren
   AuthenticatedProductsLayoutRoute: typeof AuthenticatedProductsLayoutRouteWithChildren
   AuthenticatedSettingsLayoutRoute: typeof AuthenticatedSettingsLayoutRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -713,6 +829,7 @@ interface AuthenticatedLayoutRouteChildren {
 }
 
 const AuthenticatedLayoutRouteChildren: AuthenticatedLayoutRouteChildren = {
+  AuthenticatedClientsLayoutRoute: AuthenticatedClientsLayoutRouteWithChildren,
   AuthenticatedProductsLayoutRoute:
     AuthenticatedProductsLayoutRouteWithChildren,
   AuthenticatedSettingsLayoutRoute:
@@ -746,6 +863,7 @@ const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedLayoutRoute: AuthenticatedLayoutRouteWithChildren,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
+  PlateRoute: PlateRoute,
   TestRoute: TestRoute,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authOtpRoute: authOtpRoute,

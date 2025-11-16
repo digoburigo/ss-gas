@@ -17,6 +17,7 @@ export type Invitation = $ModelResult<$Schema, "Invitation">;
 export type Todo = $ModelResult<$Schema, "Todo">;
 export type Test = $ModelResult<$Schema, "Test">;
 export type Product = $ModelResult<$Schema, "Product">;
+export type Client = $ModelResult<$Schema, "Client">;
 /**
  * Shape of the `auth()` function
  */
@@ -25,3 +26,5 @@ export const UserRole = $schema.enums.UserRole.values;
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 export const MemberRole = $schema.enums.MemberRole.values;
 export type MemberRole = (typeof MemberRole)[keyof typeof MemberRole];
+export const ClientStatus = $schema.enums.ClientStatus.values;
+export type ClientStatus = (typeof ClientStatus)[keyof typeof ClientStatus];

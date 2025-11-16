@@ -53,7 +53,11 @@ model User {
 
   createdProducts Product[] @relation("createdProducts") 
   updatedProducts Product[] @relation("updatedProducts") 
-  deletedProducts Product[] @relation("deletedProducts") 
+  deletedProducts Product[] @relation("deletedProducts")
+
+  createdClients Client[] @relation("createdClients") 
+  updatedClients Client[] @relation("updatedClients") 
+  deletedClients Client[] @relation("deletedClients") 
 
   @@allow('create,read', true)
 
@@ -130,6 +134,7 @@ model Organization {
   todos Todo[]
   tests Test[]
   products Product[]
+  clients Client[]
 
   @@unique([slug])
 
@@ -285,4 +290,41 @@ model Product {
     @@allow('read,update,delete', auth().organizationId == organizationId)
 
     @@map("product")
+}
+
+enum ClientStatus {
+  active
+  inactive
+}
+
+model Client {
+    id        String   @id @default(dbgenerated("uuidv7()"))
+
+    name String
+    email String
+    phone String
+    status ClientStatus @default(active)
+
+    createdAt DateTime @default(now()) 
+    createdById String  @default(auth().userId) 
+    createdByUser User @relation('createdClients', fields: [createdById], references: [id], onDelete: Cascade)
+
+    updatedAt DateTime @updatedAt 
+    updatedById String?  @default(auth().userId) 
+    updatedByUser User? @relation('updatedClients', fields: [updatedById], references: [id], onDelete: Cascade)
+
+    deletedById String? 
+    deletedByUser User? @relation('deletedClients', fields: [deletedById], references: [id], onDelete: Cascade)
+    deletedAt DateTime? 
+    deletedReason String? 
+
+    organizationId String? @default(auth().organizationId) 
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@deny('read', deletedAt != null)
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+
+    @@map("client")
 }

@@ -6,7 +6,7 @@
 /* eslint-disable */
 
 import { type SchemaDef, ExpressionUtils } from "@zenstackhq/orm/schema";
-export const schema = {
+const _schema = {
     provider: {
         type: "postgresql"
     },
@@ -175,6 +175,27 @@ export const schema = {
                     array: true,
                     attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("deletedProducts") }] }],
                     relation: { opposite: "deletedByUser", name: "deletedProducts" }
+                },
+                createdClients: {
+                    name: "createdClients",
+                    type: "Client",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdClients") }] }],
+                    relation: { opposite: "createdByUser", name: "createdClients" }
+                },
+                updatedClients: {
+                    name: "updatedClients",
+                    type: "Client",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("updatedClients") }] }],
+                    relation: { opposite: "updatedByUser", name: "updatedClients" }
+                },
+                deletedClients: {
+                    name: "deletedClients",
+                    type: "Client",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("deletedClients") }] }],
+                    relation: { opposite: "deletedByUser", name: "deletedClients" }
                 }
             },
             attributes: [
@@ -456,6 +477,12 @@ export const schema = {
                 products: {
                     name: "products",
                     type: "Product",
+                    array: true,
+                    relation: { opposite: "organization" }
+                },
+                clients: {
+                    name: "clients",
+                    type: "Client",
                     array: true,
                     relation: { opposite: "organization" }
                 }
@@ -1007,6 +1034,132 @@ export const schema = {
             uniqueFields: {
                 id: { type: "String" }
             }
+        },
+        Client: {
+            name: "Client",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                name: {
+                    name: "name",
+                    type: "String"
+                },
+                email: {
+                    name: "email",
+                    type: "String"
+                },
+                phone: {
+                    name: "phone",
+                    type: "String"
+                },
+                status: {
+                    name: "status",
+                    type: "ClientStatus",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("active") }] }],
+                    default: "active"
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "createdByUser"
+                    ]
+                },
+                createdByUser: {
+                    name: "createdByUser",
+                    type: "User",
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdClients") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("createdById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "createdClients", name: "createdClients", fields: ["createdById"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                },
+                updatedById: {
+                    name: "updatedById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "updatedByUser"
+                    ]
+                },
+                updatedByUser: {
+                    name: "updatedByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("updatedClients") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("updatedById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "updatedClients", name: "updatedClients", fields: ["updatedById"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                },
+                deletedById: {
+                    name: "deletedById",
+                    type: "String",
+                    optional: true,
+                    foreignKeyFor: [
+                        "deletedByUser"
+                    ]
+                },
+                deletedByUser: {
+                    name: "deletedByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("deletedClients") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("deletedById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "deletedClients", name: "deletedClients", fields: ["deletedById"], references: ["id"], onDelete: "Cascade" }
+                },
+                deletedAt: {
+                    name: "deletedAt",
+                    type: "DateTime",
+                    optional: true
+                },
+                deletedReason: {
+                    name: "deletedReason",
+                    type: "String",
+                    optional: true
+                },
+                organizationId: {
+                    name: "organizationId",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]),
+                    foreignKeyFor: [
+                        "organization"
+                    ]
+                },
+                organization: {
+                    name: "organization",
+                    type: "Organization",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("organizationId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "clients", fields: ["organizationId"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                }
+            },
+            attributes: [
+                { name: "@@deny", args: [{ name: "operation", value: ExpressionUtils.literal("read") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.field("deletedAt"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("client") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
+            }
         }
     },
     typeDefs: {
@@ -1049,9 +1202,19 @@ export const schema = {
                 patient: "patient",
                 member: "member"
             }
+        },
+        ClientStatus: {
+            values: {
+                active: "active",
+                inactive: "inactive"
+            }
         }
     },
     authType: "Auth",
     plugins: {}
 } as const satisfies SchemaDef;
-export type SchemaType = typeof schema;
+type Schema = typeof _schema & {
+    __brand?: "schema";
+};
+export const schema: Schema = _schema;
+export type SchemaType = Schema;

@@ -148,7 +148,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.66.0",
-    "react-lite-youtube-embed": "^2.5.6",
+    "react-lite-youtube-embed": "^3.3.1",
     "react-player": "^3.4.0",
     "react-resizable-panels": "^3.0.6",
     "react-textarea-autosize": "^8.5.9",

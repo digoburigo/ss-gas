@@ -2,7 +2,6 @@
 
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {
   flexRender,
@@ -16,7 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 
-import type { Product } from "@acme/zen-v3/zenstack/models";
+import type { Client } from "@acme/zen-v3/zenstack/models";
 import { cn } from "@acme/ui";
 import {
   Table,
@@ -28,40 +27,25 @@ import {
 } from "@acme/ui/table";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
-import { api } from "~/clients/api-client";
 import { authClient } from "~/clients/auth-client";
 import { DataTablePagination, DataTableToolbar } from "~/components/data-table";
 import { useTableUrlState } from "~/hooks/use-table-url-state";
-import { activeStatuses } from "../data/data";
+import { statusOptions } from "../data/data";
+import { clientsColumns as columns } from "./clients-columns";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
-import { productsColumns as columns } from "./products-columns";
 
-const route = getRouteApi("/_authenticated/products/");
+const route = getRouteApi("/_authenticated/clients/");
 
-export function ProductsTable() {
+export function ClientsTable() {
   const { data: activeOrganization } = authClient.useActiveOrganization();
 
   const client = useClientQueries(schema);
-  const { data: products = [], isFetching } = client.product.useFindMany(
-    {
-      where: {
-        category: {
-          equals: "teste",
-        },
-      },
-    },
+  const { data: clients = [], isFetching } = client.client.useFindMany(
+    {},
     {
       enabled: !!activeOrganization?.id,
     },
   );
-
-  const { data: healthcheck } = useQuery({
-    queryKey: ["healthcheck"],
-    queryFn: async () => {
-      const response = await api.healthcheck.get();
-      return response;
-    },
-  });
 
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
@@ -82,23 +66,12 @@ export function ProductsTable() {
     navigate: route.useNavigate(),
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: true, key: "filter" },
-    columnFilters: [
-      { columnId: "category", searchKey: "category", type: "array" },
-      { columnId: "active", searchKey: "active", type: "array" },
-    ],
+    columnFilters: [{ columnId: "status", searchKey: "status", type: "array" }],
   });
-
-  // Get unique categories for filter
-  const categories = Array.from(
-    new Set(products.map((p) => p.category).filter(Boolean) as string[]),
-  ).map((cat) => ({
-    label: cat,
-    value: cat,
-  }));
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data: products,
+    data: clients,
     columns,
     state: {
       sorting,
@@ -113,11 +86,11 @@ export function ProductsTable() {
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     globalFilterFn: (row, _columnId, filterValue) => {
-      const code = String(row.getValue("code")).toLowerCase();
       const name = String(row.getValue("name")).toLowerCase();
+      const email = String(row.getValue("email")).toLowerCase();
       const searchValue = String(filterValue).toLowerCase();
 
-      return code.includes(searchValue) || name.includes(searchValue);
+      return name.includes(searchValue) || email.includes(searchValue);
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -138,7 +111,7 @@ export function ProductsTable() {
   if (isFetching) {
     return (
       <div className="flex flex-1 items-center justify-center py-8">
-        <p>Carregando produtos...</p>
+        <p>Carregando clientes...</p>
       </div>
     );
   }
@@ -152,17 +125,12 @@ export function ProductsTable() {
     >
       <DataTableToolbar
         table={table}
-        searchPlaceholder="Filtrar por código ou nome..."
+        searchPlaceholder="Filtrar por nome ou email..."
         filters={[
           {
-            columnId: "category",
-            title: "Categoria",
-            options: categories,
-          },
-          {
-            columnId: "active",
+            columnId: "status",
             title: "Status",
-            options: activeStatuses.map((s) => ({
+            options: statusOptions.map((s) => ({
               label: s.label,
               value: s.value,
             })),
