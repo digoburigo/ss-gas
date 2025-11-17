@@ -62,7 +62,7 @@
   "dependencies": {
     "@ai-sdk/react": "^2.0.93",
     "@ariakit/react": "^0.4.19",
-    "@base-ui-components/react": "1.0.0-beta.4",
+    "@base-ui-components/react": "1.0.0-beta.5",
     "@better-upload/client": "^3.0.2",
     "@emoji-mart/data": "^1.2.1",
     "@faker-js/faker": "^10.1.0",
@@ -138,7 +138,7 @@
     "input-otp": "^1.4.2",
     "lodash": "^4.17.21",
     "lowlight": "^3.3.0",
-    "lucide-react": "^0.553.0",
+    "lucide-react": "^0.554.0",
     "next-themes": "^0.4.6",
     "pdf-lib": "^1.17.1",
     "platejs": "^51.0.0",

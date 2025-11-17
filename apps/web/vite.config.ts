@@ -4,7 +4,6 @@ import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import tanstackRouter from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
-// import { reactGrab } from "react-grab/plugins/vite";
 import Icons from "unplugin-icons/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
@@ -55,9 +54,6 @@ export default defineConfig({
     tsConfigPaths({
       projects: ["./tsconfig.json"],
     }),
-    // reactGrab({
-    //   enabled: true,
-    // }),
     devtools(),
     tanstackRouter({
       routeToken: "layout",
