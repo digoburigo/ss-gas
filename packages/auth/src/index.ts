@@ -1,11 +1,14 @@
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { expo } from "@better-auth/expo";
+// import { zenstackAdapter } from "@zenstackhq/better-auth";
 import { betterAuth } from "better-auth";
 import { oAuthProxy } from "better-auth/plugins";
 import { admin } from "better-auth/plugins/admin";
 import { organization } from "better-auth/plugins/organization";
 import { Pool } from "pg";
 import { v7 as uuidv7 } from "uuid";
+
+// import { db } from "@acme/zen-v3";
 
 export function initAuth<
   TExtraPlugins extends BetterAuthPlugin[] = [],
@@ -19,6 +22,9 @@ export function initAuth<
   extraPlugins?: TExtraPlugins;
 }) {
   const config = {
+    // database: zenstackAdapter(db, {
+    //   provider: "postgresql",
+    // }),
     database: new Pool({
       connectionString: process.env.DATABASE_URL,
     }),
@@ -38,6 +44,7 @@ export function initAuth<
     plugins: [
       oAuthProxy({
         productionURL: options.productionUrl,
+        currentURL: "expo://", // Must differ from productionURL for oAuthProxy to activate
       }),
       expo(),
       admin(),
@@ -54,7 +61,13 @@ export function initAuth<
         redirectURI: `${options.productionUrl}/api/auth/callback/discord`,
       },
     },
-    trustedOrigins: ["expo://", process.env.PUBLIC_WEB_URL ?? ""],
+    trustedOrigins: [
+      "expo://",
+      "exp://",
+      "https://*.exp.direct",
+      "http://localhost:*",
+      process.env.PUBLIC_WEB_URL ?? "",
+    ],
     onAPIError: {
       onError(error, ctx) {
         console.error("BETTER AUTH API ERROR", error, ctx);

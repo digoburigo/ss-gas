@@ -12,6 +12,9 @@
     "dev": {
       "cache": false
     },
+    "dev:ios": {
+      "cache": false
+    },
     "@acme/server#dev": {
       "cache": false,
       "persistent": true
@@ -21,6 +24,10 @@
       "persistent": true
     },
     "@acme/expo#dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "@acme/expo#dev:ios": {
       "cache": false,
       "persistent": true
     },

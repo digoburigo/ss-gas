@@ -18,7 +18,7 @@
     "dev:web": "turbo watch dev -F @acme/web...",
     "dev:server": "turbo watch dev -F @acme/server...",
     "dev:start": "turbo watch dev -F @acme/tanstack-start...",
-    "dev:expo:ios": "turbo watch dev:ios -F @acme/expo...",
+    "dev:expo:ios": "turbo watch dev:ios -F @acme/expo... -F @acme/server...",
     "dev:expo:android": "turbo watch dev:android -F @acme/expo...",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",

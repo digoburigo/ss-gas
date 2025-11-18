@@ -112,16 +112,21 @@ export default function Login() {
       password: "12345678",
     },
     onSubmit: async ({ value }) => {
+      console.log(`🚀 -> value:`, value);
       await authClient.signIn.email(
         {
           email: value.email,
           password: value.password,
+          // callbackURL: "/",
         },
         {
-          onSuccess: () => {
-            router.push("/");
+          onSuccess: (data) => {
+            console.log(`🚀 -> data:`, data);
+            // router.push("/");
           },
-          onError: (error) => {},
+          onError: (error) => {
+            console.log(`🚀 -> error:`, error);
+          },
         },
       );
     },

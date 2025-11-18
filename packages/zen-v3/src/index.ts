@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import type { ClientContract } from "@zenstackhq/orm";
 import { ZenStackClient } from "@zenstackhq/orm";
 import { PolicyPlugin } from "@zenstackhq/plugin-policy";
