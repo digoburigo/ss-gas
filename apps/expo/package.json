@@ -30,7 +30,7 @@
     "better-auth": "catalog:",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "expo": "~54.0.24",
+    "expo": "~54.0.25",
     "expo-constants": "~18.0.10",
     "expo-dev-client": "~6.0.18",
     "expo-linking": "~8.0.9",
