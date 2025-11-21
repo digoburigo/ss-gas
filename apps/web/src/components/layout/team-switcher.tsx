@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Building2Icon, ChevronsUpDown, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -104,13 +105,15 @@ export function TeamSwitcher() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="bg-background flex size-6 items-center justify-center rounded-md border">
-                <Plus className="size-4" />
-              </div>
-              <div className="text-muted-foreground font-medium">
-                Add organization
-              </div>
+            <DropdownMenuItem className="gap-2 p-2" asChild>
+              <Link to="/organizations">
+                <div className="bg-background flex size-6 items-center justify-center rounded-md border">
+                  <Plus className="size-4" />
+                </div>
+                <div className="text-muted-foreground font-medium">
+                  Manage organizations
+                </div>
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

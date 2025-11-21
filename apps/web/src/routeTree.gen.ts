@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as PlateRouteImport } from './routes/plate'
+import { Route as OrganizationsRouteImport } from './routes/organizations'
 import { Route as AuthLayoutRouteImport } from './routes/auth/layout'
 import { Route as AuthenticatedLayoutRouteImport } from './routes/_authenticated/layout'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
@@ -55,6 +56,11 @@ const TestRoute = TestRouteImport.update({
 const PlateRoute = PlateRouteImport.update({
   id: '/plate',
   path: '/plate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizationsRoute = OrganizationsRouteImport.update({
+  id: '/organizations',
+  path: '/organizations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
@@ -249,6 +255,7 @@ const AuthenticatedClientsClientIdRoute =
 
 export interface FileRoutesByFullPath {
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
   '/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
@@ -287,6 +294,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
   '/forgot-password': typeof authForgotPasswordRoute
@@ -324,6 +332,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedLayoutRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
   '/_authenticated/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
@@ -364,6 +373,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/auth'
+    | '/organizations'
     | '/plate'
     | '/test'
     | '/clients'
@@ -402,6 +412,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/organizations'
     | '/plate'
     | '/test'
     | '/forgot-password'
@@ -438,6 +449,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/auth'
+    | '/organizations'
     | '/plate'
     | '/test'
     | '/_authenticated/clients'
@@ -478,6 +490,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedLayoutRoute: typeof AuthenticatedLayoutRouteWithChildren
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
+  OrganizationsRoute: typeof OrganizationsRoute
   PlateRoute: typeof PlateRoute
   TestRoute: typeof TestRoute
   authForgotPasswordRoute: typeof authForgotPasswordRoute
@@ -506,6 +519,13 @@ declare module '@tanstack/react-router' {
       path: '/plate'
       fullPath: '/plate'
       preLoaderRoute: typeof PlateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/organizations': {
+      id: '/organizations'
+      path: '/organizations'
+      fullPath: '/organizations'
+      preLoaderRoute: typeof OrganizationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -863,6 +883,7 @@ const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedLayoutRoute: AuthenticatedLayoutRouteWithChildren,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
+  OrganizationsRoute: OrganizationsRoute,
   PlateRoute: PlateRoute,
   TestRoute: TestRoute,
   authForgotPasswordRoute: authForgotPasswordRoute,

@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import {
   BadgeCheck,
   Bell,
+  Building2Icon,
   ChevronsUpDown,
   CreditCard,
   LogOut,
@@ -91,6 +92,15 @@ export function NavUser({ user }: NavUserProps) {
                   </div>
                 </div>
               </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                  <Link to="/organizations">
+                    <Building2Icon />
+                    Organizations
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem>
