@@ -297,7 +297,7 @@ importers:
         version: 0.34.41
       '@zenstackhq/server':
         specifier: ^3.0.0-beta.25
-        version: 3.0.0-beta.25(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)
+        version: 3.0.0-beta.25(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)
       elysia:
         specifier: ^1.4.16
         version: 1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
@@ -382,7 +382,7 @@ importers:
         version: 11.7.1(@tanstack/react-query@5.90.10(react@19.1.1))(@trpc/client@11.7.1(@trpc/server@11.7.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.1(typescript@5.9.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)
       '@zenstackhq/server':
         specifier: ^3.0.0-beta.25
-        version: 3.0.0-beta.25(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)
+        version: 3.0.0-beta.25(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)
       '@zenstackhq/tanstack-query':
         specifier: ^3.0.0-beta.25
         version: 3.0.0-beta.25(@tanstack/react-query@5.90.10(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
@@ -641,8 +641,8 @@ importers:
         specifier: 'catalog:'
         version: 3.6.2
       react-grab:
-        specifier: 0.0.47
-        version: 0.0.47(@types/react@19.2.2)(react@19.1.1)
+        specifier: 0.0.48
+        version: 0.0.48(@types/react@19.2.2)(react@19.1.1)
       react-scan:
         specifier: ^0.4.3
         version: 0.4.3(@types/react@19.2.2)(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(rollup@2.79.2)
@@ -12028,8 +12028,8 @@ packages:
     peerDependencies:
       react: '>=17.0.0'
 
-  react-grab@0.0.47:
-    resolution: {integrity: sha512-vidr6uprIqzUI47FZoU8RRqeOov1TqWfcUmCWwaxjXpOlJ01WPxGiySS55rNM401+iXxeV6F0E6O1KEbqrrlKw==}
+  react-grab@0.0.48:
+    resolution: {integrity: sha512-HCXGBFcwgHmB+cCCniFO8nxSk70NW53dEzBdv1Sxw+ZXhkhpdcSoSHI7peJZKYV5eDqEVwT7BsD85a77bydYPA==}
 
   react-hook-form@7.66.1:
     resolution: {integrity: sha512-2KnjpgG2Rhbi+CIiIBQQ9Df6sMGH5ExNyFl4Hw9qO7pIqMBR8Bvu9RQyjl3JM4vehzCh9soiNUM/xYMswb2EiA==}
@@ -20964,7 +20964,7 @@ snapshots:
       ts-pattern: 5.9.0
       typescript: 5.9.3
 
-  '@zenstackhq/server@3.0.0-beta.25(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)':
+  '@zenstackhq/server@3.0.0-beta.25(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(next@16.0.1(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.12)':
     dependencies:
       '@zenstackhq/common-helpers': 3.0.0-beta.25
       '@zenstackhq/orm': 3.0.0-beta.25(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.12)
@@ -26925,7 +26925,7 @@ snapshots:
     dependencies:
       react: 19.1.1
 
-  react-grab@0.0.47(@types/react@19.2.2)(react@19.1.1):
+  react-grab@0.0.48(@types/react@19.2.2)(react@19.1.1):
     dependencies:
       bippy: 0.5.16(@types/react@19.2.2)(react@19.1.1)
       solid-js: 1.9.10
