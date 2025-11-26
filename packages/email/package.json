@@ -20,7 +20,7 @@
     "@acme/ui": "workspace:*",
     "@react-email/components": "^1.0.1",
     "@react-email/tailwind": "^2.0.1",
-    "nodemailer": "^7.0.10",
+    "nodemailer": "^7.0.11",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "resend": "^6.5.2"
