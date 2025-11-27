@@ -22,7 +22,7 @@
     "@acme/validators": "workspace:*",
     "@acme/zen-v3": "workspace:*",
     "@trpc/server": "catalog:",
-    "superjson": "2.2.5",
+    "superjson": "2.2.6",
     "zod": "catalog:"
   },
   "devDependencies": {

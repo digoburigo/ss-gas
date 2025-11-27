@@ -25,10 +25,10 @@
     "@elysiajs/node": "^1.4.2",
     "@elysiajs/openapi": "^1.4.11",
     "@sinclair/typebox": "^0.34.41",
-    "@zenstackhq/server": "^3.0.0-beta.25",
+    "@zenstackhq/server": "^3.0.0-beta.26",
     "elysia": "^1.4.16",
     "kysely": "catalog:",
-    "superjson": "2.2.5",
+    "superjson": "2.2.6",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -36,7 +36,7 @@
     "@types/node": "catalog:",
     "dotenv": "^17.2.3",
     "eslint": "catalog:",
-    "tsdown": "^0.16.7",
+    "tsdown": "^0.16.8",
     "tsx": "4.20.6",
     "typescript": "catalog:"
   }
