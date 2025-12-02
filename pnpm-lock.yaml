@@ -285,22 +285,22 @@ importers:
         version: 3.0.4
       '@elysiajs/cors':
         specifier: ^1.4.0
-        version: 1.4.0(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
+        version: 1.4.0(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
       '@elysiajs/node':
         specifier: ^1.4.2
-        version: 1.4.2(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
+        version: 1.4.2(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
       '@elysiajs/openapi':
         specifier: ^1.4.11
-        version: 1.4.11(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
+        version: 1.4.11(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
       '@sinclair/typebox':
         specifier: ^0.34.41
         version: 0.34.41
       '@zenstackhq/server':
-        specifier: ^3.0.0-beta.26
-        version: 3.0.0-beta.26(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(hono@4.7.10)(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.13)
+        specifier: ^3.0.0-beta.27
+        version: 3.0.0-beta.27(better-sqlite3@12.4.1)(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(hono@4.7.10)(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.13)
       elysia:
-        specifier: ^1.4.16
-        version: 1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+        specifier: ^1.4.17
+        version: 1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
       kysely:
         specifier: 'catalog:'
         version: 0.28.8
@@ -381,11 +381,11 @@ importers:
         specifier: 'catalog:'
         version: 11.7.2(@tanstack/react-query@5.90.11(react@19.1.1))(@trpc/client@11.7.2(@trpc/server@11.7.2(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.7.2(typescript@5.9.3))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)
       '@zenstackhq/server':
-        specifier: ^3.0.0-beta.26
-        version: 3.0.0-beta.26(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(hono@4.7.10)(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.13)
+        specifier: ^3.0.0-beta.27
+        version: 3.0.0-beta.27(better-sqlite3@12.4.1)(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(hono@4.7.10)(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.13)
       '@zenstackhq/tanstack-query':
-        specifier: ^3.0.0-beta.26
-        version: 3.0.0-beta.26(@tanstack/react-query@5.90.11(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
+        specifier: ^3.0.0-beta.27
+        version: 3.0.0-beta.27(@tanstack/react-query@5.90.11(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
       better-auth:
         specifier: 'catalog:'
         version: 1.4.3(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.10)
@@ -479,7 +479,7 @@ importers:
         version: 3.2.2(react@19.1.1)
       '@elysiajs/eden':
         specifier: ^1.4.5
-        version: 1.4.5(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
+        version: 1.4.5(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
       '@fontsource-variable/geist':
         specifier: ^5.2.8
         version: 5.2.8
@@ -520,8 +520,8 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@zenstackhq/tanstack-query':
-        specifier: ^3.0.0-beta.26
-        version: 3.0.0-beta.26(@tanstack/react-query@5.90.11(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
+        specifier: ^3.0.0-beta.27
+        version: 3.0.0-beta.27(@tanstack/react-query@5.90.11(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
       better-auth:
         specifier: 'catalog:'
         version: 1.4.3(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.10)
@@ -714,8 +714,8 @@ importers:
         specifier: ^0.13.8
         version: 0.13.8(typescript@5.9.3)(valibot@1.1.0(typescript@5.9.3))(zod@4.1.13)
       '@zenstackhq/better-auth':
-        specifier: 3.0.0-beta.26
-        version: 3.0.0-beta.26(@better-auth/core@1.4.3(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.1.0)(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1))(better-auth@1.4.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
+        specifier: 3.0.0-beta.27
+        version: 3.0.0-beta.27(@better-auth/core@1.4.3(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.1.0)(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1))(better-auth@1.4.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
       better-auth:
         specifier: 'catalog:'
         version: 1.4.3(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.10)
@@ -824,8 +824,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
       '@platejs/ai':
-        specifier: ^52.0.4
-        version: 52.0.4(platejs@52.0.1(@types/react@19.2.2)(immer@10.2.0)(react-dom@19.1.1(react@19.1.1))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.1.1))(react@19.1.1)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.1)))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)
+        specifier: ^52.0.6
+        version: 52.0.6(platejs@52.0.1(@types/react@19.2.2)(immer@10.2.0)(react-dom@19.1.1(react@19.1.1))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.1.1))(react@19.1.1)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.1)))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)
       '@platejs/autoformat':
         specifier: ^52.0.1
         version: 52.0.1(platejs@52.0.1(@types/react@19.2.2)(immer@10.2.0)(react-dom@19.1.1(react@19.1.1))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.1.1))(react@19.1.1)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.1)))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -1168,14 +1168,14 @@ importers:
   packages/zen-v3:
     dependencies:
       '@zenstackhq/orm':
-        specifier: ^3.0.0-beta.26
-        version: 3.0.0-beta.26(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
+        specifier: ^3.0.0-beta.27
+        version: 3.0.0-beta.27(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
       '@zenstackhq/plugin-policy':
-        specifier: ^3.0.0-beta.26
-        version: 3.0.0-beta.26(better-sqlite3@12.4.1)(kysely@0.28.8)(pg@8.16.3)(zod@4.1.13)
+        specifier: ^3.0.0-beta.27
+        version: 3.0.0-beta.27(better-sqlite3@12.4.1)(kysely@0.28.8)(pg@8.16.3)(zod@4.1.13)
       '@zenstackhq/tanstack-query':
-        specifier: ^3.0.0-beta.26
-        version: 3.0.0-beta.26(@tanstack/react-query@5.90.11(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
+        specifier: ^3.0.0-beta.27
+        version: 3.0.0-beta.27(@tanstack/react-query@5.90.11(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -1205,8 +1205,8 @@ importers:
         specifier: ^8.15.6
         version: 8.15.6
       '@zenstackhq/cli':
-        specifier: ^3.0.0-beta.26
-        version: 3.0.0-beta.26(typescript@5.9.3)
+        specifier: ^3.0.0-beta.27
+        version: 3.0.0-beta.27(typescript@5.9.3)
       drizzle-kit:
         specifier: ^0.31.7
         version: 0.31.7
@@ -1233,7 +1233,7 @@ importers:
         version: 16.0.6
       eslint-plugin-import:
         specifier: ^2.32.0
-        version: 2.32.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
+        version: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-jsx-a11y:
         specifier: ^6.10.2
         version: 6.10.2(eslint@9.39.1(jiti@2.6.1))
@@ -1247,8 +1247,8 @@ importers:
         specifier: ^2.6.1
         version: 2.6.1(eslint@9.39.1(jiti@2.6.1))(turbo@2.6.1)
       typescript-eslint:
-        specifier: ^8.48.0
-        version: 8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+        specifier: ^8.48.1
+        version: 8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
     devDependencies:
       '@acme/prettier-config':
         specifier: workspace:*
@@ -3870,8 +3870,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@platejs/ai@52.0.4':
-    resolution: {integrity: sha512-9+K7jnTP5gt+WABJv+eJFJ6HENLYtpPrt7EyMzr2ikpLB7oBjGHKM4xy9bF8qxh13Ad8E6VfJCgS1RTAk44iRw==}
+  '@platejs/ai@52.0.6':
+    resolution: {integrity: sha512-OoSmvR006JKTM1UlFcBDSFPedq2O9phdPHU2Xtxyu/hC8qu5g+K4S7ZAGANGeg9cQgKXlKS9BhxMRmH6YXWthw==}
     peerDependencies:
       platejs: '>=52.0.1'
       react: '>=18.0.0'
@@ -7012,63 +7012,63 @@ packages:
   '@types/yargs@17.0.34':
     resolution: {integrity: sha512-KExbHVa92aJpw9WDQvzBaGVE2/Pz+pLZQloT2hjL8IqsZnV62rlPOYvNnLmf/L2dyllfVUOVBj64M0z/46eR2A==}
 
-  '@typescript-eslint/eslint-plugin@8.48.0':
-    resolution: {integrity: sha512-XxXP5tL1txl13YFtrECECQYeZjBZad4fyd3cFV4a19LkAY/bIp9fev3US4S5fDVV2JaYFiKAZ/GRTOLer+mbyQ==}
+  '@typescript-eslint/eslint-plugin@8.48.1':
+    resolution: {integrity: sha512-X63hI1bxl5ohelzr0LY5coufyl0LJNthld+abwxpCoo6Gq+hSqhKwci7MUWkXo67mzgUK6YFByhmaHmUcuBJmA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
-      '@typescript-eslint/parser': ^8.48.0
+      '@typescript-eslint/parser': ^8.48.1
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <6.0.0'
 
-  '@typescript-eslint/parser@8.48.0':
-    resolution: {integrity: sha512-jCzKdm/QK0Kg4V4IK/oMlRZlY+QOcdjv89U2NgKHZk1CYTj82/RVSx1mV/0gqCVMJ/DA+Zf/S4NBWNF8GQ+eqQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      eslint: ^8.57.0 || ^9.0.0
-      typescript: '>=4.8.4 <6.0.0'
-
-  '@typescript-eslint/project-service@8.48.0':
-    resolution: {integrity: sha512-Ne4CTZyRh1BecBf84siv42wv5vQvVmgtk8AuiEffKTUo3DrBaGYZueJSxxBZ8fjk/N3DrgChH4TOdIOwOwiqqw==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      typescript: '>=4.8.4 <6.0.0'
-
-  '@typescript-eslint/scope-manager@8.48.0':
-    resolution: {integrity: sha512-uGSSsbrtJrLduti0Q1Q9+BF1/iFKaxGoQwjWOIVNJv0o6omrdyR8ct37m4xIl5Zzpkp69Kkmvom7QFTtue89YQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@typescript-eslint/tsconfig-utils@8.48.0':
-    resolution: {integrity: sha512-WNebjBdFdyu10sR1M4OXTt2OkMd5KWIL+LLfeH9KhgP+jzfDV/LI3eXzwJ1s9+Yc0Kzo2fQCdY/OpdusCMmh6w==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      typescript: '>=4.8.4 <6.0.0'
-
-  '@typescript-eslint/type-utils@8.48.0':
-    resolution: {integrity: sha512-zbeVaVqeXhhab6QNEKfK96Xyc7UQuoFWERhEnj3mLVnUWrQnv15cJNseUni7f3g557gm0e46LZ6IJ4NJVOgOpw==}
+  '@typescript-eslint/parser@8.48.1':
+    resolution: {integrity: sha512-PC0PDZfJg8sP7cmKe6L3QIL8GZwU5aRvUFedqSIpw3B+QjRSUZeeITC2M5XKeMXEzL6wccN196iy3JLwKNvDVA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <6.0.0'
 
-  '@typescript-eslint/types@8.48.0':
-    resolution: {integrity: sha512-cQMcGQQH7kwKoVswD1xdOytxQR60MWKM1di26xSUtxehaDs/32Zpqsu5WJlXTtTTqyAVK8R7hvsUnIXRS+bjvA==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@typescript-eslint/typescript-estree@8.48.0':
-    resolution: {integrity: sha512-ljHab1CSO4rGrQIAyizUS6UGHHCiAYhbfcIZ1zVJr5nMryxlXMVWS3duFPSKvSUbFPwkXMFk1k0EMIjub4sRRQ==}
+  '@typescript-eslint/project-service@8.48.1':
+    resolution: {integrity: sha512-HQWSicah4s9z2/HifRPQ6b6R7G+SBx64JlFQpgSSHWPKdvCZX57XCbszg/bapbRsOEv42q5tayTYcEFpACcX1w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       typescript: '>=4.8.4 <6.0.0'
 
-  '@typescript-eslint/utils@8.48.0':
-    resolution: {integrity: sha512-yTJO1XuGxCsSfIVt1+1UrLHtue8xz16V8apzPYI06W0HbEbEWHxHXgZaAgavIkoh+GeV6hKKd5jm0sS6OYxWXQ==}
+  '@typescript-eslint/scope-manager@8.48.1':
+    resolution: {integrity: sha512-rj4vWQsytQbLxC5Bf4XwZ0/CKd362DkWMUkviT7DCS057SK64D5lH74sSGzhI6PDD2HCEq02xAP9cX68dYyg1w==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/tsconfig-utils@8.48.1':
+    resolution: {integrity: sha512-k0Jhs4CpEffIBm6wPaCXBAD7jxBtrHjrSgtfCjUvPp9AZ78lXKdTR8fxyZO5y4vWNlOvYXRtngSZNSn+H53Jkw==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/type-utils@8.48.1':
+    resolution: {integrity: sha512-1jEop81a3LrJQLTf/1VfPQdhIY4PlGDBc/i67EVWObrtvcziysbLN3oReexHOM6N3jyXgCrkBsZpqwH0hiDOQg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <6.0.0'
 
-  '@typescript-eslint/visitor-keys@8.48.0':
-    resolution: {integrity: sha512-T0XJMaRPOH3+LBbAfzR2jalckP1MSG/L9eUtY0DEzUyVaXJ/t6zN0nR7co5kz0Jko/nkSYCBRkz1djvjajVTTg==}
+  '@typescript-eslint/types@8.48.1':
+    resolution: {integrity: sha512-+fZ3LZNeiELGmimrujsDCT4CRIbq5oXdHe7chLiW8qzqyPMnn1puNstCrMNVAqwcl2FdIxkuJ4tOs/RFDBVc/Q==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@typescript-eslint/typescript-estree@8.48.1':
+    resolution: {integrity: sha512-/9wQ4PqaefTK6POVTjJaYS0bynCgzh6ClJHGSBj06XEHjkfylzB+A3qvyaXnErEZSaxhIo4YdyBgq6j4RysxDg==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/utils@8.48.1':
+    resolution: {integrity: sha512-fAnhLrDjiVfey5wwFRwrweyRlCmdz5ZxXz2G/4cLn0YDLjTapmN4gcCsTBR1N2rWnZSDeWpYtgLDsJt+FpmcwA==}
+    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+      typescript: '>=4.8.4 <6.0.0'
+
+  '@typescript-eslint/visitor-keys@8.48.1':
+    resolution: {integrity: sha512-BmxxndzEWhE4TIEEMBs8lP3MBWN3jFPs/p6gPm/wkv02o41hI6cq9AuSmGAaTTHPtA1FTi2jBre4A9rm5ZmX+Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@udecode/cn@52.0.1':
@@ -7198,24 +7198,24 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@zenstackhq/better-auth@3.0.0-beta.26':
-    resolution: {integrity: sha512-ezGETHqlttifYEhtzH1oysdZW8qR+HiIJY394foryNIDbfVcpOr8AkRtSbaF31Zm+GYt9hrL/2K8gNg5XZcDhA==}
+  '@zenstackhq/better-auth@3.0.0-beta.27':
+    resolution: {integrity: sha512-rrJut5HGTVoki0+O5mVaNMrEIWljdV7HvSb3EKGNatIs+JSROGTx2hNXH0wUbz3R01W3UX1r70H8cLPTHIhGBA==}
     peerDependencies:
       '@better-auth/core': ^1.3.0
       better-auth: ^1.3.0
 
-  '@zenstackhq/cli@3.0.0-beta.26':
-    resolution: {integrity: sha512-Q+KZUEUW7E/g88Qo3VzTEung9194tAziEWARwnW+SWUMWzWdezvzfLTM0sa4ovEIJ7NIbBu3atEJjrVAdrBhAw==}
+  '@zenstackhq/cli@3.0.0-beta.27':
+    resolution: {integrity: sha512-5+d/zvubFkABHyKLnHNa5dGauSxLpqTxXPgAAXejqA3tjAsUmHyJVluR9UStC8xk72R7xHgWYjDhNPxhdhq2YA==}
     hasBin: true
 
-  '@zenstackhq/common-helpers@3.0.0-beta.26':
-    resolution: {integrity: sha512-IceSgKuoaqw9v5f6hSrQbTXbUkM/34u1l8geZPcbL99SZdLnZrAQEXfRnKrid4bnxhQpZWODwpW5X7jk9cPoPg==}
+  '@zenstackhq/common-helpers@3.0.0-beta.27':
+    resolution: {integrity: sha512-GEUdX5Oxol0QAtkWBwvHnKinEOPFh1pvg0JG8Vb9RoOcK9+ssHxyZtq3ZHDyE7dy0V0lAmzpCLwz8wFrsem3Qg==}
 
-  '@zenstackhq/language@3.0.0-beta.26':
-    resolution: {integrity: sha512-+RPgBQl0eJ/zLhBw14MmustTpioMfx/1NSxyMIsZvXxMcZX84ZxPfuKmuSiLAKZS7GdkaVqY6hewBIEmrCkSeg==}
+  '@zenstackhq/language@3.0.0-beta.27':
+    resolution: {integrity: sha512-9E48JU+CKQJ/6a2EL1Eicbk5udVR1EnOlZ43RMxO0KePpbghhrtAI92ibf2yEYrLtE89sodRwMPZEX2xJ/1eyQ==}
 
-  '@zenstackhq/orm@3.0.0-beta.26':
-    resolution: {integrity: sha512-JYMYeGdHC+Woipfresu2e+V0HeP53GoJw+embfkdhE3eMNtY8uh+Djkh8vJbJPD2j73Nj61mFtGgiLk+QuYgYQ==}
+  '@zenstackhq/orm@3.0.0-beta.27':
+    resolution: {integrity: sha512-vg6Y6qRTTgMoMy+wC2Lahthbw0fieTDz1vfNWy7S7DySpnwy9HIA3P7JhFkOhiTnxgOIgiNmMDYYEAQryLHPHg==}
     peerDependencies:
       better-sqlite3: ^12.2.0
       pg: ^8.13.1
@@ -7229,19 +7229,19 @@ packages:
       sql.js:
         optional: true
 
-  '@zenstackhq/plugin-policy@3.0.0-beta.26':
-    resolution: {integrity: sha512-mdlSaGEasVnm+4cUB6PXOaZuc+0+dAEi3gcLccfxOx7/JAnktHPtN8LntJ6oz6/jAkehu5Gu2xdppAGY/ITi1A==}
+  '@zenstackhq/plugin-policy@3.0.0-beta.27':
+    resolution: {integrity: sha512-y0s9CVpv0jZNhZX16MR+JVhFOJIQQyMEtEIUWjD1mZzIqYqQr1CnKqs+qhLp3rBF07g9ltQ6TtvdVsH604jhNA==}
     peerDependencies:
       kysely: ~0.28.8
 
-  '@zenstackhq/schema@3.0.0-beta.26':
-    resolution: {integrity: sha512-Pswmhf6wGNo8/3goLulWoIbo2SmdxudQ4UKHxkBWT6uFq/XcLwYoARzuksGjhX6gADMBPdpwrdo9hVj41R+DLg==}
+  '@zenstackhq/schema@3.0.0-beta.27':
+    resolution: {integrity: sha512-T9Wb7erqq8anHA5VIN73uI+xIXnKUkjfA5w7VwO4a8jL1PuY6k2cFtigLud7exkc305Q6DXuk3nDaYCvaSpqVg==}
 
-  '@zenstackhq/sdk@3.0.0-beta.26':
-    resolution: {integrity: sha512-vevl1uqRyxms+ba50yAkfyt5ey9uBA+XgAnyA1Oz/+hLTdSpTKoXtrvyB1IOyXnBxCRMPt5QRWmOq2qkoh535g==}
+  '@zenstackhq/sdk@3.0.0-beta.27':
+    resolution: {integrity: sha512-LDl+/sPp9rctO4eGg2WRVXoBTxP19BwvrVe2zVq738/qhC5zU6ikmDXRk4kvnk26a8PtKn6MUkBPFb/OuuJ8oQ==}
 
-  '@zenstackhq/server@3.0.0-beta.26':
-    resolution: {integrity: sha512-r8oyUiYvVmK187I6bSezVHM/H5yD12vDJj77Q+H2R3DeNiQ2iHT/Jf1P33dv0ksOHS4H0chIKgDiT/X91XaKSA==}
+  '@zenstackhq/server@3.0.0-beta.27':
+    resolution: {integrity: sha512-1KhwTrN1G66PA1ZTpP0w/n19i9pWcI8ZdMQvFFYmhhsS8lpJWU9ipdiZOA6Z8HeBIDYTnkxV49wVvsKGifIJMQ==}
     peerDependencies:
       '@sveltejs/kit': ^2.0.0
       elysia: ^1.3.0
@@ -7270,8 +7270,8 @@ packages:
       nuxt:
         optional: true
 
-  '@zenstackhq/tanstack-query@3.0.0-beta.26':
-    resolution: {integrity: sha512-J606A2J+GVj4Nvk4m5NcdtLp6MhDp+M91E/RyQaQ7YvkSrlvQeQ7pHA0ASniFGivC3DWokVkDzIBmRiA1pkpyA==}
+  '@zenstackhq/tanstack-query@3.0.0-beta.27':
+    resolution: {integrity: sha512-wBo/4un3AbTeXK4Ca39u9d0pxb0RseAvpwh2COhgX5JoXdAkdc4fXYyN9r6B0PD8n2G+CyJq91GfOE6lFkVg+Q==}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
       '@tanstack/svelte-query': ^5.0.0
@@ -8088,8 +8088,8 @@ packages:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
 
-  cookie@1.0.2:
-    resolution: {integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==}
+  cookie@1.1.1:
+    resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
 
   copy-anything@4.0.5:
@@ -8866,8 +8866,8 @@ packages:
   elkjs@0.9.3:
     resolution: {integrity: sha512-f/ZeWvW/BCXbhGEf1Ujp29EASo/lk1FDnETgNKwJrsVvGZhUWCZyg3xLJjAsxfOmt8KjswHmI5EwCQcPMpOYhQ==}
 
-  elysia@1.4.16:
-    resolution: {integrity: sha512-KZtKN160/bdWVKg2hEgyoNXY8jRRquc+m6PboyisaLZL891I+Ufb7Ja6lDAD7vMQur8sLEWIcidZOzj5lWw9UA==}
+  elysia@1.4.17:
+    resolution: {integrity: sha512-GcR7tgxk0+NgMCEqmXMs/xgND4XpmIzUdSdwchcQbYFeFisBcw9cmsvSpI10i160idwtlVyaRXX9K9IZBqnA7Q==}
     peerDependencies:
       '@sinclair/typebox': '>= 0.34.0 < 1'
       '@types/bun': '>= 1.2.0'
@@ -13705,8 +13705,8 @@ packages:
     resolution: {integrity: sha512-3KS2b+kL7fsuk/eJZ7EQdnEmQoaho/r6KUef7hxvltNA5DR8NAUM+8wJMbJyZ4G9/7i3v5zPBIMN5aybAh2/Jg==}
     engines: {node: '>= 0.4'}
 
-  typescript-eslint@8.48.0:
-    resolution: {integrity: sha512-fcKOvQD9GUn3Xw63EgiDqhvWJ5jsyZUaekl3KVpGsDJnN46WJTe3jWxtQP9lMZm1LJNkFLlTaWAxK2vUQR+cqw==}
+  typescript-eslint@8.48.1:
+    resolution: {integrity: sha512-FbOKN1fqNoXp1hIl5KYpObVrp0mCn+CLgn479nmu2IsRMrx2vyv74MmsBLVlhg8qVwNFGbXSp8fh1zp8pEoC2A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
@@ -16217,23 +16217,23 @@ snapshots:
 
   '@electric-sql/pglite@0.3.2': {}
 
-  '@elysiajs/cors@1.4.0(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
+  '@elysiajs/cors@1.4.0(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
     dependencies:
-      elysia: 1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+      elysia: 1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
 
-  '@elysiajs/eden@1.4.5(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
+  '@elysiajs/eden@1.4.5(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
     dependencies:
-      elysia: 1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+      elysia: 1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
 
-  '@elysiajs/node@1.4.2(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
+  '@elysiajs/node@1.4.2(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
     dependencies:
       crossws: 0.4.1(srvx@0.9.5)
-      elysia: 1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+      elysia: 1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
       srvx: 0.9.5
 
-  '@elysiajs/openapi@1.4.11(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
+  '@elysiajs/openapi@1.4.11(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))':
     dependencies:
-      elysia: 1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+      elysia: 1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
 
   '@emnapi/core@1.7.0':
     dependencies:
@@ -17553,7 +17553,7 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@platejs/ai@52.0.4(platejs@52.0.1(@types/react@19.2.2)(immer@10.2.0)(react-dom@19.1.1(react@19.1.1))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.1.1))(react@19.1.1)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.1)))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)':
+  '@platejs/ai@52.0.6(platejs@52.0.1(@types/react@19.2.2)(immer@10.2.0)(react-dom@19.1.1(react@19.1.1))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.1.1))(react@19.1.1)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.1)))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)':
     dependencies:
       '@platejs/markdown': 52.0.4(platejs@52.0.1(@types/react@19.2.2)(immer@10.2.0)(react-dom@19.1.1(react@19.1.1))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.1.1))(react@19.1.1)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.1)))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.3)
       '@platejs/selection': 52.0.1(platejs@52.0.1(@types/react@19.2.2)(immer@10.2.0)(react-dom@19.1.1(react@19.1.1))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.2)(bufferutil@4.0.9)(react@19.1.1))(react@19.1.1)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.1)))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -21109,14 +21109,14 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@typescript-eslint/eslint-plugin@8.48.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)':
+  '@typescript-eslint/eslint-plugin@8.48.1(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.2
-      '@typescript-eslint/parser': 8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
-      '@typescript-eslint/scope-manager': 8.48.0
-      '@typescript-eslint/type-utils': 8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
-      '@typescript-eslint/utils': 8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
-      '@typescript-eslint/visitor-keys': 8.48.0
+      '@typescript-eslint/parser': 8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/scope-manager': 8.48.1
+      '@typescript-eslint/type-utils': 8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/visitor-keys': 8.48.1
       eslint: 9.39.1(jiti@2.6.1)
       graphemer: 1.4.0
       ignore: 7.0.5
@@ -21126,41 +21126,41 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)':
+  '@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/scope-manager': 8.48.0
-      '@typescript-eslint/types': 8.48.0
-      '@typescript-eslint/typescript-estree': 8.48.0(typescript@5.9.3)
-      '@typescript-eslint/visitor-keys': 8.48.0
+      '@typescript-eslint/scope-manager': 8.48.1
+      '@typescript-eslint/types': 8.48.1
+      '@typescript-eslint/typescript-estree': 8.48.1(typescript@5.9.3)
+      '@typescript-eslint/visitor-keys': 8.48.1
       debug: 4.4.3
       eslint: 9.39.1(jiti@2.6.1)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/project-service@8.48.0(typescript@5.9.3)':
+  '@typescript-eslint/project-service@8.48.1(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.48.0(typescript@5.9.3)
-      '@typescript-eslint/types': 8.48.0
+      '@typescript-eslint/tsconfig-utils': 8.48.1(typescript@5.9.3)
+      '@typescript-eslint/types': 8.48.1
       debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/scope-manager@8.48.0':
+  '@typescript-eslint/scope-manager@8.48.1':
     dependencies:
-      '@typescript-eslint/types': 8.48.0
-      '@typescript-eslint/visitor-keys': 8.48.0
+      '@typescript-eslint/types': 8.48.1
+      '@typescript-eslint/visitor-keys': 8.48.1
 
-  '@typescript-eslint/tsconfig-utils@8.48.0(typescript@5.9.3)':
+  '@typescript-eslint/tsconfig-utils@8.48.1(typescript@5.9.3)':
     dependencies:
       typescript: 5.9.3
 
-  '@typescript-eslint/type-utils@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)':
+  '@typescript-eslint/type-utils@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/types': 8.48.0
-      '@typescript-eslint/typescript-estree': 8.48.0(typescript@5.9.3)
-      '@typescript-eslint/utils': 8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/types': 8.48.1
+      '@typescript-eslint/typescript-estree': 8.48.1(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       debug: 4.4.3
       eslint: 9.39.1(jiti@2.6.1)
       ts-api-utils: 2.1.0(typescript@5.9.3)
@@ -21168,14 +21168,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/types@8.48.0': {}
+  '@typescript-eslint/types@8.48.1': {}
 
-  '@typescript-eslint/typescript-estree@8.48.0(typescript@5.9.3)':
+  '@typescript-eslint/typescript-estree@8.48.1(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/project-service': 8.48.0(typescript@5.9.3)
-      '@typescript-eslint/tsconfig-utils': 8.48.0(typescript@5.9.3)
-      '@typescript-eslint/types': 8.48.0
-      '@typescript-eslint/visitor-keys': 8.48.0
+      '@typescript-eslint/project-service': 8.48.1(typescript@5.9.3)
+      '@typescript-eslint/tsconfig-utils': 8.48.1(typescript@5.9.3)
+      '@typescript-eslint/types': 8.48.1
+      '@typescript-eslint/visitor-keys': 8.48.1
       debug: 4.4.3
       minimatch: 9.0.5
       semver: 7.7.3
@@ -21185,20 +21185,20 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/utils@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)':
+  '@typescript-eslint/utils@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
       '@eslint-community/eslint-utils': 4.9.0(eslint@9.39.1(jiti@2.6.1))
-      '@typescript-eslint/scope-manager': 8.48.0
-      '@typescript-eslint/types': 8.48.0
-      '@typescript-eslint/typescript-estree': 8.48.0(typescript@5.9.3)
+      '@typescript-eslint/scope-manager': 8.48.1
+      '@typescript-eslint/types': 8.48.1
+      '@typescript-eslint/typescript-estree': 8.48.1(typescript@5.9.3)
       eslint: 9.39.1(jiti@2.6.1)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/visitor-keys@8.48.0':
+  '@typescript-eslint/visitor-keys@8.48.1':
     dependencies:
-      '@typescript-eslint/types': 8.48.0
+      '@typescript-eslint/types': 8.48.1
       eslint-visitor-keys: 4.2.1
 
   '@udecode/cn@52.0.1(@types/react@19.2.2)(class-variance-authority@0.7.1)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(tailwind-merge@3.4.0)':
@@ -21395,12 +21395,12 @@ snapshots:
   '@xtuc/long@4.2.2':
     optional: true
 
-  '@zenstackhq/better-auth@3.0.0-beta.26(@better-auth/core@1.4.3(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.1.0)(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1))(better-auth@1.4.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)':
+  '@zenstackhq/better-auth@3.0.0-beta.27(@better-auth/core@1.4.3(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.1.0)(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1))(better-auth@1.4.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)':
     dependencies:
       '@better-auth/core': 1.4.3(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.1.0)(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1)
-      '@zenstackhq/common-helpers': 3.0.0-beta.26
-      '@zenstackhq/language': 3.0.0-beta.26
-      '@zenstackhq/orm': 3.0.0-beta.26(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
+      '@zenstackhq/common-helpers': 3.0.0-beta.27
+      '@zenstackhq/language': 3.0.0-beta.27
+      '@zenstackhq/orm': 3.0.0-beta.27(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
       better-auth: 1.4.3(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.10)
       ts-pattern: 5.9.0
     transitivePeerDependencies:
@@ -21409,11 +21409,11 @@ snapshots:
       - sql.js
       - zod
 
-  '@zenstackhq/cli@3.0.0-beta.26(typescript@5.9.3)':
+  '@zenstackhq/cli@3.0.0-beta.27(typescript@5.9.3)':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.26
-      '@zenstackhq/language': 3.0.0-beta.26
-      '@zenstackhq/sdk': 3.0.0-beta.26
+      '@zenstackhq/common-helpers': 3.0.0-beta.27
+      '@zenstackhq/language': 3.0.0-beta.27
+      '@zenstackhq/sdk': 3.0.0-beta.27
       colors: 1.4.0
       commander: 8.3.0
       execa: 9.6.0
@@ -21429,21 +21429,21 @@ snapshots:
       - supports-color
       - typescript
 
-  '@zenstackhq/common-helpers@3.0.0-beta.26': {}
+  '@zenstackhq/common-helpers@3.0.0-beta.27': {}
 
-  '@zenstackhq/language@3.0.0-beta.26':
+  '@zenstackhq/language@3.0.0-beta.27':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.26
+      '@zenstackhq/common-helpers': 3.0.0-beta.27
       langium: 3.5.0
       pluralize: 8.0.0
       ts-pattern: 5.9.0
       vscode-languageserver: 9.0.1
 
-  '@zenstackhq/orm@3.0.0-beta.26(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)':
+  '@zenstackhq/orm@3.0.0-beta.27(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)':
     dependencies:
       '@paralleldrive/cuid2': 2.3.1
-      '@zenstackhq/common-helpers': 3.0.0-beta.26
-      '@zenstackhq/schema': 3.0.0-beta.26
+      '@zenstackhq/common-helpers': 3.0.0-beta.27
+      '@zenstackhq/schema': 3.0.0-beta.27
       decimal.js: 10.6.0
       json-stable-stringify: 1.3.0
       kysely: 0.28.8
@@ -21458,10 +21458,10 @@ snapshots:
       better-sqlite3: 12.4.1
       pg: 8.16.3
 
-  '@zenstackhq/plugin-policy@3.0.0-beta.26(better-sqlite3@12.4.1)(kysely@0.28.8)(pg@8.16.3)(zod@4.1.13)':
+  '@zenstackhq/plugin-policy@3.0.0-beta.27(better-sqlite3@12.4.1)(kysely@0.28.8)(pg@8.16.3)(zod@4.1.13)':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.26
-      '@zenstackhq/orm': 3.0.0-beta.26(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
+      '@zenstackhq/common-helpers': 3.0.0-beta.27
+      '@zenstackhq/orm': 3.0.0-beta.27(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
       kysely: 0.28.8
       ts-pattern: 5.9.0
     transitivePeerDependencies:
@@ -21470,22 +21470,22 @@ snapshots:
       - sql.js
       - zod
 
-  '@zenstackhq/schema@3.0.0-beta.26':
+  '@zenstackhq/schema@3.0.0-beta.27':
     dependencies:
       decimal.js: 10.6.0
 
-  '@zenstackhq/sdk@3.0.0-beta.26':
+  '@zenstackhq/sdk@3.0.0-beta.27':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.26
-      '@zenstackhq/language': 3.0.0-beta.26
+      '@zenstackhq/common-helpers': 3.0.0-beta.27
+      '@zenstackhq/language': 3.0.0-beta.27
       langium: 3.5.0
       ts-pattern: 5.9.0
       typescript: 5.9.3
 
-  '@zenstackhq/server@3.0.0-beta.26(better-sqlite3@12.4.1)(elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(hono@4.7.10)(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.13)':
+  '@zenstackhq/server@3.0.0-beta.27(better-sqlite3@12.4.1)(elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(hono@4.7.10)(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0))(pg@8.16.3)(zod@4.1.13)':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.26
-      '@zenstackhq/orm': 3.0.0-beta.26(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
+      '@zenstackhq/common-helpers': 3.0.0-beta.27
+      '@zenstackhq/orm': 3.0.0-beta.27(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
       decimal.js: 10.6.0
       superjson: 2.2.6
       ts-japi: 1.12.1
@@ -21494,7 +21494,7 @@ snapshots:
       zod: 4.1.13
       zod-validation-error: 4.0.2(zod@4.1.13)
     optionalDependencies:
-      elysia: 1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+      elysia: 1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
       hono: 4.7.10
       next: 16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(sass@1.51.0)
     transitivePeerDependencies:
@@ -21502,11 +21502,11 @@ snapshots:
       - pg
       - sql.js
 
-  '@zenstackhq/tanstack-query@3.0.0-beta.26(@tanstack/react-query@5.90.11(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)':
+  '@zenstackhq/tanstack-query@3.0.0-beta.27(@tanstack/react-query@5.90.11(react@19.1.1))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)':
     dependencies:
-      '@zenstackhq/common-helpers': 3.0.0-beta.26
-      '@zenstackhq/orm': 3.0.0-beta.26(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
-      '@zenstackhq/schema': 3.0.0-beta.26
+      '@zenstackhq/common-helpers': 3.0.0-beta.27
+      '@zenstackhq/orm': 3.0.0-beta.27(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.1.13)
+      '@zenstackhq/schema': 3.0.0-beta.27
       decimal.js: 10.6.0
       superjson: 2.2.6
     optionalDependencies:
@@ -22458,7 +22458,7 @@ snapshots:
 
   cookie@0.7.2: {}
 
-  cookie@1.0.2: {}
+  cookie@1.1.1: {}
 
   copy-anything@4.0.5:
     dependencies:
@@ -23081,10 +23081,10 @@ snapshots:
 
   elkjs@0.9.3: {}
 
-  elysia@1.4.16(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3):
+  elysia@1.4.17(@sinclair/typebox@0.34.41)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.41))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3):
     dependencies:
       '@sinclair/typebox': 0.34.41
-      cookie: 1.0.2
+      cookie: 1.1.1
       exact-mirror: 0.2.3(@sinclair/typebox@0.34.41)
       fast-decode-uri-component: 1.0.1
       file-type: 21.0.0
@@ -23400,17 +23400,17 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.1(jiti@2.6.1)):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.1(jiti@2.6.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
-      '@typescript-eslint/parser': 8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       eslint: 9.39.1(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -23421,7 +23421,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.1(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.1(jiti@2.6.1))
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint@9.39.1(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -23433,7 +23433,7 @@ snapshots:
       string.prototype.trimend: 1.0.9
       tsconfig-paths: 3.15.0
     optionalDependencies:
-      '@typescript-eslint/parser': 8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
@@ -29162,12 +29162,12 @@ snapshots:
       possible-typed-array-names: 1.1.0
       reflect.getprototypeof: 1.0.10
 
-  typescript-eslint@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3):
+  typescript-eslint@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.48.0(@typescript-eslint/parser@8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
-      '@typescript-eslint/parser': 8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
-      '@typescript-eslint/typescript-estree': 8.48.0(typescript@5.9.3)
-      '@typescript-eslint/utils': 8.48.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/eslint-plugin': 8.48.1(@typescript-eslint/parser@8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/parser': 8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+      '@typescript-eslint/typescript-estree': 8.48.1(typescript@5.9.3)
+      '@typescript-eslint/utils': 8.48.1(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       eslint: 9.39.1(jiti@2.6.1)
       typescript: 5.9.3
     transitivePeerDependencies:
