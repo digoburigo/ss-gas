@@ -590,8 +590,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
       '@iconify/json':
-        specifier: ^2.2.414
-        version: 2.2.414
+        specifier: ^2.2.415
+        version: 2.2.415
       '@svgr/core':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.9.3)
@@ -641,8 +641,8 @@ importers:
         specifier: 'catalog:'
         version: 3.7.4
       react-grab:
-        specifier: 0.0.71
-        version: 0.0.71(@types/react@19.1.17)(react@19.1.2)
+        specifier: 0.0.72
+        version: 0.0.72(@types/react@19.1.17)(react@19.1.2)
       react-scan:
         specifier: ^0.4.3
         version: 0.4.3(@types/react@19.1.17)(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.2(react@19.1.2))(react@19.1.2)(sass@1.51.0))(react-dom@19.1.2(react@19.1.2))(react@19.1.2)(rollup@2.79.2)
@@ -806,8 +806,8 @@ importers:
   packages/ui:
     dependencies:
       '@ai-sdk/react':
-        specifier: ^2.0.107
-        version: 2.0.107(react@19.1.2)(zod@4.1.13)
+        specifier: ^2.0.108
+        version: 2.0.108(react@19.1.2)(zod@4.1.13)
       '@ariakit/react':
         specifier: ^0.4.20
         version: 0.4.20(react-dom@19.1.2(react@19.1.2))(react@19.1.2)
@@ -1007,8 +1007,8 @@ importers:
         specifier: ^7.3.3
         version: 7.3.3(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.2(react@19.1.2))(react@19.1.2)(sass@1.51.0))(react@19.1.2)(uploadthing@7.7.4(next@16.0.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.2(react@19.1.2))(react@19.1.2)(sass@1.51.0))(tailwindcss@4.1.17))
       ai:
-        specifier: ^5.0.107
-        version: 5.0.107(zod@4.1.13)
+        specifier: ^5.0.108
+        version: 5.0.108(zod@4.1.13)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1355,8 +1355,8 @@ packages:
     resolution: {integrity: sha512-6o7Y2SeO9vFKB8lArHXehNuusnpddKPk7xqL7T2/b+OvXMRIXUO1rR4wcv1hAFUAT9avGZshty3Wlua/XA7TvA==}
     engines: {node: '>=18'}
 
-  '@ai-sdk/react@2.0.107':
-    resolution: {integrity: sha512-rv0u+tAi2r2zJu2uSLXcC3TBgGrkQIWXRM+i6us6qcGmYQ2kOu2VYg+lxviOSGPhL9PVebvTlN5x8mf3rDqX+w==}
+  '@ai-sdk/react@2.0.108':
+    resolution: {integrity: sha512-X2rha7Z3QoUQPJAj6MnpkVr9itArsxAzt4H+ZD1XL02d86TG/T+Pylopij4Rsy7hvARqxyxWNcRXx6rgoXGcFQ==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^18 || ^19 || ^19.0.0-rc
@@ -3160,8 +3160,8 @@ packages:
       prettier-plugin-ember-template-tag:
         optional: true
 
-  '@iconify/json@2.2.414':
-    resolution: {integrity: sha512-7aYnEansnTQCuwK0HQjcxWWH/mzSDGbnRgtHnF3PNO0QXhylOpIPHuC+l2vBBIxC7CMrQd87U3UpI+1jfB5nag==}
+  '@iconify/json@2.2.415':
+    resolution: {integrity: sha512-gHme4AWzcKR53vbw3yB/IWCSo+k7c2zB+ml796LoNUGkcCajSpPee6ei4L6QBKUh7Dc9I4DLILDcmnZAgktqLw==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -7324,8 +7324,8 @@ packages:
     resolution: {integrity: sha512-4I7Td01quW/RpocfNayFdFVk1qSuoh0E7JrbRJ16nH01HhKFQ88INq9Sd+nd72zqRySlr9BmDA8xlEJ6vJMrYA==}
     engines: {node: '>=8'}
 
-  ai@5.0.107:
-    resolution: {integrity: sha512-laZlS9ZC/DZfSaxPgrBqI4mM+kxRvTPBBQfa74ceBFskkunZKEsaGVFNEs4cfyGa3nCCCl1WO/fjxixp4V8Zag==}
+  ai@5.0.108:
+    resolution: {integrity: sha512-Jex3Lb7V41NNpuqJHKgrwoU6BCLHdI1Pg4qb4GJH4jRIDRXUBySJErHjyN4oTCwbiYCeb/8II9EnqSRPq9EifA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -12329,8 +12329,8 @@ packages:
     peerDependencies:
       react: '>=17.0.0'
 
-  react-grab@0.0.71:
-    resolution: {integrity: sha512-61fj0Aw1iZ39S/ZTkD0+YBpv2/gIDwAg2tGIp6KlRsOyZKIIrwm6Z6bGpXBcfQ4V5j3dUFpMvZgHkaxc08A72g==}
+  react-grab@0.0.72:
+    resolution: {integrity: sha512-eowir4PyopiDEJdhNLq0mE0eMwv1EQNy+/1qGdRswJN/JJXT+Uww8hvRhrQIihlVwycY+0nVOaKoBGiORloQ5g==}
 
   react-hook-form@7.68.0:
     resolution: {integrity: sha512-oNN3fjrZ/Xo40SWlHf1yCjlMK417JxoSJVUXQjGdvdRCU07NTFei1i1f8ApUAts+IVh14e4EdakeLEA+BEAs/Q==}
@@ -14650,10 +14650,10 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@2.0.107(react@19.1.2)(zod@4.1.13)':
+  '@ai-sdk/react@2.0.108(react@19.1.2)(zod@4.1.13)':
     dependencies:
       '@ai-sdk/provider-utils': 3.0.18(zod@4.1.13)
-      ai: 5.0.107(zod@4.1.13)
+      ai: 5.0.108(zod@4.1.13)
       react: 19.1.2
       swr: 2.3.6(react@19.1.2)
       throttleit: 2.1.0
@@ -17102,7 +17102,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@iconify/json@2.2.414':
+  '@iconify/json@2.2.415':
     dependencies:
       '@iconify/types': 2.0.0
       pathe: 2.0.3
@@ -22380,7 +22380,7 @@ snapshots:
       clean-stack: 2.2.0
       indent-string: 4.0.0
 
-  ai@5.0.107(zod@4.1.13):
+  ai@5.0.108(zod@4.1.13):
     dependencies:
       '@ai-sdk/gateway': 2.0.18(zod@4.1.13)
       '@ai-sdk/provider': 2.0.0
@@ -28625,7 +28625,7 @@ snapshots:
     dependencies:
       react: 19.1.2
 
-  react-grab@0.0.71(@types/react@19.1.17)(react@19.1.2):
+  react-grab@0.0.72(@types/react@19.1.17)(react@19.1.2):
     dependencies:
       bippy: 0.5.25(@types/react@19.1.17)(react@19.1.2)
       solid-js: 1.9.10
