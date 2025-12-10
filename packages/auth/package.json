@@ -30,7 +30,7 @@
     "@acme/prettier-config": "workspace:*",
     "@acme/tsconfig": "workspace:*",
     "@better-auth/cli": "catalog:",
-    "@types/pg": "^8.15.6",
+    "@types/pg": "^8.16.0",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
