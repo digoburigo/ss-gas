@@ -1,51 +1,51 @@
 {
-	"name": "create-t3-turbo",
-	"private": true,
-	"engines": {
-		"node": "^24.11.1",
-		"pnpm": "^10.23.0"
-	},
-	"packageManager": "pnpm@10.23.0",
-	"scripts": {
-		"build": "turbo run build",
-		"clean": "git clean -xdf node_modules .turbo",
-		"clean:workspaces": "turbo run clean",
-		"auth:generate": "pnpm -F @acme/auth generate",
-		"db:push": "turbo -F @acme/zen-v3 push",
-		"db:studio": "turbo -F @acme/zen-v3 studio",
-		"dev": "turbo watch dev --continue",
-		"dev:spa": "turbo watch dev -F @acme/web... -F @acme/server...",
-		"dev:web": "turbo watch dev -F @acme/web...",
-		"dev:server": "turbo watch dev -F @acme/server...",
-		"dev:start": "turbo watch dev -F @acme/tanstack-start...",
-		"dev:expo:ios": "turbo watch dev:ios -F @acme/expo... -F @acme/server...",
-		"dev:expo:android": "turbo watch dev:android -F @acme/expo...",
-		"format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
-		"format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
-		"lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
-		"lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
-		"lint:ws": "pnpm dlx sherif@latest",
-		"postinstall": "pnpm lint:ws",
-		"typecheck": "turbo run typecheck",
-		"ui-add": "turbo run ui-add",
-		"android": "expo run:android",
-		"ios": "expo run:ios",
-		"ruler:apply": "pnpm dlx @intellectronica/ruler@latest apply --local-only",
-		"pkgs:check": "pnpm dlx npm-check-updates --deep --concurrency 16",
-		"pkgs:update": "pnpm dlx npm-check-updates --deep --concurrency 16 --upgrade"
-	},
-	"devDependencies": {
-		"@acme/prettier-config": "workspace:*",
-		"@turbo/gen": "^2.6.1",
-		"dotenv-cli": "^11.0.0",
-		"prettier": "catalog:",
-		"turbo": "^2.6.1",
-		"typescript": "catalog:"
-	},
-	"prettier": "@acme/prettier-config",
-	"pnpm": {
-		"overrides": {
-			"lightningcss": "1.30.1"
-		}
-	}
+  "name": "create-t3-turbo",
+  "private": true,
+  "engines": {
+    "node": "^24.11.1",
+    "pnpm": "^10.25.0"
+  },
+  "packageManager": "pnpm@10.25.0",
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "git clean -xdf node_modules .turbo",
+    "clean:workspaces": "turbo run clean",
+    "auth:generate": "pnpm -F @acme/auth generate",
+    "db:push": "turbo -F @acme/zen-v3 push",
+    "db:studio": "turbo -F @acme/zen-v3 studio",
+    "dev": "turbo watch dev --continue",
+    "dev:spa": "turbo watch dev -F @acme/web... -F @acme/server...",
+    "dev:web": "turbo watch dev -F @acme/web...",
+    "dev:server": "turbo watch dev -F @acme/server...",
+    "dev:start": "turbo watch dev -F @acme/tanstack-start...",
+    "dev:expo:ios": "turbo watch dev:ios -F @acme/expo... -F @acme/server...",
+    "dev:expo:android": "turbo watch dev:android -F @acme/expo...",
+    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
+    "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
+    "lint:ws": "pnpm dlx sherif@latest",
+    "postinstall": "pnpm lint:ws",
+    "typecheck": "turbo run typecheck",
+    "ui-add": "turbo run ui-add",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "ruler:apply": "pnpm dlx @intellectronica/ruler@latest apply --local-only",
+    "pkgs:check": "pnpm dlx npm-check-updates --deep --concurrency 16",
+    "pkgs:update": "pnpm dlx npm-check-updates --deep --concurrency 16 --upgrade"
+  },
+  "devDependencies": {
+    "@acme/prettier-config": "workspace:*",
+    "@turbo/gen": "^2.6.3",
+    "dotenv-cli": "^11.0.0",
+    "prettier": "catalog:",
+    "turbo": "^2.6.3",
+    "typescript": "catalog:"
+  },
+  "prettier": "@acme/prettier-config",
+  "pnpm": {
+    "overrides": {
+      "lightningcss": "1.30.1"
+    }
+  }
 }

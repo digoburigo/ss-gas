@@ -6,43 +6,46 @@
 /* eslint-disable */
 
 import type {
-	AggregateArgs as $AggregateArgs,
-	CountArgs as $CountArgs,
-	CreateArgs as $CreateArgs,
-	CreateManyAndReturnArgs as $CreateManyAndReturnArgs,
-	CreateManyArgs as $CreateManyArgs,
-	DeleteArgs as $DeleteArgs,
-	DeleteManyArgs as $DeleteManyArgs,
-	FindFirstArgs as $FindFirstArgs,
-	FindManyArgs as $FindManyArgs,
-	FindUniqueArgs as $FindUniqueArgs,
-	GroupByArgs as $GroupByArgs,
-	IncludeInput as $IncludeInput,
-	OmitInput as $OmitInput,
-	SelectIncludeOmit as $SelectIncludeOmit,
-	SelectInput as $SelectInput,
-	SimplifiedModelResult as $SimplifiedModelResult,
-	UpdateArgs as $UpdateArgs,
-	UpdateManyAndReturnArgs as $UpdateManyAndReturnArgs,
-	UpdateManyArgs as $UpdateManyArgs,
-	UpsertArgs as $UpsertArgs,
-	WhereInput as $WhereInput,
+  AggregateArgs as $AggregateArgs,
+  ClientOptions as $ClientOptions,
+  CountArgs as $CountArgs,
+  CreateArgs as $CreateArgs,
+  CreateManyAndReturnArgs as $CreateManyAndReturnArgs,
+  CreateManyArgs as $CreateManyArgs,
+  DeleteArgs as $DeleteArgs,
+  DeleteManyArgs as $DeleteManyArgs,
+  FindFirstArgs as $FindFirstArgs,
+  FindManyArgs as $FindManyArgs,
+  FindUniqueArgs as $FindUniqueArgs,
+  GroupByArgs as $GroupByArgs,
+  IncludeInput as $IncludeInput,
+  OmitInput as $OmitInput,
+  SelectIncludeOmit as $SelectIncludeOmit,
+  SelectInput as $SelectInput,
+  SimplifiedModelResult as $SimplifiedModelResult,
+  UpdateArgs as $UpdateArgs,
+  UpdateManyAndReturnArgs as $UpdateManyAndReturnArgs,
+  UpdateManyArgs as $UpdateManyArgs,
+  UpsertArgs as $UpsertArgs,
+  WhereInput as $WhereInput,
 } from "@zenstackhq/orm";
-import type { SchemaType as $Schema } from "./schema";
+
+import { type SchemaType as $Schema } from "./schema";
+
 export type UserFindManyArgs = $FindManyArgs<$Schema, "User">;
 export type UserFindUniqueArgs = $FindUniqueArgs<$Schema, "User">;
 export type UserFindFirstArgs = $FindFirstArgs<$Schema, "User">;
 export type UserCreateArgs = $CreateArgs<$Schema, "User">;
 export type UserCreateManyArgs = $CreateManyArgs<$Schema, "User">;
 export type UserCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"User"
+  $Schema,
+  "User"
 >;
 export type UserUpdateArgs = $UpdateArgs<$Schema, "User">;
 export type UserUpdateManyArgs = $UpdateManyArgs<$Schema, "User">;
 export type UserUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"User"
+  $Schema,
+  "User"
 >;
 export type UserUpsertArgs = $UpsertArgs<$Schema, "User">;
 export type UserDeleteArgs = $DeleteArgs<$Schema, "User">;
@@ -55,22 +58,23 @@ export type UserSelect = $SelectInput<$Schema, "User">;
 export type UserInclude = $IncludeInput<$Schema, "User">;
 export type UserOmit = $OmitInput<$Schema, "User">;
 export type UserGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "User", true>,
-> = $SimplifiedModelResult<$Schema, "User", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "User", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "User", Options, Args>;
 export type SessionFindManyArgs = $FindManyArgs<$Schema, "Session">;
 export type SessionFindUniqueArgs = $FindUniqueArgs<$Schema, "Session">;
 export type SessionFindFirstArgs = $FindFirstArgs<$Schema, "Session">;
 export type SessionCreateArgs = $CreateArgs<$Schema, "Session">;
 export type SessionCreateManyArgs = $CreateManyArgs<$Schema, "Session">;
 export type SessionCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Session"
+  $Schema,
+  "Session"
 >;
 export type SessionUpdateArgs = $UpdateArgs<$Schema, "Session">;
 export type SessionUpdateManyArgs = $UpdateManyArgs<$Schema, "Session">;
 export type SessionUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Session"
+  $Schema,
+  "Session"
 >;
 export type SessionUpsertArgs = $UpsertArgs<$Schema, "Session">;
 export type SessionDeleteArgs = $DeleteArgs<$Schema, "Session">;
@@ -83,22 +87,23 @@ export type SessionSelect = $SelectInput<$Schema, "Session">;
 export type SessionInclude = $IncludeInput<$Schema, "Session">;
 export type SessionOmit = $OmitInput<$Schema, "Session">;
 export type SessionGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Session", true>,
-> = $SimplifiedModelResult<$Schema, "Session", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Session", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Session", Options, Args>;
 export type AccountFindManyArgs = $FindManyArgs<$Schema, "Account">;
 export type AccountFindUniqueArgs = $FindUniqueArgs<$Schema, "Account">;
 export type AccountFindFirstArgs = $FindFirstArgs<$Schema, "Account">;
 export type AccountCreateArgs = $CreateArgs<$Schema, "Account">;
 export type AccountCreateManyArgs = $CreateManyArgs<$Schema, "Account">;
 export type AccountCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Account"
+  $Schema,
+  "Account"
 >;
 export type AccountUpdateArgs = $UpdateArgs<$Schema, "Account">;
 export type AccountUpdateManyArgs = $UpdateManyArgs<$Schema, "Account">;
 export type AccountUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Account"
+  $Schema,
+  "Account"
 >;
 export type AccountUpsertArgs = $UpsertArgs<$Schema, "Account">;
 export type AccountDeleteArgs = $DeleteArgs<$Schema, "Account">;
@@ -111,37 +116,38 @@ export type AccountSelect = $SelectInput<$Schema, "Account">;
 export type AccountInclude = $IncludeInput<$Schema, "Account">;
 export type AccountOmit = $OmitInput<$Schema, "Account">;
 export type AccountGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Account", true>,
-> = $SimplifiedModelResult<$Schema, "Account", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Account", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Account", Options, Args>;
 export type VerificationFindManyArgs = $FindManyArgs<$Schema, "Verification">;
 export type VerificationFindUniqueArgs = $FindUniqueArgs<
-	$Schema,
-	"Verification"
+  $Schema,
+  "Verification"
 >;
 export type VerificationFindFirstArgs = $FindFirstArgs<$Schema, "Verification">;
 export type VerificationCreateArgs = $CreateArgs<$Schema, "Verification">;
 export type VerificationCreateManyArgs = $CreateManyArgs<
-	$Schema,
-	"Verification"
+  $Schema,
+  "Verification"
 >;
 export type VerificationCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Verification"
+  $Schema,
+  "Verification"
 >;
 export type VerificationUpdateArgs = $UpdateArgs<$Schema, "Verification">;
 export type VerificationUpdateManyArgs = $UpdateManyArgs<
-	$Schema,
-	"Verification"
+  $Schema,
+  "Verification"
 >;
 export type VerificationUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Verification"
+  $Schema,
+  "Verification"
 >;
 export type VerificationUpsertArgs = $UpsertArgs<$Schema, "Verification">;
 export type VerificationDeleteArgs = $DeleteArgs<$Schema, "Verification">;
 export type VerificationDeleteManyArgs = $DeleteManyArgs<
-	$Schema,
-	"Verification"
+  $Schema,
+  "Verification"
 >;
 export type VerificationCountArgs = $CountArgs<$Schema, "Verification">;
 export type VerificationAggregateArgs = $AggregateArgs<$Schema, "Verification">;
@@ -151,37 +157,38 @@ export type VerificationSelect = $SelectInput<$Schema, "Verification">;
 export type VerificationInclude = $IncludeInput<$Schema, "Verification">;
 export type VerificationOmit = $OmitInput<$Schema, "Verification">;
 export type VerificationGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Verification", true>,
-> = $SimplifiedModelResult<$Schema, "Verification", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Verification", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Verification", Options, Args>;
 export type OrganizationFindManyArgs = $FindManyArgs<$Schema, "Organization">;
 export type OrganizationFindUniqueArgs = $FindUniqueArgs<
-	$Schema,
-	"Organization"
+  $Schema,
+  "Organization"
 >;
 export type OrganizationFindFirstArgs = $FindFirstArgs<$Schema, "Organization">;
 export type OrganizationCreateArgs = $CreateArgs<$Schema, "Organization">;
 export type OrganizationCreateManyArgs = $CreateManyArgs<
-	$Schema,
-	"Organization"
+  $Schema,
+  "Organization"
 >;
 export type OrganizationCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Organization"
+  $Schema,
+  "Organization"
 >;
 export type OrganizationUpdateArgs = $UpdateArgs<$Schema, "Organization">;
 export type OrganizationUpdateManyArgs = $UpdateManyArgs<
-	$Schema,
-	"Organization"
+  $Schema,
+  "Organization"
 >;
 export type OrganizationUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Organization"
+  $Schema,
+  "Organization"
 >;
 export type OrganizationUpsertArgs = $UpsertArgs<$Schema, "Organization">;
 export type OrganizationDeleteArgs = $DeleteArgs<$Schema, "Organization">;
 export type OrganizationDeleteManyArgs = $DeleteManyArgs<
-	$Schema,
-	"Organization"
+  $Schema,
+  "Organization"
 >;
 export type OrganizationCountArgs = $CountArgs<$Schema, "Organization">;
 export type OrganizationAggregateArgs = $AggregateArgs<$Schema, "Organization">;
@@ -191,22 +198,23 @@ export type OrganizationSelect = $SelectInput<$Schema, "Organization">;
 export type OrganizationInclude = $IncludeInput<$Schema, "Organization">;
 export type OrganizationOmit = $OmitInput<$Schema, "Organization">;
 export type OrganizationGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Organization", true>,
-> = $SimplifiedModelResult<$Schema, "Organization", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Organization", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Organization", Options, Args>;
 export type MemberFindManyArgs = $FindManyArgs<$Schema, "Member">;
 export type MemberFindUniqueArgs = $FindUniqueArgs<$Schema, "Member">;
 export type MemberFindFirstArgs = $FindFirstArgs<$Schema, "Member">;
 export type MemberCreateArgs = $CreateArgs<$Schema, "Member">;
 export type MemberCreateManyArgs = $CreateManyArgs<$Schema, "Member">;
 export type MemberCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Member"
+  $Schema,
+  "Member"
 >;
 export type MemberUpdateArgs = $UpdateArgs<$Schema, "Member">;
 export type MemberUpdateManyArgs = $UpdateManyArgs<$Schema, "Member">;
 export type MemberUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Member"
+  $Schema,
+  "Member"
 >;
 export type MemberUpsertArgs = $UpsertArgs<$Schema, "Member">;
 export type MemberDeleteArgs = $DeleteArgs<$Schema, "Member">;
@@ -219,22 +227,23 @@ export type MemberSelect = $SelectInput<$Schema, "Member">;
 export type MemberInclude = $IncludeInput<$Schema, "Member">;
 export type MemberOmit = $OmitInput<$Schema, "Member">;
 export type MemberGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Member", true>,
-> = $SimplifiedModelResult<$Schema, "Member", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Member", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Member", Options, Args>;
 export type InvitationFindManyArgs = $FindManyArgs<$Schema, "Invitation">;
 export type InvitationFindUniqueArgs = $FindUniqueArgs<$Schema, "Invitation">;
 export type InvitationFindFirstArgs = $FindFirstArgs<$Schema, "Invitation">;
 export type InvitationCreateArgs = $CreateArgs<$Schema, "Invitation">;
 export type InvitationCreateManyArgs = $CreateManyArgs<$Schema, "Invitation">;
 export type InvitationCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Invitation"
+  $Schema,
+  "Invitation"
 >;
 export type InvitationUpdateArgs = $UpdateArgs<$Schema, "Invitation">;
 export type InvitationUpdateManyArgs = $UpdateManyArgs<$Schema, "Invitation">;
 export type InvitationUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Invitation"
+  $Schema,
+  "Invitation"
 >;
 export type InvitationUpsertArgs = $UpsertArgs<$Schema, "Invitation">;
 export type InvitationDeleteArgs = $DeleteArgs<$Schema, "Invitation">;
@@ -247,22 +256,23 @@ export type InvitationSelect = $SelectInput<$Schema, "Invitation">;
 export type InvitationInclude = $IncludeInput<$Schema, "Invitation">;
 export type InvitationOmit = $OmitInput<$Schema, "Invitation">;
 export type InvitationGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Invitation", true>,
-> = $SimplifiedModelResult<$Schema, "Invitation", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Invitation", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Invitation", Options, Args>;
 export type TodoFindManyArgs = $FindManyArgs<$Schema, "Todo">;
 export type TodoFindUniqueArgs = $FindUniqueArgs<$Schema, "Todo">;
 export type TodoFindFirstArgs = $FindFirstArgs<$Schema, "Todo">;
 export type TodoCreateArgs = $CreateArgs<$Schema, "Todo">;
 export type TodoCreateManyArgs = $CreateManyArgs<$Schema, "Todo">;
 export type TodoCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Todo"
+  $Schema,
+  "Todo"
 >;
 export type TodoUpdateArgs = $UpdateArgs<$Schema, "Todo">;
 export type TodoUpdateManyArgs = $UpdateManyArgs<$Schema, "Todo">;
 export type TodoUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Todo"
+  $Schema,
+  "Todo"
 >;
 export type TodoUpsertArgs = $UpsertArgs<$Schema, "Todo">;
 export type TodoDeleteArgs = $DeleteArgs<$Schema, "Todo">;
@@ -275,22 +285,23 @@ export type TodoSelect = $SelectInput<$Schema, "Todo">;
 export type TodoInclude = $IncludeInput<$Schema, "Todo">;
 export type TodoOmit = $OmitInput<$Schema, "Todo">;
 export type TodoGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Todo", true>,
-> = $SimplifiedModelResult<$Schema, "Todo", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Todo", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Todo", Options, Args>;
 export type TestFindManyArgs = $FindManyArgs<$Schema, "Test">;
 export type TestFindUniqueArgs = $FindUniqueArgs<$Schema, "Test">;
 export type TestFindFirstArgs = $FindFirstArgs<$Schema, "Test">;
 export type TestCreateArgs = $CreateArgs<$Schema, "Test">;
 export type TestCreateManyArgs = $CreateManyArgs<$Schema, "Test">;
 export type TestCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Test"
+  $Schema,
+  "Test"
 >;
 export type TestUpdateArgs = $UpdateArgs<$Schema, "Test">;
 export type TestUpdateManyArgs = $UpdateManyArgs<$Schema, "Test">;
 export type TestUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Test"
+  $Schema,
+  "Test"
 >;
 export type TestUpsertArgs = $UpsertArgs<$Schema, "Test">;
 export type TestDeleteArgs = $DeleteArgs<$Schema, "Test">;
@@ -303,22 +314,23 @@ export type TestSelect = $SelectInput<$Schema, "Test">;
 export type TestInclude = $IncludeInput<$Schema, "Test">;
 export type TestOmit = $OmitInput<$Schema, "Test">;
 export type TestGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Test", true>,
-> = $SimplifiedModelResult<$Schema, "Test", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Test", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Test", Options, Args>;
 export type ProductFindManyArgs = $FindManyArgs<$Schema, "Product">;
 export type ProductFindUniqueArgs = $FindUniqueArgs<$Schema, "Product">;
 export type ProductFindFirstArgs = $FindFirstArgs<$Schema, "Product">;
 export type ProductCreateArgs = $CreateArgs<$Schema, "Product">;
 export type ProductCreateManyArgs = $CreateManyArgs<$Schema, "Product">;
 export type ProductCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Product"
+  $Schema,
+  "Product"
 >;
 export type ProductUpdateArgs = $UpdateArgs<$Schema, "Product">;
 export type ProductUpdateManyArgs = $UpdateManyArgs<$Schema, "Product">;
 export type ProductUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Product"
+  $Schema,
+  "Product"
 >;
 export type ProductUpsertArgs = $UpsertArgs<$Schema, "Product">;
 export type ProductDeleteArgs = $DeleteArgs<$Schema, "Product">;
@@ -331,22 +343,23 @@ export type ProductSelect = $SelectInput<$Schema, "Product">;
 export type ProductInclude = $IncludeInput<$Schema, "Product">;
 export type ProductOmit = $OmitInput<$Schema, "Product">;
 export type ProductGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Product", true>,
-> = $SimplifiedModelResult<$Schema, "Product", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Product", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Product", Options, Args>;
 export type ClientFindManyArgs = $FindManyArgs<$Schema, "Client">;
 export type ClientFindUniqueArgs = $FindUniqueArgs<$Schema, "Client">;
 export type ClientFindFirstArgs = $FindFirstArgs<$Schema, "Client">;
 export type ClientCreateArgs = $CreateArgs<$Schema, "Client">;
 export type ClientCreateManyArgs = $CreateManyArgs<$Schema, "Client">;
 export type ClientCreateManyAndReturnArgs = $CreateManyAndReturnArgs<
-	$Schema,
-	"Client"
+  $Schema,
+  "Client"
 >;
 export type ClientUpdateArgs = $UpdateArgs<$Schema, "Client">;
 export type ClientUpdateManyArgs = $UpdateManyArgs<$Schema, "Client">;
 export type ClientUpdateManyAndReturnArgs = $UpdateManyAndReturnArgs<
-	$Schema,
-	"Client"
+  $Schema,
+  "Client"
 >;
 export type ClientUpsertArgs = $UpsertArgs<$Schema, "Client">;
 export type ClientDeleteArgs = $DeleteArgs<$Schema, "Client">;
@@ -359,5 +372,6 @@ export type ClientSelect = $SelectInput<$Schema, "Client">;
 export type ClientInclude = $IncludeInput<$Schema, "Client">;
 export type ClientOmit = $OmitInput<$Schema, "Client">;
 export type ClientGetPayload<
-	Args extends $SelectIncludeOmit<$Schema, "Client", true>,
-> = $SimplifiedModelResult<$Schema, "Client", Args>;
+  Args extends $SelectIncludeOmit<$Schema, "Client", true>,
+  Options extends $ClientOptions<$Schema> = $ClientOptions<$Schema>,
+> = $SimplifiedModelResult<$Schema, "Client", Options, Args>;
