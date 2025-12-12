@@ -641,8 +641,8 @@ importers:
         specifier: 'catalog:'
         version: 3.7.4
       react-grab:
-        specifier: 0.0.85
-        version: 0.0.85(@types/react@19.1.17)(react@19.1.4)
+        specifier: 0.0.86
+        version: 0.0.86(@types/react@19.1.17)(react@19.1.4)
       react-scan:
         specifier: ^0.4.3
         version: 0.4.3(@types/react@19.1.17)(next@16.0.7(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(rollup@2.79.2)
@@ -12311,8 +12311,8 @@ packages:
     peerDependencies:
       react: '>=17.0.0'
 
-  react-grab@0.0.85:
-    resolution: {integrity: sha512-x6luGppL77rsUmZUaiOvXnsBQRxT3qc0osJ3rKkMocFi0HSm0WQz7OSsrCG0hHTBrRC29L8lWChaI+0oElO3FA==}
+  react-grab@0.0.86:
+    resolution: {integrity: sha512-QwTy/XtuLXnpJqGP/YN+mJYILg5t9JLnTZTib5IuiSfZofYQrUnk3s3vTFHKxHnixoXk5gSDwcp3CYBIRaJKxg==}
     hasBin: true
 
   react-hook-form@7.68.0:
@@ -28601,7 +28601,7 @@ snapshots:
     dependencies:
       react: 19.1.4
 
-  react-grab@0.0.85(@types/react@19.1.17)(react@19.1.4):
+  react-grab@0.0.86(@types/react@19.1.17)(react@19.1.4):
     dependencies:
       bippy: 0.5.25(@types/react@19.1.17)(react@19.1.4)
       solid-js: 1.9.10
