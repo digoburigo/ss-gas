@@ -7,13 +7,13 @@ const { withNativewind } = require("nativewind/metro");
 const config = getDefaultConfig(__dirname);
 
 config.cacheStores = [
-  new FileStore({
-    root: path.join(__dirname, "node_modules", ".cache", "metro"),
-  }),
+	new FileStore({
+		root: path.join(__dirname, "node_modules", ".cache", "metro"),
+	}),
 ];
 
 /** @type {import('expo/metro-config').MetroConfig} */
 module.exports = withNativewind(config, {
-  input: "./src/styles.css",
-  inlineRem: 16,
+	input: "./src/styles.css",
+	inlineRem: 16,
 });

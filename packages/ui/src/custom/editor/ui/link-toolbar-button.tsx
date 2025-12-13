@@ -1,21 +1,20 @@
-import type * as React from "react";
+import { ToolbarButton } from "@acme/ui/toolbar";
 import {
-  useLinkToolbarButton,
-  useLinkToolbarButtonState,
+	useLinkToolbarButton,
+	useLinkToolbarButtonState,
 } from "@platejs/link/react";
 import { Link } from "lucide-react";
-
-import { ToolbarButton } from "@acme/ui/toolbar";
+import type * as React from "react";
 
 export function LinkToolbarButton(
-  props: React.ComponentProps<typeof ToolbarButton>,
+	props: React.ComponentProps<typeof ToolbarButton>,
 ) {
-  const state = useLinkToolbarButtonState();
-  const { props: buttonProps } = useLinkToolbarButton(state);
+	const state = useLinkToolbarButtonState();
+	const { props: buttonProps } = useLinkToolbarButton(state);
 
-  return (
-    <ToolbarButton {...props} {...buttonProps} data-plate-focus tooltip="Link">
-      <Link />
-    </ToolbarButton>
-  );
+	return (
+		<ToolbarButton {...props} {...buttonProps} data-plate-focus tooltip="Link">
+			<Link />
+		</ToolbarButton>
+	);
 }

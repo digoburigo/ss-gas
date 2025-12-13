@@ -28,7 +28,6 @@ export async function sendEmail({ emailTemplate, to, subject }: Props) {
 		if (error) {
 			console.error(error);
 		}
-
 	} else {
 		if (TEST_EMAIL_USER) {
 			console.dir(

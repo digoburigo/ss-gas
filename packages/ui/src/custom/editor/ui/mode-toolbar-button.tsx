@@ -1,120 +1,119 @@
-import * as React from "react";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+	DropdownMenuTrigger,
+} from "@acme/ui/dropdown-menu";
+import { ToolbarButton } from "@acme/ui/toolbar";
 import { SuggestionPlugin } from "@platejs/suggestion/react";
 import { CheckIcon, EyeIcon, PencilLineIcon, PenIcon } from "lucide-react";
 import { useEditorRef, usePlateState, usePluginOption } from "platejs/react";
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@acme/ui/dropdown-menu";
-import { ToolbarButton } from "@acme/ui/toolbar";
+import * as React from "react";
 
 export function ModeToolbarButton(
-  props: DropdownMenuPrimitive.DropdownMenuProps,
+	props: DropdownMenuPrimitive.DropdownMenuProps,
 ) {
-  const editor = useEditorRef();
-  const [readOnly, setReadOnly] = usePlateState("readOnly");
-  const [open, setOpen] = React.useState(false);
+	const editor = useEditorRef();
+	const [readOnly, setReadOnly] = usePlateState("readOnly");
+	const [open, setOpen] = React.useState(false);
 
-  const isSuggesting = usePluginOption(SuggestionPlugin, "isSuggesting");
+	const isSuggesting = usePluginOption(SuggestionPlugin, "isSuggesting");
 
-  let value = "editing";
+	let value = "editing";
 
-  if (readOnly) value = "viewing";
+	if (readOnly) value = "viewing";
 
-  if (isSuggesting) value = "suggestion";
+	if (isSuggesting) value = "suggestion";
 
-  const item: Record<string, { icon: React.ReactNode; label: string }> = {
-    editing: {
-      icon: <PenIcon />,
-      label: "Editing",
-    },
-    suggestion: {
-      icon: <PencilLineIcon />,
-      label: "Suggestion",
-    },
-    viewing: {
-      icon: <EyeIcon />,
-      label: "Viewing",
-    },
-  };
+	const item: Record<string, { icon: React.ReactNode; label: string }> = {
+		editing: {
+			icon: <PenIcon />,
+			label: "Editing",
+		},
+		suggestion: {
+			icon: <PencilLineIcon />,
+			label: "Suggestion",
+		},
+		viewing: {
+			icon: <EyeIcon />,
+			label: "Viewing",
+		},
+	};
 
-  return (
-    <DropdownMenu modal={false} onOpenChange={setOpen} open={open} {...props}>
-      <DropdownMenuTrigger asChild>
-        <ToolbarButton isDropdown pressed={open} tooltip="Editing mode">
-          {item[value]?.icon}
-          <span className="hidden lg:inline">{item[value]?.label}</span>
-        </ToolbarButton>
-      </DropdownMenuTrigger>
+	return (
+		<DropdownMenu modal={false} onOpenChange={setOpen} open={open} {...props}>
+			<DropdownMenuTrigger asChild>
+				<ToolbarButton isDropdown pressed={open} tooltip="Editing mode">
+					{item[value]?.icon}
+					<span className="hidden lg:inline">{item[value]?.label}</span>
+				</ToolbarButton>
+			</DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start" className="min-w-[180px]">
-        <DropdownMenuRadioGroup
-          onValueChange={(newValue) => {
-            if (newValue === "viewing") {
-              setReadOnly(true);
+			<DropdownMenuContent align="start" className="min-w-[180px]">
+				<DropdownMenuRadioGroup
+					onValueChange={(newValue) => {
+						if (newValue === "viewing") {
+							setReadOnly(true);
 
-              return;
-            }
-            setReadOnly(false);
+							return;
+						}
+						setReadOnly(false);
 
-            if (newValue === "suggestion") {
-              editor.setOption(SuggestionPlugin, "isSuggesting", true);
+						if (newValue === "suggestion") {
+							editor.setOption(SuggestionPlugin, "isSuggesting", true);
 
-              return;
-            }
-            editor.setOption(SuggestionPlugin, "isSuggesting", false);
+							return;
+						}
+						editor.setOption(SuggestionPlugin, "isSuggesting", false);
 
-            if (newValue === "editing") {
-              editor.tf.focus();
+						if (newValue === "editing") {
+							editor.tf.focus();
 
-              return;
-            }
-          }}
-          value={value}
-        >
-          <DropdownMenuRadioItem
-            className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
-            value="editing"
-          >
-            <Indicator />
-            {item.editing?.icon}
-            {item.editing?.label}
-          </DropdownMenuRadioItem>
+							return;
+						}
+					}}
+					value={value}
+				>
+					<DropdownMenuRadioItem
+						className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
+						value="editing"
+					>
+						<Indicator />
+						{item.editing?.icon}
+						{item.editing?.label}
+					</DropdownMenuRadioItem>
 
-          <DropdownMenuRadioItem
-            className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
-            value="viewing"
-          >
-            <Indicator />
-            {item.viewing?.icon}
-            {item.viewing?.label}
-          </DropdownMenuRadioItem>
+					<DropdownMenuRadioItem
+						className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
+						value="viewing"
+					>
+						<Indicator />
+						{item.viewing?.icon}
+						{item.viewing?.label}
+					</DropdownMenuRadioItem>
 
-          <DropdownMenuRadioItem
-            className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
-            value="suggestion"
-          >
-            <Indicator />
-            {item.suggestion?.icon}
-            {item.suggestion?.label}
-          </DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+					<DropdownMenuRadioItem
+						className="*:[svg]:text-muted-foreground pl-2 *:first:[span]:hidden"
+						value="suggestion"
+					>
+						<Indicator />
+						{item.suggestion?.icon}
+						{item.suggestion?.label}
+					</DropdownMenuRadioItem>
+				</DropdownMenuRadioGroup>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
 }
 
 function Indicator() {
-  return (
-    <span className="pointer-events-none absolute right-2 flex size-3.5 items-center justify-center">
-      <DropdownMenuPrimitive.DropdownMenuItemIndicator>
-        <CheckIcon />
-      </DropdownMenuPrimitive.DropdownMenuItemIndicator>
-    </span>
-  );
+	return (
+		<span className="pointer-events-none absolute right-2 flex size-3.5 items-center justify-center">
+			<DropdownMenuPrimitive.DropdownMenuItemIndicator>
+				<CheckIcon />
+			</DropdownMenuPrimitive.DropdownMenuItemIndicator>
+		</span>
+	);
 }

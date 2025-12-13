@@ -1,48 +1,48 @@
 import type { Editor } from "@tiptap/core";
 
 export const NODE_HANDLES_SELECTED_STYLE_CLASSNAME =
-  "node-handles-selected-style";
+	"node-handles-selected-style";
 
 const URL_REGEX = /^https?:\/\/\S+$/;
 export function isValidUrl(url: string) {
-  return URL_REGEX.test(url);
+	return URL_REGEX.test(url);
 }
 
 export const duplicateContent = (editor: Editor) => {
-  const { view } = editor;
-  const { state } = view;
-  const { selection } = state;
+	const { view } = editor;
+	const { state } = view;
+	const { selection } = state;
 
-  editor
-    .chain()
-    .insertContentAt(
-      selection.to,
-      /* eslint-disable */
-      // @ts-nocheck
-      selection
-        .content()
-        .content.firstChild?.toJSON(),
-      {
-        updateSelection: true,
-      }
-    )
-    .focus(selection.to)
-    .run();
+	editor
+		.chain()
+		.insertContentAt(
+			selection.to,
+			/* eslint-disable */
+			// @ts-nocheck
+			selection
+				.content()
+				.content.firstChild?.toJSON(),
+			{
+				updateSelection: true,
+			},
+		)
+		.focus(selection.to)
+		.run();
 };
 
 export function getUrlFromString(str: string) {
-  if (isValidUrl(str)) {
-    return str;
-  }
-  try {
-    if (str.includes(".") && !str.includes(" ")) {
-      return new URL(`https://${str}`).toString();
-    }
-  } catch {
-    return null;
-  }
+	if (isValidUrl(str)) {
+		return str;
+	}
+	try {
+		if (str.includes(".") && !str.includes(" ")) {
+			return new URL(`https://${str}`).toString();
+		}
+	} catch {
+		return null;
+	}
 }
 
 export function absoluteUrl(path: string) {
-  return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
+	return `${process.env.NEXT_PUBLIC_APP_URL}${path}`;
 }

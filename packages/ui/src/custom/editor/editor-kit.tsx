@@ -37,55 +37,55 @@ import { TocKit } from "./plugins/toc-kit";
 import { ToggleKit } from "./plugins/toggle-kit";
 
 export const EditorKit = [
-  ...CopilotKit,
-  ...AIKit,
+	...CopilotKit,
+	...AIKit,
 
-  // Elements
-  ...BasicBlocksKit,
-  ...CodeBlockKit,
-  ...TableKit,
-  ...ToggleKit,
-  ...TocKit,
-  ...MediaKit,
-  ...CalloutKit,
-  ...ColumnKit,
-  ...MathKit,
-  ...DateKit,
-  ...LinkKit,
-  ...MentionKit,
+	// Elements
+	...BasicBlocksKit,
+	...CodeBlockKit,
+	...TableKit,
+	...ToggleKit,
+	...TocKit,
+	...MediaKit,
+	...CalloutKit,
+	...ColumnKit,
+	...MathKit,
+	...DateKit,
+	...LinkKit,
+	...MentionKit,
 
-  // Marks
-  ...BasicMarksKit,
-  ...FontKit,
+	// Marks
+	...BasicMarksKit,
+	...FontKit,
 
-  // Block Style
-  ...ListKit,
-  ...AlignKit,
-  ...LineHeightKit,
+	// Block Style
+	...ListKit,
+	...AlignKit,
+	...LineHeightKit,
 
-  // Collaboration
-  ...DiscussionKit,
-  ...CommentKit,
-  ...SuggestionKit,
+	// Collaboration
+	...DiscussionKit,
+	...CommentKit,
+	...SuggestionKit,
 
-  // Editing
-  ...SlashKit,
-  ...AutoformatKit,
-  ...CursorOverlayKit,
-  ...BlockMenuKit,
-  ...DndKit,
-  ...EmojiKit,
-  ...ExitBreakKit,
-  TrailingBlockPlugin,
+	// Editing
+	...SlashKit,
+	...AutoformatKit,
+	...CursorOverlayKit,
+	...BlockMenuKit,
+	...DndKit,
+	...EmojiKit,
+	...ExitBreakKit,
+	TrailingBlockPlugin,
 
-  // Parsers
-  ...DocxKit,
-  ...MarkdownKit,
+	// Parsers
+	...DocxKit,
+	...MarkdownKit,
 
-  // UI
-  ...BlockPlaceholderKit,
-  ...FixedToolbarKit,
-  ...FloatingToolbarKit,
+	// UI
+	...BlockPlaceholderKit,
+	...FixedToolbarKit,
+	...FloatingToolbarKit,
 ];
 
 export type MyEditor = TPlateEditor<Value, (typeof EditorKit)[number]>;

@@ -4,10 +4,10 @@ import { LinkElement } from "../ui/link-node";
 import { LinkFloatingToolbar } from "../ui/link-toolbar";
 
 export const LinkKit = [
-  LinkPlugin.configure({
-    render: {
-      node: LinkElement,
-      afterEditable: () => <LinkFloatingToolbar />,
-    },
-  }),
+	LinkPlugin.configure({
+		render: {
+			node: LinkElement,
+			afterEditable: () => <LinkFloatingToolbar />,
+		},
+	}),
 ];

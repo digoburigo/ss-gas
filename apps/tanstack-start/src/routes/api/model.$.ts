@@ -35,11 +35,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/api/model/$")({
-  server: {
-    handlers: {
-      GET: ({ request }) => {
-        return new Response("Hello World");
-      },
-    },
-  },
+	server: {
+		handlers: {
+			GET: ({ request }) => {
+				return new Response("Hello World");
+			},
+		},
+	},
 });

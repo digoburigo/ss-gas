@@ -1,10 +1,5 @@
 "use client";
 
-import type { Extension } from "@tiptap/core";
-import type { ColorOptions } from "@tiptap/extension-color";
-import type { HighlightOptions } from "@tiptap/extension-highlight";
-import { CheckIcon, ChevronDownIcon } from "lucide-react";
-
 import { cn } from "@acme/ui";
 /* eslint-disable */
 // @ts-nocheck
@@ -13,198 +8,202 @@ import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
 import { ScrollArea } from "@acme/ui/scroll-area";
 import { Separator } from "@acme/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@acme/ui/tooltip";
+import type { Extension } from "@tiptap/core";
+import type { ColorOptions } from "@tiptap/extension-color";
+import type { HighlightOptions } from "@tiptap/extension-highlight";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 
 import { useMediaQuery } from "../../../hooks/use-media-query";
 import { MobileToolbarGroup, MobileToolbarItem } from "./mobile-toolbar-group";
 import { useToolbar } from "./toolbar-provider";
 
 type TextStylingExtensions =
-  | Extension<ColorOptions, any>
-  | Extension<HighlightOptions, any>;
+	| Extension<ColorOptions, any>
+	| Extension<HighlightOptions, any>;
 
 const TEXT_COLORS = [
-  { name: "Default", color: "var(--editor-text-default)" },
-  { name: "Gray", color: "var(--editor-text-gray)" },
-  { name: "Brown", color: "var(--editor-text-brown)" },
-  { name: "Orange", color: "var(--editor-text-orange)" },
-  { name: "Yellow", color: "var(--editor-text-yellow)" },
-  { name: "Green", color: "var(--editor-text-green)" },
-  { name: "Blue", color: "var(--editor-text-blue)" },
-  { name: "Purple", color: "var(--editor-text-purple)" },
-  { name: "Pink", color: "var(--editor-text-pink)" },
-  { name: "Red", color: "var(--editor-text-red)" },
+	{ name: "Default", color: "var(--editor-text-default)" },
+	{ name: "Gray", color: "var(--editor-text-gray)" },
+	{ name: "Brown", color: "var(--editor-text-brown)" },
+	{ name: "Orange", color: "var(--editor-text-orange)" },
+	{ name: "Yellow", color: "var(--editor-text-yellow)" },
+	{ name: "Green", color: "var(--editor-text-green)" },
+	{ name: "Blue", color: "var(--editor-text-blue)" },
+	{ name: "Purple", color: "var(--editor-text-purple)" },
+	{ name: "Pink", color: "var(--editor-text-pink)" },
+	{ name: "Red", color: "var(--editor-text-red)" },
 ];
 
 const HIGHLIGHT_COLORS = [
-  { name: "Default", color: "var(--editor-highlight-default)" },
-  { name: "Gray", color: "var(--editor-highlight-gray)" },
-  { name: "Brown", color: "var(--editor-highlight-brown)" },
-  { name: "Orange", color: "var(--editor-highlight-orange)" },
-  { name: "Yellow", color: "var(--editor-highlight-yellow)" },
-  { name: "Green", color: "var(--editor-highlight-green)" },
-  { name: "Blue", color: "var(--editor-highlight-blue)" },
-  { name: "Purple", color: "var(--editor-highlight-purple)" },
-  { name: "Pink", color: "var(--editor-highlight-pink)" },
-  { name: "Red", color: "var(--editor-highlight-red)" },
+	{ name: "Default", color: "var(--editor-highlight-default)" },
+	{ name: "Gray", color: "var(--editor-highlight-gray)" },
+	{ name: "Brown", color: "var(--editor-highlight-brown)" },
+	{ name: "Orange", color: "var(--editor-highlight-orange)" },
+	{ name: "Yellow", color: "var(--editor-highlight-yellow)" },
+	{ name: "Green", color: "var(--editor-highlight-green)" },
+	{ name: "Blue", color: "var(--editor-highlight-blue)" },
+	{ name: "Purple", color: "var(--editor-highlight-purple)" },
+	{ name: "Pink", color: "var(--editor-highlight-pink)" },
+	{ name: "Red", color: "var(--editor-highlight-red)" },
 ];
 
 interface ColorHighlightButtonProps {
-  name: string;
-  color: string;
-  isActive: boolean;
-  onClick: () => void;
-  isHighlight?: boolean;
+	name: string;
+	color: string;
+	isActive: boolean;
+	onClick: () => void;
+	isHighlight?: boolean;
 }
 
 const ColorHighlightButton = ({
-  name,
-  color,
-  isActive,
-  onClick,
-  isHighlight,
+	name,
+	color,
+	isActive,
+	onClick,
+	isHighlight,
 }: ColorHighlightButtonProps) => (
-  <button
-    className="hover:bg-gray-3 flex w-full items-center justify-between rounded-sm px-2 py-1 text-sm"
-    onClick={onClick}
-    type="button"
-  >
-    <div className="flex items-center space-x-2">
-      <div
-        className="rounded-sm border px-1 py-px font-medium"
-        style={isHighlight ? { backgroundColor: color } : { color }}
-      >
-        A
-      </div>
-      <span>{name}</span>
-    </div>
-    {isActive && <CheckIcon className="h-4 w-4" />}
-  </button>
+	<button
+		className="hover:bg-gray-3 flex w-full items-center justify-between rounded-sm px-2 py-1 text-sm"
+		onClick={onClick}
+		type="button"
+	>
+		<div className="flex items-center space-x-2">
+			<div
+				className="rounded-sm border px-1 py-px font-medium"
+				style={isHighlight ? { backgroundColor: color } : { color }}
+			>
+				A
+			</div>
+			<span>{name}</span>
+		</div>
+		{isActive && <CheckIcon className="h-4 w-4" />}
+	</button>
 );
 
 export const ColorHighlightToolbar = () => {
-  const { editor } = useToolbar();
-  const isMobile = useMediaQuery("(max-width: 640px)");
+	const { editor } = useToolbar();
+	const isMobile = useMediaQuery("(max-width: 640px)");
 
-  const currentColor = editor?.getAttributes("textStyle").color;
-  const currentHighlight = editor?.getAttributes("highlight").color;
+	const currentColor = editor?.getAttributes("textStyle").color;
+	const currentHighlight = editor?.getAttributes("highlight").color;
 
-  const handleSetColor = (color: string) => {
-    editor
-      ?.chain()
-      .focus()
-      .setColor(color === currentColor ? "" : color)
-      .run();
-  };
+	const handleSetColor = (color: string) => {
+		editor
+			?.chain()
+			.focus()
+			.setColor(color === currentColor ? "" : color)
+			.run();
+	};
 
-  const handleSetHighlight = (color: string) => {
-    editor
-      ?.chain()
-      .focus()
-      .setHighlight(color === currentHighlight ? { color: "" } : { color })
-      .run();
-  };
+	const handleSetHighlight = (color: string) => {
+		editor
+			?.chain()
+			.focus()
+			.setHighlight(color === currentHighlight ? { color: "" } : { color })
+			.run();
+	};
 
-  const isDisabled = !(
-    editor?.can().chain().setHighlight().run() &&
-    editor?.can().chain().setColor("").run()
-  );
+	const isDisabled = !(
+		editor?.can().chain().setHighlight().run() &&
+		editor?.can().chain().setColor("").run()
+	);
 
-  if (isMobile) {
-    return (
-      <div className="flex gap-1">
-        <MobileToolbarGroup label="Color">
-          {TEXT_COLORS.map(({ name, color }) => (
-            <MobileToolbarItem
-              active={currentColor === color}
-              key={name}
-              onClick={() => handleSetColor(color)}
-            >
-              <div className="flex items-center gap-2">
-                <div className="rounded-sm border px-2" style={{ color }}>
-                  A
-                </div>
-                <span>{name}</span>
-              </div>
-            </MobileToolbarItem>
-          ))}
-        </MobileToolbarGroup>
+	if (isMobile) {
+		return (
+			<div className="flex gap-1">
+				<MobileToolbarGroup label="Color">
+					{TEXT_COLORS.map(({ name, color }) => (
+						<MobileToolbarItem
+							active={currentColor === color}
+							key={name}
+							onClick={() => handleSetColor(color)}
+						>
+							<div className="flex items-center gap-2">
+								<div className="rounded-sm border px-2" style={{ color }}>
+									A
+								</div>
+								<span>{name}</span>
+							</div>
+						</MobileToolbarItem>
+					))}
+				</MobileToolbarGroup>
 
-        <MobileToolbarGroup label="Highlight">
-          {HIGHLIGHT_COLORS.map(({ name, color }) => (
-            <MobileToolbarItem
-              active={currentHighlight === color}
-              key={name}
-              onClick={() => handleSetHighlight(color)}
-            >
-              <div className="flex items-center gap-2">
-                <div
-                  className="rounded-sm border px-2"
-                  style={{ backgroundColor: color }}
-                >
-                  A
-                </div>
-                <span>{name}</span>
-              </div>
-            </MobileToolbarItem>
-          ))}
-        </MobileToolbarGroup>
-      </div>
-    );
-  }
+				<MobileToolbarGroup label="Highlight">
+					{HIGHLIGHT_COLORS.map(({ name, color }) => (
+						<MobileToolbarItem
+							active={currentHighlight === color}
+							key={name}
+							onClick={() => handleSetHighlight(color)}
+						>
+							<div className="flex items-center gap-2">
+								<div
+									className="rounded-sm border px-2"
+									style={{ backgroundColor: color }}
+								>
+									A
+								</div>
+								<span>{name}</span>
+							</div>
+						</MobileToolbarItem>
+					))}
+				</MobileToolbarGroup>
+			</div>
+		);
+	}
 
-  return (
-    <Popover>
-      <div className="relative h-full">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <PopoverTrigger asChild disabled={isDisabled}>
-              <Button
-                className={cn("h-8 w-14 p-0 font-normal")}
-                size="sm"
-                style={{
-                  color: currentColor,
-                }}
-                variant="ghost"
-              >
-                <span className="text-md">A</span>
-                <ChevronDownIcon className="ml-2 h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-          </TooltipTrigger>
-          <TooltipContent>Text Color & Highlight</TooltipContent>
-        </Tooltip>
+	return (
+		<Popover>
+			<div className="relative h-full">
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<PopoverTrigger asChild disabled={isDisabled}>
+							<Button
+								className={cn("h-8 w-14 p-0 font-normal")}
+								size="sm"
+								style={{
+									color: currentColor,
+								}}
+								variant="ghost"
+							>
+								<span className="text-md">A</span>
+								<ChevronDownIcon className="ml-2 h-4 w-4" />
+							</Button>
+						</PopoverTrigger>
+					</TooltipTrigger>
+					<TooltipContent>Text Color & Highlight</TooltipContent>
+				</Tooltip>
 
-        <PopoverContent align="start" className="dark:bg-gray-2 w-56 p-1">
-          <ScrollArea className="max-h-80 overflow-y-auto pr-2">
-            <div className="text-gray-11 mt-2 mb-2.5 px-2 text-xs">Color</div>
-            {TEXT_COLORS.map(({ name, color }) => (
-              <ColorHighlightButton
-                color={color}
-                isActive={currentColor === color}
-                key={name}
-                name={name}
-                onClick={() => handleSetColor(color)}
-              />
-            ))}
+				<PopoverContent align="start" className="dark:bg-gray-2 w-56 p-1">
+					<ScrollArea className="max-h-80 overflow-y-auto pr-2">
+						<div className="text-gray-11 mt-2 mb-2.5 px-2 text-xs">Color</div>
+						{TEXT_COLORS.map(({ name, color }) => (
+							<ColorHighlightButton
+								color={color}
+								isActive={currentColor === color}
+								key={name}
+								name={name}
+								onClick={() => handleSetColor(color)}
+							/>
+						))}
 
-            <Separator className="my-3" />
+						<Separator className="my-3" />
 
-            <div className="text-gray-11 mb-2.5 w-full px-2 pr-3 text-xs">
-              Background
-            </div>
-            {HIGHLIGHT_COLORS.map(({ name, color }) => (
-              <ColorHighlightButton
-                color={color}
-                isActive={currentHighlight === color}
-                isHighlight
-                key={name}
-                name={name}
-                onClick={() => handleSetHighlight(color)}
-              />
-            ))}
-          </ScrollArea>
-        </PopoverContent>
-      </div>
-    </Popover>
-  );
+						<div className="text-gray-11 mb-2.5 w-full px-2 pr-3 text-xs">
+							Background
+						</div>
+						{HIGHLIGHT_COLORS.map(({ name, color }) => (
+							<ColorHighlightButton
+								color={color}
+								isActive={currentHighlight === color}
+								isHighlight
+								key={name}
+								name={name}
+								onClick={() => handleSetHighlight(color)}
+							/>
+						))}
+					</ScrollArea>
+				</PopoverContent>
+			</div>
+		</Popover>
+	);
 };

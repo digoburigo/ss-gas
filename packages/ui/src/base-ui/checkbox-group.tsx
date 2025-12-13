@@ -1,16 +1,15 @@
 "use client";
 
+import { cn } from "@acme/ui";
 import { CheckboxGroup as CheckboxGroupPrimitive } from "@base-ui-components/react/checkbox-group";
 
-import { cn } from "@acme/ui";
-
 function CheckboxGroup({ className, ...props }: CheckboxGroupPrimitive.Props) {
-  return (
-    <CheckboxGroupPrimitive
-      className={cn("flex flex-col items-start gap-3", className)}
-      {...props}
-    />
-  );
+	return (
+		<CheckboxGroupPrimitive
+			className={cn("flex flex-col items-start gap-3", className)}
+			{...props}
+		/>
+	);
 }
 
 export { CheckboxGroup };

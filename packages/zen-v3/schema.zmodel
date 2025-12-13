@@ -59,6 +59,18 @@ model User {
   updatedClients Client[] @relation("updatedClients") 
   deletedClients Client[] @relation("deletedClients") 
 
+  onboardingChats OnboardingChat[]
+  knowledgeChats KnowledgeChat[]
+  groupChatMessages GroupChatMessage[]
+  onboardingChecklistProgress OnboardingChecklistProgress[]
+  calendarEvents CalendarEvent[]
+  kanbanBoards KanbanBoard[]
+  salesOrders SalesOrder[]
+  userScore UserScore?
+  userAchievements UserAchievement[]
+  userActionCounts UserActionCount[]
+  tutorialStepProgress TutorialStepProgress[]
+
   @@allow('create,read', true)
 
   // only the user can update or delete their own profile
@@ -135,6 +147,22 @@ model Organization {
   tests Test[]
   products Product[]
   clients Client[]
+  onboardingProcesses OnboardingProcess[]
+  onboardingDocuments OnboardingDocument[]
+  onboardingChats OnboardingChat[]
+  knowledgeChats KnowledgeChat[]
+  groupChatMessages GroupChatMessage[]
+  onboardingChecklistSteps OnboardingChecklistStep[]
+  onboardingChecklistProgress OnboardingChecklistProgress[]
+  calendarEvents CalendarEvent[]
+  kanbanBoards KanbanBoard[]
+  salesOrders SalesOrder[]
+  userScores UserScore[]
+  achievements Achievement[]
+  userAchievements UserAchievement[]
+  userActionCounts UserActionCount[]
+  tutorialSectors TutorialSector[]
+  tutorialStepProgress TutorialStepProgress[]
 
   @@unique([slug])
 
@@ -282,19 +310,46 @@ model Product {
     deletedReason String? 
 
     organizationId String? @default(auth().organizationId) 
-    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-    @@deny('read', deletedAt != null)
+  orderItems OrderItem[]
 
-    @@allow('create', auth() != null)
-    @@allow('read,update,delete', auth().organizationId == organizationId)
+  @@deny('read', deletedAt != null)
 
-    @@map("product")
+  @@allow('create', auth() != null)
+  @@allow('read,update,delete', auth().organizationId == organizationId)
+
+  @@map("product")
 }
 
 enum ClientStatus {
   active
   inactive
+}
+
+enum EmployeeType {
+  vendedor
+  gerente_estoque
+}
+
+enum ChatRole {
+  user
+  assistant
+  system
+}
+
+enum OrderStatus {
+  draft
+  pending
+  completed
+  cancelled
+}
+
+enum MilestoneType {
+  sales
+  events
+  kanban_tasks
+  onboarding
 }
 
 model Client {
@@ -327,4 +382,479 @@ model Client {
     @@allow('read,update,delete', auth().organizationId == organizationId)
 
     @@map("client")
+}
+
+// ONBOARDING MODELS ======================================================
+
+model OnboardingProcess {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    employeeType EmployeeType
+    title String
+    content String
+    orderIndex Int @default(0)
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("onboarding_processes")
+}
+
+model OnboardingDocument {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    employeeType EmployeeType
+    title String
+    fileUrl String
+    fileName String
+    fileSize Int?
+    
+    createdAt DateTime @default(now())
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("onboarding_documents")
+}
+
+// CHAT MODELS ======================================================
+
+model OnboardingChat {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    employeeType EmployeeType
+    role ChatRole
+    content String
+    
+    createdAt DateTime @default(now())
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("onboarding_chats")
+}
+
+model KnowledgeChat {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    role ChatRole
+    content String
+    
+    createdAt DateTime @default(now())
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("knowledge_chats")
+}
+
+model GroupChatMessage {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userName String
+    message String
+    
+    createdAt DateTime @default(now())
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("group_chat_messages")
+}
+
+// CHECKLIST MODELS ======================================================
+
+model OnboardingChecklistStep {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    employeeType EmployeeType
+    title String
+    description String
+    orderIndex Int
+    
+    createdAt DateTime @default(now())
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    progress OnboardingChecklistProgress[]
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("onboarding_checklist_steps")
+}
+
+model OnboardingChecklistProgress {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    stepId String
+    step OnboardingChecklistStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+    completed Boolean @default(false)
+    completedAt DateTime?
+    
+    createdAt DateTime @default(now())
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@unique([userId, stepId])
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("onboarding_checklist_progress")
+}
+
+// CALENDAR MODELS ======================================================
+
+model CalendarEvent {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title String
+    description String?
+    startTime DateTime
+    endTime DateTime
+    allDay Boolean @default(false)
+    color String @default("#3b82f6")
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("calendar_events")
+}
+
+// KANBAN MODELS ======================================================
+
+model KanbanBoard {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    title String
+    description String?
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    columns KanbanColumn[]
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("kanban_boards")
+}
+
+model KanbanColumn {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    boardId String
+    board KanbanBoard @relation(fields: [boardId], references: [id], onDelete: Cascade)
+    title String
+    position Int
+    
+    createdAt DateTime @default(now())
+    
+    cards KanbanCard[]
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+    
+    @@map("kanban_columns")
+}
+
+model KanbanCard {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    columnId String
+    column KanbanColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
+    title String
+    description String?
+    position Int
+    color String @default("#3b82f6")
+    dueDate DateTime?
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+    
+    @@map("kanban_cards")
+}
+
+// SALES MODELS ======================================================
+
+model SalesOrder {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    orderNumber String @unique
+    customerName String?
+    customerPhone String?
+    customerAddress String?
+    customerNeighborhood String?
+    customerCity String?
+    customerState String?
+    customerZipcode String?
+    customerTaxId String?
+    customerStateRegistration String?
+    orderDate DateTime @default(now())
+    paymentTerm String?
+    checkValue Float?
+    downPayment Float?
+    totalAmount Float @default(0)
+    status OrderStatus @default(draft)
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    items OrderItem[]
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("sales_orders")
+}
+
+model OrderItem {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    orderId String
+    order SalesOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    productId String?
+    product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+    productName String
+    quantity Int @default(1)
+    unitPrice Float @default(0)
+    totalPrice Float @default(0)
+    position Int @default(0)
+    
+    createdAt DateTime @default(now())
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+    
+    @@map("order_items")
+}
+
+// GAMIFICATION MODELS ======================================================
+
+model UserScore {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String @unique
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    totalPoints Int @default(0)
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("user_scores")
+}
+
+model Achievement {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    name String @unique
+    description String
+    points Int
+    milestoneType MilestoneType
+    milestoneCount Int
+    icon String?
+    
+    createdAt DateTime @default(now())
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    userAchievements UserAchievement[]
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("achievements")
+}
+
+model UserAchievement {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    achievementId String
+    achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+    earnedAt DateTime @default(now())
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@unique([userId, achievementId])
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("user_achievements")
+}
+
+model UserActionCount {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    actionType MilestoneType
+    count Int @default(0)
+    lastActionAt DateTime @default(now())
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@unique([userId, actionType])
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("user_action_counts")
+}
+
+// TUTORIAL MODELS ======================================================
+
+model TutorialSector {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    name String
+    description String?
+    icon String?
+    orderIndex Int @default(0)
+    active Boolean @default(true)
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    sections TutorialSection[]
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("tutorial_sectors")
+}
+
+model TutorialSection {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    sectorId String
+    sector TutorialSector @relation(fields: [sectorId], references: [id], onDelete: Cascade)
+    name String
+    description String?
+    orderIndex Int @default(0)
+    active Boolean @default(true)
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    steps TutorialStep[]
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+    
+    @@map("tutorial_sections")
+}
+
+model TutorialStep {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    sectionId String
+    section TutorialSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+    title String
+    description String?
+    youtubeVideoUrl String
+    durationMinutes Int?
+    orderIndex Int @default(0)
+    active Boolean @default(true)
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    progress TutorialStepProgress[]
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+    
+    @@map("tutorial_steps")
+}
+
+model TutorialStepProgress {
+    id String @id @default(dbgenerated("uuidv7()"))
+    
+    userId String
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    stepId String
+    step TutorialStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+    completed Boolean @default(false)
+    completedAt DateTime?
+    
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    
+    @@unique([userId, stepId])
+    
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+    
+    @@map("tutorial_step_progress")
 }

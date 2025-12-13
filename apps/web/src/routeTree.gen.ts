@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteImport } from './routes/test'
 import { Route as PlateRouteImport } from './routes/plate'
 import { Route as OrganizationsRouteImport } from './routes/organizations'
+import { Route as LandRouteImport } from './routes/land'
 import { Route as AuthLayoutRouteImport } from './routes/auth/layout'
 import { Route as AuthenticatedLayoutRouteImport } from './routes/_authenticated/layout'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
@@ -61,6 +62,11 @@ const PlateRoute = PlateRouteImport.update({
 const OrganizationsRoute = OrganizationsRouteImport.update({
   id: '/organizations',
   path: '/organizations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandRoute = LandRouteImport.update({
+  id: '/land',
+  path: '/land',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
@@ -255,6 +261,7 @@ const AuthenticatedClientsClientIdRoute =
 
 export interface FileRoutesByFullPath {
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
@@ -294,6 +301,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
@@ -332,6 +340,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedLayoutRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
@@ -373,6 +382,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/auth'
+    | '/land'
     | '/organizations'
     | '/plate'
     | '/test'
@@ -412,6 +422,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/land'
     | '/organizations'
     | '/plate'
     | '/test'
@@ -449,6 +460,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/auth'
+    | '/land'
     | '/organizations'
     | '/plate'
     | '/test'
@@ -490,6 +502,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedLayoutRoute: typeof AuthenticatedLayoutRouteWithChildren
   AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
+  LandRoute: typeof LandRoute
   OrganizationsRoute: typeof OrganizationsRoute
   PlateRoute: typeof PlateRoute
   TestRoute: typeof TestRoute
@@ -526,6 +539,13 @@ declare module '@tanstack/react-router' {
       path: '/organizations'
       fullPath: '/organizations'
       preLoaderRoute: typeof OrganizationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/land': {
+      id: '/land'
+      path: '/land'
+      fullPath: '/land'
+      preLoaderRoute: typeof LandRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -883,6 +903,7 @@ const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedLayoutRoute: AuthenticatedLayoutRouteWithChildren,
   AuthLayoutRoute: AuthLayoutRouteWithChildren,
+  LandRoute: LandRoute,
   OrganizationsRoute: OrganizationsRoute,
   PlateRoute: PlateRoute,
   TestRoute: TestRoute,

@@ -1,142 +1,141 @@
 "use client";
 
-import {
-  AlignCenter,
-  AlignJustify,
-  AlignLeft,
-  AlignRight,
-  Check,
-  ChevronDown,
-} from "lucide-react";
-
 import { Button } from "@acme/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
 } from "@acme/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@acme/ui/tooltip";
+import {
+	AlignCenter,
+	AlignJustify,
+	AlignLeft,
+	AlignRight,
+	Check,
+	ChevronDown,
+} from "lucide-react";
 
 import { useMediaQuery } from "../../../hooks/use-media-query";
 import { MobileToolbarGroup, MobileToolbarItem } from "./mobile-toolbar-group";
 import { useToolbar } from "./toolbar-provider";
 
 export const AlignmentTooolbar = () => {
-  const { editor } = useToolbar();
-  const isMobile = useMediaQuery("(max-width: 640px)");
-  const handleAlign = (value: string) => {
-    editor?.chain().focus().setTextAlign(value).run();
-  };
+	const { editor } = useToolbar();
+	const isMobile = useMediaQuery("(max-width: 640px)");
+	const handleAlign = (value: string) => {
+		editor?.chain().focus().setTextAlign(value).run();
+	};
 
-  const isDisabled =
-    editor?.isActive("image") ?? editor?.isActive("video") ?? !editor ?? false;
+	const isDisabled =
+		editor?.isActive("image") ?? editor?.isActive("video") ?? !editor ?? false;
 
-  const currentTextAlign = () => {
-    if (editor?.isActive({ textAlign: "left" })) {
-      return "left";
-    }
-    if (editor?.isActive({ textAlign: "center" })) {
-      return "center";
-    }
-    if (editor?.isActive({ textAlign: "right" })) {
-      return "right";
-    }
-    if (editor?.isActive({ textAlign: "justify" })) {
-      return "justify";
-    }
+	const currentTextAlign = () => {
+		if (editor?.isActive({ textAlign: "left" })) {
+			return "left";
+		}
+		if (editor?.isActive({ textAlign: "center" })) {
+			return "center";
+		}
+		if (editor?.isActive({ textAlign: "right" })) {
+			return "right";
+		}
+		if (editor?.isActive({ textAlign: "justify" })) {
+			return "justify";
+		}
 
-    return "left";
-  };
+		return "left";
+	};
 
-  const alignmentOptions = [
-    {
-      name: "Left Align",
-      value: "left",
-      icon: <AlignLeft className="h-4 w-4" />,
-    },
-    {
-      name: "Center Align",
-      value: "center",
-      icon: <AlignCenter className="h-4 w-4" />,
-    },
-    {
-      name: "Right Align",
-      value: "right",
-      icon: <AlignRight className="h-4 w-4" />,
-    },
-    {
-      name: "Justify Align",
-      value: "justify",
-      icon: <AlignJustify className="h-4 w-4" />,
-    },
-  ];
+	const alignmentOptions = [
+		{
+			name: "Left Align",
+			value: "left",
+			icon: <AlignLeft className="h-4 w-4" />,
+		},
+		{
+			name: "Center Align",
+			value: "center",
+			icon: <AlignCenter className="h-4 w-4" />,
+		},
+		{
+			name: "Right Align",
+			value: "right",
+			icon: <AlignRight className="h-4 w-4" />,
+		},
+		{
+			name: "Justify Align",
+			value: "justify",
+			icon: <AlignJustify className="h-4 w-4" />,
+		},
+	];
 
-  const findIndex = (value: string) =>
-    alignmentOptions.findIndex((option) => option.value === value);
+	const findIndex = (value: string) =>
+		alignmentOptions.findIndex((option) => option.value === value);
 
-  if (isMobile) {
-    return (
-      <MobileToolbarGroup
-        label={
-          alignmentOptions[findIndex(currentTextAlign())]?.name ?? "Left Align"
-        }
-      >
-        {alignmentOptions.map((option, index) => (
-          <MobileToolbarItem
-            active={currentTextAlign() === option.value}
-            key={index}
-            onClick={() => handleAlign(option.value)}
-          >
-            <span className="mr-2">{option.icon}</span>
-            {option.name}
-          </MobileToolbarItem>
-        ))}
-      </MobileToolbarGroup>
-    );
-  }
+	if (isMobile) {
+		return (
+			<MobileToolbarGroup
+				label={
+					alignmentOptions[findIndex(currentTextAlign())]?.name ?? "Left Align"
+				}
+			>
+				{alignmentOptions.map((option, index) => (
+					<MobileToolbarItem
+						active={currentTextAlign() === option.value}
+						key={index}
+						onClick={() => handleAlign(option.value)}
+					>
+						<span className="mr-2">{option.icon}</span>
+						{option.name}
+					</MobileToolbarItem>
+				))}
+			</MobileToolbarGroup>
+		);
+	}
 
-  return (
-    <DropdownMenu>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild disabled={isDisabled}>
-            <Button className="h-8 w-max font-normal" size="sm" variant="ghost">
-              <span className="mr-2">
-                {alignmentOptions[findIndex(currentTextAlign())]?.icon}
-              </span>
-              {alignmentOptions[findIndex(currentTextAlign())]?.name}
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-        </TooltipTrigger>
-        <TooltipContent>Text Alignment</TooltipContent>
-      </Tooltip>
-      <DropdownMenuContent
-        loop
-        onCloseAutoFocus={(e) => {
-          e.preventDefault();
-        }}
-      >
-        <DropdownMenuGroup className="w-40">
-          {alignmentOptions.map((option, index) => (
-            <DropdownMenuItem
-              key={index}
-              onSelect={() => {
-                handleAlign(option.value);
-              }}
-            >
-              <span className="mr-2">{option.icon}</span>
-              {option.name}
+	return (
+		<DropdownMenu>
+			<Tooltip>
+				<TooltipTrigger asChild>
+					<DropdownMenuTrigger asChild disabled={isDisabled}>
+						<Button className="h-8 w-max font-normal" size="sm" variant="ghost">
+							<span className="mr-2">
+								{alignmentOptions[findIndex(currentTextAlign())]?.icon}
+							</span>
+							{alignmentOptions[findIndex(currentTextAlign())]?.name}
+							<ChevronDown className="ml-2 h-4 w-4" />
+						</Button>
+					</DropdownMenuTrigger>
+				</TooltipTrigger>
+				<TooltipContent>Text Alignment</TooltipContent>
+			</Tooltip>
+			<DropdownMenuContent
+				loop
+				onCloseAutoFocus={(e) => {
+					e.preventDefault();
+				}}
+			>
+				<DropdownMenuGroup className="w-40">
+					{alignmentOptions.map((option, index) => (
+						<DropdownMenuItem
+							key={index}
+							onSelect={() => {
+								handleAlign(option.value);
+							}}
+						>
+							<span className="mr-2">{option.icon}</span>
+							{option.name}
 
-              {option.value === currentTextAlign() && (
-                <Check className="ml-auto h-4 w-4" />
-              )}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+							{option.value === currentTextAlign() && (
+								<Check className="ml-auto h-4 w-4" />
+							)}
+						</DropdownMenuItem>
+					))}
+				</DropdownMenuGroup>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
 };

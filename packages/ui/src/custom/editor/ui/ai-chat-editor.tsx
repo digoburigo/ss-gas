@@ -7,15 +7,15 @@ import { BaseEditorKit } from "../editor-base-kit";
 import { EditorStatic } from "./editor-static";
 
 export const AIChatEditor = React.memo(function AIChatEditor({
-  content,
+	content,
 }: {
-  content: string;
+	content: string;
 }) {
-  const aiEditor = usePlateEditor({
-    plugins: BaseEditorKit,
-  });
+	const aiEditor = usePlateEditor({
+		plugins: BaseEditorKit,
+	});
 
-  useAIChatEditor(aiEditor, content);
+	useAIChatEditor(aiEditor, content);
 
-  return <EditorStatic editor={aiEditor} variant="aiChat" />;
+	return <EditorStatic editor={aiEditor} variant="aiChat" />;
 });

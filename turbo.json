@@ -1,89 +1,89 @@
 {
-  "$schema": "https://turborepo.com/schema.json",
-  "ui": "tui",
-  "tasks": {
-    "topo": {
-      "dependsOn": ["^topo"]
-    },
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".cache/tsbuildinfo.json", "dist/**"]
-    },
-    "dev": {
-      "cache": false
-    },
-    "dev:ios": {
-      "cache": false
-    },
-    "@acme/server#dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "@acme/web#dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "@acme/expo#dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "@acme/expo#dev:ios": {
-      "cache": false,
-      "persistent": true
-    },
-    "@acme/nextjs#dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "@acme/tanstack-start#dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "format": {
-      "outputs": [".cache/.prettiercache"],
-      "outputLogs": "new-only"
-    },
-    "lint": {
-      "dependsOn": ["^topo", "^build"],
-      "outputs": [".cache/.eslintcache"]
-    },
-    "typecheck": {
-      "dependsOn": ["^topo", "^build"],
-      "outputs": [".cache/tsbuildinfo.json"]
-    },
-    "clean": {
-      "cache": false
-    },
-    "//#clean": {
-      "cache": false
-    },
-    "push": {
-      "cache": false,
-      "interactive": true
-    },
-    "studio": {
-      "cache": false,
-      "persistent": true
-    },
-    "ui-add": {
-      "cache": false,
-      "interactive": true
-    }
-  },
-  "globalEnv": [
-    "POSTGRES_URL",
-    "AUTH_DISCORD_ID",
-    "AUTH_DISCORD_SECRET",
-    "AUTH_REDIRECT_PROXY_URL",
-    "AUTH_SECRET",
-    "PORT"
-  ],
-  "globalPassThroughEnv": [
-    "NODE_ENV",
-    "CI",
-    "VERCEL",
-    "VERCEL_ENV",
-    "VERCEL_URL",
-    "npm_lifecycle_event"
-  ]
+	"$schema": "https://turborepo.com/schema.json",
+	"ui": "tui",
+	"tasks": {
+		"topo": {
+			"dependsOn": ["^topo"]
+		},
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": [".cache/tsbuildinfo.json", "dist/**"]
+		},
+		"dev": {
+			"cache": false
+		},
+		"dev:ios": {
+			"cache": false
+		},
+		"@acme/server#dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"@acme/web#dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"@acme/expo#dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"@acme/expo#dev:ios": {
+			"cache": false,
+			"persistent": true
+		},
+		"@acme/nextjs#dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"@acme/tanstack-start#dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"format": {
+			"outputs": [".cache/.prettiercache"],
+			"outputLogs": "new-only"
+		},
+		"lint": {
+			"dependsOn": ["^topo", "^build"],
+			"outputs": [".cache/.eslintcache"]
+		},
+		"typecheck": {
+			"dependsOn": ["^topo", "^build"],
+			"outputs": [".cache/tsbuildinfo.json"]
+		},
+		"clean": {
+			"cache": false
+		},
+		"//#clean": {
+			"cache": false
+		},
+		"push": {
+			"cache": false,
+			"interactive": true
+		},
+		"studio": {
+			"cache": false,
+			"persistent": true
+		},
+		"ui-add": {
+			"cache": false,
+			"interactive": true
+		}
+	},
+	"globalEnv": [
+		"POSTGRES_URL",
+		"AUTH_DISCORD_ID",
+		"AUTH_DISCORD_SECRET",
+		"AUTH_REDIRECT_PROXY_URL",
+		"AUTH_SECRET",
+		"PORT"
+	],
+	"globalPassThroughEnv": [
+		"NODE_ENV",
+		"CI",
+		"VERCEL",
+		"VERCEL_ENV",
+		"VERCEL_URL",
+		"npm_lifecycle_event"
+	]
 }

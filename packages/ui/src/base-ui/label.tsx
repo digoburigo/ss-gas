@@ -1,15 +1,14 @@
+import { cn } from "@acme/ui";
 import type * as React from "react";
 
-import { cn } from "@acme/ui";
-
 function Label({ className, ...props }: React.ComponentProps<"label">) {
-  return (
-    <label
-      className={cn("inline-flex items-center gap-2 text-sm/4", className)}
-      data-slot="label"
-      {...props}
-    />
-  );
+	return (
+		<label
+			className={cn("inline-flex items-center gap-2 text-sm/4", className)}
+			data-slot="label"
+			{...props}
+		/>
+	);
 }
 
 export { Label };
