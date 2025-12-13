@@ -1,11 +1,17 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
   Clock,
+  Instagram,
+  Linkedin,
   ListChecks,
+  Mail,
+  MapPin,
   MessageSquare,
+  Phone,
   Sparkles,
   TrendingUp,
   Users,
@@ -13,12 +19,222 @@ import {
 
 import { Button } from "@acme/ui/button";
 import { Card, CardContent } from "@acme/ui/card";
+import { Input } from "@acme/ui/input";
+import { Label } from "@acme/ui/label";
+import { Textarea } from "@acme/ui/textarea";
+import { toast } from "@acme/ui/toast";
 
 import { Sparkles as SparklesComponent } from "~/components/sparkles";
 
 export const Route = createFileRoute("/land")({
   component: RouteComponent,
 });
+
+function ContactSection() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.message.trim()
+    ) {
+      toast.error("Por favor, preencha todos os campos");
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("Por favor, insira um email válido");
+      return;
+    }
+
+    // Success message
+    toast.success(
+      "Mensagem enviada com sucesso! Entraremos em contato em breve.",
+    );
+
+    // Reset form
+    setFormData({ name: "", email: "", message: "" });
+  };
+
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-br from-[#5B9AAD] via-[#3A7A8A] to-[#1E3A4C] py-20 text-white">
+      <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+      <div className="relative container mx-auto max-w-7xl px-4">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold text-balance md:text-5xl">
+            Entre em Contato
+          </h2>
+          <p className="mx-auto max-w-3xl text-lg leading-relaxed opacity-90 md:text-xl">
+            Tem alguma dúvida ou quer saber mais? Estamos aqui para ajudar.
+          </p>
+        </div>
+
+        <div className="grid gap-12 lg:grid-cols-2">
+          {/* Left Side - Contact Information */}
+          <div className="space-y-8">
+            <div>
+              <h3 className="mb-6 text-2xl font-bold">
+                Informações de Contato
+              </h3>
+              <p className="mb-8 leading-relaxed opacity-90">
+                Entre em contato conosco através dos canais abaixo ou preencha o
+                formulário ao lado.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10">
+                  <Mail className="h-6 w-6" />
+                </div>
+                <div>
+                  <h4 className="mb-1 text-lg font-semibold">Email</h4>
+                  <a
+                    href="mailto:contato@altos.ai"
+                    className="text-base opacity-90 transition-opacity hover:opacity-100"
+                  >
+                    contato@altos.ai
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10">
+                  <Phone className="h-6 w-6" />
+                </div>
+                <div>
+                  <h4 className="mb-1 text-lg font-semibold">Telefone</h4>
+                  <a
+                    href="tel:+5511999999999"
+                    className="text-base opacity-90 transition-opacity hover:opacity-100"
+                  >
+                    +55 (11) 99999-9999
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/10">
+                  <MapPin className="h-6 w-6" />
+                </div>
+                <div>
+                  <h4 className="mb-1 text-lg font-semibold">Endereço</h4>
+                  <p className="text-base opacity-90">
+                    São Paulo, SP
+                    <br />
+                    Brasil
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-6">
+              <h4 className="mb-4 text-lg font-semibold">Redes Sociais</h4>
+              <div className="flex gap-4">
+                <a
+                  href="https://linkedin.com/company/altos-ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 transition-colors hover:bg-white/20"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="h-6 w-6" />
+                </a>
+                <a
+                  href="https://instagram.com/altos.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 transition-colors hover:bg-white/20"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="h-6 w-6" />
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Contact Form */}
+          <div>
+            <Card className="border-0 bg-white/10 backdrop-blur-sm">
+              <CardContent className="p-8">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-white">
+                      Nome
+                    </Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Seu nome completo"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      className="bg-white/90 text-gray-900 placeholder:text-gray-500 focus-visible:bg-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-white">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                      className="bg-white/90 text-gray-900 placeholder:text-gray-500 focus-visible:bg-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="message" className="text-white">
+                      Mensagem
+                    </Label>
+                    <Textarea
+                      id="message"
+                      placeholder="Como podemos ajudar?"
+                      value={formData.message}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
+                      className="min-h-32 bg-white/90 text-gray-900 placeholder:text-gray-500 focus-visible:bg-white"
+                      required
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full bg-white text-[#1E3A4C] shadow-xl hover:bg-gray-100"
+                  >
+                    Enviar Mensagem
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function RouteComponent() {
   return (
@@ -559,42 +775,8 @@ function RouteComponent() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#5B9AAD] via-[#3A7A8A] to-[#1E3A4C] py-20 text-white">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-        <div className="relative container mx-auto max-w-5xl px-4">
-          <div className="text-center">
-            <h2 className="mb-6 text-3xl font-bold text-balance md:text-5xl">
-              Pronto para revolucionar seu onboarding?
-            </h2>
-            <p className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed opacity-90 md:text-xl">
-              Junte-se às empresas que já estão oferecendo uma experiência de
-              integração excepcional para seus novos colaboradores com
-              tecnologia de ponta.
-            </p>
-            <div className="flex flex-col justify-center gap-4 sm:flex-row">
-              <Link to="/auth/register">
-                <Button
-                  size="lg"
-                  className="h-12 w-full bg-white px-8 text-base font-semibold text-[#1E3A4C] shadow-xl hover:bg-gray-100 sm:w-auto"
-                >
-                  Criar Conta Gratuita
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="h-12 w-full border-2 border-white bg-transparent px-8 text-base font-semibold text-white hover:bg-white/10 sm:w-auto"
-                >
-                  Explorar Plataforma
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Contact Section */}
+      <ContactSection />
 
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white">
