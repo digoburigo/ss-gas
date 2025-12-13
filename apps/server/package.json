@@ -1,43 +1,43 @@
 {
-	"name": "@acme/server",
-	"version": "0.0.0",
-	"private": true,
-	"type": "module",
-	"exports": {
-		".": "./src/index.ts",
-		"./*": "./src/*.ts"
-	},
-	"scripts": {
-		"check-types": "tsc --noEmit",
-		"clean": "git clean -xdf node_modules .turbo",
-		"db:seed": "pnpm with-env tsx seed.ts",
-		"dev": "pnpm with-env tsx watch src/index.ts",
-		"build": "tsdown",
-		"generate:component": "turbo gen react-component",
-		"lint": "eslint . --max-warnings 0",
-		"with-env": "dotenv -e ../../.env --"
-	},
-	"dependencies": {
-		"@acme/auth": "workspace:*",
-		"@acme/zen-v3": "workspace:*",
-		"@better-upload/server": "^3.0.6",
-		"@elysiajs/cors": "^1.4.0",
-		"@elysiajs/node": "^1.4.2",
-		"@elysiajs/openapi": "^1.4.11",
-		"@sinclair/typebox": "^0.34.41",
-		"@zenstackhq/server": "^3.0.0-beta.28",
-		"elysia": "^1.4.18",
-		"kysely": "catalog:",
-		"superjson": "2.2.6",
-		"zod": "catalog:"
-	},
-	"devDependencies": {
-		"@acme/tsconfig": "workspace:*",
-		"@types/node": "catalog:",
-		"dotenv": "^17.2.3",
-		"eslint": "catalog:",
-		"tsdown": "^0.17.3",
-		"tsx": "4.21.0",
-		"typescript": "catalog:"
-	}
+  "name": "@acme/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "clean": "git clean -xdf node_modules .turbo",
+    "db:seed": "pnpm with-env tsx seed.ts",
+    "dev": "pnpm with-env tsx watch src/index.ts",
+    "build": "tsdown",
+    "generate:component": "turbo gen react-component",
+    "lint": "eslint . --max-warnings 0",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "@acme/auth": "workspace:*",
+    "@acme/zen-v3": "workspace:*",
+    "@better-upload/server": "^3.0.6",
+    "@elysiajs/cors": "^1.4.0",
+    "@elysiajs/node": "^1.4.2",
+    "@elysiajs/openapi": "^1.4.11",
+    "@sinclair/typebox": "^0.34.41",
+    "@zenstackhq/server": "^3.0.0-beta.28",
+    "elysia": "^1.4.19",
+    "kysely": "catalog:",
+    "superjson": "2.2.6",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@acme/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "dotenv": "^17.2.3",
+    "eslint": "catalog:",
+    "tsdown": "^0.17.3",
+    "tsx": "4.21.0",
+    "typescript": "catalog:"
+  }
 }
