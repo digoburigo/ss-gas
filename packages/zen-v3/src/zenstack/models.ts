@@ -5,11 +5,8 @@
 
 /* eslint-disable */
 
-import type {
-	ModelResult as $ModelResult,
-	TypeDefResult as $TypeDefResult,
-} from "@zenstackhq/orm";
-import { type SchemaType as $Schema, schema as $schema } from "./schema";
+import { schema as $schema, type SchemaType as $Schema } from "./schema";
+import { type ModelResult as $ModelResult, type TypeDefResult as $TypeDefResult } from "@zenstackhq/orm";
 export type User = $ModelResult<$Schema, "User">;
 export type Session = $ModelResult<$Schema, "Session">;
 export type Account = $ModelResult<$Schema, "Account">;
@@ -21,6 +18,27 @@ export type Todo = $ModelResult<$Schema, "Todo">;
 export type Test = $ModelResult<$Schema, "Test">;
 export type Product = $ModelResult<$Schema, "Product">;
 export type Client = $ModelResult<$Schema, "Client">;
+export type OnboardingProcess = $ModelResult<$Schema, "OnboardingProcess">;
+export type OnboardingDocument = $ModelResult<$Schema, "OnboardingDocument">;
+export type OnboardingChat = $ModelResult<$Schema, "OnboardingChat">;
+export type KnowledgeChat = $ModelResult<$Schema, "KnowledgeChat">;
+export type GroupChatMessage = $ModelResult<$Schema, "GroupChatMessage">;
+export type OnboardingChecklistStep = $ModelResult<$Schema, "OnboardingChecklistStep">;
+export type OnboardingChecklistProgress = $ModelResult<$Schema, "OnboardingChecklistProgress">;
+export type CalendarEvent = $ModelResult<$Schema, "CalendarEvent">;
+export type KanbanBoard = $ModelResult<$Schema, "KanbanBoard">;
+export type KanbanColumn = $ModelResult<$Schema, "KanbanColumn">;
+export type KanbanCard = $ModelResult<$Schema, "KanbanCard">;
+export type SalesOrder = $ModelResult<$Schema, "SalesOrder">;
+export type OrderItem = $ModelResult<$Schema, "OrderItem">;
+export type UserScore = $ModelResult<$Schema, "UserScore">;
+export type Achievement = $ModelResult<$Schema, "Achievement">;
+export type UserAchievement = $ModelResult<$Schema, "UserAchievement">;
+export type UserActionCount = $ModelResult<$Schema, "UserActionCount">;
+export type TutorialSector = $ModelResult<$Schema, "TutorialSector">;
+export type TutorialSection = $ModelResult<$Schema, "TutorialSection">;
+export type TutorialStep = $ModelResult<$Schema, "TutorialStep">;
+export type TutorialStepProgress = $ModelResult<$Schema, "TutorialStepProgress">;
 /**
  * Shape of the `auth()` function
  */
@@ -31,3 +49,11 @@ export const MemberRole = $schema.enums.MemberRole.values;
 export type MemberRole = (typeof MemberRole)[keyof typeof MemberRole];
 export const ClientStatus = $schema.enums.ClientStatus.values;
 export type ClientStatus = (typeof ClientStatus)[keyof typeof ClientStatus];
+export const EmployeeType = $schema.enums.EmployeeType.values;
+export type EmployeeType = (typeof EmployeeType)[keyof typeof EmployeeType];
+export const ChatRole = $schema.enums.ChatRole.values;
+export type ChatRole = (typeof ChatRole)[keyof typeof ChatRole];
+export const OrderStatus = $schema.enums.OrderStatus.values;
+export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus];
+export const MilestoneType = $schema.enums.MilestoneType.values;
+export type MilestoneType = (typeof MilestoneType)[keyof typeof MilestoneType];
