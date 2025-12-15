@@ -641,8 +641,8 @@ importers:
         specifier: 'catalog:'
         version: 3.7.4
       react-grab:
-        specifier: 0.0.88
-        version: 0.0.88(@types/react@19.1.17)(react@19.1.4)
+        specifier: 0.0.89
+        version: 0.0.89(@types/react@19.1.17)(react@19.1.4)
       react-scan:
         specifier: ^0.4.3
         version: 0.4.3(@types/react@19.1.17)(next@16.0.9(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(rollup@2.79.2)
@@ -7706,8 +7706,8 @@ packages:
     peerDependencies:
       react: '>=17.0.1'
 
-  bippy@0.5.25:
-    resolution: {integrity: sha512-sJi17nFrSDPbVt1FWqFPcZ4DWZTQ4bqegG979aEecbjsQ7sO53Cls+A3w1UmpQO2dKMdRmOHwvxd8V0Kp4B77w==}
+  bippy@0.5.26:
+    resolution: {integrity: sha512-pOy5vxOX2gXo0L7lIwo5H9mqvrgAE5mCZgrPOli5SaxxXx8VnPHi1vxDr5nancX5F6rYqmigMpAalPrM2I3nCA==}
     peerDependencies:
       react: '>=17.0.1'
 
@@ -12344,8 +12344,8 @@ packages:
     peerDependencies:
       react: '>=17.0.0'
 
-  react-grab@0.0.88:
-    resolution: {integrity: sha512-5AJp+ZoN+SqQRT3D8DkqcchFLelU6j9Q+BAPxcHxjtjfnFnziTWx+Wg+5qLPNc0G42bcGsATL9qifP62dX09Hw==}
+  react-grab@0.0.89:
+    resolution: {integrity: sha512-ZkmyGdyx9oq5XS6dlVoc7uQ+cJGjpCMxnfCCBrpyF8Xp/JmQElFt1P6/uOlnp0MGr464QMaArJrJyug7JvOMhg==}
     hasBin: true
 
   react-hook-form@7.68.0:
@@ -22899,7 +22899,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  bippy@0.5.25(@types/react@19.1.17)(react@19.1.4):
+  bippy@0.5.26(@types/react@19.1.17)(react@19.1.4):
     dependencies:
       '@types/react-reconciler': 0.28.9(@types/react@19.1.17)
       react: 19.1.4
@@ -28656,9 +28656,9 @@ snapshots:
     dependencies:
       react: 19.1.4
 
-  react-grab@0.0.88(@types/react@19.1.17)(react@19.1.4):
+  react-grab@0.0.89(@types/react@19.1.17)(react@19.1.4):
     dependencies:
-      bippy: 0.5.25(@types/react@19.1.17)(react@19.1.4)
+      bippy: 0.5.26(@types/react@19.1.17)(react@19.1.4)
       solid-js: 1.9.10
     transitivePeerDependencies:
       - '@types/react'
