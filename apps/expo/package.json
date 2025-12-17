@@ -35,7 +35,7 @@
     "expo-dev-client": "~6.0.20",
     "expo-linking": "~8.0.10",
     "expo-network": "~8.0.8",
-    "expo-router": "~6.0.19",
+    "expo-router": "~6.0.20",
     "expo-secure-store": "~15.0.8",
     "expo-splash-screen": "~31.0.12",
     "expo-status-bar": "~3.0.9",
