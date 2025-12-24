@@ -82,7 +82,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "catalog:",
     "prettier": "catalog:",
-    "react-grab": "0.0.91",
+    "react-grab": "0.0.92",
     "react-scan": "^0.4.3",
     "shx": "0.4.0",
     "typescript": "catalog:",
