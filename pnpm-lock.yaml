@@ -25,8 +25,8 @@ catalogs:
       specifier: ^1.27.6
       version: 1.27.6
     '@tanstack/react-query':
-      specifier: ^5.90.12
-      version: 5.90.12
+      specifier: ^5.90.14
+      version: 5.90.14
     '@trpc/client':
       specifier: ^11.8.1
       version: 11.8.1
@@ -134,7 +134,7 @@ importers:
         version: 1.27.6(@tanstack/react-start@1.145.0(crossws@0.4.1(srvx@0.9.8))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.102.1))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@tanstack/react-query':
         specifier: 'catalog:'
-        version: 5.90.12(react@19.1.4)
+        version: 5.90.14(react@19.1.4)
       '@trpc/client':
         specifier: 'catalog:'
         version: 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
@@ -143,7 +143,7 @@ importers:
         version: 11.8.1(typescript@5.9.3)
       '@trpc/tanstack-react-query':
         specifier: 'catalog:'
-        version: 11.8.1(@tanstack/react-query@5.90.12(react@19.1.4))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
+        version: 11.8.1(@tanstack/react-query@5.90.14(react@19.1.4))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
       better-auth:
         specifier: 'catalog:'
         version: 1.4.9(8c0c4834c12f4615418cdb20c67a3da9)
@@ -358,7 +358,7 @@ importers:
         version: 1.27.6(@tanstack/react-start@1.145.0(crossws@0.4.1(srvx@0.9.6))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.102.1))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@tanstack/react-query':
         specifier: 'catalog:'
-        version: 5.90.12(react@19.1.4)
+        version: 5.90.14(react@19.1.4)
       '@tanstack/react-router':
         specifier: ^1.144.0
         version: 1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -367,7 +367,7 @@ importers:
         version: 1.144.0(@tanstack/react-router@1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/router-core@1.144.0)(csstype@3.1.3)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(solid-js@1.9.10)
       '@tanstack/react-router-ssr-query':
         specifier: ^1.144.0
-        version: 1.144.0(@tanstack/query-core@5.90.12)(@tanstack/react-query@5.90.12(react@19.1.4))(@tanstack/react-router@1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/router-core@1.144.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 1.144.0(@tanstack/query-core@5.90.14)(@tanstack/react-query@5.90.14(react@19.1.4))(@tanstack/react-router@1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/router-core@1.144.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@tanstack/react-start':
         specifier: ^1.145.0
         version: 1.145.0(crossws@0.4.1(srvx@0.9.6))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.102.1)
@@ -379,13 +379,13 @@ importers:
         version: 11.8.1(typescript@5.9.3)
       '@trpc/tanstack-react-query':
         specifier: 'catalog:'
-        version: 11.8.1(@tanstack/react-query@5.90.12(react@19.1.4))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
+        version: 11.8.1(@tanstack/react-query@5.90.14(react@19.1.4))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
       '@zenstackhq/server':
         specifier: ^3.0.0
         version: 3.0.0(better-sqlite3@12.4.1)(elysia@1.4.19(@sinclair/typebox@0.34.45)(@types/bun@1.3.2(@types/react@19.1.17))(exact-mirror@0.2.3(@sinclair/typebox@0.34.45))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(hono@4.10.6)(next@16.0.10(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0))(pg@8.16.3)(zod@4.2.1)
       '@zenstackhq/tanstack-query':
         specifier: ^3.0.0
-        version: 3.0.0(@tanstack/react-query@5.90.12(react@19.1.4))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.2.1)
+        version: 3.0.0(@tanstack/react-query@5.90.14(react@19.1.4))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.2.1)
       better-auth:
         specifier: 'catalog:'
         version: 1.4.9(a3f773ec2baf330145ea436bb64fd881)
@@ -512,7 +512,7 @@ importers:
         version: 1.27.6(@tanstack/react-start@1.145.0(crossws@0.4.1(srvx@0.9.8))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.102.1))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@tanstack/react-query':
         specifier: 'catalog:'
-        version: 5.90.12(react@19.1.4)
+        version: 5.90.14(react@19.1.4)
       '@tanstack/react-router':
         specifier: ^1.144.0
         version: 1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -521,7 +521,7 @@ importers:
         version: 8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@zenstackhq/tanstack-query':
         specifier: ^3.0.0
-        version: 3.0.0(@tanstack/react-query@5.90.12(react@19.1.4))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.2.1)
+        version: 3.0.0(@tanstack/react-query@5.90.14(react@19.1.4))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.2.1)
       better-auth:
         specifier: 'catalog:'
         version: 1.4.9(bc8e7b67262cb9ca7acfffc4d4ad2286)
@@ -609,7 +609,7 @@ importers:
         version: 0.2.9(@types/react@19.1.17)(csstype@3.1.3)(react@19.1.4)(solid-js@1.9.10)
       '@tanstack/react-query-devtools':
         specifier: ^5.91.2
-        version: 5.91.2(@tanstack/react-query@5.90.12(react@19.1.4))(react@19.1.4)
+        version: 5.91.2(@tanstack/react-query@5.90.14(react@19.1.4))(react@19.1.4)
       '@tanstack/react-router-devtools':
         specifier: ^1.144.0
         version: 1.144.0(@tanstack/react-router@1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/router-core@1.144.0)(csstype@3.1.3)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(solid-js@1.9.10)
@@ -1175,7 +1175,7 @@ importers:
         version: 3.0.0(kysely@0.28.9)(pg@8.16.3)(zod@4.2.1)
       '@zenstackhq/tanstack-query':
         specifier: ^3.0.0
-        version: 3.0.0(@tanstack/react-query@5.90.12(react@19.1.4))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.2.1)
+        version: 3.0.0(@tanstack/react-query@5.90.14(react@19.1.4))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.2.1)
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -6347,8 +6347,8 @@ packages:
     resolution: {integrity: sha512-y/xtNPNt/YeyoVxE/JCx+T7yjEzpezmbb+toK8DDD1P4m7Kzs5YR956+7OKexG3f8aXgC3rLZl7b1V+yNUSy5w==}
     engines: {node: '>=18'}
 
-  '@tanstack/query-core@5.90.12':
-    resolution: {integrity: sha512-T1/8t5DhV/SisWjDnaiU2drl6ySvsHj1bHBCWNXd+/T+Hh1cf6JodyEYMd5sgwm+b/mETT4EV3H+zCVczCU5hg==}
+  '@tanstack/query-core@5.90.14':
+    resolution: {integrity: sha512-/6di2yNI+YxpVrH9Ig74Q+puKnkCE+D0LGyagJEGndJHJc6ahkcc/UqirHKy8zCYE/N9KLggxcQvzYCsUBWgdw==}
 
   '@tanstack/query-devtools@5.92.0':
     resolution: {integrity: sha512-N8D27KH1vEpVacvZgJL27xC6yPFUy0Zkezn5gnB3L3gRCxlDeSuiya7fKge8Y91uMTnC8aSxBQhcK6ocY7alpQ==}
@@ -6382,8 +6382,8 @@ packages:
       '@tanstack/react-query': ^5.90.14
       react: ^18 || ^19
 
-  '@tanstack/react-query@5.90.12':
-    resolution: {integrity: sha512-graRZspg7EoEaw0a8faiUASCyJrqjKPdqJ9EwuDRUF9mEYJ1YPczI9H+/agJ0mOJkPCJDk0lsz5QTrLZ/jQ2rg==}
+  '@tanstack/react-query@5.90.14':
+    resolution: {integrity: sha512-JAMuULej09hrZ14W9+mxoRZ44rR2BuZfCd6oKTQVNfynQxCN3muH3jh3W46gqZNw5ZqY0ZVaS43Imb3dMr6tgw==}
     peerDependencies:
       react: ^18 || ^19
 
@@ -20840,7 +20840,7 @@ snapshots:
 
   '@tanstack/pacer-lite@0.1.1': {}
 
-  '@tanstack/query-core@5.90.12': {}
+  '@tanstack/query-core@5.90.14': {}
 
   '@tanstack/query-devtools@5.92.0': {}
 
@@ -20898,15 +20898,15 @@ snapshots:
     transitivePeerDependencies:
       - react-dom
 
-  '@tanstack/react-query-devtools@5.91.2(@tanstack/react-query@5.90.12(react@19.1.4))(react@19.1.4)':
+  '@tanstack/react-query-devtools@5.91.2(@tanstack/react-query@5.90.14(react@19.1.4))(react@19.1.4)':
     dependencies:
       '@tanstack/query-devtools': 5.92.0
-      '@tanstack/react-query': 5.90.12(react@19.1.4)
+      '@tanstack/react-query': 5.90.14(react@19.1.4)
       react: 19.1.4
 
-  '@tanstack/react-query@5.90.12(react@19.1.4)':
+  '@tanstack/react-query@5.90.14(react@19.1.4)':
     dependencies:
-      '@tanstack/query-core': 5.90.12
+      '@tanstack/query-core': 5.90.14
       react: 19.1.4
 
   '@tanstack/react-router-devtools@1.144.0(@tanstack/react-router@1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/router-core@1.144.0)(csstype@3.1.3)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(solid-js@1.9.10)':
@@ -20921,12 +20921,12 @@ snapshots:
       - csstype
       - solid-js
 
-  '@tanstack/react-router-ssr-query@1.144.0(@tanstack/query-core@5.90.12)(@tanstack/react-query@5.90.12(react@19.1.4))(@tanstack/react-router@1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/router-core@1.144.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
+  '@tanstack/react-router-ssr-query@1.144.0(@tanstack/query-core@5.90.14)(@tanstack/react-query@5.90.14(react@19.1.4))(@tanstack/react-router@1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/router-core@1.144.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
-      '@tanstack/query-core': 5.90.12
-      '@tanstack/react-query': 5.90.12(react@19.1.4)
+      '@tanstack/query-core': 5.90.14
+      '@tanstack/react-query': 5.90.14(react@19.1.4)
       '@tanstack/react-router': 1.144.0(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@tanstack/router-ssr-query-core': 1.144.0(@tanstack/query-core@5.90.12)(@tanstack/router-core@1.144.0)
+      '@tanstack/router-ssr-query-core': 1.144.0(@tanstack/query-core@5.90.14)(@tanstack/router-core@1.144.0)
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
     transitivePeerDependencies:
@@ -21154,9 +21154,9 @@ snapshots:
       - supports-color
     optional: true
 
-  '@tanstack/router-ssr-query-core@1.144.0(@tanstack/query-core@5.90.12)(@tanstack/router-core@1.144.0)':
+  '@tanstack/router-ssr-query-core@1.144.0(@tanstack/query-core@5.90.14)(@tanstack/router-core@1.144.0)':
     dependencies:
-      '@tanstack/query-core': 5.90.12
+      '@tanstack/query-core': 5.90.14
       '@tanstack/router-core': 1.144.0
 
   '@tanstack/router-utils@1.143.11':
@@ -21582,9 +21582,9 @@ snapshots:
     dependencies:
       typescript: 5.9.3
 
-  '@trpc/tanstack-react-query@11.8.1(@tanstack/react-query@5.90.12(react@19.1.4))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)':
+  '@trpc/tanstack-react-query@11.8.1(@tanstack/react-query@5.90.14(react@19.1.4))(@trpc/client@11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.8.1(typescript@5.9.3))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)':
     dependencies:
-      '@tanstack/react-query': 5.90.12(react@19.1.4)
+      '@tanstack/react-query': 5.90.14(react@19.1.4)
       '@trpc/client': 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
       '@trpc/server': 11.8.1(typescript@5.9.3)
       react: 19.1.4
@@ -22293,7 +22293,7 @@ snapshots:
       - pg
       - sql.js
 
-  '@zenstackhq/tanstack-query@3.0.0(@tanstack/react-query@5.90.12(react@19.1.4))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.2.1)':
+  '@zenstackhq/tanstack-query@3.0.0(@tanstack/react-query@5.90.14(react@19.1.4))(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.2.1)':
     dependencies:
       '@zenstackhq/common-helpers': 3.0.0
       '@zenstackhq/orm': 3.0.0(better-sqlite3@12.4.1)(pg@8.16.3)(zod@4.2.1)
@@ -22301,7 +22301,7 @@ snapshots:
       decimal.js: 10.6.0
       superjson: 2.2.6
     optionalDependencies:
-      '@tanstack/react-query': 5.90.12(react@19.1.4)
+      '@tanstack/react-query': 5.90.14(react@19.1.4)
     transitivePeerDependencies:
       - better-sqlite3
       - pg
