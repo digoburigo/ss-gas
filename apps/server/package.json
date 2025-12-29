@@ -20,8 +20,8 @@
   "dependencies": {
     "@acme/auth": "workspace:*",
     "@acme/zen-v3": "workspace:*",
-    "@better-upload/server": "^3.0.6",
-    "@elysiajs/cors": "^1.4.0",
+    "@better-upload/server": "^3.0.8",
+    "@elysiajs/cors": "^1.4.1",
     "@elysiajs/node": "^1.4.2",
     "@elysiajs/openapi": "^1.4.13",
     "@sinclair/typebox": "^0.34.45",
