@@ -20,7 +20,7 @@
   "dependencies": {
     "@acme/auth": "workspace:*",
     "@acme/zen-v3": "workspace:*",
-    "@better-upload/server": "^3.0.10",
+    "@better-upload/server": "^3.0.11",
     "@elysiajs/cors": "^1.4.1",
     "@elysiajs/node": "^1.4.2",
     "@elysiajs/openapi": "^1.4.13",
