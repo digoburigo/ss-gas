@@ -4,8 +4,8 @@ packages:
   - tooling/*
 
 catalog:
-  "@better-auth/cli": 1.4.9
-  "@better-auth/expo": 1.4.9
+  "@better-auth/cli": 1.4.10
+  "@better-auth/expo": 1.4.10
   "@eslint/js": ^9.39.2
   "@tailwindcss/postcss": ^4.1.18
   "@tailwindcss/vite": ^4.1.18
@@ -16,13 +16,13 @@ catalog:
   "@trpc/tanstack-react-query": ^11.8.1
   "@types/node": ^24.10.4
   "@vitejs/plugin-react": 5.1.2
-  better-auth: 1.4.9
+  better-auth: 1.4.10
   eslint: ^9.39.2
   kysely: 0.28.9
   prettier: ^3.7.4
   tailwindcss: ^4.1.18
   typescript: ^5.9.3
-  zod: ^4.2.1
+  zod: ^4.3.2
   vite: 7.3.0
 
 catalogs:
