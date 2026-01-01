@@ -281,8 +281,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/zen-v3
       '@better-upload/server':
-        specifier: ^3.0.11
-        version: 3.0.11
+        specifier: ^3.0.12
+        version: 3.0.12
       '@elysiajs/cors':
         specifier: ^1.4.1
         version: 1.4.1(elysia@1.4.19(@sinclair/typebox@0.34.46)(@types/bun@1.3.2(@types/react@19.2.2))(exact-mirror@0.2.3(@sinclair/typebox@0.34.46))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
@@ -463,8 +463,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/zen-v3
       '@better-upload/client':
-        specifier: ^3.0.11
-        version: 3.0.11(react@19.1.4)
+        specifier: ^3.0.12
+        version: 3.0.12(react@19.1.4)
       '@dnd-kit/core':
         specifier: ^6.3.1
         version: 6.3.1(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -815,8 +815,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(@types/react@19.1.17)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@better-upload/client':
-        specifier: ^3.0.11
-        version: 3.0.11(react@19.1.4)
+        specifier: ^3.0.12
+        version: 3.0.12(react@19.1.4)
       '@emoji-mart/data':
         specifier: ^1.2.1
         version: 1.2.1
@@ -2274,13 +2274,13 @@ packages:
   '@better-fetch/fetch@1.1.21':
     resolution: {integrity: sha512-/ImESw0sskqlVR94jB+5+Pxjf+xBwDZF/N5+y2/q4EqD7IARUTSpPfIo8uf39SYpCxyOCtbyYpUrZ3F/k0zT4A==}
 
-  '@better-upload/client@3.0.11':
-    resolution: {integrity: sha512-1x97UmCuqDxS9MkRW9mqTupA8BBH7uDEnSAWneJh3yye03RGWmzxWa0TE9IFvB+YCgbpfkxOvUpaFDofcTztrg==}
+  '@better-upload/client@3.0.12':
+    resolution: {integrity: sha512-MnYMJ690hxZYsN8tV7bJBSj3vCAdNH18XxvOYHcKF+9HbARsXIIOnjviK+lAdPmXvYFFMN+8beMl+RopKaBu0g==}
     peerDependencies:
       react: '*'
 
-  '@better-upload/server@3.0.11':
-    resolution: {integrity: sha512-Z1YdNOgsOazVbNWdsbAsLoygHoktpBVPLSXoIp/3MAcmcXfXP7yPxHtXAzIQK/UA5Yr4G7D0U576tMAKq1Ig+A==}
+  '@better-upload/server@3.0.12':
+    resolution: {integrity: sha512-okXKhRTD43AwT6sXk5ZG7np2zdnJAppxgW5r46yek6HiHHwCGWcqsviLJ26sR0VisWlPk6ZC0mK85M7xDnn55w==}
 
   '@borewit/text-codec@0.1.1':
     resolution: {integrity: sha512-5L/uBxmjaCIX5h8Z+uu+kA9BQLkc/Wl06UGR5ajNRxu+/XjonB5i8JpgFMrPj3LXTCPA0pv8yxUvbUi+QthGGA==}
@@ -16044,11 +16044,11 @@ snapshots:
 
   '@better-fetch/fetch@1.1.21': {}
 
-  '@better-upload/client@3.0.11(react@19.1.4)':
+  '@better-upload/client@3.0.12(react@19.1.4)':
     dependencies:
       react: 19.1.4
 
-  '@better-upload/server@3.0.11':
+  '@better-upload/server@3.0.12':
     dependencies:
       aws4fetch: 1.0.20
       fast-xml-parser: 5.3.1
