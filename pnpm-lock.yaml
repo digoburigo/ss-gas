@@ -590,8 +590,8 @@ importers:
         specifier: ^10.1.0
         version: 10.1.0
       '@iconify/json':
-        specifier: ^2.2.423
-        version: 2.2.423
+        specifier: ^2.2.424
+        version: 2.2.424
       '@svgr/core':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.9.3)
@@ -3158,8 +3158,8 @@ packages:
       prettier-plugin-ember-template-tag:
         optional: true
 
-  '@iconify/json@2.2.423':
-    resolution: {integrity: sha512-BNXF6fS6Vfh55jLT8p7H/JAq56U5Kww2jlWnxXbJ+uwsVMahtvy3t260jliswqwuDK22hEAdg+/5lZ/iRqkJRg==}
+  '@iconify/json@2.2.424':
+    resolution: {integrity: sha512-Lxx8ad2DgyTGV88ec0mlaJ+OSjr0SyU0j8Awfbxl9JrxxHmBEFQJ+jywhztWAhLnaMUG3+G1htNJYzEsoAsNMQ==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -17095,7 +17095,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@iconify/json@2.2.423':
+  '@iconify/json@2.2.424':
     dependencies:
       '@iconify/types': 2.0.0
       pathe: 2.0.3
