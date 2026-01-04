@@ -488,7 +488,7 @@ importers:
         version: 5.2.7
       '@hookform/resolvers':
         specifier: ^5.2.2
-        version: 5.2.2(react-hook-form@7.69.0(react@19.1.4))
+        version: 5.2.2(react-hook-form@7.70.0(react@19.1.4))
       '@radix-ui/react-direction':
         specifier: ^1.1.1
         version: 1.1.1(@types/react@19.1.17)(react@19.1.4)
@@ -544,8 +544,8 @@ importers:
         specifier: catalog:react19
         version: 19.1.4(react@19.1.4)
       react-hook-form:
-        specifier: ^7.69.0
-        version: 7.69.0(react@19.1.4)
+        specifier: ^7.70.0
+        version: 7.70.0(react@19.1.4)
       react-top-loading-bar:
         specifier: ^3.0.2
         version: 3.0.2(react@19.1.4)
@@ -1067,8 +1067,8 @@ importers:
         specifier: ^14.3.8
         version: 14.3.8(react@19.1.4)
       react-hook-form:
-        specifier: ^7.69.0
-        version: 7.69.0(react@19.1.4)
+        specifier: ^7.70.0
+        version: 7.70.0(react@19.1.4)
       react-lite-youtube-embed:
         specifier: ^3.3.3
         version: 3.3.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -12271,8 +12271,8 @@ packages:
     resolution: {integrity: sha512-PChqv7DWRpsUw+eBqMFNwzhG0vlMv/RXbAuEGrFD3R53k+tKM6B0zgnN4jgIPvDSYEUmni3ApN1IerHOWCIuRQ==}
     hasBin: true
 
-  react-hook-form@7.69.0:
-    resolution: {integrity: sha512-yt6ZGME9f4F6WHwevrvpAjh42HMvocuSnSIHUGycBqXIJdhqGSPQzTpGF+1NLREk/58IdPxEMfPcFCjlMhclGw==}
+  react-hook-form@7.70.0:
+    resolution: {integrity: sha512-COOMajS4FI3Wuwrs3GPpi/Jeef/5W1DRR84Yl5/ShlT3dKVFUfoGiEZ/QE6Uw8P4T2/CLJdcTVYKvWBMQTEpvw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -17056,10 +17056,10 @@ snapshots:
     dependencies:
       hono: 4.10.6
 
-  '@hookform/resolvers@5.2.2(react-hook-form@7.69.0(react@19.1.4))':
+  '@hookform/resolvers@5.2.2(react-hook-form@7.70.0(react@19.1.4))':
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.69.0(react@19.1.4)
+      react-hook-form: 7.70.0(react@19.1.4)
 
   '@humanfs/core@0.19.1': {}
 
@@ -28498,7 +28498,7 @@ snapshots:
       - '@types/react'
       - react
 
-  react-hook-form@7.69.0(react@19.1.4):
+  react-hook-form@7.70.0(react@19.1.4):
     dependencies:
       react: 19.1.4
 
