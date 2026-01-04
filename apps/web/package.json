@@ -64,7 +64,7 @@
     "@acme/server": "workspace:*",
     "@acme/tailwind-config": "workspace:*",
     "@acme/tsconfig": "workspace:*",
-    "@faker-js/faker": "^10.1.0",
+    "@faker-js/faker": "^10.2.0",
     "@iconify/json": "^2.2.424",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",

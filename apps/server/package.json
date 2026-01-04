@@ -26,7 +26,7 @@
     "@elysiajs/openapi": "^1.4.13",
     "@sinclair/typebox": "^0.34.46",
     "@zenstackhq/server": "^3.1.0",
-    "elysia": "^1.4.20",
+    "elysia": "^1.4.21",
     "kysely": "catalog:",
     "superjson": "2.2.6",
     "zod": "catalog:"
