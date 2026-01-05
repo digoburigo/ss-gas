@@ -590,8 +590,8 @@ importers:
         specifier: ^10.2.0
         version: 10.2.0
       '@iconify/json':
-        specifier: ^2.2.424
-        version: 2.2.424
+        specifier: ^2.2.425
+        version: 2.2.425
       '@svgr/core':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.9.3)
@@ -806,8 +806,8 @@ importers:
   packages/ui:
     dependencies:
       '@ai-sdk/react':
-        specifier: ^3.0.6
-        version: 3.0.6(react@19.1.4)(zod@4.3.5)
+        specifier: ^3.0.7
+        version: 3.0.7(react@19.1.4)(zod@4.3.5)
       '@ariakit/react':
         specifier: ^0.4.20
         version: 0.4.20(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -1007,8 +1007,8 @@ importers:
         specifier: ^7.3.3
         version: 7.3.3(next@16.0.10(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0))(react@19.1.4)(uploadthing@7.7.4(next@16.0.10(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0))(tailwindcss@4.1.18))
       ai:
-        specifier: ^6.0.6
-        version: 6.0.6(zod@4.3.5)
+        specifier: ^6.0.7
+        version: 6.0.7(zod@4.3.5)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1339,8 +1339,8 @@ packages:
       graphql:
         optional: true
 
-  '@ai-sdk/gateway@3.0.5':
-    resolution: {integrity: sha512-AtxA1wcoKTHr9uFoC5KZEXqJP4SMW4j3VbcliUECUYssbWbePJ9+b3AaCny1lxf1xhDK9EIyAgBOKhXoQSr9nA==}
+  '@ai-sdk/gateway@3.0.6':
+    resolution: {integrity: sha512-oEpwjM0PIaSUErtZI8Ag+gQ+ZelysRWA96N5ahvOc5e9d7QkKJWF0POWx0nI1qBxvmUSw7ca0sLTVw+J5yn7Tg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -1355,8 +1355,8 @@ packages:
     resolution: {integrity: sha512-2lR4w7mr9XrydzxBSjir4N6YMGdXD+Np1Sh0RXABh7tWdNFFwIeRI1Q+SaYZMbfL8Pg8RRLcrxQm51yxTLhokg==}
     engines: {node: '>=18'}
 
-  '@ai-sdk/react@3.0.6':
-    resolution: {integrity: sha512-ub88RCcT+v1xgsadRtXbcqOoFj3duVyGayOUtUCt2CTbyh+4zdxzXL9Oc/WH8Mqr4X+OKLVddRiLfqUYh0xmlA==}
+  '@ai-sdk/react@3.0.7':
+    resolution: {integrity: sha512-7y22Zjy6oWrKC/e3G59tSzaPOZOXciKBxLxauHaVBZl8gmrDejHt/cbnzSnLaFNDpRkoIDB1/ec4jHgVBkmbOA==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
@@ -3158,8 +3158,8 @@ packages:
       prettier-plugin-ember-template-tag:
         optional: true
 
-  '@iconify/json@2.2.424':
-    resolution: {integrity: sha512-Lxx8ad2DgyTGV88ec0mlaJ+OSjr0SyU0j8Awfbxl9JrxxHmBEFQJ+jywhztWAhLnaMUG3+G1htNJYzEsoAsNMQ==}
+  '@iconify/json@2.2.425':
+    resolution: {integrity: sha512-RJcJeoLFAmKPr7e7bP7gw33ASBSONuFsiCg35cEvrf/s8DDG5+C9eSqOvIiggNwZwwjYeGNKIJ7RduJTWgN0IQ==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -7298,8 +7298,8 @@ packages:
     resolution: {integrity: sha512-4I7Td01quW/RpocfNayFdFVk1qSuoh0E7JrbRJ16nH01HhKFQ88INq9Sd+nd72zqRySlr9BmDA8xlEJ6vJMrYA==}
     engines: {node: '>=8'}
 
-  ai@6.0.6:
-    resolution: {integrity: sha512-LM0eAMWVn3RTj+0X5O1m/8g+7QiTeWG5aN5FsDbdmCkAQHVg93XxLbljFOLzi0NMjuJgf7fKLKmWoPsrdMyqfw==}
+  ai@6.0.7:
+    resolution: {integrity: sha512-kLzSXHdW6cAcb2mFSIfkbfzxYqqjrUnyhrB1sg855qlC+6XkLI8hmwFE8f/4SnjmtcTDOnkIaVjWoO5i5Ir0bw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -14572,7 +14572,7 @@ snapshots:
 
   '@0no-co/graphql.web@1.2.0': {}
 
-  '@ai-sdk/gateway@3.0.5(zod@4.3.5)':
+  '@ai-sdk/gateway@3.0.6(zod@4.3.5)':
     dependencies:
       '@ai-sdk/provider': 3.0.1
       '@ai-sdk/provider-utils': 4.0.2(zod@4.3.5)
@@ -14590,10 +14590,10 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@3.0.6(react@19.1.4)(zod@4.3.5)':
+  '@ai-sdk/react@3.0.7(react@19.1.4)(zod@4.3.5)':
     dependencies:
       '@ai-sdk/provider-utils': 4.0.2(zod@4.3.5)
-      ai: 6.0.6(zod@4.3.5)
+      ai: 6.0.7(zod@4.3.5)
       react: 19.1.4
       swr: 2.3.6(react@19.1.4)
       throttleit: 2.1.0
@@ -17083,7 +17083,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@iconify/json@2.2.424':
+  '@iconify/json@2.2.425':
     dependencies:
       '@iconify/types': 2.0.0
       pathe: 2.0.3
@@ -22365,9 +22365,9 @@ snapshots:
       clean-stack: 2.2.0
       indent-string: 4.0.0
 
-  ai@6.0.6(zod@4.3.5):
+  ai@6.0.7(zod@4.3.5):
     dependencies:
-      '@ai-sdk/gateway': 3.0.5(zod@4.3.5)
+      '@ai-sdk/gateway': 3.0.6(zod@4.3.5)
       '@ai-sdk/provider': 3.0.1
       '@ai-sdk/provider-utils': 4.0.2(zod@4.3.5)
       '@opentelemetry/api': 1.9.0
