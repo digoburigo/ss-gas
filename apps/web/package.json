@@ -70,7 +70,7 @@
     "@svgr/plugin-jsx": "^8.1.0",
     "@tanstack/devtools-vite": "^0.4.1",
     "@tanstack/react-devtools": "^0.9.1",
-    "@tanstack/react-form-devtools": "^0.2.10",
+    "@tanstack/react-form-devtools": "^0.2.11",
     "@tanstack/react-query-devtools": "^5.91.2",
     "@tanstack/react-router-devtools": "^1.145.7",
     "@tanstack/router-plugin": "1.145.7",

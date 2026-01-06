@@ -32,7 +32,7 @@
     "dotenv": "^17.2.3",
     "kysely": "catalog:",
     "pg": "^8.16.3",
-    "postgres": "^3.4.7",
+    "postgres": "^3.4.8",
     "zod": "catalog:"
   },
   "devDependencies": {
