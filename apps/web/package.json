@@ -40,7 +40,7 @@
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "^1.145.7",
     "@tanstack/react-table": "^8.21.3",
-    "@zenstackhq/tanstack-query": "^3.1.0",
+    "@zenstackhq/tanstack-query": "^3.1.1",
     "better-auth": "catalog:",
     "date-fns": "^4.1.0",
     "dotenv-cli": "^11.0.0",
