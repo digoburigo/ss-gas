@@ -73,7 +73,7 @@
     "@tanstack/react-form-devtools": "^0.2.11",
     "@tanstack/react-query-devtools": "^5.91.2",
     "@tanstack/react-router-devtools": "^1.145.7",
-    "@tanstack/router-plugin": "1.145.7",
+    "@tanstack/router-plugin": "1.145.10",
     "@types/node": "catalog:",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
