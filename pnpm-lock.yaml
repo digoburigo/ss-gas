@@ -1076,8 +1076,8 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0(@types/react-dom@19.2.2(@types/react@19.1.17))(@types/react@19.1.17)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       react-resizable-panels:
-        specifier: ^4.3.2
-        version: 4.3.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        specifier: ^4.3.3
+        version: 4.3.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       react-textarea-autosize:
         specifier: ^8.5.9
         version: 8.5.9(@types/react@19.1.17)(react@19.1.4)
@@ -12406,8 +12406,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-resizable-panels@4.3.2:
-    resolution: {integrity: sha512-Rg6kSKK9yxfaJIaj/nXsmTNX/8hexrksXSjfL9SEIfeApcSXs35aG2HFxjwW5oobHKh/Mr/BkH9m4fgPBq3CTg==}
+  react-resizable-panels@4.3.3:
+    resolution: {integrity: sha512-7ZmYcoOiipVwwz8X9O/HiRbm8THM6qnXo7p5dPI6ivzdDoteHo3iXS1pijs8Z4/XU8V1RwhuGgJiZU5G7Zy0KQ==}
     peerDependencies:
       react: ^18.0.0 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
@@ -28794,7 +28794,7 @@ snapshots:
       '@types/react': 19.2.2
     optional: true
 
-  react-resizable-panels@4.3.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4):
+  react-resizable-panels@4.3.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4):
     dependencies:
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
