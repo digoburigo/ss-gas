@@ -806,8 +806,8 @@ importers:
   packages/ui:
     dependencies:
       '@ai-sdk/react':
-        specifier: ^3.0.25
-        version: 3.0.25(react@19.1.4)(zod@4.3.5)
+        specifier: ^3.0.26
+        version: 3.0.26(react@19.1.4)(zod@4.3.5)
       '@ariakit/react':
         specifier: ^0.4.20
         version: 0.4.20(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -824,8 +824,8 @@ importers:
         specifier: ^10.2.0
         version: 10.2.0
       '@platejs/ai':
-        specifier: ^52.0.16
-        version: 52.0.16(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
+        specifier: ^52.1.0
+        version: 52.1.0(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
       '@platejs/autoformat':
         specifier: ^52.0.11
         version: 52.0.11(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -884,8 +884,8 @@ importers:
         specifier: ^52.0.11
         version: 52.0.11(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@platejs/markdown':
-        specifier: ^52.0.11
-        version: 52.0.11(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
+        specifier: ^52.1.0
+        version: 52.1.0(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
       '@platejs/math':
         specifier: ^52.0.11
         version: 52.0.11(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -1007,8 +1007,8 @@ importers:
         specifier: ^7.3.3
         version: 7.3.3(next@16.0.10(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0))(react@19.1.4)(uploadthing@7.7.4(next@16.0.10(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0))(tailwindcss@4.1.18))
       ai:
-        specifier: ^6.0.24
-        version: 6.0.24(zod@4.3.5)
+        specifier: ^6.0.25
+        version: 6.0.25(zod@4.3.5)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1223,8 +1223,8 @@ importers:
   tooling/eslint:
     dependencies:
       '@eslint/compat':
-        specifier: ^2.0.0
-        version: 2.0.0(eslint@9.39.2(jiti@2.6.1))
+        specifier: ^2.0.1
+        version: 2.0.1(eslint@9.39.2(jiti@2.6.1))
       '@eslint/js':
         specifier: 'catalog:'
         version: 9.39.2
@@ -1355,8 +1355,8 @@ packages:
     resolution: {integrity: sha512-HrEmNt/BH/hkQ7zpi2o6N3k1ZR1QTb7z85WYhYygiTxOQuaml4CMtHCWRbric5WPU+RNsYI7r1EpyVQMKO1pYw==}
     engines: {node: '>=18'}
 
-  '@ai-sdk/react@3.0.25':
-    resolution: {integrity: sha512-84s0jE8EmAFgPNI2MJaEBow4e738wgrZ7U8yYQTby4KgoRJ/zogcuzcBQ3NIGWnXNSqDWWUACGNXqN3ZmHU+bw==}
+  '@ai-sdk/react@3.0.26':
+    resolution: {integrity: sha512-lRY9fZvdmk0my9CgIaUvFd6o3qJfzpYBWXIVy6IyeXU0AGFiSLVfeZZodH/zI3udJ+zMKJOT+mCedFDYAxHTzg==}
     engines: {node: '>=18'}
     peerDependencies:
       react: ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
@@ -2897,8 +2897,8 @@ packages:
     resolution: {integrity: sha512-EriSTlt5OC9/7SXkRSCAhfSxxoSUgBm33OH+IkwbdpgoqsSsUg7y3uh+IICI/Qg4BBWr3U2i39RpmycbxMq4ew==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
 
-  '@eslint/compat@2.0.0':
-    resolution: {integrity: sha512-T9AfE1G1uv4wwq94ozgTGio5EUQBqAVe1X9qsQtSNVEYW6j3hvtZVm8Smr4qL1qDPFg+lOB2cL5RxTRMzq4CTA==}
+  '@eslint/compat@2.0.1':
+    resolution: {integrity: sha512-yl/JsgplclzuvGFNqwNYV4XNPhP3l62ZOP9w/47atNAdmDtIFCx6X7CSk/SlWUuBGkT4Et/5+UD+WyvX2iiIWA==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
     peerDependencies:
       eslint: ^8.40 || 9
@@ -2918,8 +2918,8 @@ packages:
     resolution: {integrity: sha512-yL/sLrpmtDaFEiUj1osRP4TI2MDz1AddJL+jZ7KSqvBuliN4xqYY54IfdN8qD8Toa6g1iloph1fxQNkjOxrrpQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/core@1.0.0':
-    resolution: {integrity: sha512-PRfWP+8FOldvbApr6xL7mNCw4cJcSTq4GA7tYbgq15mRb0kWKO/wEB2jr+uwjFH3sZvEZneZyCUGTxsv4Sahyw==}
+  '@eslint/core@1.0.1':
+    resolution: {integrity: sha512-r18fEAj9uCk+VjzGt2thsbOmychS+4kxI14spVNibUO2vqKX7obOG+ymZljAwuPZl+S3clPGwCwTDtrdqTiY6Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
   '@eslint/eslintrc@3.3.1':
@@ -3865,8 +3865,8 @@ packages:
       react: '>=18'
       react-dom: '>=18'
 
-  '@platejs/ai@52.0.16':
-    resolution: {integrity: sha512-7Lqta/mgluKLsbWf2oUWpHtadrmsTZ3cIxIvFRdsA3GbH3R/tHFD7+L5U2GB7yKoj5F1XQCxGvL1duc9JiSUaA==}
+  '@platejs/ai@52.1.0':
+    resolution: {integrity: sha512-jXw4oJdsNEmm9MNQiJzhO9hJFiAxQY2LMZ6TcVXE00FtVZ+vwN+67SwfWBTw+tIAHjyleNTd1P46nSfoEaa0Dg==}
     peerDependencies:
       platejs: '>=52.0.15'
       react: '>=18.0.0'
@@ -4021,8 +4021,8 @@ packages:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
 
-  '@platejs/markdown@52.0.11':
-    resolution: {integrity: sha512-SsoFKC6LgMHsuVaJi/RQJ2ZjbB9B711RFgkVJYlGfdsqSrcw0bj2s421kRvDUhVMywfqEk2M5UyIgsefWgFFDw==}
+  '@platejs/markdown@52.1.0':
+    resolution: {integrity: sha512-4443H09CJ4AH1449TERm7ot5aFji4rKt+iHIZdB7FiIBz9Coki5+JkKcRn9gEq7lpjMQ9E/MD2J9ejnmglc1/A==}
     peerDependencies:
       platejs: '>=52.0.11'
       react: '>=18.0.0'
@@ -7299,8 +7299,8 @@ packages:
     resolution: {integrity: sha512-4I7Td01quW/RpocfNayFdFVk1qSuoh0E7JrbRJ16nH01HhKFQ88INq9Sd+nd72zqRySlr9BmDA8xlEJ6vJMrYA==}
     engines: {node: '>=8'}
 
-  ai@6.0.24:
-    resolution: {integrity: sha512-np5VIe32O1vgDnzWWKa34NX1OkhaiY84DSfVWcmswVHtxp97g6k9EKv5dts8OfO9lM73XKyd6a7JqflA0+DN7A==}
+  ai@6.0.25:
+    resolution: {integrity: sha512-KErk9JWkRaN4j9Xzxuo+twa0TxcYKdYbrRV8iGktduvUeGb0Yd5seWe3yOfuLGERbDBiKI1ajQz28O2FG3WO5A==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -14589,10 +14589,10 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@3.0.25(react@19.1.4)(zod@4.3.5)':
+  '@ai-sdk/react@3.0.26(react@19.1.4)(zod@4.3.5)':
     dependencies:
       '@ai-sdk/provider-utils': 4.0.4(zod@4.3.5)
-      ai: 6.0.24(zod@4.3.5)
+      ai: 6.0.25(zod@4.3.5)
       react: 19.1.4
       swr: 2.3.6(react@19.1.4)
       throttleit: 2.1.0
@@ -16454,9 +16454,9 @@ snapshots:
 
   '@eslint-community/regexpp@4.12.2': {}
 
-  '@eslint/compat@2.0.0(eslint@9.39.2(jiti@2.6.1))':
+  '@eslint/compat@2.0.1(eslint@9.39.2(jiti@2.6.1))':
     dependencies:
-      '@eslint/core': 1.0.0
+      '@eslint/core': 1.0.1
     optionalDependencies:
       eslint: 9.39.2(jiti@2.6.1)
 
@@ -16476,7 +16476,7 @@ snapshots:
     dependencies:
       '@types/json-schema': 7.0.15
 
-  '@eslint/core@1.0.0':
+  '@eslint/core@1.0.1':
     dependencies:
       '@types/json-schema': 7.0.15
 
@@ -17647,9 +17647,9 @@ snapshots:
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
 
-  '@platejs/ai@52.0.16(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)':
+  '@platejs/ai@52.1.0(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)':
     dependencies:
-      '@platejs/markdown': 52.0.11(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
+      '@platejs/markdown': 52.1.0(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
       '@platejs/selection': 52.0.16(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@platejs/suggestion': 52.0.11(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       fastest-levenshtein: 1.0.16
@@ -17861,7 +17861,7 @@ snapshots:
       react-compiler-runtime: 1.0.0(react@19.1.4)
       react-dom: 19.1.4(react@19.1.4)
 
-  '@platejs/markdown@52.0.11(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)':
+  '@platejs/markdown@52.1.0(platejs@52.0.17(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.1.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.26.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)':
     dependencies:
       marked: 15.0.12
       mdast-util-math: 3.0.0
@@ -22349,7 +22349,7 @@ snapshots:
       clean-stack: 2.2.0
       indent-string: 4.0.0
 
-  ai@6.0.24(zod@4.3.5):
+  ai@6.0.25(zod@4.3.5):
     dependencies:
       '@ai-sdk/gateway': 3.0.10(zod@4.3.5)
       '@ai-sdk/provider': 3.0.2
