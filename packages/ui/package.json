@@ -61,7 +61,7 @@
   "prettier": "@acme/prettier-config",
   "dependencies": {
     "@ai-sdk/react": "^3.0.30",
-    "@ariakit/react": "^0.4.20",
+    "@ariakit/react": "^0.4.21",
     "@base-ui/react": "^1.0.0",
     "@better-upload/client": "^3.0.12",
     "@emoji-mart/data": "^1.2.1",
