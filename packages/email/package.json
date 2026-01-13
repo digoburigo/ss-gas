@@ -27,12 +27,12 @@
 	},
 	"devDependencies": {
 		"@acme/tsconfig": "workspace:*",
-		"@react-email/preview-server": "5.2.1",
+		"@react-email/preview-server": "5.2.2",
 		"@types/node": "catalog:",
 		"@types/nodemailer": "^7.0.5",
 		"@types/react": "catalog:react19",
 		"@types/react-dom": "catalog:react19",
-		"react-email": "^5.2.1",
+		"react-email": "^5.2.2",
 		"typescript": "catalog:"
 	}
 }
