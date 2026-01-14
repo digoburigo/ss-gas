@@ -782,8 +782,8 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/typescript
       '@react-email/preview-server':
-        specifier: 5.2.3
-        version: 5.2.3(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0)
+        specifier: 5.2.4
+        version: 5.2.4(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0)
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.7
@@ -797,8 +797,8 @@ importers:
         specifier: catalog:react19
         version: 19.1.11(@types/react@19.1.17)
       react-email:
-        specifier: ^5.2.3
-        version: 5.2.3(bufferutil@4.0.9)
+        specifier: ^5.2.4
+        version: 5.2.4(bufferutil@4.0.9)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -5373,8 +5373,8 @@ packages:
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
 
-  '@react-email/preview-server@5.2.3':
-    resolution: {integrity: sha512-1kVIyCGBaHd++N0LAuuIFohS33TvGA/nx3yLlWPBKLW5Wjit9X1MNisoH45tG3bOmx84YZvbtXI++0hPkKL/tQ==}
+  '@react-email/preview-server@5.2.4':
+    resolution: {integrity: sha512-6bEK4VbTuaHjmDkt2/mqXfK1PazHTcYiFP/EcMkDJqS/X4xvwXEGjFte09m6niwRGK16sKsRsJuUNlP6ajRbkw==}
 
   '@react-email/preview@0.0.14':
     resolution: {integrity: sha512-aYK8q0IPkBXyMsbpMXgxazwHxYJxTrXrV95GFuu2HbEiIToMwSyUgb8HDFYwPqqfV03/jbwqlsXmFxsOd+VNaw==}
@@ -12318,8 +12318,8 @@ packages:
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
 
-  react-email@5.2.3:
-    resolution: {integrity: sha512-EJZLLsdaFD7DYHQKMotpm5tiUp5Fp/FFB6x8VlZA5z20itiJsQ5zBaTTPBDE0KhJXvAUhBbKjC1BheCEchVoOg==}
+  react-email@5.2.4:
+    resolution: {integrity: sha512-F2Qsy/+t54O/lme7egiNPVjQnuqGJd9dJj4eR9Q77Ma9CcQGcS2ohZ6WFlmSnEaH1pp6ahf4Mg3aHoWG45JkRA==}
     engines: {node: '>=20.0.0'}
     hasBin: true
 
@@ -19757,7 +19757,7 @@ snapshots:
       marked: 15.0.12
       react: 19.1.4
 
-  '@react-email/preview-server@5.2.3(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0)':
+  '@react-email/preview-server@5.2.4(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0)':
     dependencies:
       next: 16.0.10(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0)
     transitivePeerDependencies:
@@ -21821,7 +21821,7 @@ snapshots:
 
   '@types/graceful-fs@4.1.9':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 24.10.7
 
   '@types/hammerjs@2.0.46': {}
 
@@ -21895,7 +21895,7 @@ snapshots:
   '@types/pg@8.11.6':
     dependencies:
       '@types/node': 24.10.7
-      pg-protocol: 1.10.3
+      pg-protocol: 1.11.0
       pg-types: 4.1.0
     optional: true
 
@@ -28541,7 +28541,7 @@ snapshots:
       prop-types: 15.8.1
       react: 19.1.4
 
-  react-email@5.2.3(bufferutil@4.0.9):
+  react-email@5.2.4(bufferutil@4.0.9):
     dependencies:
       '@babel/parser': 7.28.5
       '@babel/traverse': 7.28.5
