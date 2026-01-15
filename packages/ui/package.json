@@ -62,7 +62,7 @@
   "dependencies": {
     "@ai-sdk/react": "^3.0.39",
     "@ariakit/react": "^0.4.21",
-    "@base-ui/react": "^1.0.0",
+    "@base-ui/react": "^1.1.0",
     "@better-upload/client": "^3.0.12",
     "@emoji-mart/data": "^1.2.1",
     "@faker-js/faker": "^10.2.0",
