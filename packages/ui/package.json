@@ -60,7 +60,7 @@
   },
   "prettier": "@acme/prettier-config",
   "dependencies": {
-    "@ai-sdk/react": "^3.0.40",
+    "@ai-sdk/react": "^3.0.41",
     "@ariakit/react": "^0.4.21",
     "@base-ui/react": "^1.1.0",
     "@better-upload/client": "^3.0.12",
@@ -127,7 +127,7 @@
     "@tiptap/starter-kit": "^3.15.3",
     "@udecode/cn": "^52.0.11",
     "@uploadthing/react": "^7.3.3",
-    "ai": "^6.0.38",
+    "ai": "^6.0.39",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
