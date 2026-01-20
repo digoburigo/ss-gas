@@ -3847,9 +3847,30 @@ export class SchemaType implements SchemaDef {
                     name: "name",
                     type: "String"
                 },
+                contractNumber: {
+                    name: "contractNumber",
+                    type: "String",
+                    optional: true
+                },
+                supplier: {
+                    name: "supplier",
+                    type: "String",
+                    optional: true
+                },
+                supplierCnpj: {
+                    name: "supplierCnpj",
+                    type: "String",
+                    optional: true
+                },
                 qdcContracted: {
                     name: "qdcContracted",
                     type: "Float"
+                },
+                volumeUnit: {
+                    name: "volumeUnit",
+                    type: "String",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("m3") }] }],
+                    default: "m3"
                 },
                 transportToleranceUpperPercent: {
                     name: "transportToleranceUpperPercent",
@@ -3869,6 +3890,120 @@ export class SchemaType implements SchemaDef {
                     attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(5) }] }],
                     default: 5
                 },
+                takeOrPayPercent: {
+                    name: "takeOrPayPercent",
+                    type: "Float",
+                    optional: true
+                },
+                takeOrPayAccumulationMonths: {
+                    name: "takeOrPayAccumulationMonths",
+                    type: "Int",
+                    optional: true
+                },
+                takeOrPayExpirationMonths: {
+                    name: "takeOrPayExpirationMonths",
+                    type: "Int",
+                    optional: true
+                },
+                makeUpGasEnabled: {
+                    name: "makeUpGasEnabled",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(false) }] }],
+                    default: false
+                },
+                makeUpGasExpirationMonths: {
+                    name: "makeUpGasExpirationMonths",
+                    type: "Int",
+                    optional: true
+                },
+                makeUpGasMaxPercent: {
+                    name: "makeUpGasMaxPercent",
+                    type: "Float",
+                    optional: true
+                },
+                flexibilityUpPercent: {
+                    name: "flexibilityUpPercent",
+                    type: "Float",
+                    optional: true
+                },
+                flexibilityDownPercent: {
+                    name: "flexibilityDownPercent",
+                    type: "Float",
+                    optional: true
+                },
+                seasonalFlexibility: {
+                    name: "seasonalFlexibility",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(false) }] }],
+                    default: false
+                },
+                basePricePerUnit: {
+                    name: "basePricePerUnit",
+                    type: "Float",
+                    optional: true
+                },
+                priceCurrency: {
+                    name: "priceCurrency",
+                    type: "String",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("BRL") }] }],
+                    default: "BRL"
+                },
+                adjustmentIndex: {
+                    name: "adjustmentIndex",
+                    type: "String",
+                    optional: true
+                },
+                adjustmentFrequency: {
+                    name: "adjustmentFrequency",
+                    type: "String",
+                    optional: true
+                },
+                adjustmentBaseDate: {
+                    name: "adjustmentBaseDate",
+                    type: "DateTime",
+                    optional: true
+                },
+                nextAdjustmentDate: {
+                    name: "nextAdjustmentDate",
+                    type: "DateTime",
+                    optional: true
+                },
+                transportCostPerUnit: {
+                    name: "transportCostPerUnit",
+                    type: "Float",
+                    optional: true
+                },
+                taxesIncluded: {
+                    name: "taxesIncluded",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(false) }] }],
+                    default: false
+                },
+                penaltyForUnderConsumption: {
+                    name: "penaltyForUnderConsumption",
+                    type: "Float",
+                    optional: true
+                },
+                penaltyForOverConsumption: {
+                    name: "penaltyForOverConsumption",
+                    type: "Float",
+                    optional: true
+                },
+                penaltyCalculationMethod: {
+                    name: "penaltyCalculationMethod",
+                    type: "String",
+                    optional: true
+                },
+                latePaymentPenaltyPercent: {
+                    name: "latePaymentPenaltyPercent",
+                    type: "Float",
+                    optional: true
+                },
+                latePaymentInterestPercent: {
+                    name: "latePaymentInterestPercent",
+                    type: "Float",
+                    optional: true
+                },
                 effectiveFrom: {
                     name: "effectiveFrom",
                     type: "DateTime",
@@ -3878,6 +4013,26 @@ export class SchemaType implements SchemaDef {
                 effectiveTo: {
                     name: "effectiveTo",
                     type: "DateTime",
+                    optional: true
+                },
+                renewalDate: {
+                    name: "renewalDate",
+                    type: "DateTime",
+                    optional: true
+                },
+                renewalNoticeDays: {
+                    name: "renewalNoticeDays",
+                    type: "Int",
+                    optional: true
+                },
+                dailySchedulingDeadline: {
+                    name: "dailySchedulingDeadline",
+                    type: "String",
+                    optional: true
+                },
+                monthlyDeclarationDeadline: {
+                    name: "monthlyDeclarationDeadline",
+                    type: "Int",
                     optional: true
                 },
                 active: {
@@ -3942,12 +4097,88 @@ export class SchemaType implements SchemaDef {
                     type: "GasUnit",
                     array: true,
                     relation: { opposite: "contract" }
+                },
+                auditLogs: {
+                    name: "auditLogs",
+                    type: "GasContractAuditLog",
+                    array: true,
+                    relation: { opposite: "contract" }
                 }
             },
             attributes: [
                 { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
                 { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
                 { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_contracts") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
+            }
+        },
+        GasContractAuditLog: {
+            name: "GasContractAuditLog",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                contractId: {
+                    name: "contractId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "contract"
+                    ]
+                },
+                contract: {
+                    name: "contract",
+                    type: "GasContract",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("contractId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "auditLogs", fields: ["contractId"], references: ["id"], onDelete: "Cascade" }
+                },
+                action: {
+                    name: "action",
+                    type: "String"
+                },
+                field: {
+                    name: "field",
+                    type: "String",
+                    optional: true
+                },
+                oldValue: {
+                    name: "oldValue",
+                    type: "String",
+                    optional: true
+                },
+                newValue: {
+                    name: "newValue",
+                    type: "String",
+                    optional: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                userId: {
+                    name: "userId",
+                    type: "String",
+                    optional: true
+                },
+                userName: {
+                    name: "userName",
+                    type: "String",
+                    optional: true
+                }
+            },
+            attributes: [
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("contractId")]) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_contract_audit_logs") }] }
             ],
             idFields: ["id"],
             uniqueFields: {

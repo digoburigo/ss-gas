@@ -1,214 +1,221 @@
 import {
-	AudioWaveform,
-	Bell,
-	Building2,
-	Bug,
-	Command,
-	Construction,
-	FileX,
-	Flame,
-	Gauge,
-	GalleryVerticalEnd,
-	HelpCircle,
-	LayoutDashboard,
-	Lock,
-	Monitor,
-	Package,
-	Palette,
-	ServerOff,
-	Settings,
-	Shield,
-	ShieldCheck,
-	UserCog,
-	UserX,
-	Wrench,
+  AudioWaveform,
+  Bell,
+  Bug,
+  Building2,
+  Command,
+  Construction,
+  FileSignature,
+  FileX,
+  Flame,
+  GalleryVerticalEnd,
+  Gauge,
+  HelpCircle,
+  LayoutDashboard,
+  Lock,
+  Monitor,
+  Package,
+  Palette,
+  ServerOff,
+  Settings,
+  Shield,
+  ShieldCheck,
+  UserCog,
+  UserX,
+  Wrench,
 } from "lucide-react";
+
 import type { SidebarData } from "../types";
 
 export const sidebarData: SidebarData = {
-	user: {
-		name: "satnaing",
-		email: "satnaingdev@gmail.com",
-		avatar: "/avatars/shadcn.jpg",
-	},
-	teams: [
-		{
-			name: "Shadcn Admin",
-			logo: Command,
-			plan: "Vite + ShadcnUI",
-		},
-		{
-			name: "Acme Inc",
-			logo: GalleryVerticalEnd,
-			plan: "Enterprise",
-		},
-		{
-			name: "Acme Corp.",
-			logo: AudioWaveform,
-			plan: "Startup",
-		},
-	],
-	navGroups: [
-		{
-			title: "General",
-			items: [
-				{
-					title: "Dashboard",
-					url: "/",
-					icon: LayoutDashboard,
-				},
-				{
-					title: "Gás",
-					icon: Flame,
-					items: [
-						{
-							title: "Painel",
-							url: "/gas",
-						},
-						{
-							title: "Unidades Consumidoras",
-							url: "/gas/consumer-units",
-							icon: Gauge,
-						},
-						{
-							title: "Lançamento Diário",
-							url: "/gas/entry",
-						},
-						{
-							title: "Relatórios",
-							url: "/gas/reports",
-						},
-						{
-							title: "Administração",
-							url: "/gas/admin",
-						},
-					],
-				},
-				{
-					title: "Produtos",
-					url: "/products",
-					icon: Package,
-				},
-			],
-		},
-		{
-			title: "Administração",
-			items: [
-				{
-					title: "Admin Global",
-					icon: Shield,
-					items: [
-						{
-							title: "Organizações",
-							url: "/admin/organizations",
-							icon: Building2,
-						},
-					],
-				},
-			],
-		},
-		{
-			title: "Pages",
-			items: [
-				{
-					title: "Auth",
-					icon: ShieldCheck,
-					items: [
-						{
-							title: "Sign In",
-							url: "/sign-in",
-						},
-						{
-							title: "Sign In (2 Col)",
-							url: "/sign-in-2",
-						},
-						{
-							title: "Sign Up",
-							url: "/sign-up",
-						},
-						{
-							title: "Forgot Password",
-							url: "/forgot-password",
-						},
-						{
-							title: "OTP",
-							url: "/otp",
-						},
-					],
-				},
-				{
-					title: "Errors",
-					icon: Bug,
-					items: [
-						{
-							title: "Unauthorized",
-							url: "/errors/unauthorized",
-							icon: Lock,
-						},
-						{
-							title: "Forbidden",
-							url: "/errors/forbidden",
-							icon: UserX,
-						},
-						{
-							title: "Not Found",
-							url: "/errors/not-found",
-							icon: FileX,
-						},
-						{
-							title: "Internal Server Error",
-							url: "/errors/internal-server-error",
-							icon: ServerOff,
-						},
-						{
-							title: "Maintenance Error",
-							url: "/errors/maintenance-error",
-							icon: Construction,
-						},
-					],
-				},
-			],
-		},
-		{
-			title: "Other",
-			items: [
-				{
-					title: "Settings",
-					icon: Settings,
-					items: [
-						{
-							title: "Profile",
-							url: "/settings",
-							icon: UserCog,
-						},
-						{
-							title: "Account",
-							url: "/settings/account",
-							icon: Wrench,
-						},
-						{
-							title: "Appearance",
-							url: "/settings/appearance",
-							icon: Palette,
-						},
-						{
-							title: "Notifications",
-							url: "/settings/notifications",
-							icon: Bell,
-						},
-						{
-							title: "Display",
-							url: "/settings/display",
-							icon: Monitor,
-						},
-					],
-				},
-				{
-					title: "Help Center",
-					url: "/help-center",
-					icon: HelpCircle,
-				},
-			],
-		},
-	],
+  user: {
+    name: "satnaing",
+    email: "satnaingdev@gmail.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
+  teams: [
+    {
+      name: "Shadcn Admin",
+      logo: Command,
+      plan: "Vite + ShadcnUI",
+    },
+    {
+      name: "Acme Inc",
+      logo: GalleryVerticalEnd,
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      logo: AudioWaveform,
+      plan: "Startup",
+    },
+  ],
+  navGroups: [
+    {
+      title: "General",
+      items: [
+        {
+          title: "Dashboard",
+          url: "/",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "Gás",
+          icon: Flame,
+          items: [
+            {
+              title: "Painel",
+              url: "/gas",
+            },
+            {
+              title: "Contratos",
+              url: "/gas/contracts",
+              icon: FileSignature,
+            },
+            {
+              title: "Unidades Consumidoras",
+              url: "/gas/consumer-units",
+              icon: Gauge,
+            },
+            {
+              title: "Lançamento Diário",
+              url: "/gas/entry",
+            },
+            {
+              title: "Relatórios",
+              url: "/gas/reports",
+            },
+            {
+              title: "Administração",
+              url: "/gas/admin",
+            },
+          ],
+        },
+        {
+          title: "Produtos",
+          url: "/products",
+          icon: Package,
+        },
+      ],
+    },
+    {
+      title: "Administração",
+      items: [
+        {
+          title: "Admin Global",
+          icon: Shield,
+          items: [
+            {
+              title: "Organizações",
+              url: "/admin/organizations",
+              icon: Building2,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Pages",
+      items: [
+        {
+          title: "Auth",
+          icon: ShieldCheck,
+          items: [
+            {
+              title: "Sign In",
+              url: "/sign-in",
+            },
+            {
+              title: "Sign In (2 Col)",
+              url: "/sign-in-2",
+            },
+            {
+              title: "Sign Up",
+              url: "/sign-up",
+            },
+            {
+              title: "Forgot Password",
+              url: "/forgot-password",
+            },
+            {
+              title: "OTP",
+              url: "/otp",
+            },
+          ],
+        },
+        {
+          title: "Errors",
+          icon: Bug,
+          items: [
+            {
+              title: "Unauthorized",
+              url: "/errors/unauthorized",
+              icon: Lock,
+            },
+            {
+              title: "Forbidden",
+              url: "/errors/forbidden",
+              icon: UserX,
+            },
+            {
+              title: "Not Found",
+              url: "/errors/not-found",
+              icon: FileX,
+            },
+            {
+              title: "Internal Server Error",
+              url: "/errors/internal-server-error",
+              icon: ServerOff,
+            },
+            {
+              title: "Maintenance Error",
+              url: "/errors/maintenance-error",
+              icon: Construction,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Other",
+      items: [
+        {
+          title: "Settings",
+          icon: Settings,
+          items: [
+            {
+              title: "Profile",
+              url: "/settings",
+              icon: UserCog,
+            },
+            {
+              title: "Account",
+              url: "/settings/account",
+              icon: Wrench,
+            },
+            {
+              title: "Appearance",
+              url: "/settings/appearance",
+              icon: Palette,
+            },
+            {
+              title: "Notifications",
+              url: "/settings/notifications",
+              icon: Bell,
+            },
+            {
+              title: "Display",
+              url: "/settings/display",
+              icon: Monitor,
+            },
+          ],
+        },
+        {
+          title: "Help Center",
+          url: "/help-center",
+          icon: HelpCircle,
+        },
+      ],
+    },
+  ],
 };

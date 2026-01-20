@@ -1123,18 +1123,72 @@ model GasRealConsumption {
 model GasContract {
     id String @id @default(dbgenerated("uuidv7()"))
 
-    name String
-    qdcContracted Float
+    // === Basic Data Section ===
+    name String                      // Contract name/identifier
+    contractNumber String?           // Official contract number
+    supplier String?                 // Supplier name (company/distributor)
+    supplierCnpj String?             // Supplier CNPJ
 
-    transportToleranceUpperPercent Float @default(10)
-    transportToleranceLowerPercent Float @default(20)
-    moleculeTolerancePercent Float @default(5)
+    // === Volumes and Flexibilities Section ===
+    qdcContracted Float              // DCQ - Daily Contracted Quantity (m3/day or MMBtu/day)
+    volumeUnit String @default("m3") // Volume unit: m3, MMBtu
 
-    effectiveFrom DateTime @default(now())
-    effectiveTo DateTime?
+    // Tolerances
+    transportToleranceUpperPercent Float @default(10)   // Upper transport tolerance %
+    transportToleranceLowerPercent Float @default(20)   // Lower transport tolerance %
+    moleculeTolerancePercent Float @default(5)          // Molecule tolerance %
+
+    // Take-or-Pay clauses
+    takeOrPayPercent Float?                 // Take-or-pay percentage (e.g., 80%)
+    takeOrPayAccumulationMonths Int?        // Months for take-or-pay accumulation period
+    takeOrPayExpirationMonths Int?          // Months until take-or-pay credit expires
+
+    // Make-up Gas clauses
+    makeUpGasEnabled Boolean @default(false)  // Whether make-up gas is allowed
+    makeUpGasExpirationMonths Int?            // Months until make-up gas credit expires
+    makeUpGasMaxPercent Float?                // Maximum percentage for make-up gas recovery
+
+    // Flexibility clauses
+    flexibilityUpPercent Float?      // Flexibility to increase volume %
+    flexibilityDownPercent Float?    // Flexibility to decrease volume %
+    seasonalFlexibility Boolean @default(false)  // Whether seasonal flexibility applies
+
+    // === Prices and Adjustments Section ===
+    basePricePerUnit Float?           // Base price per volume unit
+    priceCurrency String @default("BRL")  // Currency: BRL, USD
+
+    // Price adjustment clauses
+    adjustmentIndex String?           // Index for adjustments (e.g., IGPM, IPCA, Henry Hub)
+    adjustmentFrequency String?       // Frequency: monthly, quarterly, annually
+    adjustmentBaseDate DateTime?      // Base date for adjustments
+    nextAdjustmentDate DateTime?      // Next scheduled adjustment date
+
+    // Additional pricing
+    transportCostPerUnit Float?       // Transport cost per unit
+    taxesIncluded Boolean @default(false)  // Whether taxes are included in price
+
+    // === Penalties Section ===
+    penaltyForUnderConsumption Float?     // Penalty for consuming below take-or-pay %
+    penaltyForOverConsumption Float?      // Penalty for consuming above flexibility %
+    penaltyCalculationMethod String?      // Calculation method description
+    latePaymentPenaltyPercent Float?      // Late payment penalty %
+    latePaymentInterestPercent Float?     // Monthly interest for late payment %
+
+    // === Important Events/Dates Section ===
+    effectiveFrom DateTime @default(now())  // Contract start date
+    effectiveTo DateTime?                    // Contract end date
+    renewalDate DateTime?                    // Renewal notification deadline
+    renewalNoticeDays Int?                   // Days before expiration to notify
+
+    // Scheduling deadlines
+    dailySchedulingDeadline String?   // Time deadline for daily scheduling (e.g., "10:00")
+    monthlyDeclarationDeadline Int?   // Day of month for monthly declaration
+
+    // General
     active Boolean @default(true)
-    notes String?
+    notes String?                     // General notes/observations
 
+    // === Audit/Tracking ===
     createdAt DateTime @default(now())
     createdById String? @default(auth().userId)
     createdByUser User? @relation("createdGasContracts", fields: [createdById], references: [id], onDelete: SetNull)
@@ -1147,10 +1201,36 @@ model GasContract {
     // Consumer units linked to this contract
     units GasUnit[]
 
+    // Audit log entries for this contract
+    auditLogs GasContractAuditLog[]
+
     @@allow('create', auth() != null)
     @@allow('read,update,delete', auth().organizationId == organizationId)
 
     @@map("gas_contracts")
+}
+
+// Audit log for contract change history
+model GasContractAuditLog {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    contractId String
+    contract GasContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+    action String        // create, update, delete
+    field String?        // Which field was changed (null for create/delete)
+    oldValue String?     // Previous value (JSON serialized if complex)
+    newValue String?     // New value (JSON serialized if complex)
+
+    createdAt DateTime @default(now())
+    userId String?
+    userName String?     // Stored for history even if user is deleted
+
+    @@allow('create', auth() != null)
+    @@allow('read', auth() != null)
+
+    @@index([contractId])
+    @@map("gas_contract_audit_logs")
 }
 
 // USER NOTIFICATION PREFERENCES ======================================================
