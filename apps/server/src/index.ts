@@ -9,6 +9,7 @@ import { gasController } from "./modules/gas";
 import { zenstackController } from "./modules/zenstack";
 import { betterAuth } from "./plugins/better-auth";
 import { betterUpload } from "./plugins/better-upload";
+import { scheduledJobs } from "./plugins/scheduled-jobs";
 
 const trustedOrigins = [
 	process.env.PUBLIC_WEB_URL ?? "http://localhost:3001",
@@ -42,6 +43,7 @@ export const app = new Elysia({
 	)
 	.use(betterAuth)
 	.use(betterUpload)
+	.use(scheduledJobs)
 	.use(zenstackController)
 	.use(gasController)
 	.get("/", () => ({ message: "Hello Elysia!" }))
