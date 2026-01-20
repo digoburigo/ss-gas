@@ -11,6 +11,7 @@
     "check-types": "tsc --noEmit",
     "clean": "git clean -xdf node_modules .turbo",
     "db:seed": "pnpm with-env tsx seed.ts",
+    "db:seed-gas": "pnpm with-env tsx seed-gas.ts",
     "dev": "pnpm with-env tsx watch src/index.ts",
     "build": "tsdown",
     "generate:component": "turbo gen react-component",
