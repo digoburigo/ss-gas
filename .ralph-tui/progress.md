@@ -55,6 +55,14 @@ after each iteration and included in agent prompts for context.
 - Define TypeScript interfaces for form data and props
 - Export component from module `index.ts`
 
+### Form Validation Patterns
+- Use Zod validators with `validators: { onSubmit: z.object({...}) }`
+- Zod v4 uses `{ message: "..." }` for custom error messages (not `required_error`)
+- Display errors with `field.state.meta.errors.map((error) => <p>{error?.message}</p>)`
+- Error styling: `className={field.state.meta.errors.length > 0 ? "border-destructive" : ""}`
+- Mark required fields with asterisk in label: `<Label>Field Name *</Label>`
+- Submit button disabled via TanStack Form's `!state.canSubmit`
+
 ---
 
 ## 2026-01-20 - US-001
@@ -266,4 +274,36 @@ odules/gas/gas.controller.ts` - Added POST and GET endpoints with full validatio
     - For nested Record fields, use single `form.Field` with `handleChange` on full object
     - Pre-existing typecheck errors in codebase (dash components, ui editor) - not related to new code
     - Ultracite/biome not installed despite being referenced in CLAUDE.md
+---
+## ✓ Iteration 7 - US-007: Build unit entry form component
+*2026-01-20T03:53:14.230Z (453s)*
+
+**Status:** Completed
+
+**Notes:**
+ime QDS calculation displayed** - Uses `form.Subscribe` with selector to reactively calculate and display atomizer consumption, lines consumption, and total QDS\n\n### Technical Details\n- Uses `@tanstack/react-form` for form state management\n- UI components from `@acme/ui` (Button, Card, Input, Label, Switch, Textarea)\n- Calculation logic mirrors server-side `GasCalculationService` functions\n- Supports units with single or dual atomizers\n- Number formatting with Brazilian locale (pt-BR)\n\n
+
+---
+
+## 2026-01-20 - US-008
+- **What was implemented:** Added form validation and auto-calculation with manual override
+- **Files changed:**
+  - `apps/web/src/components/gas/daily-entry-form.tsx` - Added validators, error display, and QDS override
+- **Features:**
+  - Form validators using Zod (hours 0-24 range, required date)
+  - Visual feedback on validation errors (red border + error messages)
+  - Required field indicators (asterisk on labels)
+  - Manual QDS override toggle with separate input field
+  - Visual differentiation for manual override (amber styling vs primary)
+  - Shows original calculated value when override is active
+  - Submit button disabled when form is invalid (via TanStack Form's canSubmit)
+- **Learnings:**
+  - Patterns discovered:
+    - Zod v4 uses `{ message: "..." }` instead of `{ required_error: "..." }` for date validation
+    - Use `field.state.meta.errors` array to display validation errors
+    - Conditional className with template literals for error styling: `` `w-32 ${field.state.meta.errors.length > 0 ? "border-destructive" : ""}` ``
+    - Manual override pattern: toggle + conditional input field + display original value
+  - Gotchas encountered:
+    - Pre-existing typecheck errors in codebase (dash components, products, table, etc.) - unrelated to new code
+    - TanStack Form + Zod integration works well with `validators: { onSubmit: z.object({...}) }`
 ---

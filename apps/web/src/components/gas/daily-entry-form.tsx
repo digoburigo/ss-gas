@@ -12,6 +12,7 @@ import { Switch } from "@acme/ui/switch";
 import { Textarea } from "@acme/ui/textarea";
 import { useForm } from "@tanstack/react-form";
 import { useMemo } from "react";
+import * as z from "zod";
 
 import { DatePicker } from "~/components/date-picker";
 
@@ -58,6 +59,8 @@ interface DailyEntryFormData {
 	secondaryAtomizerHours: number;
 	lineStatuses: Record<string, LineStatusValue>;
 	observations: string;
+	qdsManualOverride: boolean;
+	qdsManualValue: number;
 }
 
 interface DailyEntryFormProps {
@@ -196,9 +199,30 @@ export function DailyEntryForm({
 			secondaryAtomizerHours: defaultValues?.secondaryAtomizerHours ?? 0,
 			lineStatuses: initialLineStatuses,
 			observations: defaultValues?.observations ?? "",
+			qdsManualOverride: defaultValues?.qdsManualOverride ?? false,
+			qdsManualValue: defaultValues?.qdsManualValue ?? 0,
 		},
 		onSubmit: async ({ value }) => {
 			await onSubmit(value);
+		},
+		validators: {
+			onSubmit: z.object({
+				date: z.date({ message: "Data é obrigatória" }),
+				atomizerScheduled: z.boolean(),
+				atomizerHours: z
+					.number()
+					.min(0, "Horas devem ser entre 0 e 24")
+					.max(24, "Horas devem ser entre 0 e 24"),
+				secondaryAtomizerScheduled: z.boolean(),
+				secondaryAtomizerHours: z
+					.number()
+					.min(0, "Horas devem ser entre 0 e 24")
+					.max(24, "Horas devem ser entre 0 e 24"),
+				lineStatuses: z.record(z.string(), z.enum(["on", "off"])),
+				observations: z.string(),
+				qdsManualOverride: z.boolean(),
+				qdsManualValue: z.number().min(0, "Valor deve ser positivo"),
+			}),
 		},
 	});
 
@@ -223,12 +247,20 @@ export function DailyEntryForm({
 					<form.Field name="date">
 						{(field) => (
 							<div className="space-y-2">
-								<Label htmlFor={field.name}>Data</Label>
+								<Label htmlFor={field.name}>Data *</Label>
 								<DatePicker
 									selected={field.state.value}
 									onSelect={(date) => field.handleChange(date ?? new Date())}
 									placeholder="Selecione a data"
 								/>
+								{field.state.meta.errors.map((error) => (
+									<p
+										className="text-destructive text-sm"
+										key={error?.message}
+									>
+										{error?.message}
+									</p>
+								))}
 							</div>
 						)}
 					</form.Field>
@@ -277,7 +309,7 @@ export function DailyEntryForm({
 							<form.Field name="atomizerHours">
 								{(field) => (
 									<div className="space-y-2">
-										<Label htmlFor={field.name}>Horas de Funcionamento</Label>
+										<Label htmlFor={field.name}>Horas de Funcionamento *</Label>
 										<Input
 											id={field.name}
 											name={field.name}
@@ -292,8 +324,16 @@ export function DailyEntryForm({
 												)
 											}
 											value={field.state.value}
-											className="w-32"
+											className={`w-32 ${field.state.meta.errors.length > 0 ? "border-destructive" : ""}`}
 										/>
+										{field.state.meta.errors.map((error) => (
+											<p
+												className="text-destructive text-sm"
+												key={error?.message}
+											>
+												{error?.message}
+											</p>
+										))}
 									</div>
 								)}
 							</form.Field>
@@ -338,7 +378,7 @@ export function DailyEntryForm({
 										{(field) => (
 											<div className="space-y-2">
 												<Label htmlFor={field.name}>
-													Horas de Funcionamento
+													Horas de Funcionamento *
 												</Label>
 												<Input
 													id={field.name}
@@ -354,8 +394,16 @@ export function DailyEntryForm({
 														)
 													}
 													value={field.state.value}
-													className="w-32"
+													className={`w-32 ${field.state.meta.errors.length > 0 ? "border-destructive" : ""}`}
 												/>
+												{field.state.meta.errors.map((error) => (
+													<p
+														className="text-destructive text-sm"
+														key={error?.message}
+													>
+														{error?.message}
+													</p>
+												))}
 											</div>
 										)}
 									</form.Field>
@@ -489,8 +537,14 @@ export function DailyEntryForm({
 
 					const qdcLines = calculateQdcLines(linesWithStatus);
 
-					// Total QDS
-					const qdsTotal = Math.round((qdcAtomizer + qdcLines) * 100) / 100;
+					// Total QDS (calculated)
+					const qdsCalculated =
+						Math.round((qdcAtomizer + qdcLines) * 100) / 100;
+
+					// Final QDS value (manual override or calculated)
+					const qdsFinal = values.qdsManualOverride
+						? values.qdsManualValue
+						: qdsCalculated;
 
 					return (
 						<Card className="border-primary/20 bg-primary/5">
@@ -500,7 +554,7 @@ export function DailyEntryForm({
 									Previsão de consumo diário baseado nas configurações acima
 								</CardDescription>
 							</CardHeader>
-							<CardContent>
+							<CardContent className="space-y-6">
 								<div className="grid gap-4 sm:grid-cols-3">
 									<div className="text-center">
 										<p className="text-muted-foreground text-sm">
@@ -518,13 +572,99 @@ export function DailyEntryForm({
 										</p>
 										<p className="text-muted-foreground text-xs">m³/dia</p>
 									</div>
-									<div className="bg-primary/10 rounded-lg p-3 text-center">
-										<p className="text-muted-foreground text-sm">Total QDS</p>
-										<p className="text-primary text-3xl font-bold">
-											{formatNumber(qdsTotal)}
+									<div
+										className={`rounded-lg p-3 text-center ${
+											values.qdsManualOverride
+												? "border-2 border-amber-500/50 bg-amber-500/10"
+												: "bg-primary/10"
+										}`}
+									>
+										<p className="text-muted-foreground text-sm">
+											Total QDS
+											{values.qdsManualOverride && " (Manual)"}
+										</p>
+										<p
+											className={`text-3xl font-bold ${
+												values.qdsManualOverride
+													? "text-amber-600"
+													: "text-primary"
+											}`}
+										>
+											{formatNumber(qdsFinal)}
 										</p>
 										<p className="text-muted-foreground text-xs">m³/dia</p>
 									</div>
+								</div>
+
+								{/* Manual Override Option */}
+								<div className="border-t pt-4">
+									<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+										<div className="flex items-center gap-3">
+											<form.Field name="qdsManualOverride">
+												{(field) => (
+													<Switch
+														id="qdsManualOverride"
+														checked={field.state.value}
+														onCheckedChange={(checked) =>
+															field.handleChange(checked)
+														}
+													/>
+												)}
+											</form.Field>
+											<div>
+												<Label
+													htmlFor="qdsManualOverride"
+													className="cursor-pointer"
+												>
+													Sobrescrever valor calculado
+												</Label>
+												<p className="text-muted-foreground text-xs">
+													Use quando o cálculo automático não refletir a
+													realidade
+												</p>
+											</div>
+										</div>
+
+										{values.qdsManualOverride && (
+											<form.Field name="qdsManualValue">
+												{(field) => (
+													<div className="space-y-1">
+														<Input
+															id={field.name}
+															name={field.name}
+															type="number"
+															min={0}
+															step={0.01}
+															onBlur={field.handleBlur}
+															onChange={(e) =>
+																field.handleChange(
+																	e.target.value ? Number(e.target.value) : 0,
+																)
+															}
+															value={field.state.value}
+															className={`w-40 ${field.state.meta.errors.length > 0 ? "border-destructive" : ""}`}
+															placeholder="Valor manual (m³/dia)"
+														/>
+														{field.state.meta.errors.map((error) => (
+															<p
+																className="text-destructive text-sm"
+																key={error?.message}
+															>
+																{error?.message}
+															</p>
+														))}
+													</div>
+												)}
+											</form.Field>
+										)}
+									</div>
+
+									{values.qdsManualOverride && (
+										<p className="text-muted-foreground mt-2 text-xs">
+											Valor calculado original: {formatNumber(qdsCalculated)}{" "}
+											m³/dia
+										</p>
+									)}
 								</div>
 							</CardContent>
 						</Card>
