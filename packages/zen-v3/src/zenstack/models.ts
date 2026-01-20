@@ -47,6 +47,7 @@ export type GasLineStatus = $ModelResult<$Schema, "GasLineStatus">;
 export type GasDailyPlan = $ModelResult<$Schema, "GasDailyPlan">;
 export type GasRealConsumption = $ModelResult<$Schema, "GasRealConsumption">;
 export type GasContract = $ModelResult<$Schema, "GasContract">;
+export type UserNotificationPreferences = $ModelResult<$Schema, "UserNotificationPreferences">;
 /**
  * Shape of the `auth()` function
  */

@@ -71,16 +71,18 @@ async function getUnitsWithMissingEntries(
 		.filter((unit) => unit.organizationId !== "");
 }
 
-interface OrganizationMember {
+interface OrganizationMemberWithPrefs {
 	userId: string;
 	userName: string;
 	userEmail: string;
 	role: string;
+	missingEntryAlertsEnabled: boolean;
+	escalationEnabled: boolean;
 }
 
-async function getOrganizationMembers(
+async function getOrganizationMembersWithPrefs(
 	organizationId: string
-): Promise<OrganizationMember[]> {
+): Promise<OrganizationMemberWithPrefs[]> {
 	const members = await db.member.findMany({
 		where: { organizationId },
 		include: {
@@ -89,6 +91,12 @@ async function getOrganizationMembers(
 					id: true,
 					name: true,
 					email: true,
+					notificationPreferences: {
+						select: {
+							missingEntryAlertsEnabled: true,
+							escalationEnabled: true,
+						},
+					},
 				},
 			},
 		},
@@ -99,6 +107,11 @@ async function getOrganizationMembers(
 		userName: member.user.name,
 		userEmail: member.user.email,
 		role: member.role,
+		// Default to true if no preferences are set
+		missingEntryAlertsEnabled:
+			member.user.notificationPreferences?.missingEntryAlertsEnabled ?? true,
+		escalationEnabled:
+			member.user.notificationPreferences?.escalationEnabled ?? true,
 	}));
 }
 
@@ -114,6 +127,7 @@ export const ScheduledJobsService = {
 	/**
 	 * Check for missing daily entries and send alerts to unit operators.
 	 * This job should run at 6 PM daily.
+	 * Respects user notification preferences (missingEntryAlertsEnabled).
 	 */
 	async checkMissingEntriesAndAlert(): Promise<void> {
 		const jobName = "checkMissingEntriesAndAlert";
@@ -138,14 +152,16 @@ export const ScheduledJobsService = {
 
 			const dateFormatted = formatDateBR(today);
 			let alertsSent = 0;
+			let alertsSkipped = 0;
 			const alertDetails: Array<{
 				unit: string;
 				usersNotified: string[];
+				usersSkipped: string[];
 			}> = [];
 
 			for (const unit of unitsWithMissingEntries) {
-				// Get all members of the organization (operators)
-				const members = await getOrganizationMembers(unit.organizationId);
+				// Get all members of the organization (operators) with their preferences
+				const members = await getOrganizationMembersWithPrefs(unit.organizationId);
 
 				// Filter to get non-admin members (operators) for initial alert
 				const operators = members.filter(
@@ -156,7 +172,16 @@ export const ScheduledJobsService = {
 				const usersToNotify = operators.length > 0 ? operators : members;
 
 				const notifiedUsers: string[] = [];
+				const skippedUsers: string[] = [];
+
 				for (const user of usersToNotify) {
+					// Check if user has alerts enabled
+					if (!user.missingEntryAlertsEnabled) {
+						skippedUsers.push(user.userEmail);
+						alertsSkipped++;
+						continue;
+					}
+
 					try {
 						await NotificationService.sendMissingEntryAlert({
 							userName: user.userName,
@@ -178,6 +203,7 @@ export const ScheduledJobsService = {
 				alertDetails.push({
 					unit: `${unit.unitCode} - ${unit.unitName}`,
 					usersNotified: notifiedUsers,
+					usersSkipped: skippedUsers,
 				});
 			}
 
@@ -185,7 +211,7 @@ export const ScheduledJobsService = {
 				jobName,
 				executedAt,
 				status: "success",
-				message: `Sent ${alertsSent} alerts for ${unitsWithMissingEntries.length} units with missing entries`,
+				message: `Sent ${alertsSent} alerts for ${unitsWithMissingEntries.length} units with missing entries (${alertsSkipped} skipped due to preferences)`,
 				details: { alertDetails },
 			});
 		} catch (error) {
@@ -204,6 +230,7 @@ export const ScheduledJobsService = {
 	/**
 	 * Escalation check for missing entries. Sends alerts to supervisors/admins.
 	 * This job should run at 8 PM daily (2 hours after initial alert).
+	 * Respects user notification preferences (escalationEnabled).
 	 */
 	async escalateMissingEntries(): Promise<void> {
 		const jobName = "escalateMissingEntries";
@@ -228,14 +255,16 @@ export const ScheduledJobsService = {
 
 			const dateFormatted = formatDateBR(today);
 			let alertsSent = 0;
+			let alertsSkipped = 0;
 			const escalationDetails: Array<{
 				unit: string;
 				supervisorsNotified: string[];
+				supervisorsSkipped: string[];
 			}> = [];
 
 			for (const unit of unitsWithMissingEntries) {
-				// Get all members of the organization
-				const members = await getOrganizationMembers(unit.organizationId);
+				// Get all members of the organization with preferences
+				const members = await getOrganizationMembersWithPrefs(unit.organizationId);
 
 				// Filter to get admins/supervisors for escalation
 				const supervisors = members.filter(
@@ -248,7 +277,16 @@ export const ScheduledJobsService = {
 				}
 
 				const notifiedSupervisors: string[] = [];
+				const skippedSupervisors: string[] = [];
+
 				for (const supervisor of supervisors) {
+					// Check if user has escalation enabled
+					if (!supervisor.escalationEnabled) {
+						skippedSupervisors.push(supervisor.userEmail);
+						alertsSkipped++;
+						continue;
+					}
+
 					try {
 						await NotificationService.sendMissingEntryAlert({
 							userName: supervisor.userName,
@@ -270,6 +308,7 @@ export const ScheduledJobsService = {
 				escalationDetails.push({
 					unit: `${unit.unitCode} - ${unit.unitName}`,
 					supervisorsNotified: notifiedSupervisors,
+					supervisorsSkipped: skippedSupervisors,
 				});
 			}
 
@@ -277,7 +316,7 @@ export const ScheduledJobsService = {
 				jobName,
 				executedAt,
 				status: "success",
-				message: `Sent ${alertsSent} escalation alerts for ${unitsWithMissingEntries.length} units still missing entries`,
+				message: `Sent ${alertsSent} escalation alerts for ${unitsWithMissingEntries.length} units still missing entries (${alertsSkipped} skipped due to preferences)`,
 				details: { escalationDetails },
 			});
 		} catch (error) {

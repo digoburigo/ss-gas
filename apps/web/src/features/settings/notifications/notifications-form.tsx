@@ -1,5 +1,4 @@
 import { Button } from "@acme/ui/button";
-import { Checkbox } from "@acme/ui/checkbox";
 import {
 	Form,
 	FormControl,
@@ -7,106 +6,138 @@ import {
 	FormField,
 	FormItem,
 	FormLabel,
-	FormMessage,
 } from "@acme/ui/form";
-import { RadioGroup, RadioGroupItem } from "@acme/ui/radio-group";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@acme/ui/select";
 import { Switch } from "@acme/ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
-import { showSubmittedData } from "~/lib/show-submitted-data";
+import { api } from "~/clients/api-client";
 
 const notificationsFormSchema = z.object({
-	type: z.enum(["all", "mentions", "none"], {
-		error: (iss) =>
-			iss.input === undefined
-				? "Please select a notification type."
-				: undefined,
-	}),
-	mobile: z.boolean().default(false).optional(),
-	communication_emails: z.boolean().default(false).optional(),
-	social_emails: z.boolean().default(false).optional(),
-	marketing_emails: z.boolean().default(false).optional(),
-	security_emails: z.boolean(),
+	missingEntryAlertsEnabled: z.boolean(),
+	preferredNotificationHour: z.number().min(0).max(23),
+	escalationEnabled: z.boolean(),
+	escalationDelayHours: z.number().min(1).max(24),
 });
 
 type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
 
-// This can come from your database or API.
-const defaultValues: Partial<NotificationsFormValues> = {
-	communication_emails: false,
-	marketing_emails: false,
-	social_emails: true,
-	security_emails: true,
+// Default values for new users
+const defaultValues: NotificationsFormValues = {
+	missingEntryAlertsEnabled: true,
+	preferredNotificationHour: 18,
+	escalationEnabled: true,
+	escalationDelayHours: 2,
 };
 
+// Generate hour options (0-23)
+const hourOptions = Array.from({ length: 24 }, (_, i) => ({
+	value: i.toString(),
+	label: `${i.toString().padStart(2, "0")}:00`,
+}));
+
+// Generate escalation delay options (1-24 hours)
+const escalationDelayOptions = [
+	{ value: "1", label: "1 hora" },
+	{ value: "2", label: "2 horas" },
+	{ value: "3", label: "3 horas" },
+	{ value: "4", label: "4 horas" },
+	{ value: "6", label: "6 horas" },
+	{ value: "8", label: "8 horas" },
+	{ value: "12", label: "12 horas" },
+	{ value: "24", label: "24 horas" },
+];
+
 export function NotificationsForm() {
+	const queryClient = useQueryClient();
+
+	// Fetch current preferences
+	const { data: preferences, isLoading } = useQuery({
+		queryKey: ["user", "notification-preferences"],
+		queryFn: async () => {
+			const response = await api.user["notification-preferences"].get();
+			if (response.error) {
+				throw new Error("Falha ao carregar preferências");
+			}
+			return response.data;
+		},
+	});
+
 	const form = useForm<NotificationsFormValues>({
 		resolver: zodResolver(notificationsFormSchema),
 		defaultValues,
 	});
 
+	// Update form when preferences are loaded
+	useEffect(() => {
+		if (preferences) {
+			form.reset(preferences);
+		}
+	}, [preferences, form]);
+
+	// Mutation to save preferences
+	const saveMutation = useMutation({
+		mutationFn: async (data: NotificationsFormValues) => {
+			const response = await api.user["notification-preferences"].put(data);
+			if (response.error) {
+				throw new Error("Falha ao salvar preferências");
+			}
+			return response.data;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["user", "notification-preferences"],
+			});
+			toast.success("Preferências de notificação atualizadas");
+		},
+		onError: (error) => {
+			toast.error(error.message || "Erro ao salvar preferências");
+		},
+	});
+
+	const onSubmit = (data: NotificationsFormValues) => {
+		saveMutation.mutate(data);
+	};
+
+	if (isLoading) {
+		return (
+			<div className="flex items-center justify-center py-8">
+				<Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+			</div>
+		);
+	}
+
 	return (
 		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
-				className="space-y-8"
-			>
-				<FormField
-					control={form.control}
-					name="type"
-					render={({ field }) => (
-						<FormItem className="relative space-y-3">
-							<FormLabel>Notify me about...</FormLabel>
-							<FormControl>
-								<RadioGroup
-									onValueChange={field.onChange}
-									defaultValue={field.value}
-									className="flex flex-col gap-2"
-								>
-									<FormItem className="flex items-center">
-										<FormControl>
-											<RadioGroupItem value="all" />
-										</FormControl>
-										<FormLabel className="font-normal">
-											All new messages
-										</FormLabel>
-									</FormItem>
-									<FormItem className="flex items-center">
-										<FormControl>
-											<RadioGroupItem value="mentions" />
-										</FormControl>
-										<FormLabel className="font-normal">
-											Direct messages and mentions
-										</FormLabel>
-									</FormItem>
-									<FormItem className="flex items-center">
-										<FormControl>
-											<RadioGroupItem value="none" />
-										</FormControl>
-										<FormLabel className="font-normal">Nothing</FormLabel>
-									</FormItem>
-								</RadioGroup>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 				<div className="relative">
-					<h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
+					<h3 className="mb-4 font-medium text-lg">
+						Alertas de Lançamento de Gás
+					</h3>
 					<div className="space-y-4">
 						<FormField
 							control={form.control}
-							name="communication_emails"
+							name="missingEntryAlertsEnabled"
 							render={({ field }) => (
 								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 									<div className="space-y-0.5">
 										<FormLabel className="text-base">
-											Communication emails
+											Alertas de lançamento pendente
 										</FormLabel>
 										<FormDescription>
-											Receive emails about your account activity.
+											Receber notificações por e-mail quando o lançamento diário
+											de consumo de gás não for realizado.
 										</FormDescription>
 									</div>
 									<FormControl>
@@ -118,102 +149,118 @@ export function NotificationsForm() {
 								</FormItem>
 							)}
 						/>
+
 						<FormField
 							control={form.control}
-							name="marketing_emails"
+							name="preferredNotificationHour"
 							render={({ field }) => (
 								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 									<div className="space-y-0.5">
 										<FormLabel className="text-base">
-											Marketing emails
+											Horário preferencial de notificação
 										</FormLabel>
 										<FormDescription>
-											Receive emails about new products, features, and more.
+											Horário em que você prefere receber os alertas de
+											lançamento pendente.
 										</FormDescription>
 									</div>
 									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="social_emails"
-							render={({ field }) => (
-								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-									<div className="space-y-0.5">
-										<FormLabel className="text-base">Social emails</FormLabel>
-										<FormDescription>
-											Receive emails for friend requests, follows, and more.
-										</FormDescription>
-									</div>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-										/>
-									</FormControl>
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="security_emails"
-							render={({ field }) => (
-								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-									<div className="space-y-0.5">
-										<FormLabel className="text-base">Security emails</FormLabel>
-										<FormDescription>
-											Receive emails about your account activity and security.
-										</FormDescription>
-									</div>
-									<FormControl>
-										<Switch
-											checked={field.value}
-											onCheckedChange={field.onChange}
-											disabled
-											aria-readonly
-										/>
+										<Select
+											value={field.value.toString()}
+											onValueChange={(value) =>
+												field.onChange(Number.parseInt(value))
+											}
+										>
+											<SelectTrigger className="w-24">
+												<SelectValue />
+											</SelectTrigger>
+											<SelectContent>
+												{hourOptions.map((option) => (
+													<SelectItem key={option.value} value={option.value}>
+														{option.label}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
 									</FormControl>
 								</FormItem>
 							)}
 						/>
 					</div>
 				</div>
-				<FormField
-					control={form.control}
-					name="mobile"
-					render={({ field }) => (
-						<FormItem className="relative flex flex-row items-start">
-							<FormControl>
-								<Checkbox
-									checked={field.value}
-									onCheckedChange={field.onChange}
-								/>
-							</FormControl>
-							<div className="space-y-1 leading-none">
-								<FormLabel>
-									Use different settings for my mobile devices
-								</FormLabel>
-								<FormDescription>
-									You can manage your mobile notifications in the{" "}
-									<Link
-										to="/settings"
-										className="underline decoration-dashed underline-offset-4 hover:decoration-solid"
-									>
-										mobile settings
-									</Link>{" "}
-									page.
-								</FormDescription>
-							</div>
-						</FormItem>
+
+				<div className="relative">
+					<h3 className="mb-4 font-medium text-lg">Escalação para Supervisor</h3>
+					<div className="space-y-4">
+						<FormField
+							control={form.control}
+							name="escalationEnabled"
+							render={({ field }) => (
+								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+									<div className="space-y-0.5">
+										<FormLabel className="text-base">
+											Ativar escalação automática
+										</FormLabel>
+										<FormDescription>
+											Notificar supervisores automaticamente quando o lançamento
+											não for realizado dentro do prazo configurado.
+										</FormDescription>
+									</div>
+									<FormControl>
+										<Switch
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="escalationDelayHours"
+							render={({ field }) => (
+								<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+									<div className="space-y-0.5">
+										<FormLabel className="text-base">
+											Tempo para escalação
+										</FormLabel>
+										<FormDescription>
+											Tempo de espera após o alerta inicial antes de notificar
+											os supervisores.
+										</FormDescription>
+									</div>
+									<FormControl>
+										<Select
+											value={field.value.toString()}
+											onValueChange={(value) =>
+												field.onChange(Number.parseInt(value))
+											}
+										>
+											<SelectTrigger className="w-28">
+												<SelectValue />
+											</SelectTrigger>
+											<SelectContent>
+												{escalationDelayOptions.map((option) => (
+													<SelectItem key={option.value} value={option.value}>
+														{option.label}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+					</div>
+				</div>
+
+				<Button type="submit" disabled={saveMutation.isPending}>
+					{saveMutation.isPending && (
+						<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 					)}
-				/>
-				<Button type="submit">Update notifications</Button>
+					Salvar preferências
+				</Button>
 			</form>
 		</Form>
 	);

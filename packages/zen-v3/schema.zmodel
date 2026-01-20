@@ -80,6 +80,8 @@ model User {
   createdGasRealConsumptions GasRealConsumption[] @relation("createdGasRealConsumptions")
   createdGasContracts GasContract[] @relation("createdGasContracts")
 
+  notificationPreferences UserNotificationPreferences?
+
   @@allow('create,read', true)
 
   // only the user can update or delete their own profile
@@ -1115,4 +1117,31 @@ model GasContract {
     @@allow('read,update,delete', auth().organizationId == organizationId)
 
     @@map("gas_contracts")
+}
+
+// USER NOTIFICATION PREFERENCES ======================================================
+
+model UserNotificationPreferences {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    userId String @unique
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    // Missing entry alerts
+    missingEntryAlertsEnabled Boolean @default(true)
+
+    // Preferred notification time (0-23 hours)
+    preferredNotificationHour Int @default(18)
+
+    // Supervisor escalation settings
+    escalationEnabled Boolean @default(true)
+    escalationDelayHours Int @default(2)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().userId == userId)
+
+    @@map("user_notification_preferences")
 }
