@@ -5,6 +5,7 @@ import { fromTypes, openapi } from "@elysiajs/openapi";
 import { Elysia, t } from "elysia";
 import { sql } from "kysely";
 
+import { contractExtractionController } from "./modules/contract-extraction";
 import { gasController } from "./modules/gas";
 import { userController } from "./modules/user";
 import { zenstackController } from "./modules/zenstack";
@@ -48,6 +49,7 @@ export const app = new Elysia({
 	.use(zenstackController)
 	.use(gasController)
 	.use(userController)
+	.use(contractExtractionController)
 	.get("/", () => ({ message: "Hello Elysia!" }))
 	.get("/healthcheck", () => ({ qualquercoisa: "OK 1" }), {
 		response: {

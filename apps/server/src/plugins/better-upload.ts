@@ -31,6 +31,24 @@ const router: Router = {
 				};
 			},
 		}),
+		contracts: route({
+			fileTypes: ["application/pdf", "image/*"],
+			multipleFiles: true,
+			maxFiles: 1,
+			onBeforeUpload: async ({ req, files, clientMetadata }) => {
+				const session = await getSessionUser({ request: req });
+				return {
+					generateObjectInfo: ({ file }: { file: { name: string } }) => ({
+						key: `${session?.organizationId ?? ""}/contracts/${Date.now()}-${file.name}`,
+						metadata: {
+							userId: session?.userId ?? "",
+							organizationId: session?.organizationId ?? "",
+							type: "contract",
+						},
+					}),
+				};
+			},
+		}),
 	},
 };
 

@@ -21,6 +21,7 @@ import { schema } from "@acme/zen-v3/zenstack/schema";
 import { authClient } from "~/clients/auth-client";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import { ContractsMutateDrawer } from "./contracts-mutate-drawer";
+import { ContractUploadDrawer } from "./contract-upload-drawer";
 import { useContracts } from "./contracts-provider";
 
 export function ContractsDialogs() {
@@ -138,6 +139,14 @@ export function ContractsDialogs() {
       <ContractsMutateDrawer
         key="contract-create"
         open={open === "create"}
+        onOpenChange={(v) => {
+          if (!v) setOpen(null);
+        }}
+      />
+
+      <ContractUploadDrawer
+        key="contract-upload"
+        open={open === "upload"}
         onOpenChange={(v) => {
           if (!v) setOpen(null);
         }}

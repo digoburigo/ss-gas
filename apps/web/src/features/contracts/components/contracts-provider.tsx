@@ -9,7 +9,8 @@ type ContractsDialogType =
   | "update"
   | "delete"
   | "toggle-active"
-  | "view-history";
+  | "view-history"
+  | "upload";
 
 type ContractsContextType = {
   open: ContractsDialogType | null;
