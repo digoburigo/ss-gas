@@ -12,6 +12,7 @@ type Auth {
   userId           String @id
   organizationId   String?
   organizationRole String?
+  userRole         String?  // Global user role (admin/user) from User.role field
 
   @@auth
 }
@@ -147,9 +148,20 @@ model Organization {
   name                        String
   slug                        String?
   logo                        String?
-  createdAt                   DateTime                     @default(now()) 
-  updatedAt                   DateTime                     @updatedAt 
+  createdAt                   DateTime                     @default(now())
+  updatedAt                   DateTime                     @updatedAt
   metadata                    String? // address, phone, email, website, etc.
+
+  // SS-GAS fields for organization management
+  cnpj                        String?  // Brazilian tax ID (CNPJ)
+  address                     String?  // Full address
+  city                        String?
+  state                       String?
+  zipCode                     String?
+  contactName                 String?  // Primary contact name
+  contactEmail                String?  // Primary contact email
+  contactPhone                String?  // Primary contact phone
+  active                      Boolean  @default(true)
 
   members                     Member[]
   invitations                 Invitation[]
@@ -179,8 +191,13 @@ model Organization {
   gasContracts GasContract[]
 
   @@unique([slug])
+  @@unique([cnpj])
 
-  @@allow('create,read', true)
+  // Anyone can read organizations (for listing/selecting)
+  @@allow('read', true)
+
+  // Only global admins (users with userRole='admin') can create, update, delete organizations
+  @@allow('create,update,delete', auth().userRole == 'admin')
 
   @@map("organization")
 }

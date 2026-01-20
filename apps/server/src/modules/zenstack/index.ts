@@ -32,7 +32,7 @@ export async function getSessionUser({ request }: { request: Request }) {
 		userId: user.id,
 		organizationId: session.activeOrganizationId,
 		organizationRole,
-		role: user.role,
+		userRole: user.role,
 	};
 }
 

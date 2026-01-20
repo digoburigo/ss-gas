@@ -578,6 +578,52 @@ export class SchemaType implements SchemaDef {
                     type: "String",
                     optional: true
                 },
+                cnpj: {
+                    name: "cnpj",
+                    type: "String",
+                    optional: true
+                },
+                address: {
+                    name: "address",
+                    type: "String",
+                    optional: true
+                },
+                city: {
+                    name: "city",
+                    type: "String",
+                    optional: true
+                },
+                state: {
+                    name: "state",
+                    type: "String",
+                    optional: true
+                },
+                zipCode: {
+                    name: "zipCode",
+                    type: "String",
+                    optional: true
+                },
+                contactName: {
+                    name: "contactName",
+                    type: "String",
+                    optional: true
+                },
+                contactEmail: {
+                    name: "contactEmail",
+                    type: "String",
+                    optional: true
+                },
+                contactPhone: {
+                    name: "contactPhone",
+                    type: "String",
+                    optional: true
+                },
+                active: {
+                    name: "active",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(true) }] }],
+                    default: true
+                },
                 members: {
                     name: "members",
                     type: "Member",
@@ -725,13 +771,16 @@ export class SchemaType implements SchemaDef {
             },
             attributes: [
                 { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("slug")]) }] },
-                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create,read") }, { name: "condition", value: ExpressionUtils.literal(true) }] },
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("cnpj")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read") }, { name: "condition", value: ExpressionUtils.literal(true) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["userRole"]), "==", ExpressionUtils.literal("admin")) }] },
                 { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("organization") }] }
             ],
             idFields: ["id"],
             uniqueFields: {
                 id: { type: "String" },
-                slug: { type: "String" }
+                slug: { type: "String" },
+                cnpj: { type: "String" }
             }
         },
         Member: {
@@ -3949,6 +3998,11 @@ export class SchemaType implements SchemaDef {
                 },
                 organizationRole: {
                     name: "organizationRole",
+                    type: "String",
+                    optional: true
+                },
+                userRole: {
+                    name: "userRole",
                     type: "String",
                     optional: true
                 }

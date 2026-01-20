@@ -13,11 +13,11 @@ import { Route as TestRouteImport } from './routes/test'
 import { Route as PlateRouteImport } from './routes/plate'
 import { Route as OrganizationsRouteImport } from './routes/organizations'
 import { Route as LandRouteImport } from './routes/land'
-import { Route as AuthLayoutRouteImport } from './routes/auth/layout'
-import { Route as AuthenticatedLayoutRouteImport } from './routes/_authenticated/layout'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthLayoutRouteImport } from './routes/auth/layout'
+import { Route as AuthenticatedLayoutRouteImport } from './routes/_authenticated/layout'
 import { Route as errors503RouteImport } from './routes/(errors)/503'
 import { Route as errors500RouteImport } from './routes/(errors)/500'
 import { Route as errors404RouteImport } from './routes/(errors)/404'
@@ -28,10 +28,6 @@ import { Route as authSignIn2RouteImport } from './routes/(auth)/sign-in-2'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
-import { Route as AuthenticatedSettingsLayoutRouteImport } from './routes/_authenticated/settings/layout'
-import { Route as AuthenticatedProductsLayoutRouteImport } from './routes/_authenticated/products/layout'
-import { Route as AuthenticatedGasLayoutRouteImport } from './routes/_authenticated/gas/layout'
-import { Route as AuthenticatedClientsLayoutRouteImport } from './routes/_authenticated/clients/layout'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
@@ -42,17 +38,22 @@ import { Route as AuthenticatedClientsIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
+import { Route as AuthenticatedSettingsLayoutRouteImport } from './routes/_authenticated/settings/layout'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated/products/new'
+import { Route as AuthenticatedProductsLayoutRouteImport } from './routes/_authenticated/products/layout'
 import { Route as AuthenticatedProductsProductIdRouteImport } from './routes/_authenticated/products/$productId'
 import { Route as AuthenticatedGasReportsRouteImport } from './routes/_authenticated/gas/reports'
+import { Route as AuthenticatedGasLayoutRouteImport } from './routes/_authenticated/gas/layout'
 import { Route as AuthenticatedGasEntryRouteImport } from './routes/_authenticated/gas/entry'
 import { Route as AuthenticatedGasAdminRouteImport } from './routes/_authenticated/gas/admin'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedClientsNewRouteImport } from './routes/_authenticated/clients/new'
+import { Route as AuthenticatedClientsLayoutRouteImport } from './routes/_authenticated/clients/layout'
 import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients/$clientId'
+import { Route as AuthenticatedAdminOrganizationsIndexRouteImport } from './routes/_authenticated/admin/organizations/index'
 
 const TestRoute = TestRouteImport.update({
   id: '/test',
@@ -74,29 +75,30 @@ const LandRoute = LandRouteImport.update({
   path: '/land',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/_authenticated/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthLayoutRoute = AuthLayoutRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+  id: '/auth/layout',
+  path: '/auth/layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedLayoutRoute = AuthenticatedLayoutRouteImport.update({
-  id: '/_authenticated',
+  id: '/_authenticated/layout',
+  path: '/layout',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedLayoutRoute,
-} as any)
-const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => AuthLayoutRoute,
-} as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => AuthLayoutRoute,
 } as any)
 const errors503Route = errors503RouteImport.update({
   id: '/(errors)/503',
@@ -148,158 +150,158 @@ const authForgotPasswordRoute = authForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedSettingsLayoutRoute =
-  AuthenticatedSettingsLayoutRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedLayoutRoute,
-  } as any)
-const AuthenticatedProductsLayoutRoute =
-  AuthenticatedProductsLayoutRouteImport.update({
-    id: '/products',
-    path: '/products',
-    getParentRoute: () => AuthenticatedLayoutRoute,
-  } as any)
-const AuthenticatedGasLayoutRoute = AuthenticatedGasLayoutRouteImport.update({
-  id: '/gas',
-  path: '/gas',
-  getParentRoute: () => AuthenticatedLayoutRoute,
-} as any)
-const AuthenticatedClientsLayoutRoute =
-  AuthenticatedClientsLayoutRouteImport.update({
-    id: '/clients',
-    path: '/clients',
-    getParentRoute: () => AuthenticatedLayoutRoute,
-  } as any)
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
-  id: '/users/',
+  id: '/_authenticated/users/',
   path: '/users/',
-  getParentRoute: () => AuthenticatedLayoutRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedTasksIndexRoute = AuthenticatedTasksIndexRouteImport.update({
-  id: '/tasks/',
+  id: '/_authenticated/tasks/',
   path: '/tasks/',
-  getParentRoute: () => AuthenticatedLayoutRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSettingsIndexRoute =
   AuthenticatedSettingsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+    id: '/_authenticated/settings/',
+    path: '/settings/',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedProductsIndexRoute =
   AuthenticatedProductsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedProductsLayoutRoute,
+    id: '/_authenticated/products/',
+    path: '/products/',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedHelpCenterIndexRoute =
   AuthenticatedHelpCenterIndexRouteImport.update({
-    id: '/help-center/',
+    id: '/_authenticated/help-center/',
     path: '/help-center/',
-    getParentRoute: () => AuthenticatedLayoutRoute,
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedGasIndexRoute = AuthenticatedGasIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedGasLayoutRoute,
+  id: '/_authenticated/gas/',
+  path: '/gas/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedClientsIndexRoute =
   AuthenticatedClientsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedClientsLayoutRoute,
+    id: '/_authenticated/clients/',
+    path: '/clients/',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
-  id: '/chats/',
+  id: '/_authenticated/chats/',
   path: '/chats/',
-  getParentRoute: () => AuthenticatedLayoutRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexRouteImport.update({
-  id: '/apps/',
+  id: '/_authenticated/apps/',
   path: '/apps/',
-  getParentRoute: () => AuthenticatedLayoutRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsRouteImport.update({
-    id: '/notifications',
-    path: '/notifications',
-    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+    id: '/_authenticated/settings/notifications',
+    path: '/settings/notifications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedSettingsLayoutRoute =
+  AuthenticatedSettingsLayoutRouteImport.update({
+    id: '/_authenticated/settings/layout',
+    path: '/settings/layout',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedSettingsDisplayRoute =
   AuthenticatedSettingsDisplayRouteImport.update({
-    id: '/display',
-    path: '/display',
-    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+    id: '/_authenticated/settings/display',
+    path: '/settings/display',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedSettingsAppearanceRoute =
   AuthenticatedSettingsAppearanceRouteImport.update({
-    id: '/appearance',
-    path: '/appearance',
-    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+    id: '/_authenticated/settings/appearance',
+    path: '/settings/appearance',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedSettingsAccountRoute =
   AuthenticatedSettingsAccountRouteImport.update({
-    id: '/account',
-    path: '/account',
-    getParentRoute: () => AuthenticatedSettingsLayoutRoute,
+    id: '/_authenticated/settings/account',
+    path: '/settings/account',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedProductsNewRoute =
   AuthenticatedProductsNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => AuthenticatedProductsLayoutRoute,
+    id: '/_authenticated/products/new',
+    path: '/products/new',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedProductsLayoutRoute =
+  AuthenticatedProductsLayoutRouteImport.update({
+    id: '/_authenticated/products/layout',
+    path: '/products/layout',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedProductsProductIdRoute =
   AuthenticatedProductsProductIdRouteImport.update({
-    id: '/$productId',
-    path: '/$productId',
-    getParentRoute: () => AuthenticatedProductsLayoutRoute,
+    id: '/_authenticated/products/$productId',
+    path: '/products/$productId',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedGasReportsRoute = AuthenticatedGasReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
-  getParentRoute: () => AuthenticatedGasLayoutRoute,
+  id: '/_authenticated/gas/reports',
+  path: '/gas/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedGasLayoutRoute = AuthenticatedGasLayoutRouteImport.update({
+  id: '/_authenticated/gas/layout',
+  path: '/gas/layout',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedGasEntryRoute = AuthenticatedGasEntryRouteImport.update({
-  id: '/entry',
-  path: '/entry',
-  getParentRoute: () => AuthenticatedGasLayoutRoute,
+  id: '/_authenticated/gas/entry',
+  path: '/gas/entry',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedGasAdminRoute = AuthenticatedGasAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedGasLayoutRoute,
+  id: '/_authenticated/gas/admin',
+  path: '/gas/admin',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedErrorsErrorRoute =
   AuthenticatedErrorsErrorRouteImport.update({
-    id: '/errors/$error',
+    id: '/_authenticated/errors/$error',
     path: '/errors/$error',
-    getParentRoute: () => AuthenticatedLayoutRoute,
+    getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedClientsNewRoute = AuthenticatedClientsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => AuthenticatedClientsLayoutRoute,
+  id: '/_authenticated/clients/new',
+  path: '/clients/new',
+  getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedClientsLayoutRoute =
+  AuthenticatedClientsLayoutRouteImport.update({
+    id: '/_authenticated/clients/layout',
+    path: '/clients/layout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedClientsClientIdRoute =
   AuthenticatedClientsClientIdRouteImport.update({
-    id: '/$clientId',
-    path: '/$clientId',
-    getParentRoute: () => AuthenticatedClientsLayoutRoute,
+    id: '/_authenticated/clients/$clientId',
+    path: '/clients/$clientId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AuthenticatedAdminOrganizationsIndexRoute =
+  AuthenticatedAdminOrganizationsIndexRouteImport.update({
+    id: '/_authenticated/admin/organizations/',
+    path: '/admin/organizations/',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedIndexRoute
-  '/auth': typeof AuthLayoutRouteWithChildren
   '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
-  '/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
-  '/gas': typeof AuthenticatedGasLayoutRouteWithChildren
-  '/products': typeof AuthenticatedProductsLayoutRouteWithChildren
-  '/settings': typeof AuthenticatedSettingsLayoutRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
   '/sign-in': typeof authSignInRoute
@@ -310,19 +312,26 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/layout': typeof AuthenticatedLayoutRoute
+  '/auth/layout': typeof AuthLayoutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/': typeof AuthenticatedIndexRoute
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/clients/layout': typeof AuthenticatedClientsLayoutRoute
   '/clients/new': typeof AuthenticatedClientsNewRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/gas/admin': typeof AuthenticatedGasAdminRoute
   '/gas/entry': typeof AuthenticatedGasEntryRoute
+  '/gas/layout': typeof AuthenticatedGasLayoutRoute
   '/gas/reports': typeof AuthenticatedGasReportsRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
+  '/products/layout': typeof AuthenticatedProductsLayoutRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
+  '/settings/layout': typeof AuthenticatedSettingsLayoutRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/apps/': typeof AuthenticatedAppsIndexRoute
   '/chats/': typeof AuthenticatedChatsIndexRoute
@@ -333,9 +342,9 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks/': typeof AuthenticatedTasksIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
+  '/admin/organizations/': typeof AuthenticatedAdminOrganizationsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/auth': typeof AuthLayoutRouteWithChildren
   '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
@@ -350,20 +359,26 @@ export interface FileRoutesByTo {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/layout': typeof AuthenticatedLayoutRoute
+  '/auth/layout': typeof AuthLayoutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/': typeof AuthenticatedIndexRoute
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/clients/layout': typeof AuthenticatedClientsLayoutRoute
   '/clients/new': typeof AuthenticatedClientsNewRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/gas/admin': typeof AuthenticatedGasAdminRoute
   '/gas/entry': typeof AuthenticatedGasEntryRoute
+  '/gas/layout': typeof AuthenticatedGasLayoutRoute
   '/gas/reports': typeof AuthenticatedGasReportsRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
+  '/products/layout': typeof AuthenticatedProductsLayoutRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
+  '/settings/layout': typeof AuthenticatedSettingsLayoutRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
@@ -374,19 +389,14 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/admin/organizations': typeof AuthenticatedAdminOrganizationsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_authenticated': typeof AuthenticatedLayoutRouteWithChildren
-  '/auth': typeof AuthLayoutRouteWithChildren
   '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
-  '/_authenticated/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
-  '/_authenticated/gas': typeof AuthenticatedGasLayoutRouteWithChildren
-  '/_authenticated/products': typeof AuthenticatedProductsLayoutRouteWithChildren
-  '/_authenticated/settings': typeof AuthenticatedSettingsLayoutRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/otp': typeof authOtpRoute
   '/(auth)/sign-in': typeof authSignInRoute
@@ -397,20 +407,26 @@ export interface FileRoutesById {
   '/(errors)/404': typeof errors404Route
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
+  '/_authenticated/layout': typeof AuthenticatedLayoutRoute
+  '/auth/layout': typeof AuthLayoutRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/_authenticated/clients/layout': typeof AuthenticatedClientsLayoutRoute
   '/_authenticated/clients/new': typeof AuthenticatedClientsNewRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/gas/admin': typeof AuthenticatedGasAdminRoute
   '/_authenticated/gas/entry': typeof AuthenticatedGasEntryRoute
+  '/_authenticated/gas/layout': typeof AuthenticatedGasLayoutRoute
   '/_authenticated/gas/reports': typeof AuthenticatedGasReportsRoute
   '/_authenticated/products/$productId': typeof AuthenticatedProductsProductIdRoute
+  '/_authenticated/products/layout': typeof AuthenticatedProductsLayoutRoute
   '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
+  '/_authenticated/settings/layout': typeof AuthenticatedSettingsLayoutRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
@@ -421,20 +437,15 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/admin/organizations/': typeof AuthenticatedAdminOrganizationsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/auth'
     | '/land'
     | '/organizations'
     | '/plate'
     | '/test'
-    | '/clients'
-    | '/gas'
-    | '/products'
-    | '/settings'
     | '/forgot-password'
     | '/otp'
     | '/sign-in'
@@ -445,19 +456,26 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/layout'
+    | '/auth/layout'
     | '/auth/login'
     | '/auth/register'
+    | '/'
     | '/clients/$clientId'
+    | '/clients/layout'
     | '/clients/new'
     | '/errors/$error'
     | '/gas/admin'
     | '/gas/entry'
+    | '/gas/layout'
     | '/gas/reports'
     | '/products/$productId'
+    | '/products/layout'
     | '/products/new'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
+    | '/settings/layout'
     | '/settings/notifications'
     | '/apps/'
     | '/chats/'
@@ -468,9 +486,9 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/tasks/'
     | '/users/'
+    | '/admin/organizations/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/auth'
     | '/land'
     | '/organizations'
     | '/plate'
@@ -485,20 +503,26 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/layout'
+    | '/auth/layout'
     | '/auth/login'
     | '/auth/register'
     | '/'
     | '/clients/$clientId'
+    | '/clients/layout'
     | '/clients/new'
     | '/errors/$error'
     | '/gas/admin'
     | '/gas/entry'
+    | '/gas/layout'
     | '/gas/reports'
     | '/products/$productId'
+    | '/products/layout'
     | '/products/new'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
+    | '/settings/layout'
     | '/settings/notifications'
     | '/apps'
     | '/chats'
@@ -509,18 +533,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tasks'
     | '/users'
+    | '/admin/organizations'
   id:
     | '__root__'
-    | '/_authenticated'
-    | '/auth'
     | '/land'
     | '/organizations'
     | '/plate'
     | '/test'
-    | '/_authenticated/clients'
-    | '/_authenticated/gas'
-    | '/_authenticated/products'
-    | '/_authenticated/settings'
     | '/(auth)/forgot-password'
     | '/(auth)/otp'
     | '/(auth)/sign-in'
@@ -531,20 +550,26 @@ export interface FileRouteTypes {
     | '/(errors)/404'
     | '/(errors)/500'
     | '/(errors)/503'
+    | '/_authenticated/layout'
+    | '/auth/layout'
     | '/auth/login'
     | '/auth/register'
     | '/_authenticated/'
     | '/_authenticated/clients/$clientId'
+    | '/_authenticated/clients/layout'
     | '/_authenticated/clients/new'
     | '/_authenticated/errors/$error'
     | '/_authenticated/gas/admin'
     | '/_authenticated/gas/entry'
+    | '/_authenticated/gas/layout'
     | '/_authenticated/gas/reports'
     | '/_authenticated/products/$productId'
+    | '/_authenticated/products/layout'
     | '/_authenticated/products/new'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
+    | '/_authenticated/settings/layout'
     | '/_authenticated/settings/notifications'
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
@@ -555,11 +580,10 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
+    | '/_authenticated/admin/organizations/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AuthenticatedLayoutRoute: typeof AuthenticatedLayoutRouteWithChildren
-  AuthLayoutRoute: typeof AuthLayoutRouteWithChildren
   LandRoute: typeof LandRoute
   OrganizationsRoute: typeof OrganizationsRoute
   PlateRoute: typeof PlateRoute
@@ -574,6 +598,37 @@ export interface RootRouteChildren {
   errors404Route: typeof errors404Route
   errors500Route: typeof errors500Route
   errors503Route: typeof errors503Route
+  AuthenticatedLayoutRoute: typeof AuthenticatedLayoutRoute
+  AuthLayoutRoute: typeof AuthLayoutRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRoute
+  AuthenticatedClientsLayoutRoute: typeof AuthenticatedClientsLayoutRoute
+  AuthenticatedClientsNewRoute: typeof AuthenticatedClientsNewRoute
+  AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedGasAdminRoute: typeof AuthenticatedGasAdminRoute
+  AuthenticatedGasEntryRoute: typeof AuthenticatedGasEntryRoute
+  AuthenticatedGasLayoutRoute: typeof AuthenticatedGasLayoutRoute
+  AuthenticatedGasReportsRoute: typeof AuthenticatedGasReportsRoute
+  AuthenticatedProductsProductIdRoute: typeof AuthenticatedProductsProductIdRoute
+  AuthenticatedProductsLayoutRoute: typeof AuthenticatedProductsLayoutRoute
+  AuthenticatedProductsNewRoute: typeof AuthenticatedProductsNewRoute
+  AuthenticatedSettingsAccountRoute: typeof AuthenticatedSettingsAccountRoute
+  AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
+  AuthenticatedSettingsDisplayRoute: typeof AuthenticatedSettingsDisplayRoute
+  AuthenticatedSettingsLayoutRoute: typeof AuthenticatedSettingsLayoutRoute
+  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
+  AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
+  AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
+  AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
+  AuthenticatedGasIndexRoute: typeof AuthenticatedGasIndexRoute
+  AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
+  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
+  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
+  AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
+  AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedAdminOrganizationsIndexRoute: typeof AuthenticatedAdminOrganizationsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -606,40 +661,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LandRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedLayoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/': {
       id: '/_authenticated/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/auth/register': {
       id: '/auth/register'
-      path: '/register'
+      path: '/auth/register'
       fullPath: '/auth/register'
       preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof AuthLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/auth/login': {
       id: '/auth/login'
-      path: '/login'
+      path: '/auth/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof AuthLayoutRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/layout': {
+      id: '/auth/layout'
+      path: '/auth/layout'
+      fullPath: '/auth/layout'
+      preLoaderRoute: typeof AuthLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/layout': {
+      id: '/_authenticated/layout'
+      path: '/layout'
+      fullPath: '/layout'
+      preLoaderRoute: typeof AuthenticatedLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(errors)/503': {
       id: '/(errors)/503'
@@ -711,313 +766,192 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsLayoutRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
-    }
-    '/_authenticated/products': {
-      id: '/_authenticated/products'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof AuthenticatedProductsLayoutRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
-    }
-    '/_authenticated/gas': {
-      id: '/_authenticated/gas'
-      path: '/gas'
-      fullPath: '/gas'
-      preLoaderRoute: typeof AuthenticatedGasLayoutRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
-    }
-    '/_authenticated/clients': {
-      id: '/_authenticated/clients'
-      path: '/clients'
-      fullPath: '/clients'
-      preLoaderRoute: typeof AuthenticatedClientsLayoutRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
-    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
       fullPath: '/users/'
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/tasks/': {
       id: '/_authenticated/tasks/'
       path: '/tasks'
       fullPath: '/tasks/'
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings/': {
       id: '/_authenticated/settings/'
-      path: '/'
+      path: '/settings'
       fullPath: '/settings/'
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
-      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/products/': {
       id: '/_authenticated/products/'
-      path: '/'
+      path: '/products'
       fullPath: '/products/'
       preLoaderRoute: typeof AuthenticatedProductsIndexRouteImport
-      parentRoute: typeof AuthenticatedProductsLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/help-center/': {
       id: '/_authenticated/help-center/'
       path: '/help-center'
       fullPath: '/help-center/'
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/gas/': {
       id: '/_authenticated/gas/'
-      path: '/'
+      path: '/gas'
       fullPath: '/gas/'
       preLoaderRoute: typeof AuthenticatedGasIndexRouteImport
-      parentRoute: typeof AuthenticatedGasLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/clients/': {
       id: '/_authenticated/clients/'
-      path: '/'
+      path: '/clients'
       fullPath: '/clients/'
       preLoaderRoute: typeof AuthenticatedClientsIndexRouteImport
-      parentRoute: typeof AuthenticatedClientsLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/chats/': {
       id: '/_authenticated/chats/'
       path: '/chats'
       fullPath: '/chats/'
       preLoaderRoute: typeof AuthenticatedChatsIndexRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/apps/': {
       id: '/_authenticated/apps/'
       path: '/apps'
       fullPath: '/apps/'
       preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings/notifications': {
       id: '/_authenticated/settings/notifications'
-      path: '/notifications'
+      path: '/settings/notifications'
       fullPath: '/settings/notifications'
       preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
-      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/settings/layout': {
+      id: '/_authenticated/settings/layout'
+      path: '/settings/layout'
+      fullPath: '/settings/layout'
+      preLoaderRoute: typeof AuthenticatedSettingsLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings/display': {
       id: '/_authenticated/settings/display'
-      path: '/display'
+      path: '/settings/display'
       fullPath: '/settings/display'
       preLoaderRoute: typeof AuthenticatedSettingsDisplayRouteImport
-      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings/appearance': {
       id: '/_authenticated/settings/appearance'
-      path: '/appearance'
+      path: '/settings/appearance'
       fullPath: '/settings/appearance'
       preLoaderRoute: typeof AuthenticatedSettingsAppearanceRouteImport
-      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/settings/account': {
       id: '/_authenticated/settings/account'
-      path: '/account'
+      path: '/settings/account'
       fullPath: '/settings/account'
       preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
-      parentRoute: typeof AuthenticatedSettingsLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/products/new': {
       id: '/_authenticated/products/new'
-      path: '/new'
+      path: '/products/new'
       fullPath: '/products/new'
       preLoaderRoute: typeof AuthenticatedProductsNewRouteImport
-      parentRoute: typeof AuthenticatedProductsLayoutRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/products/layout': {
+      id: '/_authenticated/products/layout'
+      path: '/products/layout'
+      fullPath: '/products/layout'
+      preLoaderRoute: typeof AuthenticatedProductsLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/products/$productId': {
       id: '/_authenticated/products/$productId'
-      path: '/$productId'
+      path: '/products/$productId'
       fullPath: '/products/$productId'
       preLoaderRoute: typeof AuthenticatedProductsProductIdRouteImport
-      parentRoute: typeof AuthenticatedProductsLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/gas/reports': {
       id: '/_authenticated/gas/reports'
-      path: '/reports'
+      path: '/gas/reports'
       fullPath: '/gas/reports'
       preLoaderRoute: typeof AuthenticatedGasReportsRouteImport
-      parentRoute: typeof AuthenticatedGasLayoutRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/gas/layout': {
+      id: '/_authenticated/gas/layout'
+      path: '/gas/layout'
+      fullPath: '/gas/layout'
+      preLoaderRoute: typeof AuthenticatedGasLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/gas/entry': {
       id: '/_authenticated/gas/entry'
-      path: '/entry'
+      path: '/gas/entry'
       fullPath: '/gas/entry'
       preLoaderRoute: typeof AuthenticatedGasEntryRouteImport
-      parentRoute: typeof AuthenticatedGasLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/gas/admin': {
       id: '/_authenticated/gas/admin'
-      path: '/admin'
+      path: '/gas/admin'
       fullPath: '/gas/admin'
       preLoaderRoute: typeof AuthenticatedGasAdminRouteImport
-      parentRoute: typeof AuthenticatedGasLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/errors/$error': {
       id: '/_authenticated/errors/$error'
       path: '/errors/$error'
       fullPath: '/errors/$error'
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
-      parentRoute: typeof AuthenticatedLayoutRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/clients/new': {
       id: '/_authenticated/clients/new'
-      path: '/new'
+      path: '/clients/new'
       fullPath: '/clients/new'
       preLoaderRoute: typeof AuthenticatedClientsNewRouteImport
-      parentRoute: typeof AuthenticatedClientsLayoutRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/clients/layout': {
+      id: '/_authenticated/clients/layout'
+      path: '/clients/layout'
+      fullPath: '/clients/layout'
+      preLoaderRoute: typeof AuthenticatedClientsLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/clients/$clientId': {
       id: '/_authenticated/clients/$clientId'
-      path: '/$clientId'
+      path: '/clients/$clientId'
       fullPath: '/clients/$clientId'
       preLoaderRoute: typeof AuthenticatedClientsClientIdRouteImport
-      parentRoute: typeof AuthenticatedClientsLayoutRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/organizations/': {
+      id: '/_authenticated/admin/organizations/'
+      path: '/admin/organizations'
+      fullPath: '/admin/organizations/'
+      preLoaderRoute: typeof AuthenticatedAdminOrganizationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface AuthenticatedClientsLayoutRouteChildren {
-  AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRoute
-  AuthenticatedClientsNewRoute: typeof AuthenticatedClientsNewRoute
-  AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
-}
-
-const AuthenticatedClientsLayoutRouteChildren: AuthenticatedClientsLayoutRouteChildren =
-  {
-    AuthenticatedClientsClientIdRoute: AuthenticatedClientsClientIdRoute,
-    AuthenticatedClientsNewRoute: AuthenticatedClientsNewRoute,
-    AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
-  }
-
-const AuthenticatedClientsLayoutRouteWithChildren =
-  AuthenticatedClientsLayoutRoute._addFileChildren(
-    AuthenticatedClientsLayoutRouteChildren,
-  )
-
-interface AuthenticatedGasLayoutRouteChildren {
-  AuthenticatedGasAdminRoute: typeof AuthenticatedGasAdminRoute
-  AuthenticatedGasEntryRoute: typeof AuthenticatedGasEntryRoute
-  AuthenticatedGasReportsRoute: typeof AuthenticatedGasReportsRoute
-  AuthenticatedGasIndexRoute: typeof AuthenticatedGasIndexRoute
-}
-
-const AuthenticatedGasLayoutRouteChildren: AuthenticatedGasLayoutRouteChildren =
-  {
-    AuthenticatedGasAdminRoute: AuthenticatedGasAdminRoute,
-    AuthenticatedGasEntryRoute: AuthenticatedGasEntryRoute,
-    AuthenticatedGasReportsRoute: AuthenticatedGasReportsRoute,
-    AuthenticatedGasIndexRoute: AuthenticatedGasIndexRoute,
-  }
-
-const AuthenticatedGasLayoutRouteWithChildren =
-  AuthenticatedGasLayoutRoute._addFileChildren(
-    AuthenticatedGasLayoutRouteChildren,
-  )
-
-interface AuthenticatedProductsLayoutRouteChildren {
-  AuthenticatedProductsProductIdRoute: typeof AuthenticatedProductsProductIdRoute
-  AuthenticatedProductsNewRoute: typeof AuthenticatedProductsNewRoute
-  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
-}
-
-const AuthenticatedProductsLayoutRouteChildren: AuthenticatedProductsLayoutRouteChildren =
-  {
-    AuthenticatedProductsProductIdRoute: AuthenticatedProductsProductIdRoute,
-    AuthenticatedProductsNewRoute: AuthenticatedProductsNewRoute,
-    AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
-  }
-
-const AuthenticatedProductsLayoutRouteWithChildren =
-  AuthenticatedProductsLayoutRoute._addFileChildren(
-    AuthenticatedProductsLayoutRouteChildren,
-  )
-
-interface AuthenticatedSettingsLayoutRouteChildren {
-  AuthenticatedSettingsAccountRoute: typeof AuthenticatedSettingsAccountRoute
-  AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
-  AuthenticatedSettingsDisplayRoute: typeof AuthenticatedSettingsDisplayRoute
-  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
-  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
-}
-
-const AuthenticatedSettingsLayoutRouteChildren: AuthenticatedSettingsLayoutRouteChildren =
-  {
-    AuthenticatedSettingsAccountRoute: AuthenticatedSettingsAccountRoute,
-    AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
-    AuthenticatedSettingsDisplayRoute: AuthenticatedSettingsDisplayRoute,
-    AuthenticatedSettingsNotificationsRoute:
-      AuthenticatedSettingsNotificationsRoute,
-    AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
-  }
-
-const AuthenticatedSettingsLayoutRouteWithChildren =
-  AuthenticatedSettingsLayoutRoute._addFileChildren(
-    AuthenticatedSettingsLayoutRouteChildren,
-  )
-
-interface AuthenticatedLayoutRouteChildren {
-  AuthenticatedClientsLayoutRoute: typeof AuthenticatedClientsLayoutRouteWithChildren
-  AuthenticatedGasLayoutRoute: typeof AuthenticatedGasLayoutRouteWithChildren
-  AuthenticatedProductsLayoutRoute: typeof AuthenticatedProductsLayoutRouteWithChildren
-  AuthenticatedSettingsLayoutRoute: typeof AuthenticatedSettingsLayoutRouteWithChildren
-  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
-  AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
-  AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
-  AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
-  AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
-  AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
-}
-
-const AuthenticatedLayoutRouteChildren: AuthenticatedLayoutRouteChildren = {
-  AuthenticatedClientsLayoutRoute: AuthenticatedClientsLayoutRouteWithChildren,
-  AuthenticatedGasLayoutRoute: AuthenticatedGasLayoutRouteWithChildren,
-  AuthenticatedProductsLayoutRoute:
-    AuthenticatedProductsLayoutRouteWithChildren,
-  AuthenticatedSettingsLayoutRoute:
-    AuthenticatedSettingsLayoutRouteWithChildren,
-  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
-  AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
-  AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
-  AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
-  AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
-  AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
-}
-
-const AuthenticatedLayoutRouteWithChildren =
-  AuthenticatedLayoutRoute._addFileChildren(AuthenticatedLayoutRouteChildren)
-
-interface AuthLayoutRouteChildren {
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthRegisterRoute: typeof AuthRegisterRoute
-}
-
-const AuthLayoutRouteChildren: AuthLayoutRouteChildren = {
-  AuthLoginRoute: AuthLoginRoute,
-  AuthRegisterRoute: AuthRegisterRoute,
-}
-
-const AuthLayoutRouteWithChildren = AuthLayoutRoute._addFileChildren(
-  AuthLayoutRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
-  AuthenticatedLayoutRoute: AuthenticatedLayoutRouteWithChildren,
-  AuthLayoutRoute: AuthLayoutRouteWithChildren,
   LandRoute: LandRoute,
   OrganizationsRoute: OrganizationsRoute,
   PlateRoute: PlateRoute,
@@ -1032,6 +966,39 @@ const rootRouteChildren: RootRouteChildren = {
   errors404Route: errors404Route,
   errors500Route: errors500Route,
   errors503Route: errors503Route,
+  AuthenticatedLayoutRoute: AuthenticatedLayoutRoute,
+  AuthLayoutRoute: AuthLayoutRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedClientsClientIdRoute: AuthenticatedClientsClientIdRoute,
+  AuthenticatedClientsLayoutRoute: AuthenticatedClientsLayoutRoute,
+  AuthenticatedClientsNewRoute: AuthenticatedClientsNewRoute,
+  AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedGasAdminRoute: AuthenticatedGasAdminRoute,
+  AuthenticatedGasEntryRoute: AuthenticatedGasEntryRoute,
+  AuthenticatedGasLayoutRoute: AuthenticatedGasLayoutRoute,
+  AuthenticatedGasReportsRoute: AuthenticatedGasReportsRoute,
+  AuthenticatedProductsProductIdRoute: AuthenticatedProductsProductIdRoute,
+  AuthenticatedProductsLayoutRoute: AuthenticatedProductsLayoutRoute,
+  AuthenticatedProductsNewRoute: AuthenticatedProductsNewRoute,
+  AuthenticatedSettingsAccountRoute: AuthenticatedSettingsAccountRoute,
+  AuthenticatedSettingsAppearanceRoute: AuthenticatedSettingsAppearanceRoute,
+  AuthenticatedSettingsDisplayRoute: AuthenticatedSettingsDisplayRoute,
+  AuthenticatedSettingsLayoutRoute: AuthenticatedSettingsLayoutRoute,
+  AuthenticatedSettingsNotificationsRoute:
+    AuthenticatedSettingsNotificationsRoute,
+  AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
+  AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
+  AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
+  AuthenticatedGasIndexRoute: AuthenticatedGasIndexRoute,
+  AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
+  AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
+  AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
+  AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
+  AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedAdminOrganizationsIndexRoute:
+    AuthenticatedAdminOrganizationsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

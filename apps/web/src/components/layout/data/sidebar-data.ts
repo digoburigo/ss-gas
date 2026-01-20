@@ -1,6 +1,7 @@
 import {
 	AudioWaveform,
 	Bell,
+	Building2,
 	Bug,
 	Command,
 	Construction,
@@ -15,6 +16,7 @@ import {
 	Palette,
 	ServerOff,
 	Settings,
+	Shield,
 	ShieldCheck,
 	UserCog,
 	UserX,
@@ -80,6 +82,22 @@ export const sidebarData: SidebarData = {
 					title: "Produtos",
 					url: "/products",
 					icon: Package,
+				},
+			],
+		},
+		{
+			title: "Administração",
+			items: [
+				{
+					title: "Admin Global",
+					icon: Shield,
+					items: [
+						{
+							title: "Organizações",
+							url: "/admin/organizations",
+							icon: Building2,
+						},
+					],
 				},
 			],
 		},
