@@ -1439,4 +1439,321 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				}),
 			},
 		},
+	)
+
+	/**
+	 * GET /gas/admin/units
+	 *
+	 * Returns all units with their equipment and current constants.
+	 * Used by admin page to list and manage equipment configurations.
+	 */
+	.get(
+		"/admin/units",
+		async ({ session }) => {
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+				},
+				include: {
+					equipment: {
+						orderBy: { orderIndex: "asc" },
+						include: {
+							constants: {
+								orderBy: { effectiveFrom: "desc" },
+							},
+						},
+					},
+				},
+				orderBy: { code: "asc" },
+			});
+
+			return units;
+		},
+		{
+			auth: true,
+			response: {
+				200: t.Array(
+					t.Object({
+						id: t.String(),
+						code: t.String(),
+						name: t.String(),
+						description: t.Nullable(t.String()),
+						active: t.Boolean(),
+						createdAt: t.Date(),
+						updatedAt: t.Date(),
+						organizationId: t.Nullable(t.String()),
+						equipment: t.Array(
+							t.Object({
+								id: t.String(),
+								unitId: t.String(),
+								code: t.String(),
+								name: t.String(),
+								type: t.String(),
+								active: t.Boolean(),
+								orderIndex: t.Number(),
+								createdAt: t.Date(),
+								updatedAt: t.Date(),
+								constants: t.Array(
+									t.Object({
+										id: t.String(),
+										equipmentId: t.String(),
+										consumptionRate: t.Number(),
+										consumptionUnit: t.String(),
+										effectiveFrom: t.Date(),
+										effectiveTo: t.Nullable(t.Date()),
+										notes: t.Nullable(t.String()),
+										createdAt: t.Date(),
+										createdById: t.Nullable(t.String()),
+									}),
+								),
+							}),
+						),
+					}),
+				),
+			},
+		},
+	)
+
+	/**
+	 * PUT /gas/admin/equipment/:equipmentId/constant
+	 *
+	 * Updates the consumption rate for an equipment by:
+	 * 1. Closing the current active constant (setting effectiveTo)
+	 * 2. Creating a new constant with the new rate effective from the given date
+	 *
+	 * This maintains a complete history of all constant changes for audit purposes.
+	 */
+	.put(
+		"/admin/equipment/:equipmentId/constant",
+		async ({ params, body, user, session, status }) => {
+			const { equipmentId } = params;
+
+			// Verify equipment exists
+			const equipment = await db.gasEquipment.findUnique({
+				where: { id: equipmentId },
+				include: {
+					unit: true,
+					constants: {
+						where: { effectiveTo: null },
+						orderBy: { effectiveFrom: "desc" },
+						take: 1,
+					},
+				},
+			});
+
+			if (!equipment) {
+				return status(404, { error: "Equipment not found" });
+			}
+
+			// Verify equipment belongs to user's organization
+			if (equipment.unit.organizationId !== session.activeOrganizationId) {
+				return status(403, { error: "Access denied" });
+			}
+
+			const effectiveDate = new Date(body.effectiveFrom);
+			const currentConstant = equipment.constants[0];
+
+			// Set up authenticated database client
+			const userDb = authDb.$setAuth({
+				userId: user.id,
+				organizationId: session.activeOrganizationId ?? "",
+				organizationRole: "member",
+				role: "user",
+			});
+
+			// Close the current constant if it exists
+			if (currentConstant) {
+				await db.gasEquipmentConstant.update({
+					where: { id: currentConstant.id },
+					data: {
+						effectiveTo: effectiveDate,
+					},
+				});
+			}
+
+			// Create new constant with the new rate
+			const newConstant = await userDb.gasEquipmentConstant.create({
+				data: {
+					equipmentId,
+					consumptionRate: body.consumptionRate,
+					consumptionUnit:
+						(body.consumptionUnit as "m3_per_hour" | "m3_per_day") ??
+						"m3_per_hour",
+					effectiveFrom: effectiveDate,
+					notes: body.notes,
+				},
+			});
+
+			return {
+				...newConstant,
+				previousConstant: currentConstant
+					? {
+							id: currentConstant.id,
+							consumptionRate: currentConstant.consumptionRate,
+							effectiveFrom: currentConstant.effectiveFrom,
+							effectiveTo: effectiveDate,
+						}
+					: null,
+			};
+		},
+		{
+			auth: true,
+			params: t.Object({
+				equipmentId: t.String(),
+			}),
+			body: t.Object({
+				consumptionRate: t.Number({ minimum: 0 }),
+				consumptionUnit: t.Optional(
+					t.Union([t.Literal("m3_per_hour"), t.Literal("m3_per_day")]),
+				),
+				effectiveFrom: t.String({ format: "date" }),
+				notes: t.Optional(t.String()),
+			}),
+			response: {
+				200: t.Object({
+					id: t.String(),
+					equipmentId: t.String(),
+					consumptionRate: t.Number(),
+					consumptionUnit: t.String(),
+					effectiveFrom: t.Date(),
+					effectiveTo: t.Nullable(t.Date()),
+					notes: t.Nullable(t.String()),
+					createdAt: t.Date(),
+					createdById: t.Nullable(t.String()),
+					previousConstant: t.Nullable(
+						t.Object({
+							id: t.String(),
+							consumptionRate: t.Number(),
+							effectiveFrom: t.Date(),
+							effectiveTo: t.Date(),
+						}),
+					),
+				}),
+				403: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
+	)
+
+	/**
+	 * GET /gas/admin/equipment/:equipmentId/history
+	 *
+	 * Returns the full history of constants for an equipment.
+	 * Includes who made each change and when, for audit purposes.
+	 */
+	.get(
+		"/admin/equipment/:equipmentId/history",
+		async ({ params, session, status }) => {
+			const { equipmentId } = params;
+
+			// Verify equipment exists and belongs to user's organization
+			const equipment = await db.gasEquipment.findUnique({
+				where: { id: equipmentId },
+				include: {
+					unit: true,
+				},
+			});
+
+			if (!equipment) {
+				return status(404, { error: "Equipment not found" });
+			}
+
+			if (equipment.unit.organizationId !== session.activeOrganizationId) {
+				return status(403, { error: "Access denied" });
+			}
+
+			// Get all constants for this equipment with creator info
+			const constants = await db.gasEquipmentConstant.findMany({
+				where: { equipmentId },
+				include: {
+					createdByUser: {
+						select: {
+							id: true,
+							name: true,
+							email: true,
+						},
+					},
+				},
+				orderBy: { effectiveFrom: "desc" },
+			});
+
+			return {
+				equipment: {
+					id: equipment.id,
+					code: equipment.code,
+					name: equipment.name,
+					type: equipment.type,
+				},
+				unit: {
+					id: equipment.unit.id,
+					code: equipment.unit.code,
+					name: equipment.unit.name,
+				},
+				history: constants.map((c) => ({
+					id: c.id,
+					consumptionRate: c.consumptionRate,
+					consumptionUnit: c.consumptionUnit,
+					effectiveFrom: c.effectiveFrom,
+					effectiveTo: c.effectiveTo,
+					notes: c.notes,
+					createdAt: c.createdAt,
+					createdBy: c.createdByUser
+						? {
+								id: c.createdByUser.id,
+								name: c.createdByUser.name,
+								email: c.createdByUser.email,
+							}
+						: null,
+				})),
+			};
+		},
+		{
+			auth: true,
+			params: t.Object({
+				equipmentId: t.String(),
+			}),
+			response: {
+				200: t.Object({
+					equipment: t.Object({
+						id: t.String(),
+						code: t.String(),
+						name: t.String(),
+						type: t.String(),
+					}),
+					unit: t.Object({
+						id: t.String(),
+						code: t.String(),
+						name: t.String(),
+					}),
+					history: t.Array(
+						t.Object({
+							id: t.String(),
+							consumptionRate: t.Number(),
+							consumptionUnit: t.String(),
+							effectiveFrom: t.Date(),
+							effectiveTo: t.Nullable(t.Date()),
+							notes: t.Nullable(t.String()),
+							createdAt: t.Date(),
+							createdBy: t.Nullable(
+								t.Object({
+									id: t.String(),
+									name: t.String(),
+									email: t.String(),
+								}),
+							),
+						}),
+					),
+				}),
+				403: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
 	);

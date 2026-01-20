@@ -48,6 +48,7 @@ import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_auth
 import { Route as AuthenticatedProductsNewRouteImport } from './routes/_authenticated/products/new'
 import { Route as AuthenticatedProductsProductIdRouteImport } from './routes/_authenticated/products/$productId'
 import { Route as AuthenticatedGasReportsRouteImport } from './routes/_authenticated/gas/reports'
+import { Route as AuthenticatedGasAdminRouteImport } from './routes/_authenticated/gas/admin'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedClientsNewRouteImport } from './routes/_authenticated/clients/new'
 import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients/$clientId'
@@ -259,6 +260,11 @@ const AuthenticatedGasReportsRoute = AuthenticatedGasReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AuthenticatedGasLayoutRoute,
 } as any)
+const AuthenticatedGasAdminRoute = AuthenticatedGasAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedGasLayoutRoute,
+} as any)
 const AuthenticatedErrorsErrorRoute =
   AuthenticatedErrorsErrorRouteImport.update({
     id: '/errors/$error',
@@ -303,6 +309,7 @@ export interface FileRoutesByFullPath {
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/clients/new': typeof AuthenticatedClientsNewRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/gas/admin': typeof AuthenticatedGasAdminRoute
   '/gas/reports': typeof AuthenticatedGasReportsRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
@@ -342,6 +349,7 @@ export interface FileRoutesByTo {
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/clients/new': typeof AuthenticatedClientsNewRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/gas/admin': typeof AuthenticatedGasAdminRoute
   '/gas/reports': typeof AuthenticatedGasReportsRoute
   '/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/products/new': typeof AuthenticatedProductsNewRoute
@@ -387,6 +395,7 @@ export interface FileRoutesById {
   '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/_authenticated/clients/new': typeof AuthenticatedClientsNewRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/_authenticated/gas/admin': typeof AuthenticatedGasAdminRoute
   '/_authenticated/gas/reports': typeof AuthenticatedGasReportsRoute
   '/_authenticated/products/$productId': typeof AuthenticatedProductsProductIdRoute
   '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
@@ -432,6 +441,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/clients/new'
     | '/errors/$error'
+    | '/gas/admin'
     | '/gas/reports'
     | '/products/$productId'
     | '/products/new'
@@ -471,6 +481,7 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/clients/new'
     | '/errors/$error'
+    | '/gas/admin'
     | '/gas/reports'
     | '/products/$productId'
     | '/products/new'
@@ -515,6 +526,7 @@ export interface FileRouteTypes {
     | '/_authenticated/clients/$clientId'
     | '/_authenticated/clients/new'
     | '/_authenticated/errors/$error'
+    | '/_authenticated/gas/admin'
     | '/_authenticated/gas/reports'
     | '/_authenticated/products/$productId'
     | '/_authenticated/products/new'
@@ -827,6 +839,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGasReportsRouteImport
       parentRoute: typeof AuthenticatedGasLayoutRoute
     }
+    '/_authenticated/gas/admin': {
+      id: '/_authenticated/gas/admin'
+      path: '/admin'
+      fullPath: '/gas/admin'
+      preLoaderRoute: typeof AuthenticatedGasAdminRouteImport
+      parentRoute: typeof AuthenticatedGasLayoutRoute
+    }
     '/_authenticated/errors/$error': {
       id: '/_authenticated/errors/$error'
       path: '/errors/$error'
@@ -870,12 +889,14 @@ const AuthenticatedClientsLayoutRouteWithChildren =
   )
 
 interface AuthenticatedGasLayoutRouteChildren {
+  AuthenticatedGasAdminRoute: typeof AuthenticatedGasAdminRoute
   AuthenticatedGasReportsRoute: typeof AuthenticatedGasReportsRoute
   AuthenticatedGasIndexRoute: typeof AuthenticatedGasIndexRoute
 }
 
 const AuthenticatedGasLayoutRouteChildren: AuthenticatedGasLayoutRouteChildren =
   {
+    AuthenticatedGasAdminRoute: AuthenticatedGasAdminRoute,
     AuthenticatedGasReportsRoute: AuthenticatedGasReportsRoute,
     AuthenticatedGasIndexRoute: AuthenticatedGasIndexRoute,
   }
