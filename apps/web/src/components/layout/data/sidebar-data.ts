@@ -3,6 +3,7 @@ import {
   Bell,
   Bug,
   Building2,
+  Calendar,
   Command,
   Construction,
   FileSignature,
@@ -76,6 +77,11 @@ export const sidebarData: SidebarData = {
               title: "Unidades Consumidoras",
               url: "/gas/consumer-units",
               icon: Gauge,
+            },
+            {
+              title: "Programação Diária",
+              url: "/gas/scheduling",
+              icon: Calendar,
             },
             {
               title: "Lançamento Diário",
