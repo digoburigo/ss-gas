@@ -260,6 +260,7 @@ const AuthenticatedClientsClientIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
@@ -280,7 +281,6 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
-  '/': typeof AuthenticatedIndexRoute
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/clients/new': typeof AuthenticatedClientsNewRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
@@ -290,14 +290,14 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
-  '/apps': typeof AuthenticatedAppsIndexRoute
-  '/chats': typeof AuthenticatedChatsIndexRoute
+  '/apps/': typeof AuthenticatedAppsIndexRoute
+  '/chats/': typeof AuthenticatedChatsIndexRoute
   '/clients/': typeof AuthenticatedClientsIndexRoute
-  '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/products/': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
-  '/tasks': typeof AuthenticatedTasksIndexRoute
-  '/users': typeof AuthenticatedUsersIndexRoute
+  '/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/users/': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthLayoutRouteWithChildren
@@ -381,6 +381,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/auth'
     | '/land'
     | '/organizations'
@@ -401,7 +402,6 @@ export interface FileRouteTypes {
     | '/503'
     | '/auth/login'
     | '/auth/register'
-    | '/'
     | '/clients/$clientId'
     | '/clients/new'
     | '/errors/$error'
@@ -411,14 +411,14 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
-    | '/apps'
-    | '/chats'
+    | '/apps/'
+    | '/chats/'
     | '/clients/'
-    | '/help-center'
+    | '/help-center/'
     | '/products/'
     | '/settings/'
-    | '/tasks'
-    | '/users'
+    | '/tasks/'
+    | '/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
@@ -558,7 +558,7 @@ declare module '@tanstack/react-router' {
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthenticatedLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -677,14 +677,14 @@ declare module '@tanstack/react-router' {
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
-      fullPath: '/users'
+      fullPath: '/users/'
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
     }
     '/_authenticated/tasks/': {
       id: '/_authenticated/tasks/'
       path: '/tasks'
-      fullPath: '/tasks'
+      fullPath: '/tasks/'
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
     }
@@ -705,7 +705,7 @@ declare module '@tanstack/react-router' {
     '/_authenticated/help-center/': {
       id: '/_authenticated/help-center/'
       path: '/help-center'
-      fullPath: '/help-center'
+      fullPath: '/help-center/'
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
     }
@@ -719,14 +719,14 @@ declare module '@tanstack/react-router' {
     '/_authenticated/chats/': {
       id: '/_authenticated/chats/'
       path: '/chats'
-      fullPath: '/chats'
+      fullPath: '/chats/'
       preLoaderRoute: typeof AuthenticatedChatsIndexRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
     }
     '/_authenticated/apps/': {
       id: '/_authenticated/apps/'
       path: '/apps'
-      fullPath: '/apps'
+      fullPath: '/apps/'
       preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
     }

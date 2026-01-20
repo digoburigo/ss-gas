@@ -1,17 +1,17 @@
-name: vtnc2
+name: ss-gas
 
 services:
   postgres:
     image: postgres
-    container_name: vtnc2-postgres
+    container_name: ss-gas-postgres
     environment:
-      POSTGRES_DB: vtnc2
+      POSTGRES_DB: ss-gas
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
     volumes:
-      - vtnc2_postgres_data:/var/lib/postgresql/data
+      - ss-gas_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -20,4 +20,4 @@ services:
     restart: unless-stopped
 
 volumes:
-  vtnc2_postgres_data:
+  ss-gas_postgres_data:
