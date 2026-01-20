@@ -262,6 +262,62 @@ export class SchemaType implements SchemaDef {
                     type: "TutorialStepProgress",
                     array: true,
                     relation: { opposite: "user" }
+                },
+                createdGasEquipmentConstants: {
+                    name: "createdGasEquipmentConstants",
+                    type: "GasEquipmentConstant",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasEquipmentConstants") }] }],
+                    relation: { opposite: "createdByUser", name: "createdGasEquipmentConstants" }
+                },
+                createdGasDailyEntries: {
+                    name: "createdGasDailyEntries",
+                    type: "GasDailyEntry",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasDailyEntries") }] }],
+                    relation: { opposite: "createdByUser", name: "createdGasDailyEntries" }
+                },
+                updatedGasDailyEntries: {
+                    name: "updatedGasDailyEntries",
+                    type: "GasDailyEntry",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("updatedGasDailyEntries") }] }],
+                    relation: { opposite: "updatedByUser", name: "updatedGasDailyEntries" }
+                },
+                createdGasDailyPlans: {
+                    name: "createdGasDailyPlans",
+                    type: "GasDailyPlan",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasDailyPlans") }] }],
+                    relation: { opposite: "createdByUser", name: "createdGasDailyPlans" }
+                },
+                submittedGasDailyPlans: {
+                    name: "submittedGasDailyPlans",
+                    type: "GasDailyPlan",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("submittedGasDailyPlans") }] }],
+                    relation: { opposite: "submittedByUser", name: "submittedGasDailyPlans" }
+                },
+                approvedGasDailyPlans: {
+                    name: "approvedGasDailyPlans",
+                    type: "GasDailyPlan",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("approvedGasDailyPlans") }] }],
+                    relation: { opposite: "approvedByUser", name: "approvedGasDailyPlans" }
+                },
+                createdGasRealConsumptions: {
+                    name: "createdGasRealConsumptions",
+                    type: "GasRealConsumption",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasRealConsumptions") }] }],
+                    relation: { opposite: "createdByUser", name: "createdGasRealConsumptions" }
+                },
+                createdGasContracts: {
+                    name: "createdGasContracts",
+                    type: "GasContract",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasContracts") }] }],
+                    relation: { opposite: "createdByUser", name: "createdGasContracts" }
                 }
             },
             attributes: [
@@ -645,6 +701,18 @@ export class SchemaType implements SchemaDef {
                 tutorialStepProgress: {
                     name: "tutorialStepProgress",
                     type: "TutorialStepProgress",
+                    array: true,
+                    relation: { opposite: "organization" }
+                },
+                gasUnits: {
+                    name: "gasUnits",
+                    type: "GasUnit",
+                    array: true,
+                    relation: { opposite: "organization" }
+                },
+                gasContracts: {
+                    name: "gasContracts",
+                    type: "GasContract",
                     array: true,
                     relation: { opposite: "organization" }
                 }
@@ -2969,6 +3037,821 @@ export class SchemaType implements SchemaDef {
                 id: { type: "String" },
                 userId_stepId: { userId: { type: "String" }, stepId: { type: "String" } }
             }
+        },
+        GasUnit: {
+            name: "GasUnit",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                code: {
+                    name: "code",
+                    type: "String"
+                },
+                name: {
+                    name: "name",
+                    type: "String"
+                },
+                description: {
+                    name: "description",
+                    type: "String",
+                    optional: true
+                },
+                active: {
+                    name: "active",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(true) }] }],
+                    default: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                },
+                organizationId: {
+                    name: "organizationId",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]),
+                    foreignKeyFor: [
+                        "organization"
+                    ]
+                },
+                organization: {
+                    name: "organization",
+                    type: "Organization",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("organizationId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "gasUnits", fields: ["organizationId"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                },
+                equipment: {
+                    name: "equipment",
+                    type: "GasEquipment",
+                    array: true,
+                    relation: { opposite: "unit" }
+                },
+                dailyEntries: {
+                    name: "dailyEntries",
+                    type: "GasDailyEntry",
+                    array: true,
+                    relation: { opposite: "unit" }
+                },
+                dailyPlans: {
+                    name: "dailyPlans",
+                    type: "GasDailyPlan",
+                    array: true,
+                    relation: { opposite: "unit" }
+                },
+                realConsumptions: {
+                    name: "realConsumptions",
+                    type: "GasRealConsumption",
+                    array: true,
+                    relation: { opposite: "unit" }
+                }
+            },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("organizationId"), ExpressionUtils.field("code")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_units") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" },
+                organizationId_code: { organizationId: { type: "String" }, code: { type: "String" } }
+            }
+        },
+        GasEquipment: {
+            name: "GasEquipment",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                unitId: {
+                    name: "unitId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "unit"
+                    ]
+                },
+                unit: {
+                    name: "unit",
+                    type: "GasUnit",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("unitId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "equipment", fields: ["unitId"], references: ["id"], onDelete: "Cascade" }
+                },
+                code: {
+                    name: "code",
+                    type: "String"
+                },
+                name: {
+                    name: "name",
+                    type: "String"
+                },
+                type: {
+                    name: "type",
+                    type: "EquipmentType"
+                },
+                active: {
+                    name: "active",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(true) }] }],
+                    default: true
+                },
+                orderIndex: {
+                    name: "orderIndex",
+                    type: "Int",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(0) }] }],
+                    default: 0
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                },
+                constants: {
+                    name: "constants",
+                    type: "GasEquipmentConstant",
+                    array: true,
+                    relation: { opposite: "equipment" }
+                },
+                lineStatuses: {
+                    name: "lineStatuses",
+                    type: "GasLineStatus",
+                    array: true,
+                    relation: { opposite: "equipment" }
+                }
+            },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("unitId"), ExpressionUtils.field("code")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_equipment") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" },
+                unitId_code: { unitId: { type: "String" }, code: { type: "String" } }
+            }
+        },
+        GasEquipmentConstant: {
+            name: "GasEquipmentConstant",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                equipmentId: {
+                    name: "equipmentId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "equipment"
+                    ]
+                },
+                equipment: {
+                    name: "equipment",
+                    type: "GasEquipment",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("equipmentId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "constants", fields: ["equipmentId"], references: ["id"], onDelete: "Cascade" }
+                },
+                consumptionRate: {
+                    name: "consumptionRate",
+                    type: "Float"
+                },
+                consumptionUnit: {
+                    name: "consumptionUnit",
+                    type: "ConsumptionUnit",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("m3_per_hour") }] }],
+                    default: "m3_per_hour"
+                },
+                effectiveFrom: {
+                    name: "effectiveFrom",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                effectiveTo: {
+                    name: "effectiveTo",
+                    type: "DateTime",
+                    optional: true
+                },
+                notes: {
+                    name: "notes",
+                    type: "String",
+                    optional: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "createdByUser"
+                    ]
+                },
+                createdByUser: {
+                    name: "createdByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasEquipmentConstants") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("createdById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "createdGasEquipmentConstants", name: "createdGasEquipmentConstants", fields: ["createdById"], references: ["id"], onDelete: "SetNull", hasDefault: true }
+                }
+            },
+            attributes: [
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_equipment_constants") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
+            }
+        },
+        GasDailyEntry: {
+            name: "GasDailyEntry",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                unitId: {
+                    name: "unitId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "unit"
+                    ]
+                },
+                unit: {
+                    name: "unit",
+                    type: "GasUnit",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("unitId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "dailyEntries", fields: ["unitId"], references: ["id"], onDelete: "Cascade" }
+                },
+                date: {
+                    name: "date",
+                    type: "DateTime",
+                    attributes: [{ name: "@db.Date" }]
+                },
+                atomizerScheduled: {
+                    name: "atomizerScheduled",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(true) }] }],
+                    default: true
+                },
+                atomizerHours: {
+                    name: "atomizerHours",
+                    type: "Float",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(0) }] }],
+                    default: 0
+                },
+                secondaryAtomizerScheduled: {
+                    name: "secondaryAtomizerScheduled",
+                    type: "Boolean",
+                    optional: true
+                },
+                secondaryAtomizerHours: {
+                    name: "secondaryAtomizerHours",
+                    type: "Float",
+                    optional: true
+                },
+                qdcAtomizer: {
+                    name: "qdcAtomizer",
+                    type: "Float",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(0) }] }],
+                    default: 0
+                },
+                qdcLines: {
+                    name: "qdcLines",
+                    type: "Float",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(0) }] }],
+                    default: 0
+                },
+                qdsCalculated: {
+                    name: "qdsCalculated",
+                    type: "Float",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(0) }] }],
+                    default: 0
+                },
+                qdsManual: {
+                    name: "qdsManual",
+                    type: "Float",
+                    optional: true
+                },
+                observations: {
+                    name: "observations",
+                    type: "String",
+                    optional: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "createdByUser"
+                    ]
+                },
+                createdByUser: {
+                    name: "createdByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasDailyEntries") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("createdById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "createdGasDailyEntries", name: "createdGasDailyEntries", fields: ["createdById"], references: ["id"], onDelete: "SetNull", hasDefault: true }
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                },
+                updatedById: {
+                    name: "updatedById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "updatedByUser"
+                    ]
+                },
+                updatedByUser: {
+                    name: "updatedByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("updatedGasDailyEntries") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("updatedById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "updatedGasDailyEntries", name: "updatedGasDailyEntries", fields: ["updatedById"], references: ["id"], onDelete: "SetNull", hasDefault: true }
+                },
+                lineStatuses: {
+                    name: "lineStatuses",
+                    type: "GasLineStatus",
+                    array: true,
+                    relation: { opposite: "entry" }
+                }
+            },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("unitId"), ExpressionUtils.field("date")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_daily_entries") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" },
+                unitId_date: { unitId: { type: "String" }, date: { type: "DateTime" } }
+            }
+        },
+        GasLineStatus: {
+            name: "GasLineStatus",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                entryId: {
+                    name: "entryId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "entry"
+                    ]
+                },
+                entry: {
+                    name: "entry",
+                    type: "GasDailyEntry",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("entryId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "lineStatuses", fields: ["entryId"], references: ["id"], onDelete: "Cascade" }
+                },
+                equipmentId: {
+                    name: "equipmentId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "equipment"
+                    ]
+                },
+                equipment: {
+                    name: "equipment",
+                    type: "GasEquipment",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("equipmentId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "lineStatuses", fields: ["equipmentId"], references: ["id"], onDelete: "Cascade" }
+                },
+                status: {
+                    name: "status",
+                    type: "LineStatusValue",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("off") }] }],
+                    default: "off"
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                }
+            },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("entryId"), ExpressionUtils.field("equipmentId")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_line_statuses") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" },
+                entryId_equipmentId: { entryId: { type: "String" }, equipmentId: { type: "String" } }
+            }
+        },
+        GasDailyPlan: {
+            name: "GasDailyPlan",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                unitId: {
+                    name: "unitId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "unit"
+                    ]
+                },
+                unit: {
+                    name: "unit",
+                    type: "GasUnit",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("unitId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "dailyPlans", fields: ["unitId"], references: ["id"], onDelete: "Cascade" }
+                },
+                date: {
+                    name: "date",
+                    type: "DateTime",
+                    attributes: [{ name: "@db.Date" }]
+                },
+                qdpValue: {
+                    name: "qdpValue",
+                    type: "Float",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(0) }] }],
+                    default: 0
+                },
+                notes: {
+                    name: "notes",
+                    type: "String",
+                    optional: true
+                },
+                submitted: {
+                    name: "submitted",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(false) }] }],
+                    default: false
+                },
+                submittedAt: {
+                    name: "submittedAt",
+                    type: "DateTime",
+                    optional: true
+                },
+                submittedById: {
+                    name: "submittedById",
+                    type: "String",
+                    optional: true,
+                    foreignKeyFor: [
+                        "submittedByUser"
+                    ]
+                },
+                submittedByUser: {
+                    name: "submittedByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("submittedGasDailyPlans") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("submittedById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "submittedGasDailyPlans", name: "submittedGasDailyPlans", fields: ["submittedById"], references: ["id"], onDelete: "SetNull" }
+                },
+                approved: {
+                    name: "approved",
+                    type: "Boolean",
+                    optional: true
+                },
+                approvedAt: {
+                    name: "approvedAt",
+                    type: "DateTime",
+                    optional: true
+                },
+                approvedById: {
+                    name: "approvedById",
+                    type: "String",
+                    optional: true,
+                    foreignKeyFor: [
+                        "approvedByUser"
+                    ]
+                },
+                approvedByUser: {
+                    name: "approvedByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("approvedGasDailyPlans") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("approvedById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "approvedGasDailyPlans", name: "approvedGasDailyPlans", fields: ["approvedById"], references: ["id"], onDelete: "SetNull" }
+                },
+                rejectionReason: {
+                    name: "rejectionReason",
+                    type: "String",
+                    optional: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "createdByUser"
+                    ]
+                },
+                createdByUser: {
+                    name: "createdByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasDailyPlans") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("createdById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "createdGasDailyPlans", name: "createdGasDailyPlans", fields: ["createdById"], references: ["id"], onDelete: "SetNull", hasDefault: true }
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                }
+            },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("unitId"), ExpressionUtils.field("date")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_daily_plans") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" },
+                unitId_date: { unitId: { type: "String" }, date: { type: "DateTime" } }
+            }
+        },
+        GasRealConsumption: {
+            name: "GasRealConsumption",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                unitId: {
+                    name: "unitId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "unit"
+                    ]
+                },
+                unit: {
+                    name: "unit",
+                    type: "GasUnit",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("unitId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "realConsumptions", fields: ["unitId"], references: ["id"], onDelete: "Cascade" }
+                },
+                date: {
+                    name: "date",
+                    type: "DateTime",
+                    attributes: [{ name: "@db.Date" }]
+                },
+                qdrValue: {
+                    name: "qdrValue",
+                    type: "Float",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(0) }] }],
+                    default: 0
+                },
+                source: {
+                    name: "source",
+                    type: "ConsumptionSource",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("meter") }] }],
+                    default: "meter"
+                },
+                meterReading: {
+                    name: "meterReading",
+                    type: "Float",
+                    optional: true
+                },
+                previousMeterReading: {
+                    name: "previousMeterReading",
+                    type: "Float",
+                    optional: true
+                },
+                notes: {
+                    name: "notes",
+                    type: "String",
+                    optional: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "createdByUser"
+                    ]
+                },
+                createdByUser: {
+                    name: "createdByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasRealConsumptions") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("createdById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "createdGasRealConsumptions", name: "createdGasRealConsumptions", fields: ["createdById"], references: ["id"], onDelete: "SetNull", hasDefault: true }
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                }
+            },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("unitId"), ExpressionUtils.field("date")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_real_consumptions") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" },
+                unitId_date: { unitId: { type: "String" }, date: { type: "DateTime" } }
+            }
+        },
+        GasContract: {
+            name: "GasContract",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                name: {
+                    name: "name",
+                    type: "String"
+                },
+                qdcContracted: {
+                    name: "qdcContracted",
+                    type: "Float"
+                },
+                transportToleranceUpperPercent: {
+                    name: "transportToleranceUpperPercent",
+                    type: "Float",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(10) }] }],
+                    default: 10
+                },
+                transportToleranceLowerPercent: {
+                    name: "transportToleranceLowerPercent",
+                    type: "Float",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(20) }] }],
+                    default: 20
+                },
+                moleculeTolerancePercent: {
+                    name: "moleculeTolerancePercent",
+                    type: "Float",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(5) }] }],
+                    default: 5
+                },
+                effectiveFrom: {
+                    name: "effectiveFrom",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                effectiveTo: {
+                    name: "effectiveTo",
+                    type: "DateTime",
+                    optional: true
+                },
+                active: {
+                    name: "active",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(true) }] }],
+                    default: true
+                },
+                notes: {
+                    name: "notes",
+                    type: "String",
+                    optional: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "createdByUser"
+                    ]
+                },
+                createdByUser: {
+                    name: "createdByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasContracts") }, { name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("createdById")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "createdGasContracts", name: "createdGasContracts", fields: ["createdById"], references: ["id"], onDelete: "SetNull", hasDefault: true }
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                },
+                organizationId: {
+                    name: "organizationId",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]),
+                    foreignKeyFor: [
+                        "organization"
+                    ]
+                },
+                organization: {
+                    name: "organization",
+                    type: "Organization",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("organizationId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "gasContracts", fields: ["organizationId"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                }
+            },
+            attributes: [
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_contracts") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
+            }
         }
     } as const;
     typeDefs = {
@@ -3045,6 +3928,32 @@ export class SchemaType implements SchemaDef {
                 events: "events",
                 kanban_tasks: "kanban_tasks",
                 onboarding: "onboarding"
+            }
+        },
+        EquipmentType: {
+            values: {
+                atomizer: "atomizer",
+                line: "line",
+                dryer: "dryer"
+            }
+        },
+        ConsumptionUnit: {
+            values: {
+                m3_per_hour: "m3_per_hour",
+                m3_per_day: "m3_per_day"
+            }
+        },
+        LineStatusValue: {
+            values: {
+                on: "on",
+                off: "off"
+            }
+        },
+        ConsumptionSource: {
+            values: {
+                calculated: "calculated",
+                meter: "meter",
+                manual: "manual"
             }
         }
     } as const;

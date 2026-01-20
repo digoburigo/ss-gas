@@ -39,6 +39,14 @@ export type TutorialSector = $ModelResult<$Schema, "TutorialSector">;
 export type TutorialSection = $ModelResult<$Schema, "TutorialSection">;
 export type TutorialStep = $ModelResult<$Schema, "TutorialStep">;
 export type TutorialStepProgress = $ModelResult<$Schema, "TutorialStepProgress">;
+export type GasUnit = $ModelResult<$Schema, "GasUnit">;
+export type GasEquipment = $ModelResult<$Schema, "GasEquipment">;
+export type GasEquipmentConstant = $ModelResult<$Schema, "GasEquipmentConstant">;
+export type GasDailyEntry = $ModelResult<$Schema, "GasDailyEntry">;
+export type GasLineStatus = $ModelResult<$Schema, "GasLineStatus">;
+export type GasDailyPlan = $ModelResult<$Schema, "GasDailyPlan">;
+export type GasRealConsumption = $ModelResult<$Schema, "GasRealConsumption">;
+export type GasContract = $ModelResult<$Schema, "GasContract">;
 /**
  * Shape of the `auth()` function
  */
@@ -57,3 +65,11 @@ export const OrderStatus = $schema.enums.OrderStatus.values;
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus];
 export const MilestoneType = $schema.enums.MilestoneType.values;
 export type MilestoneType = (typeof MilestoneType)[keyof typeof MilestoneType];
+export const EquipmentType = $schema.enums.EquipmentType.values;
+export type EquipmentType = (typeof EquipmentType)[keyof typeof EquipmentType];
+export const ConsumptionUnit = $schema.enums.ConsumptionUnit.values;
+export type ConsumptionUnit = (typeof ConsumptionUnit)[keyof typeof ConsumptionUnit];
+export const LineStatusValue = $schema.enums.LineStatusValue.values;
+export type LineStatusValue = (typeof LineStatusValue)[keyof typeof LineStatusValue];
+export const ConsumptionSource = $schema.enums.ConsumptionSource.values;
+export type ConsumptionSource = (typeof ConsumptionSource)[keyof typeof ConsumptionSource];

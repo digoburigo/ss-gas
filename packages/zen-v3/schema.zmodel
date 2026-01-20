@@ -71,6 +71,15 @@ model User {
   userActionCounts UserActionCount[]
   tutorialStepProgress TutorialStepProgress[]
 
+  createdGasEquipmentConstants GasEquipmentConstant[] @relation("createdGasEquipmentConstants")
+  createdGasDailyEntries GasDailyEntry[] @relation("createdGasDailyEntries")
+  updatedGasDailyEntries GasDailyEntry[] @relation("updatedGasDailyEntries")
+  createdGasDailyPlans GasDailyPlan[] @relation("createdGasDailyPlans")
+  submittedGasDailyPlans GasDailyPlan[] @relation("submittedGasDailyPlans")
+  approvedGasDailyPlans GasDailyPlan[] @relation("approvedGasDailyPlans")
+  createdGasRealConsumptions GasRealConsumption[] @relation("createdGasRealConsumptions")
+  createdGasContracts GasContract[] @relation("createdGasContracts")
+
   @@allow('create,read', true)
 
   // only the user can update or delete their own profile
@@ -163,6 +172,9 @@ model Organization {
   userActionCounts UserActionCount[]
   tutorialSectors TutorialSector[]
   tutorialStepProgress TutorialStepProgress[]
+
+  gasUnits GasUnit[]
+  gasContracts GasContract[]
 
   @@unique([slug])
 
@@ -350,6 +362,30 @@ enum MilestoneType {
   events
   kanban_tasks
   onboarding
+}
+
+// GAS CONSUMPTION ENUMS ======================================================
+
+enum EquipmentType {
+  atomizer
+  line
+  dryer
+}
+
+enum ConsumptionUnit {
+  m3_per_hour
+  m3_per_day
+}
+
+enum LineStatusValue {
+  on
+  off
+}
+
+enum ConsumptionSource {
+  calculated
+  meter
+  manual
 }
 
 model Client {
@@ -837,24 +873,246 @@ model TutorialStep {
 
 model TutorialStepProgress {
     id String @id @default(dbgenerated("uuidv7()"))
-    
+
     userId String
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
     stepId String
     step TutorialStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
     completed Boolean @default(false)
     completedAt DateTime?
-    
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    
+
     organizationId String? @default(auth().organizationId)
     organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    
+
     @@unique([userId, stepId])
-    
+
     @@allow('create', auth() != null)
     @@allow('read,update,delete', auth().organizationId == organizationId)
-    
+
     @@map("tutorial_step_progress")
+}
+
+// GAS CONSUMPTION MODELS ======================================================
+
+model GasUnit {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    code String
+    name String
+    description String?
+    active Boolean @default(true)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    equipment GasEquipment[]
+    dailyEntries GasDailyEntry[]
+    dailyPlans GasDailyPlan[]
+    realConsumptions GasRealConsumption[]
+
+    @@unique([organizationId, code])
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+
+    @@map("gas_units")
+}
+
+model GasEquipment {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    unitId String
+    unit GasUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+    code String
+    name String
+    type EquipmentType
+    active Boolean @default(true)
+    orderIndex Int @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    constants GasEquipmentConstant[]
+    lineStatuses GasLineStatus[]
+
+    @@unique([unitId, code])
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+
+    @@map("gas_equipment")
+}
+
+model GasEquipmentConstant {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    equipmentId String
+    equipment GasEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+    consumptionRate Float
+    consumptionUnit ConsumptionUnit @default(m3_per_hour)
+    effectiveFrom DateTime @default(now())
+    effectiveTo DateTime?
+    notes String?
+
+    createdAt DateTime @default(now())
+    createdById String? @default(auth().userId)
+    createdByUser User? @relation("createdGasEquipmentConstants", fields: [createdById], references: [id], onDelete: SetNull)
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+
+    @@map("gas_equipment_constants")
+}
+
+model GasDailyEntry {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    unitId String
+    unit GasUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+    date DateTime @db.Date
+
+    atomizerScheduled Boolean @default(true)
+    atomizerHours Float @default(0)
+    secondaryAtomizerScheduled Boolean?
+    secondaryAtomizerHours Float?
+
+    qdcAtomizer Float @default(0)
+    qdcLines Float @default(0)
+    qdsCalculated Float @default(0)
+    qdsManual Float?
+    observations String?
+
+    createdAt DateTime @default(now())
+    createdById String? @default(auth().userId)
+    createdByUser User? @relation("createdGasDailyEntries", fields: [createdById], references: [id], onDelete: SetNull)
+
+    updatedAt DateTime @updatedAt
+    updatedById String? @default(auth().userId)
+    updatedByUser User? @relation("updatedGasDailyEntries", fields: [updatedById], references: [id], onDelete: SetNull)
+
+    lineStatuses GasLineStatus[]
+
+    @@unique([unitId, date])
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+
+    @@map("gas_daily_entries")
+}
+
+model GasLineStatus {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    entryId String
+    entry GasDailyEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+    equipmentId String
+    equipment GasEquipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+    status LineStatusValue @default(off)
+
+    createdAt DateTime @default(now())
+
+    @@unique([entryId, equipmentId])
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+
+    @@map("gas_line_statuses")
+}
+
+model GasDailyPlan {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    unitId String
+    unit GasUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+    date DateTime @db.Date
+
+    qdpValue Float @default(0)
+    notes String?
+
+    submitted Boolean @default(false)
+    submittedAt DateTime?
+    submittedById String?
+    submittedByUser User? @relation("submittedGasDailyPlans", fields: [submittedById], references: [id], onDelete: SetNull)
+
+    approved Boolean?
+    approvedAt DateTime?
+    approvedById String?
+    approvedByUser User? @relation("approvedGasDailyPlans", fields: [approvedById], references: [id], onDelete: SetNull)
+    rejectionReason String?
+
+    createdAt DateTime @default(now())
+    createdById String? @default(auth().userId)
+    createdByUser User? @relation("createdGasDailyPlans", fields: [createdById], references: [id], onDelete: SetNull)
+
+    updatedAt DateTime @updatedAt
+
+    @@unique([unitId, date])
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+
+    @@map("gas_daily_plans")
+}
+
+model GasRealConsumption {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    unitId String
+    unit GasUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+    date DateTime @db.Date
+
+    qdrValue Float @default(0)
+    source ConsumptionSource @default(meter)
+    meterReading Float?
+    previousMeterReading Float?
+    notes String?
+
+    createdAt DateTime @default(now())
+    createdById String? @default(auth().userId)
+    createdByUser User? @relation("createdGasRealConsumptions", fields: [createdById], references: [id], onDelete: SetNull)
+
+    updatedAt DateTime @updatedAt
+
+    @@unique([unitId, date])
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+
+    @@map("gas_real_consumptions")
+}
+
+model GasContract {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    name String
+    qdcContracted Float
+
+    transportToleranceUpperPercent Float @default(10)
+    transportToleranceLowerPercent Float @default(20)
+    moleculeTolerancePercent Float @default(5)
+
+    effectiveFrom DateTime @default(now())
+    effectiveTo DateTime?
+    active Boolean @default(true)
+    notes String?
+
+    createdAt DateTime @default(now())
+    createdById String? @default(auth().userId)
+    createdByUser User? @relation("createdGasContracts", fields: [createdById], references: [id], onDelete: SetNull)
+
+    updatedAt DateTime @updatedAt
+
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+
+    @@map("gas_contracts")
 }
