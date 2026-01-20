@@ -55,6 +55,7 @@ export type GasAlertSentLog = $ModelResult<$Schema, "GasAlertSentLog">;
 export type GasSystemParameter = $ModelResult<$Schema, "GasSystemParameter">;
 export type GasContractTemplate = $ModelResult<$Schema, "GasContractTemplate">;
 export type GasCustomField = $ModelResult<$Schema, "GasCustomField">;
+export type GasAuditLog = $ModelResult<$Schema, "GasAuditLog">;
 export type UserNotificationPreferences = $ModelResult<$Schema, "UserNotificationPreferences">;
 /**
  * Shape of the `auth()` function
@@ -90,3 +91,5 @@ export const GasAlertRecurrence = $schema.enums.GasAlertRecurrence.values;
 export type GasAlertRecurrence = (typeof GasAlertRecurrence)[keyof typeof GasAlertRecurrence];
 export const GasParameterCategory = $schema.enums.GasParameterCategory.values;
 export type GasParameterCategory = (typeof GasParameterCategory)[keyof typeof GasParameterCategory];
+export const AuditAction = $schema.enums.AuditAction.values;
+export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];

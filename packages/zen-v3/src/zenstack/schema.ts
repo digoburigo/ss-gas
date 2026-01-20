@@ -785,6 +785,12 @@ export class SchemaType implements SchemaDef {
                     type: "GasCustomField",
                     array: true,
                     relation: { opposite: "organization" }
+                },
+                gasAuditLogs: {
+                    name: "gasAuditLogs",
+                    type: "GasAuditLog",
+                    array: true,
+                    relation: { opposite: "organization" }
                 }
             },
             attributes: [
@@ -4839,6 +4845,108 @@ export class SchemaType implements SchemaDef {
                 organizationId_entityType_fieldName: { organizationId: { type: "String" }, entityType: { type: "String" }, fieldName: { type: "String" } }
             }
         },
+        GasAuditLog: {
+            name: "GasAuditLog",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                entityType: {
+                    name: "entityType",
+                    type: "String"
+                },
+                entityId: {
+                    name: "entityId",
+                    type: "String"
+                },
+                entityName: {
+                    name: "entityName",
+                    type: "String",
+                    optional: true
+                },
+                action: {
+                    name: "action",
+                    type: "AuditAction"
+                },
+                field: {
+                    name: "field",
+                    type: "String",
+                    optional: true
+                },
+                oldValue: {
+                    name: "oldValue",
+                    type: "String",
+                    optional: true
+                },
+                newValue: {
+                    name: "newValue",
+                    type: "String",
+                    optional: true
+                },
+                changes: {
+                    name: "changes",
+                    type: "String",
+                    optional: true
+                },
+                userId: {
+                    name: "userId",
+                    type: "String",
+                    optional: true
+                },
+                userName: {
+                    name: "userName",
+                    type: "String",
+                    optional: true
+                },
+                userEmail: {
+                    name: "userEmail",
+                    type: "String",
+                    optional: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                organizationId: {
+                    name: "organizationId",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]),
+                    foreignKeyFor: [
+                        "organization"
+                    ]
+                },
+                organization: {
+                    name: "organization",
+                    type: "Organization",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("organizationId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "gasAuditLogs", fields: ["organizationId"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                }
+            },
+            attributes: [
+                { name: "@@deny", args: [{ name: "operation", value: ExpressionUtils.literal("all") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "==", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("organizationId")]) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("entityType")]) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("entityId")]) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("userId")]) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("createdAt")]) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_audit_logs") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
+            }
+        },
         UserNotificationPreferences: {
             name: "UserNotificationPreferences",
             fields: {
@@ -5056,6 +5164,13 @@ export class SchemaType implements SchemaDef {
                 business_rules: "business_rules",
                 contract_templates: "contract_templates",
                 custom_fields: "custom_fields"
+            }
+        },
+        AuditAction: {
+            values: {
+                create: "create",
+                update: "update",
+                delete: "delete"
             }
         }
     } as const;

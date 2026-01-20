@@ -186,14 +186,15 @@
         "Automatic deviation calculation (scheduled vs actual)"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-007"
       ],
       "labels": [
         "operator",
         "consumption"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-010",
@@ -207,14 +208,15 @@
         "Trend charts"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-009"
       ],
       "labels": [
         "manager",
         "analytics"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-011",
@@ -227,7 +229,7 @@
         "Does not include automatic action suggestions (alert only)"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-009",
         "US-012"
@@ -235,7 +237,8 @@
       "labels": [
         "system",
         "alert"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-012",
@@ -250,14 +253,15 @@
         "Only Admin profile has access"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-001"
       ],
       "labels": [
         "admin",
         "settings"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-013",
@@ -292,17 +296,18 @@
         "Log export"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "dependsOn": [
         "US-001"
       ],
       "labels": [
         "admin",
         "audit"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-01-20T20:32:20.321Z"
+    "updatedAt": "2026-01-21T00:00:00.000Z"
   }
 }

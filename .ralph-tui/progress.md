@@ -216,3 +216,47 @@ const { mutate: createItem, isPending: isCreating } = client.model.useCreate({
   - Pattern: Import `cn` from `@acme/ui` not `@acme/ui/lib/utils`
   - Pattern: TanStack Router routes need Vite dev server to regenerate routeTree.gen.ts
 ---
+## ✓ Iteration 4 - US-011: Scheduling Deviation Alerts
+*2026-01-20T22:46:46.164Z (784s)*
+
+**Status:** Completed
+
+**Notes:**
+stem only shows alerts and allows acknowledgment\n   - No automatic corrective action suggestions\n\n### Files Created:\n- `packages/email/src/emails/DeviationAlertEmail.tsx` - Email template\n- `apps/web/src/features/deviation-alerts/` - Full feature module (9 files)\n- `apps/web/src/routes/_authenticated/gas/deviation-alerts/index.tsx` - Route\n- Updated `apps/web/src/features/gas/index.tsx` - Dashboard indicator\n- Updated `apps/web/src/components/layout/data/sidebar-data.ts` - Navigation\n\n
+
+---
+
+## 2026-01-20 - US-014
+- **What was implemented**: History and Audit Log feature for Admin profile
+- **Files changed**:
+  - `packages/zen-v3/schema.zmodel` - Added GasAuditLog model with AuditAction enum
+  - `apps/web/src/features/audit-log/` - New feature module (8 files):
+    - `index.tsx` - Main page with log fetching and filtering
+    - `data/data.tsx` - Entity types, action types, export utilities
+    - `components/audit-log-provider.tsx` - Context for filters and dialog state
+    - `components/audit-log-filters.tsx` - Date range, entity, action, user filters
+    - `components/audit-log-table.tsx` - Table with sortable columns and pagination
+    - `components/audit-log-summary-cards.tsx` - KPI summary cards
+    - `components/details-dialog.tsx` - Dialog for viewing log details
+    - `components/export-dialog.tsx` - Dialog for exporting logs to CSV/JSON
+  - `apps/web/src/routes/_authenticated/gas/audit-log/index.tsx` - Route page
+  - `apps/web/src/components/layout/data/sidebar-data.ts` - Added navigation link
+- **Key features**:
+  - Log of all write operations (create, update, delete)
+  - Record: user, date/time, entity type, entity name, changed field, previous value, new value
+  - Entity types: contract, unit, plan, consumption, parameter, template, custom_field, alert, user, organization
+  - Color-coded action badges: green for create, blue for update, red for delete
+  - Filters by entity type, action type, user, period (date range)
+  - Search by entity name, user name, or field name
+  - Summary cards: total logs, creates, updates, deletes, unique users
+  - Details dialog with full change information
+  - Export to CSV or JSON format
+  - Admin-only access via organization context
+- **Learnings:**
+  - Pattern: Use enum cast `as "create" | "update" | "delete"` for action filters with ZenStack
+  - Pattern: Use `isJsonValue()` helper to detect and parse JSON values for display
+  - Pattern: Export functions should create Blob and trigger download via temporary link
+  - Pattern: For audit logs, store userName/userEmail directly to preserve history even if user is deleted
+  - Gotcha: New routes require dev server to regenerate routeTree.gen.ts
+  - Pattern: Use border-l-4 with color classes for visual action indicators in table rows
+---

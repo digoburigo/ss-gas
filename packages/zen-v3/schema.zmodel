@@ -192,6 +192,7 @@ model Organization {
   gasSystemParameters GasSystemParameter[]
   gasContractTemplates GasContractTemplate[]
   gasCustomFields GasCustomField[]
+  gasAuditLogs GasAuditLog[]
 
   @@unique([slug])
   @@unique([cnpj])
@@ -1531,6 +1532,59 @@ model GasCustomField {
     @@allow('create,update,delete', auth().organizationId == organizationId && auth().organizationRole == 'admin')
 
     @@map("gas_custom_fields")
+}
+
+// AUDIT LOG FOR SYSTEM CHANGES ======================================================
+// Tracks all write operations (create, update, delete) for audit purposes (US-014)
+
+enum AuditAction {
+  create
+  update
+  delete
+}
+
+model GasAuditLog {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    // What was changed
+    entityType String            // Entity type: contract, unit, plan, consumption, parameter, etc.
+    entityId String              // ID of the changed entity
+    entityName String?           // Display name for easier reading (e.g., contract name, unit name)
+
+    // What action was performed
+    action AuditAction           // create, update, delete
+
+    // Change details (for updates)
+    field String?                // Which field was changed (null for create/delete)
+    oldValue String?             // Previous value (JSON serialized if complex)
+    newValue String?             // New value (JSON serialized if complex)
+
+    // Full change snapshot (for complex updates with multiple fields)
+    changes String?              // JSON object with all field changes
+
+    // Who made the change
+    userId String?
+    userName String?             // Stored for history even if user is deleted
+    userEmail String?            // Stored for history
+
+    // When the change was made
+    createdAt DateTime @default(now())
+
+    // Organization context
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    // Only admin profile can read audit logs
+    @@deny('all', auth() == null)
+    @@allow('create', auth() != null)
+    @@allow('read', auth().organizationId == organizationId)
+
+    @@index([organizationId])
+    @@index([entityType])
+    @@index([entityId])
+    @@index([userId])
+    @@index([createdAt])
+    @@map("gas_audit_logs")
 }
 
 // USER NOTIFICATION PREFERENCES ======================================================
