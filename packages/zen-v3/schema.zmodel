@@ -210,15 +210,33 @@ enum MemberRole {
   member
 }
 
+// SS-GAS User Profiles - organization-scoped roles for gas management
+enum GasUserProfile {
+  admin         // Full access to organization's gas management
+  manager       // Can manage contracts, units, view reports
+  operator      // Can enter daily data, view assigned units
+  viewer        // Read-only access to reports and dashboards
+}
+
 model Member {
   id             String       @id @default(dbgenerated("uuidv7()"))
-  organizationId String 
+  organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String 
+  userId         String
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role           String 
-  createdAt      DateTime     @default(now()) 
-  updatedAt      DateTime     @updatedAt 
+  role           String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  // SS-GAS: User profile for gas management permissions
+  profile        GasUserProfile @default(viewer)
+
+  // SS-GAS: Soft delete support - deactivated members can't access
+  deactivatedAt  DateTime?
+  deactivatedById String?
+
+  // SS-GAS: Operator-unit assignments (only relevant for 'operator' profile)
+  unitAssignments GasUnitOperator[]
 
   // deny anonymous users
   @@deny('all', auth() == null)
@@ -228,6 +246,9 @@ model Member {
 
   // allow read access to members that belong to the user's active organization
   @@allow('read', auth().organizationId == organizationId)
+
+  // allow admins to update members in their organization
+  @@allow('update', auth().organizationId == organizationId && auth().organizationRole == 'admin')
 
   @@map("member")
 }
@@ -949,6 +970,9 @@ model GasUnit {
     dailyPlans GasDailyPlan[]
     realConsumptions GasRealConsumption[]
 
+    // Operator assignments - which operators can work with this unit
+    operatorAssignments GasUnitOperator[]
+
     @@unique([organizationId, code])
 
     @@allow('create', auth() != null)
@@ -1231,6 +1255,34 @@ model GasContractAuditLog {
 
     @@index([contractId])
     @@map("gas_contract_audit_logs")
+}
+
+// GAS UNIT OPERATOR ASSIGNMENT ======================================================
+// Links operators (members with 'operator' profile) to specific gas units they can manage
+
+model GasUnitOperator {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    memberId String
+    member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+    unitId String
+    unit GasUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+    // When this assignment was created
+    createdAt DateTime @default(now())
+    createdById String?
+
+    // Optional notes about this assignment
+    notes String?
+
+    @@unique([memberId, unitId])
+
+    // Only accessible within the organization context
+    @@deny('all', auth() == null)
+    @@allow('create,read,update,delete', auth() != null)
+
+    @@map("gas_unit_operators")
 }
 
 // USER NOTIFICATION PREFERENCES ======================================================

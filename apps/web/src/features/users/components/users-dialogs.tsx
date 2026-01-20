@@ -1,51 +1,69 @@
-import { UsersActionDialog } from "./users-action-dialog";
-import { UsersDeleteDialog } from "./users-delete-dialog";
+import { UsersDeactivateDialog } from "./users-deactivate-dialog";
+import { UsersEditProfileDialog } from "./users-edit-profile-dialog";
 import { UsersInviteDialog } from "./users-invite-dialog";
+import { UsersReactivateDialog } from "./users-reactivate-dialog";
+import { UsersAssignUnitsDialog } from "./users-assign-units-dialog";
 import { useUsers } from "./users-provider";
 
 export function UsersDialogs() {
-	const { open, setOpen, currentRow, setCurrentRow } = useUsers();
-	return (
-		<>
-			<UsersActionDialog
-				key="user-add"
-				open={open === "add"}
-				onOpenChange={() => setOpen("add")}
-			/>
+  const { open, setOpen, currentMember, setCurrentMember } = useUsers();
 
-			<UsersInviteDialog
-				key="user-invite"
-				open={open === "invite"}
-				onOpenChange={() => setOpen("invite")}
-			/>
+  const handleCloseDialog = () => {
+    setOpen(null);
+    setTimeout(() => {
+      setCurrentMember(null);
+    }, 500);
+  };
 
-			{currentRow && (
-				<>
-					<UsersActionDialog
-						key={`user-edit-${currentRow.id}`}
-						open={open === "edit"}
-						onOpenChange={() => {
-							setOpen("edit");
-							setTimeout(() => {
-								setCurrentRow(null);
-							}, 500);
-						}}
-						currentRow={currentRow}
-					/>
+  return (
+    <>
+      <UsersInviteDialog
+        key="user-invite"
+        open={open === "invite"}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setOpen(null);
+        }}
+      />
 
-					<UsersDeleteDialog
-						key={`user-delete-${currentRow.id}`}
-						open={open === "delete"}
-						onOpenChange={() => {
-							setOpen("delete");
-							setTimeout(() => {
-								setCurrentRow(null);
-							}, 500);
-						}}
-						currentRow={currentRow}
-					/>
-				</>
-			)}
-		</>
-	);
+      {currentMember && (
+        <>
+          <UsersEditProfileDialog
+            key={`user-edit-${currentMember.id}`}
+            open={open === "edit-profile"}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) handleCloseDialog();
+            }}
+            member={currentMember}
+          />
+
+          <UsersDeactivateDialog
+            key={`user-deactivate-${currentMember.id}`}
+            open={open === "deactivate"}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) handleCloseDialog();
+            }}
+            member={currentMember}
+          />
+
+          <UsersReactivateDialog
+            key={`user-reactivate-${currentMember.id}`}
+            open={open === "reactivate"}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) handleCloseDialog();
+            }}
+            member={currentMember}
+          />
+
+          <UsersAssignUnitsDialog
+            key={`user-assign-units-${currentMember.id}`}
+            open={open === "assign-units"}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) handleCloseDialog();
+            }}
+            member={currentMember}
+          />
+        </>
+      )}
+    </>
+  );
 }

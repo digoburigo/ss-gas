@@ -834,12 +834,35 @@ export class SchemaType implements SchemaDef {
                     type: "DateTime",
                     updatedAt: true,
                     attributes: [{ name: "@updatedAt" }]
+                },
+                profile: {
+                    name: "profile",
+                    type: "GasUserProfile",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("viewer") }] }],
+                    default: "viewer"
+                },
+                deactivatedAt: {
+                    name: "deactivatedAt",
+                    type: "DateTime",
+                    optional: true
+                },
+                deactivatedById: {
+                    name: "deactivatedById",
+                    type: "String",
+                    optional: true
+                },
+                unitAssignments: {
+                    name: "unitAssignments",
+                    type: "GasUnitOperator",
+                    array: true,
+                    relation: { opposite: "member" }
                 }
             },
             attributes: [
                 { name: "@@deny", args: [{ name: "operation", value: ExpressionUtils.literal("all") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "==", ExpressionUtils._null()) }] },
                 { name: "@@deny", args: [{ name: "operation", value: ExpressionUtils.literal("all") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "!=", ExpressionUtils.field("organizationId")) }] },
                 { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("update") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")), "&&", ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationRole"]), "==", ExpressionUtils.literal("admin"))) }] },
                 { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("member") }] }
             ],
             idFields: ["id"],
@@ -3214,6 +3237,12 @@ export class SchemaType implements SchemaDef {
                     type: "GasRealConsumption",
                     array: true,
                     relation: { opposite: "unit" }
+                },
+                operatorAssignments: {
+                    name: "operatorAssignments",
+                    type: "GasUnitOperator",
+                    array: true,
+                    relation: { opposite: "unit" }
                 }
             },
             attributes: [
@@ -4185,6 +4214,71 @@ export class SchemaType implements SchemaDef {
                 id: { type: "String" }
             }
         },
+        GasUnitOperator: {
+            name: "GasUnitOperator",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                memberId: {
+                    name: "memberId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "member"
+                    ]
+                },
+                member: {
+                    name: "member",
+                    type: "Member",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("memberId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "unitAssignments", fields: ["memberId"], references: ["id"], onDelete: "Cascade" }
+                },
+                unitId: {
+                    name: "unitId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "unit"
+                    ]
+                },
+                unit: {
+                    name: "unit",
+                    type: "GasUnit",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("unitId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "operatorAssignments", fields: ["unitId"], references: ["id"], onDelete: "Cascade" }
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    optional: true
+                },
+                notes: {
+                    name: "notes",
+                    type: "String",
+                    optional: true
+                }
+            },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("memberId"), ExpressionUtils.field("unitId")]) }] },
+                { name: "@@deny", args: [{ name: "operation", value: ExpressionUtils.literal("all") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "==", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create,read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_unit_operators") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" },
+                memberId_unitId: { memberId: { type: "String" }, unitId: { type: "String" } }
+            }
+        },
         UserNotificationPreferences: {
             name: "UserNotificationPreferences",
             fields: {
@@ -4303,6 +4397,14 @@ export class SchemaType implements SchemaDef {
                 secretary: "secretary",
                 patient: "patient",
                 member: "member"
+            }
+        },
+        GasUserProfile: {
+            values: {
+                admin: "admin",
+                manager: "manager",
+                operator: "operator",
+                viewer: "viewer"
             }
         },
         ClientStatus: {

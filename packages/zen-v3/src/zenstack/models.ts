@@ -48,6 +48,7 @@ export type GasDailyPlan = $ModelResult<$Schema, "GasDailyPlan">;
 export type GasRealConsumption = $ModelResult<$Schema, "GasRealConsumption">;
 export type GasContract = $ModelResult<$Schema, "GasContract">;
 export type GasContractAuditLog = $ModelResult<$Schema, "GasContractAuditLog">;
+export type GasUnitOperator = $ModelResult<$Schema, "GasUnitOperator">;
 export type UserNotificationPreferences = $ModelResult<$Schema, "UserNotificationPreferences">;
 /**
  * Shape of the `auth()` function
@@ -57,6 +58,8 @@ export const UserRole = $schema.enums.UserRole.values;
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 export const MemberRole = $schema.enums.MemberRole.values;
 export type MemberRole = (typeof MemberRole)[keyof typeof MemberRole];
+export const GasUserProfile = $schema.enums.GasUserProfile.values;
+export type GasUserProfile = (typeof GasUserProfile)[keyof typeof GasUserProfile];
 export const ClientStatus = $schema.enums.ClientStatus.values;
 export type ClientStatus = (typeof ClientStatus)[keyof typeof ClientStatus];
 export const EmployeeType = $schema.enums.EmployeeType.values;
