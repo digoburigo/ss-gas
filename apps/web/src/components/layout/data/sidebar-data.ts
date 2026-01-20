@@ -1,4 +1,5 @@
 import {
+  Activity,
   AudioWaveform,
   Bell,
   BellRing,
@@ -94,6 +95,11 @@ export const sidebarData: SidebarData = {
               title: "Painel de Programação",
               url: "/gas/scheduling-dashboard",
               icon: ClipboardList,
+            },
+            {
+              title: "Consumo Real",
+              url: "/gas/actual-consumption",
+              icon: Activity,
             },
             {
               title: "Lançamento Diário",
