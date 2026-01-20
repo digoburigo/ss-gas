@@ -176,3 +176,43 @@ const { mutate: createItem, isPending: isCreating } = client.model.useCreate({
   - Pattern: Cast arrays for `.find()` callbacks: `(parameters as GasSystemParameter[]).find((p) => p.key === key)`
   - Gotcha: After adding new models to schema.zmodel, run `pnpm run --filter "@acme/zen-v3" db:generate` to regenerate types
 ---
+## ✓ Iteration 3 - US-012: Administrative Parameter Panel
+*2026-01-20T22:33:41.080Z (1140s)*
+
+**Status:** Completed
+
+---
+
+## 2026-01-20 - US-011
+- **What was implemented**: Scheduling Deviation Alerts system
+- **Files changed**:
+  - `packages/email/src/emails/DeviationAlertEmail.tsx` - New email template for deviation alerts
+  - `apps/web/src/features/deviation-alerts/` - New feature module (8 files):
+    - `index.tsx` - Main page with alert detection logic
+    - `data/data.tsx` - Severity levels, status options, helper functions
+    - `components/deviation-alerts-provider.tsx` - Context for filters and dialogs
+    - `components/deviation-alerts-summary-cards.tsx` - KPI summary cards
+    - `components/deviation-alerts-filters.tsx` - Date range, unit, status filters
+    - `components/deviation-alerts-table.tsx` - Alerts table with severity coloring
+    - `components/deviation-alert-indicator.tsx` - Dashboard indicator card
+    - `components/send-email-dialog.tsx` - Dialog for sending alert emails
+    - `components/acknowledge-dialog.tsx` - Dialog for acknowledging alerts
+  - `apps/web/src/features/gas/index.tsx` - Added deviation alert indicator to dashboard
+  - `apps/web/src/routes/_authenticated/gas/deviation-alerts/index.tsx` - Route page
+  - `apps/web/src/components/layout/data/sidebar-data.ts` - Added navigation link
+- **Key features**:
+  - Configurable threshold from admin parameters (deviation_threshold_percent)
+  - Automatic detection of deviations exceeding threshold
+  - Severity levels: critical (≥30%), high (≥20%), medium (≥10%)
+  - Visual indicator on gas dashboard showing active alert count
+  - Alerts table with filtering by date range, unit, and status
+  - Summary cards: total alerts, active alerts, over/under consumption counts, emails sent
+  - Send email dialog with configurable recipients
+  - Acknowledge dialog to mark alerts as reviewed
+  - Color-coded rows based on alert severity
+- **Learnings:**
+  - Pattern: Use `useEffect` to sync admin parameter value to local state
+  - Pattern: For imperative filtering (for...of loops), use explicit push to typed array instead of .map().filter()
+  - Pattern: Import `cn` from `@acme/ui` not `@acme/ui/lib/utils`
+  - Pattern: TanStack Router routes need Vite dev server to regenerate routeTree.gen.ts
+---

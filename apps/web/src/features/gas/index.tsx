@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import { Link } from "@tanstack/react-router";
 import {
   Activity,
@@ -17,6 +18,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+
+import type { GasSystemParameter } from "@acme/zen-v3/zenstack/models";
+import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import type { ChartConfig } from "@acme/ui/chart";
 import {
@@ -50,6 +54,11 @@ import { Main } from "~/components/layout/main";
 import { ProfileDropdown } from "~/components/profile-dropdown";
 import { Search } from "~/components/search";
 import { ThemeSwitch } from "~/components/theme-switch";
+import { DeviationAlertIndicator } from "~/features/deviation-alerts/components/deviation-alert-indicator";
+import {
+  calculateDeviationPercent,
+  isDeviationExceedsThreshold,
+} from "~/features/deviation-alerts/data/data";
 
 /**
  * Format a number with thousand separators and unit
@@ -160,6 +169,96 @@ const trendChartConfig = {
 
 export function GasDashboard() {
   const currentMonth = useMemo(() => getCurrentMonth(), []);
+  const client = useClientQueries(schema);
+  const [thresholdPercent, setThresholdPercent] = useState(10);
+
+  // Fetch threshold from admin parameters
+  const { data: thresholdParam } = client.gasSystemParameter.useFindFirst({
+    where: {
+      category: "alert_thresholds",
+      key: "deviation_threshold_percent",
+      active: true,
+    },
+  });
+
+  // Update threshold when parameter is loaded
+  useEffect(() => {
+    if (thresholdParam) {
+      const value = Number.parseFloat((thresholdParam as GasSystemParameter).value);
+      if (!Number.isNaN(value)) {
+        setThresholdPercent(value);
+      }
+    }
+  }, [thresholdParam]);
+
+  // Fetch last 7 days of real consumption for deviation alerts
+  const sevenDaysAgo = useMemo(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 7);
+    return date;
+  }, []);
+
+  const { data: recentConsumptions = [], isFetching: isFetchingConsumptions } =
+    client.gasRealConsumption.useFindMany({
+      where: {
+        date: {
+          gte: sevenDaysAgo,
+          lte: new Date(),
+        },
+      },
+      include: {
+        unit: {
+          include: {
+            dailyPlans: {
+              where: {
+                date: {
+                  gte: sevenDaysAgo,
+                  lte: new Date(),
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { date: "desc" },
+    });
+
+  // Calculate deviation alerts
+  const deviationAlertsSummary = useMemo(() => {
+    const alerts: Array<{
+      unitName: string;
+      deviationPercent: number;
+      date: string;
+    }> = [];
+
+    for (const consumption of recentConsumptions) {
+      const dateStr = new Date(consumption.date).toISOString().split("T")[0];
+      const plan = consumption.unit.dailyPlans?.find((p) => {
+        const planDate = new Date(p.date).toISOString().split("T")[0];
+        return planDate === dateStr;
+      });
+
+      if (!plan || plan.qdpValue <= 0) continue;
+
+      const deviationPercent = calculateDeviationPercent(
+        plan.qdpValue,
+        consumption.qdrValue,
+      );
+
+      if (isDeviationExceedsThreshold(deviationPercent, thresholdPercent)) {
+        alerts.push({
+          unitName: consumption.unit.name,
+          deviationPercent,
+          date: consumption.date.toString(),
+        });
+      }
+    }
+
+    return {
+      activeAlertsCount: alerts.length,
+      latestAlert: alerts.length > 0 ? alerts[0] : undefined,
+    };
+  }, [recentConsumptions, thresholdPercent]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["gas", "consolidated", currentMonth],
@@ -413,7 +512,7 @@ export function GasDashboard() {
 
         {/* Tolerance Band Indicators */}
         {toleranceSummary && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Transport Tolerance Card */}
             <Tooltip>
               <TooltipTrigger asChild>
@@ -570,6 +669,24 @@ export function GasDashboard() {
                 </div>
               </TooltipContent>
             </Tooltip>
+
+            {/* Deviation Alert Indicator */}
+            <DeviationAlertIndicator
+              activeAlertsCount={deviationAlertsSummary.activeAlertsCount}
+              latestAlert={deviationAlertsSummary.latestAlert}
+              isLoading={isFetchingConsumptions}
+            />
+          </div>
+        )}
+
+        {/* Deviation Alert Indicator (shown when no tolerance summary) */}
+        {!toleranceSummary && (
+          <div className="grid gap-4 sm:grid-cols-3">
+            <DeviationAlertIndicator
+              activeAlertsCount={deviationAlertsSummary.activeAlertsCount}
+              latestAlert={deviationAlertsSummary.latestAlert}
+              isLoading={isFetchingConsumptions}
+            />
           </div>
         )}
 

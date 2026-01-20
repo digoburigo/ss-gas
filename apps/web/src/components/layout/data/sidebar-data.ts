@@ -1,5 +1,6 @@
 import {
   Activity,
+  AlertTriangle,
   AudioWaveform,
   Bell,
   BellRing,
@@ -107,6 +108,11 @@ export const sidebarData: SidebarData = {
               title: "Taxa de Acurácia",
               url: "/gas/scheduling-accuracy",
               icon: Target,
+            },
+            {
+              title: "Alertas de Desvio",
+              url: "/gas/deviation-alerts",
+              icon: AlertTriangle,
             },
             {
               title: "Lançamento Diário",

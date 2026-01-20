@@ -56,6 +56,7 @@ import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_auth
 import { Route as AuthenticatedGasSchedulingIndexRouteImport } from './routes/_authenticated/gas/scheduling/index'
 import { Route as AuthenticatedGasSchedulingDashboardIndexRouteImport } from './routes/_authenticated/gas/scheduling-dashboard/index'
 import { Route as AuthenticatedGasSchedulingAccuracyIndexRouteImport } from './routes/_authenticated/gas/scheduling-accuracy/index'
+import { Route as AuthenticatedGasDeviationAlertsIndexRouteImport } from './routes/_authenticated/gas/deviation-alerts/index'
 import { Route as AuthenticatedGasContractsIndexRouteImport } from './routes/_authenticated/gas/contracts/index'
 import { Route as AuthenticatedGasContractAlertsIndexRouteImport } from './routes/_authenticated/gas/contract-alerts/index'
 import { Route as AuthenticatedGasConsumerUnitsIndexRouteImport } from './routes/_authenticated/gas/consumer-units/index'
@@ -315,6 +316,12 @@ const AuthenticatedGasSchedulingAccuracyIndexRoute =
     path: '/scheduling-accuracy/',
     getParentRoute: () => AuthenticatedGasLayoutRoute,
   } as any)
+const AuthenticatedGasDeviationAlertsIndexRoute =
+  AuthenticatedGasDeviationAlertsIndexRouteImport.update({
+    id: '/deviation-alerts/',
+    path: '/deviation-alerts/',
+    getParentRoute: () => AuthenticatedGasLayoutRoute,
+  } as any)
 const AuthenticatedGasContractsIndexRoute =
   AuthenticatedGasContractsIndexRouteImport.update({
     id: '/contracts/',
@@ -402,6 +409,7 @@ export interface FileRoutesByFullPath {
   '/gas/consumer-units/': typeof AuthenticatedGasConsumerUnitsIndexRoute
   '/gas/contract-alerts/': typeof AuthenticatedGasContractAlertsIndexRoute
   '/gas/contracts/': typeof AuthenticatedGasContractsIndexRoute
+  '/gas/deviation-alerts/': typeof AuthenticatedGasDeviationAlertsIndexRoute
   '/gas/scheduling-accuracy/': typeof AuthenticatedGasSchedulingAccuracyIndexRoute
   '/gas/scheduling-dashboard/': typeof AuthenticatedGasSchedulingDashboardIndexRoute
   '/gas/scheduling/': typeof AuthenticatedGasSchedulingIndexRoute
@@ -452,6 +460,7 @@ export interface FileRoutesByTo {
   '/gas/consumer-units': typeof AuthenticatedGasConsumerUnitsIndexRoute
   '/gas/contract-alerts': typeof AuthenticatedGasContractAlertsIndexRoute
   '/gas/contracts': typeof AuthenticatedGasContractsIndexRoute
+  '/gas/deviation-alerts': typeof AuthenticatedGasDeviationAlertsIndexRoute
   '/gas/scheduling-accuracy': typeof AuthenticatedGasSchedulingAccuracyIndexRoute
   '/gas/scheduling-dashboard': typeof AuthenticatedGasSchedulingDashboardIndexRoute
   '/gas/scheduling': typeof AuthenticatedGasSchedulingIndexRoute
@@ -508,6 +517,7 @@ export interface FileRoutesById {
   '/_authenticated/gas/consumer-units/': typeof AuthenticatedGasConsumerUnitsIndexRoute
   '/_authenticated/gas/contract-alerts/': typeof AuthenticatedGasContractAlertsIndexRoute
   '/_authenticated/gas/contracts/': typeof AuthenticatedGasContractsIndexRoute
+  '/_authenticated/gas/deviation-alerts/': typeof AuthenticatedGasDeviationAlertsIndexRoute
   '/_authenticated/gas/scheduling-accuracy/': typeof AuthenticatedGasSchedulingAccuracyIndexRoute
   '/_authenticated/gas/scheduling-dashboard/': typeof AuthenticatedGasSchedulingDashboardIndexRoute
   '/_authenticated/gas/scheduling/': typeof AuthenticatedGasSchedulingIndexRoute
@@ -564,6 +574,7 @@ export interface FileRouteTypes {
     | '/gas/consumer-units/'
     | '/gas/contract-alerts/'
     | '/gas/contracts/'
+    | '/gas/deviation-alerts/'
     | '/gas/scheduling-accuracy/'
     | '/gas/scheduling-dashboard/'
     | '/gas/scheduling/'
@@ -614,6 +625,7 @@ export interface FileRouteTypes {
     | '/gas/consumer-units'
     | '/gas/contract-alerts'
     | '/gas/contracts'
+    | '/gas/deviation-alerts'
     | '/gas/scheduling-accuracy'
     | '/gas/scheduling-dashboard'
     | '/gas/scheduling'
@@ -669,6 +681,7 @@ export interface FileRouteTypes {
     | '/_authenticated/gas/consumer-units/'
     | '/_authenticated/gas/contract-alerts/'
     | '/_authenticated/gas/contracts/'
+    | '/_authenticated/gas/deviation-alerts/'
     | '/_authenticated/gas/scheduling-accuracy/'
     | '/_authenticated/gas/scheduling-dashboard/'
     | '/_authenticated/gas/scheduling/'
@@ -1024,6 +1037,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGasSchedulingAccuracyIndexRouteImport
       parentRoute: typeof AuthenticatedGasLayoutRoute
     }
+    '/_authenticated/gas/deviation-alerts/': {
+      id: '/_authenticated/gas/deviation-alerts/'
+      path: '/deviation-alerts'
+      fullPath: '/gas/deviation-alerts/'
+      preLoaderRoute: typeof AuthenticatedGasDeviationAlertsIndexRouteImport
+      parentRoute: typeof AuthenticatedGasLayoutRoute
+    }
     '/_authenticated/gas/contracts/': {
       id: '/_authenticated/gas/contracts/'
       path: '/contracts'
@@ -1097,6 +1117,7 @@ interface AuthenticatedGasLayoutRouteChildren {
   AuthenticatedGasConsumerUnitsIndexRoute: typeof AuthenticatedGasConsumerUnitsIndexRoute
   AuthenticatedGasContractAlertsIndexRoute: typeof AuthenticatedGasContractAlertsIndexRoute
   AuthenticatedGasContractsIndexRoute: typeof AuthenticatedGasContractsIndexRoute
+  AuthenticatedGasDeviationAlertsIndexRoute: typeof AuthenticatedGasDeviationAlertsIndexRoute
   AuthenticatedGasSchedulingAccuracyIndexRoute: typeof AuthenticatedGasSchedulingAccuracyIndexRoute
   AuthenticatedGasSchedulingDashboardIndexRoute: typeof AuthenticatedGasSchedulingDashboardIndexRoute
   AuthenticatedGasSchedulingIndexRoute: typeof AuthenticatedGasSchedulingIndexRoute
@@ -1117,6 +1138,8 @@ const AuthenticatedGasLayoutRouteChildren: AuthenticatedGasLayoutRouteChildren =
     AuthenticatedGasContractAlertsIndexRoute:
       AuthenticatedGasContractAlertsIndexRoute,
     AuthenticatedGasContractsIndexRoute: AuthenticatedGasContractsIndexRoute,
+    AuthenticatedGasDeviationAlertsIndexRoute:
+      AuthenticatedGasDeviationAlertsIndexRoute,
     AuthenticatedGasSchedulingAccuracyIndexRoute:
       AuthenticatedGasSchedulingAccuracyIndexRoute,
     AuthenticatedGasSchedulingDashboardIndexRoute:
