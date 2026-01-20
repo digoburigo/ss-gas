@@ -7,4 +7,8 @@ if (!import.meta.env.PUBLIC_SERVER_URL) {
 
 const webUrl = new URL(import.meta.env.PUBLIC_SERVER_URL);
 
-export const api = treaty<App>(`${webUrl.hostname}:${webUrl.port}`).api;
+export const api = treaty<App>(`${webUrl.protocol}//${webUrl.hostname}:${webUrl.port}`, {
+	fetch: {
+		credentials: 'include'
+	}
+}).api;

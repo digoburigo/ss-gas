@@ -15,14 +15,15 @@ import {
 	SelectValue,
 } from "@acme/ui/select";
 import { Switch } from "@acme/ui/switch";
+import { schema } from "@acme/zen-v3/zenstack/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { api } from "~/clients/api-client";
+import { authClient } from "~/clients/auth-client";
 
 const notificationsFormSchema = z.object({
 	missingEntryAlertsEnabled: z.boolean(),
@@ -60,19 +61,18 @@ const escalationDelayOptions = [
 ];
 
 export function NotificationsForm() {
-	const queryClient = useQueryClient();
+	const client = useClientQueries(schema);
+	const { data: session } = authClient.useSession();
 
 	// Fetch current preferences
-	const { data: preferences, isLoading } = useQuery({
-		queryKey: ["user", "notification-preferences"],
-		queryFn: async () => {
-			const response = await api.user["notification-preferences"].get();
-			if (response.error) {
-				throw new Error("Falha ao carregar preferências");
-			}
-			return response.data;
+	const { data: preferences, isLoading } = client.userNotificationPreferences.useFindFirst(
+		{
+			where: { userId: session?.user?.id },
 		},
-	});
+		{
+			enabled: !!session?.user?.id,
+		},
+	);
 
 	const form = useForm<NotificationsFormValues>({
 		resolver: zodResolver(notificationsFormSchema),
@@ -82,23 +82,18 @@ export function NotificationsForm() {
 	// Update form when preferences are loaded
 	useEffect(() => {
 		if (preferences) {
-			form.reset(preferences);
+			form.reset({
+				missingEntryAlertsEnabled: preferences.missingEntryAlertsEnabled,
+				preferredNotificationHour: preferences.preferredNotificationHour,
+				escalationEnabled: preferences.escalationEnabled,
+				escalationDelayHours: preferences.escalationDelayHours,
+			});
 		}
 	}, [preferences, form]);
 
 	// Mutation to save preferences
-	const saveMutation = useMutation({
-		mutationFn: async (data: NotificationsFormValues) => {
-			const response = await api.user["notification-preferences"].put(data);
-			if (response.error) {
-				throw new Error("Falha ao salvar preferências");
-			}
-			return response.data;
-		},
+	const { mutate: upsertPreferences, isPending } = client.userNotificationPreferences.useUpsert({
 		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["user", "notification-preferences"],
-			});
 			toast.success("Preferências de notificação atualizadas");
 		},
 		onError: (error) => {
@@ -107,7 +102,12 @@ export function NotificationsForm() {
 	});
 
 	const onSubmit = (data: NotificationsFormValues) => {
-		saveMutation.mutate(data);
+		if (!session?.user?.id) return;
+		upsertPreferences({
+			where: { userId: session.user.id },
+			create: { userId: session.user.id, ...data },
+			update: data,
+		});
 	};
 
 	if (isLoading) {
@@ -255,8 +255,8 @@ export function NotificationsForm() {
 					</div>
 				</div>
 
-				<Button type="submit" disabled={saveMutation.isPending}>
-					{saveMutation.isPending && (
+				<Button type="submit" disabled={isPending}>
+					{isPending && (
 						<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 					)}
 					Salvar preferências

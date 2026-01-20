@@ -28,12 +28,12 @@ export function initAuth<
 		database: new Pool({
 			connectionString: process.env.DATABASE_URL,
 		}),
-		session: {
-			cookieCache: {
-				enabled: true,
-				maxAge: 5 * 60, // Cache duration in seconds
-			},
-		},
+		// session: {
+		// 	cookieCache: {
+		// 		enabled: true,
+		// 		maxAge: 5 * 60, // Cache duration in seconds
+		// 	},
+		// },
 		baseURL: options.baseUrl,
 		secret: options.secret,
 		advanced: {

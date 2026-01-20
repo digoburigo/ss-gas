@@ -48,7 +48,9 @@ import {
 	TableRow,
 } from "@acme/ui/table";
 import { Textarea } from "@acme/ui/textarea";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { schema } from "@acme/zen-v3/zenstack/schema";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
 	ChevronDown,
@@ -213,6 +215,7 @@ interface HistoryData {
 
 function GasAdminPage() {
 	const queryClient = useQueryClient();
+	const zenstack = useClientQueries(schema);
 	const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
 	const [editEquipment, setEditEquipment] = useState<Equipment | null>(null);
 	const [historyEquipmentId, setHistoryEquipmentId] = useState<string | null>(
@@ -227,35 +230,68 @@ function GasAdminPage() {
 	const [effectiveDate, setEffectiveDate] = useState(getTodayDate());
 	const [notes, setNotes] = useState("");
 
-	// Fetch units with equipment
-	const { data: units, isLoading } = useQuery({
-		queryKey: ["gas", "admin", "units"],
-		queryFn: async () => {
-			const response = await api.gas.admin.units.get();
-			if (response.error) {
-				const errorObj = response.error as { error?: string };
-				throw new Error(errorObj.error ?? "Falha ao carregar unidades");
-			}
-			return response.data as Unit[];
+	// Fetch units with equipment using ZenStack
+	const { data: unitsData, isLoading } = zenstack.gasUnit.useFindMany({
+		include: {
+			equipment: {
+				orderBy: { orderIndex: "asc" },
+				include: {
+					constants: {
+						orderBy: { effectiveFrom: "desc" },
+						take: 1, // Only get current constant
+					},
+				},
+			},
 		},
+		orderBy: { code: "asc" },
 	});
 
-	// Fetch history for selected equipment
-	const { data: historyData, isLoading: isLoadingHistory } = useQuery({
-		queryKey: ["gas", "admin", "equipment", "history", historyEquipmentId],
-		queryFn: async () => {
-			if (!historyEquipmentId) return null;
-			const response = await api.gas.admin
-				.equipment({ equipmentId: historyEquipmentId })
-				.history.get();
-			if (response.error) {
-				const errorObj = response.error as { error?: string };
-				throw new Error(errorObj.error ?? "Falha ao carregar histórico");
-			}
-			return response.data as HistoryData;
-		},
-		enabled: !!historyEquipmentId,
-	});
+	// Transform ZenStack data to match existing Unit[] interface
+	const units = unitsData as Unit[] | undefined;
+
+	// Fetch history for selected equipment using ZenStack
+	const { data: historyConstants, isLoading: isLoadingHistory } =
+		zenstack.gasEquipmentConstant.useFindMany(
+			{
+				where: { equipmentId: historyEquipmentId ?? undefined },
+				include: {
+					createdByUser: { select: { id: true, name: true, email: true } },
+					equipment: { include: { unit: true } },
+				},
+				orderBy: { effectiveFrom: "desc" },
+			},
+			{
+				enabled: !!historyEquipmentId,
+			},
+		);
+
+	// Transform history data to match existing HistoryData interface
+	const historyData: HistoryData | null =
+		historyConstants && historyConstants.length > 0 && historyConstants[0]?.equipment
+			? {
+					equipment: {
+						id: historyConstants[0].equipment.id,
+						code: historyConstants[0].equipment.code,
+						name: historyConstants[0].equipment.name,
+						type: historyConstants[0].equipment.type,
+					},
+					unit: {
+						id: historyConstants[0].equipment.unit?.id ?? "",
+						code: historyConstants[0].equipment.unit?.code ?? "",
+						name: historyConstants[0].equipment.unit?.name ?? "",
+					},
+					history: historyConstants.map((c) => ({
+						id: c.id,
+						consumptionRate: c.consumptionRate,
+						consumptionUnit: c.consumptionUnit,
+						effectiveFrom: c.effectiveFrom,
+						effectiveTo: c.effectiveTo,
+						notes: c.notes,
+						createdAt: c.createdAt,
+						createdBy: c.createdByUser,
+					})),
+				}
+			: null;
 
 	// Mutation to update equipment constant
 	const updateConstantMutation = useMutation({

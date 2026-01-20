@@ -8,6 +8,9 @@ if (!import.meta.env.PUBLIC_SERVER_URL) {
 export const authClient = createAuthClient({
 	baseURL: import.meta.env.PUBLIC_SERVER_URL,
 	plugins: [adminClient(), organizationClient()],
+	fetchOptions: {
+		credentials: "include",
+	},
 });
 
 export type AuthSession =
