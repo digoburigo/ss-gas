@@ -24,6 +24,7 @@ import {
   Settings,
   Shield,
   ShieldCheck,
+  Target,
   UserCog,
   UserX,
   Wrench,
@@ -100,6 +101,11 @@ export const sidebarData: SidebarData = {
               title: "Consumo Real",
               url: "/gas/actual-consumption",
               icon: Activity,
+            },
+            {
+              title: "Taxa de Acurácia",
+              url: "/gas/scheduling-accuracy",
+              icon: Target,
             },
             {
               title: "Lançamento Diário",
