@@ -30,12 +30,14 @@ import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsLayoutRouteImport } from './routes/_authenticated/settings/layout'
 import { Route as AuthenticatedProductsLayoutRouteImport } from './routes/_authenticated/products/layout'
+import { Route as AuthenticatedGasLayoutRouteImport } from './routes/_authenticated/gas/layout'
 import { Route as AuthenticatedClientsLayoutRouteImport } from './routes/_authenticated/clients/layout'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProductsIndexRouteImport } from './routes/_authenticated/products/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
+import { Route as AuthenticatedGasIndexRouteImport } from './routes/_authenticated/gas/index'
 import { Route as AuthenticatedClientsIndexRouteImport } from './routes/_authenticated/clients/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
@@ -155,6 +157,11 @@ const AuthenticatedProductsLayoutRoute =
     path: '/products',
     getParentRoute: () => AuthenticatedLayoutRoute,
   } as any)
+const AuthenticatedGasLayoutRoute = AuthenticatedGasLayoutRouteImport.update({
+  id: '/gas',
+  path: '/gas',
+  getParentRoute: () => AuthenticatedLayoutRoute,
+} as any)
 const AuthenticatedClientsLayoutRoute =
   AuthenticatedClientsLayoutRouteImport.update({
     id: '/clients',
@@ -189,6 +196,11 @@ const AuthenticatedHelpCenterIndexRoute =
     path: '/help-center/',
     getParentRoute: () => AuthenticatedLayoutRoute,
   } as any)
+const AuthenticatedGasIndexRoute = AuthenticatedGasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedGasLayoutRoute,
+} as any)
 const AuthenticatedClientsIndexRoute =
   AuthenticatedClientsIndexRouteImport.update({
     id: '/',
@@ -267,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
   '/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
+  '/gas': typeof AuthenticatedGasLayoutRouteWithChildren
   '/products': typeof AuthenticatedProductsLayoutRouteWithChildren
   '/settings': typeof AuthenticatedSettingsLayoutRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
@@ -293,6 +306,7 @@ export interface FileRoutesByFullPath {
   '/apps/': typeof AuthenticatedAppsIndexRoute
   '/chats/': typeof AuthenticatedChatsIndexRoute
   '/clients/': typeof AuthenticatedClientsIndexRoute
+  '/gas/': typeof AuthenticatedGasIndexRoute
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/products/': typeof AuthenticatedProductsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -330,6 +344,7 @@ export interface FileRoutesByTo {
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/clients': typeof AuthenticatedClientsIndexRoute
+  '/gas': typeof AuthenticatedGasIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/products': typeof AuthenticatedProductsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
@@ -345,6 +360,7 @@ export interface FileRoutesById {
   '/plate': typeof PlateRoute
   '/test': typeof TestRoute
   '/_authenticated/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
+  '/_authenticated/gas': typeof AuthenticatedGasLayoutRouteWithChildren
   '/_authenticated/products': typeof AuthenticatedProductsLayoutRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsLayoutRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
@@ -372,6 +388,7 @@ export interface FileRoutesById {
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/clients/': typeof AuthenticatedClientsIndexRoute
+  '/_authenticated/gas/': typeof AuthenticatedGasIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -388,6 +405,7 @@ export interface FileRouteTypes {
     | '/plate'
     | '/test'
     | '/clients'
+    | '/gas'
     | '/products'
     | '/settings'
     | '/forgot-password'
@@ -414,6 +432,7 @@ export interface FileRouteTypes {
     | '/apps/'
     | '/chats/'
     | '/clients/'
+    | '/gas/'
     | '/help-center/'
     | '/products/'
     | '/settings/'
@@ -451,6 +470,7 @@ export interface FileRouteTypes {
     | '/apps'
     | '/chats'
     | '/clients'
+    | '/gas'
     | '/help-center'
     | '/products'
     | '/settings'
@@ -465,6 +485,7 @@ export interface FileRouteTypes {
     | '/plate'
     | '/test'
     | '/_authenticated/clients'
+    | '/_authenticated/gas'
     | '/_authenticated/products'
     | '/_authenticated/settings'
     | '/(auth)/forgot-password'
@@ -492,6 +513,7 @@ export interface FileRouteTypes {
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
     | '/_authenticated/clients/'
+    | '/_authenticated/gas/'
     | '/_authenticated/help-center/'
     | '/_authenticated/products/'
     | '/_authenticated/settings/'
@@ -667,6 +689,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductsLayoutRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
     }
+    '/_authenticated/gas': {
+      id: '/_authenticated/gas'
+      path: '/gas'
+      fullPath: '/gas'
+      preLoaderRoute: typeof AuthenticatedGasLayoutRouteImport
+      parentRoute: typeof AuthenticatedLayoutRoute
+    }
     '/_authenticated/clients': {
       id: '/_authenticated/clients'
       path: '/clients'
@@ -708,6 +737,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/help-center/'
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
       parentRoute: typeof AuthenticatedLayoutRoute
+    }
+    '/_authenticated/gas/': {
+      id: '/_authenticated/gas/'
+      path: '/'
+      fullPath: '/gas/'
+      preLoaderRoute: typeof AuthenticatedGasIndexRouteImport
+      parentRoute: typeof AuthenticatedGasLayoutRoute
     }
     '/_authenticated/clients/': {
       id: '/_authenticated/clients/'
@@ -814,6 +850,20 @@ const AuthenticatedClientsLayoutRouteWithChildren =
     AuthenticatedClientsLayoutRouteChildren,
   )
 
+interface AuthenticatedGasLayoutRouteChildren {
+  AuthenticatedGasIndexRoute: typeof AuthenticatedGasIndexRoute
+}
+
+const AuthenticatedGasLayoutRouteChildren: AuthenticatedGasLayoutRouteChildren =
+  {
+    AuthenticatedGasIndexRoute: AuthenticatedGasIndexRoute,
+  }
+
+const AuthenticatedGasLayoutRouteWithChildren =
+  AuthenticatedGasLayoutRoute._addFileChildren(
+    AuthenticatedGasLayoutRouteChildren,
+  )
+
 interface AuthenticatedProductsLayoutRouteChildren {
   AuthenticatedProductsProductIdRoute: typeof AuthenticatedProductsProductIdRoute
   AuthenticatedProductsNewRoute: typeof AuthenticatedProductsNewRoute
@@ -857,6 +907,7 @@ const AuthenticatedSettingsLayoutRouteWithChildren =
 
 interface AuthenticatedLayoutRouteChildren {
   AuthenticatedClientsLayoutRoute: typeof AuthenticatedClientsLayoutRouteWithChildren
+  AuthenticatedGasLayoutRoute: typeof AuthenticatedGasLayoutRouteWithChildren
   AuthenticatedProductsLayoutRoute: typeof AuthenticatedProductsLayoutRouteWithChildren
   AuthenticatedSettingsLayoutRoute: typeof AuthenticatedSettingsLayoutRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
@@ -870,6 +921,7 @@ interface AuthenticatedLayoutRouteChildren {
 
 const AuthenticatedLayoutRouteChildren: AuthenticatedLayoutRouteChildren = {
   AuthenticatedClientsLayoutRoute: AuthenticatedClientsLayoutRouteWithChildren,
+  AuthenticatedGasLayoutRoute: AuthenticatedGasLayoutRouteWithChildren,
   AuthenticatedProductsLayoutRoute:
     AuthenticatedProductsLayoutRouteWithChildren,
   AuthenticatedSettingsLayoutRoute:
