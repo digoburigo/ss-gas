@@ -393,4 +393,335 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				}),
 			},
 		},
+	)
+
+	/**
+	 * GET /gas/consolidated
+	 *
+	 * Returns consolidated gas data across all units for a specific month.
+	 * Query parameter:
+	 * - month: YYYY-MM format (required)
+	 *
+	 * Returns:
+	 * - Daily summary with QDC, QDS, QDP, QDR totals across all units
+	 * - Status (OK/NOK) for each day based on tolerance bands
+	 * - Tolerance band status per day (transport and molecule)
+	 * - Unit breakdown available for each day
+	 */
+	.get(
+		"/consolidated",
+		async ({ query, status, session }) => {
+			const { month } = query;
+
+			// Validate month format
+			const monthRegex = /^\d{4}-\d{2}$/;
+			if (!monthRegex.test(month)) {
+				return status(400, {
+					error: "Invalid month format. Expected YYYY-MM",
+				});
+			}
+
+			// Parse month to get start and end dates
+			const parts = month.split("-").map(Number);
+			const year = parts[0] ?? 0;
+			const monthNum = parts[1] ?? 1;
+			const startDate = new Date(year, monthNum - 1, 1);
+			const endDate = new Date(year, monthNum, 0); // Last day of month
+
+			// Get all units for the organization
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { code: "asc" },
+			});
+
+			// Get active contract for tolerance calculations
+			const contract = await db.gasContract.findFirst({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+					effectiveFrom: { lte: endDate },
+					OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }],
+				},
+				orderBy: { effectiveFrom: "desc" },
+			});
+
+			if (!contract) {
+				return status(404, { error: "No active contract found" });
+			}
+
+			// Get all daily entries for the month across all units
+			const entries = await db.gasDailyEntry.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+				include: {
+					unit: true,
+				},
+				orderBy: { date: "asc" },
+			});
+
+			// Get all daily plans for the month across all units
+			const plans = await db.gasDailyPlan.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+				orderBy: { date: "asc" },
+			});
+
+			// Get all real consumption data for the month across all units
+			const realConsumptions = await db.gasRealConsumption.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+				orderBy: { date: "asc" },
+			});
+
+			// Group data by date
+			const dailySummaries: Record<
+				string,
+				{
+					date: Date;
+					qdcTotal: number;
+					qdsTotal: number;
+					qdpTotal: number;
+					qdrTotal: number;
+					status: "ok" | "nok";
+					transportStatus: "within" | "exceeded_upper" | "exceeded_lower";
+					moleculeStatus: "within" | "exceeded";
+					deviations: {
+						transportUpperLimit: number;
+						transportLowerLimit: number;
+						transportDeviation: number;
+						transportDeviationPercent: number;
+						moleculeUpperLimit: number;
+						moleculeLowerLimit: number;
+						moleculeDeviation: number;
+						moleculeDeviationPercent: number;
+					};
+					units: Array<{
+						unitId: string;
+						unitCode: string;
+						unitName: string;
+						qdc: number;
+						qds: number;
+						qdp: number | null;
+						qdr: number | null;
+					}>;
+				}
+			> = {};
+
+			// Process entries to aggregate by date
+			for (const entry of entries) {
+				const dateKey = entry.date.toISOString().split("T")[0] ?? "";
+
+				if (!dailySummaries[dateKey]) {
+					dailySummaries[dateKey] = {
+						date: entry.date,
+						qdcTotal: 0,
+						qdsTotal: 0,
+						qdpTotal: 0,
+						qdrTotal: 0,
+						status: "ok",
+						transportStatus: "within",
+						moleculeStatus: "within",
+						deviations: {
+							transportUpperLimit: 0,
+							transportLowerLimit: 0,
+							transportDeviation: 0,
+							transportDeviationPercent: 0,
+							moleculeUpperLimit: 0,
+							moleculeLowerLimit: 0,
+							moleculeDeviation: 0,
+							moleculeDeviationPercent: 0,
+						},
+						units: [],
+					};
+				}
+
+				const summary = dailySummaries[dateKey];
+				if (!summary) continue;
+
+				const qdc = entry.qdcAtomizer + entry.qdcLines;
+				const qds = entry.qdsManual ?? entry.qdsCalculated;
+
+				// Find matching plan and real consumption for this unit and date
+				const plan = plans.find(
+					(p) =>
+						p.unitId === entry.unitId &&
+						p.date.toISOString().split("T")[0] === dateKey,
+				);
+				const realConsumption = realConsumptions.find(
+					(r) =>
+						r.unitId === entry.unitId &&
+						r.date.toISOString().split("T")[0] === dateKey,
+				);
+
+				summary.qdcTotal += qdc;
+				summary.qdsTotal += qds;
+				summary.qdpTotal += plan?.qdpValue ?? 0;
+				summary.qdrTotal += realConsumption?.qdrValue ?? 0;
+
+				summary.units.push({
+					unitId: entry.unitId,
+					unitCode: entry.unit.code,
+					unitName: entry.unit.name,
+					qdc,
+					qds,
+					qdp: plan?.qdpValue ?? null,
+					qdr: realConsumption?.qdrValue ?? null,
+				});
+			}
+
+			// Calculate deviations and status for each day
+			for (const dateKey in dailySummaries) {
+				const summary = dailySummaries[dateKey];
+				if (!summary) continue;
+
+				const deviations = GasCalculationService.calculateDeviations(
+					{ qdsCalculated: summary.qdsTotal },
+					{
+						qdcContracted: contract.qdcContracted,
+						transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
+						transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+						moleculeTolerancePercent: contract.moleculeTolerancePercent,
+					},
+				);
+
+				summary.transportStatus = deviations.transportStatus;
+				summary.moleculeStatus = deviations.moleculeStatus;
+				summary.deviations = {
+					transportUpperLimit: deviations.transportUpperLimit,
+					transportLowerLimit: deviations.transportLowerLimit,
+					transportDeviation: deviations.transportDeviation,
+					transportDeviationPercent: deviations.transportDeviationPercent,
+					moleculeUpperLimit: deviations.moleculeUpperLimit,
+					moleculeLowerLimit: deviations.moleculeLowerLimit,
+					moleculeDeviation: deviations.moleculeDeviation,
+					moleculeDeviationPercent: deviations.moleculeDeviationPercent,
+				};
+
+				// Status is NOK if either transport or molecule tolerance is exceeded
+				summary.status =
+					deviations.transportStatus === "within" &&
+					deviations.moleculeStatus === "within"
+						? "ok"
+						: "nok";
+			}
+
+			// Convert to array sorted by date
+			const consolidatedData = Object.values(dailySummaries).sort(
+				(a, b) => a.date.getTime() - b.date.getTime(),
+			);
+
+			return {
+				month,
+				contract: {
+					id: contract.id,
+					name: contract.name,
+					qdcContracted: contract.qdcContracted,
+					transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
+					transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+					moleculeTolerancePercent: contract.moleculeTolerancePercent,
+				},
+				units: units.map((u) => ({
+					id: u.id,
+					code: u.code,
+					name: u.name,
+				})),
+				dailySummaries: consolidatedData,
+			};
+		},
+		{
+			auth: true,
+			query: t.Object({
+				month: t.String(),
+			}),
+			response: {
+				200: t.Object({
+					month: t.String(),
+					contract: t.Object({
+						id: t.String(),
+						name: t.String(),
+						qdcContracted: t.Number(),
+						transportToleranceUpperPercent: t.Number(),
+						transportToleranceLowerPercent: t.Number(),
+						moleculeTolerancePercent: t.Number(),
+					}),
+					units: t.Array(
+						t.Object({
+							id: t.String(),
+							code: t.String(),
+							name: t.String(),
+						}),
+					),
+					dailySummaries: t.Array(
+						t.Object({
+							date: t.Date(),
+							qdcTotal: t.Number(),
+							qdsTotal: t.Number(),
+							qdpTotal: t.Number(),
+							qdrTotal: t.Number(),
+							status: t.Union([t.Literal("ok"), t.Literal("nok")]),
+							transportStatus: t.Union([
+								t.Literal("within"),
+								t.Literal("exceeded_upper"),
+								t.Literal("exceeded_lower"),
+							]),
+							moleculeStatus: t.Union([
+								t.Literal("within"),
+								t.Literal("exceeded"),
+							]),
+							deviations: t.Object({
+								transportUpperLimit: t.Number(),
+								transportLowerLimit: t.Number(),
+								transportDeviation: t.Number(),
+								transportDeviationPercent: t.Number(),
+								moleculeUpperLimit: t.Number(),
+								moleculeLowerLimit: t.Number(),
+								moleculeDeviation: t.Number(),
+								moleculeDeviationPercent: t.Number(),
+							}),
+							units: t.Array(
+								t.Object({
+									unitId: t.String(),
+									unitCode: t.String(),
+									unitName: t.String(),
+									qdc: t.Number(),
+									qds: t.Number(),
+									qdp: t.Nullable(t.Number()),
+									qdr: t.Nullable(t.Number()),
+								}),
+							),
+						}),
+					),
+				}),
+				400: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
 	);
