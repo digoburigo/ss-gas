@@ -4,6 +4,7 @@ import {
   Bug,
   Building2,
   Calendar,
+  ClipboardList,
   Command,
   Construction,
   FileSignature,
@@ -82,6 +83,11 @@ export const sidebarData: SidebarData = {
               title: "Programação Diária",
               url: "/gas/scheduling",
               icon: Calendar,
+            },
+            {
+              title: "Painel de Programação",
+              url: "/gas/scheduling-dashboard",
+              icon: ClipboardList,
             },
             {
               title: "Lançamento Diário",
