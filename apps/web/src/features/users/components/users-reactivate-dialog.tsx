@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import { Power } from "lucide-react";
 import { toast } from "sonner";
-import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 
 import { Button } from "@acme/ui/button";
 import {

@@ -1,40 +1,36 @@
 {
-  "name": "Sistema de Gestão de Consumo de Gás Natural - RC",
-  "branchName": "feature/gas-consumption-management",
+  "name": "Natural Gas Contract Management System (SS-GAS)",
+  "branchName": "feature/ss-gas-contracts",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Add ZenStack models to schema.zmodel",
-      "description": "Add all gas consumption related models (Unit, Equipment, EquipmentConstant, DailyEntry, LineStatus, DailyPlan, RealConsumption, Contract) to the ZenStack schema file",
+      "title": "Organization Management",
+      "description": "As a Global Admin, I want to register organizations (client companies), so that each company can manage its own contracts and units",
       "acceptanceCriteria": [
-        "All enums defined (EquipmentType, ConsumptionUnit, LineStatusValue, ConsumptionSource)",
-        "Unit model with organization relation and equipment array",
-        "Equipment model with unit relation and constants array",
-        "EquipmentConstant model with effective date range",
-        "DailyEntry model with all fields and unique constraint on unitId+date",
-        "LineStatus model with entry and equipment relations",
-        "DailyPlan model with approval workflow fields",
-        "RealConsumption model with source tracking",
-        "Contract model with tolerance band fields",
-        "Access policies defined for all models"
+        "Form with: Name, CNPJ (tax ID), address, primary contact",
+        "Each organization is isolated (multi-tenant)",
+        "Global Admin can activate/deactivate organizations",
+        "Only users with the 'role' field on the User model (global admin) can create and manage organizations - NOT organization-scoped roles on the Member model"
       ],
       "priority": 1,
       "passes": true,
       "dependsOn": [],
       "labels": [
-        "infrastructure",
-        "database"
+        "admin",
+        "organization"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-002",
-      "title": "Run database generation and migration",
-      "description": "Execute db:generate and db:push commands to apply the new schema to the database",
+      "title": "Consumer Units CRUD",
+      "description": "As a Contract Manager, I want to manage consumer units (metering points), to control each gas delivery point",
       "acceptanceCriteria": [
-        "ZenStack files generated successfully",
-        "Database schema updated with new tables",
-        "No migration errors"
+        "Fields: Name, meter code, address, linked contract, responsible parties (emails)",
+        "Each unit represents 1 metering point",
+        "Use ZenStack v3 TanStack Query on frontend",
+        "ElysiaJS endpoints with Kysely for complex operations",
+        "Validation: do not allow deletion of units with pending schedules"
       ],
       "priority": 1,
       "passes": true,
@@ -42,63 +38,65 @@
         "US-001"
       ],
       "labels": [
-        "infrastructure",
-        "database"
+        "manager",
+        "unit"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-003",
-      "title": "Create seed script for units and equipment",
-      "description": "Create a seed script that populates the database with the three units (Criciúma, Urussanga, Botucatu) and their respective equipment with consumption rates",
+      "title": "Contract Upload and AI Extraction",
+      "description": "As a Contract Manager, I want to upload contracts in PDF and automatically extract data, to speed up contract registration",
       "acceptanceCriteria": [
-        "Criciúma unit created with code CRI and all equipment (Atomizador + Lines 0-7)",
-        "Urussanga unit created with code URU and equipment (Atomizador + Lines 1-2)",
-        "Botucatu unit created with code BOT and equipment (ATM 250, ATM 052, Lines 1-2, Secador 2)",
-        "Equipment constants set with correct consumption rates",
-        "Default contract created with QDC 134,800 m³/d and tolerance bands"
+        "PDF/image contract upload",
+        "AI extracts fields: supplier, contracted volume (DCQ), validity period, prices, flexibilities (take-or-pay, make-up gas, tolerances), adjustment clauses, penalties",
+        "Side-by-side display: original PDF + form with extracted data",
+        "User MUST review and confirm all fields before saving",
+        "Low confidence fields highlighted in yellow"
       ],
-      "priority": 1,
+      "priority": 2,
       "passes": true,
       "dependsOn": [
-        "US-002"
+        "US-001",
+        "US-004"
       ],
       "labels": [
-        "infrastructure",
-        "seed-data"
+        "manager",
+        "contract",
+        "ai"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-004",
-      "title": "Set up gas module structure in server",
-      "description": "Create the gas module folder structure in apps/server/src/modules/gas with controller and service files",
+      "title": "Manual Contract Registration",
+      "description": "As a Contract Manager, I want to manually register/edit contracts, to enter contracts when automatic extraction is not sufficient",
       "acceptanceCriteria": [
-        "Gas module folder created at apps/server/src/modules/gas/",
-        "gas.controller.ts file created with Elysia setup",
-        "Module registered in main server app"
+        "Complete form with all contract fields",
+        "Sections: Basic data, Volumes and flexibilities, Prices and adjustments, Penalties, Important events/dates",
+        "Link multiple units to a contract",
+        "Change history (audit log)"
       ],
       "priority": 1,
       "passes": true,
       "dependsOn": [
-        "US-003"
+        "US-001"
       ],
       "labels": [
-        "infrastructure",
-        "backend"
+        "manager",
+        "contract"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-005",
-      "title": "Implement GasCalculationService",
-      "description": "Create the gas calculation service with methods for calculating QDC atomizer, QDC lines, QDS, and contract deviations",
+      "title": "Deadline Alert Configuration",
+      "description": "As a Contract Manager, I want to configure alerts for important contract dates, to not miss critical deadlines",
       "acceptanceCriteria": [
-        "calculateQdcAtomizer method handles single and dual atomizer scenarios",
-        "calculateQdcLines method sums consumption for ON lines only",
-        "calculateQds method combines atomizer and lines consumption",
-        "calculateDeviations method computes transport and molecule tolerances",
-        "Deviation status (within/exceeded) correctly determined"
+        "Default events: contract expiration, renewal, scheduling deadlines, adjustment dates, take-or-pay expiration",
+        "Customizable events per contract (name + date + recurrence)",
+        "Configure alert advance notice (e.g., 30, 15, 7, 1 day before)",
+        "Define responsible parties (emails) per alert"
       ],
       "priority": 2,
       "passes": true,
@@ -106,22 +104,20 @@
         "US-004"
       ],
       "labels": [
-        "backend",
-        "business-logic"
+        "manager",
+        "alert"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-006",
-      "title": "Create daily entry API endpoints",
-      "description": "Implement POST and GET endpoints for daily entries with validation and auto-calculation",
+      "title": "Reminder Email Dispatch",
+      "description": "As a System, I want to send automatic emails to responsible parties, to ensure deadlines are met",
       "acceptanceCriteria": [
-        "POST /gas/units/:unitId/entries creates new entry with validation",
-        "Entry validation ensures hours 0-24, valid equipment IDs",
-        "Auto-calculation of qdcAtomizer, qdcLines, qdsCalculated on save",
-        "GET /gas/units/:unitId/entries returns entries for a month",
-        "Query parameter month in YYYY-MM format",
-        "Entries returned with line statuses populated"
+        "Individual email per event (1 alert = 1 email)",
+        "Template with: contract name, unit, event, date, required action",
+        "Direct link to contract/unit in the system",
+        "Log of sent emails (date, recipient, status)"
       ],
       "priority": 2,
       "passes": true,
@@ -129,333 +125,184 @@
         "US-005"
       ],
       "labels": [
-        "backend",
-        "api"
+        "system",
+        "email",
+        "alert"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-007",
-      "title": "Build unit entry form component",
-      "description": "Create the daily data entry form component for unit operators with unit-specific fields using Base UI",
+      "title": "Daily Consumption Scheduling by Unit",
+      "description": "As a Unit Operator, I want to register the daily gas volume schedule, to declare the expected consumption to the distributor",
       "acceptanceCriteria": [
-        "Date picker with auto-populated today's date",
-        "Atomizer scheduled toggle (Yes/No)",
-        "Atomizer hours input (0-24 numeric)",
-        "Secondary atomizer fields shown only for Botucatu",
-        "Production line toggles rendered based on unit equipment",
-        "Observations text field",
-        "Real-time QDS calculation displayed"
+        "Select unit and date",
+        "Enter scheduled volume (m3 or MMBtu)",
+        "Field for observations",
+        "Validation against contract limits (DCQ, tolerances)",
+        "Internal scheduling + declaration to distributor (DCQ)"
       ],
-      "priority": 2,
+      "priority": 1,
       "passes": true,
       "dependsOn": [
-        "US-006"
+        "US-002",
+        "US-004"
       ],
       "labels": [
-        "frontend",
-        "forms"
+        "operator",
+        "scheduling"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-008",
-      "title": "Add form validation and auto-calculation",
-      "description": "Implement client-side validation and real-time auto-calculation in the entry form",
+      "title": "Daily Scheduling Dashboard",
+      "description": "As a Contract Manager, I want to view all units on the dashboard, to see who has already scheduled for the day and who has not",
       "acceptanceCriteria": [
-        "Hours field validates 0-24 range",
-        "Required fields validated before submit",
-        "QDS value updates as user changes inputs",
-        "Manual override option available for QDS",
-        "Visual feedback on validation errors",
-        "Submit button disabled when form invalid"
+        "Current day view",
+        "List of all organization units",
+        "Status per unit: Scheduled | Pending | Late",
+        "Filters by contract, unit, status",
+        "Visual highlight for pending units"
       ],
-      "priority": 2,
+      "priority": 1,
       "passes": true,
       "dependsOn": [
         "US-007"
       ],
       "labels": [
-        "frontend",
-        "validation"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-009",
-      "title": "Create consolidated dashboard route",
-      "description": "Set up the main gas dashboard route at /gas with TanStack Router",
-      "acceptanceCriteria": [
-        "Route created at apps/web/src/routes/gas/index.tsx",
-        "GasDashboard component renders",
-        "Route protected by authentication",
-        "Breadcrumb navigation in place"
-      ],
-      "priority": 3,
-      "passes": true,
-      "dependsOn": [
-        "US-008"
-      ],
-      "labels": [
-        "frontend",
-        "routing"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-010",
-      "title": "Implement consolidated data API endpoint",
-      "description": "Create GET /gas/consolidated endpoint that aggregates data across all units",
-      "acceptanceCriteria": [
-        "Endpoint accepts month query parameter (YYYY-MM)",
-        "Returns daily summary with QDC, QDS, QDP, QDR totals",
-        "Calculates status (OK/NOK) for each day",
-        "Includes tolerance band status per day",
-        "Data grouped by date with unit breakdown available"
-      ],
-      "priority": 3,
-      "passes": true,
-      "dependsOn": [
-        "US-006"
-      ],
-      "labels": [
-        "backend",
-        "api"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-011",
-      "title": "Build summary cards with Base UI",
-      "description": "Create dashboard summary cards showing QDC, QDS, QDP, QDR values with visual styling",
-      "acceptanceCriteria": [
-        "QDC card shows contracted daily quantity (134,800 m³)",
-        "QDS card shows calculated/forecasted consumption",
-        "QDP card shows programmed quantity",
-        "QDR card shows real consumption from meters",
-        "Cards styled with appropriate colors and icons",
-        "Values formatted with thousand separators and units"
-      ],
-      "priority": 3,
-      "passes": true,
-      "dependsOn": [
-        "US-009",
-        "US-010"
-      ],
-      "labels": [
-        "frontend",
+        "manager",
         "dashboard"
       ],
       "completionNotes": "Completed by agent"
     },
     {
-      "id": "US-012",
-      "title": "Add tolerance band visualization",
-      "description": "Implement visual indicators showing tolerance band status (green/yellow/red) on the dashboard",
+      "id": "US-009",
+      "title": "Actual Consumption Recording",
+      "description": "As a Unit Operator, I want to record the actual measured consumption, to compare with the schedule and calculate accuracy",
       "acceptanceCriteria": [
-        "Green indicator when within tolerance bands",
-        "Yellow indicator when approaching limits (5% from boundary)",
-        "Red indicator when tolerance exceeded",
-        "Transport tolerance (±20%/+10%) displayed",
-        "Molecule tolerance (±5%) displayed",
-        "Tooltip with exact values on hover"
+        "Manual input of consumed volume (measurement)",
+        "Reading date and time",
+        "Automatic deviation calculation (scheduled vs actual)"
       ],
-      "priority": 3,
-      "passes": true,
+      "priority": 2,
+      "passes": false,
       "dependsOn": [
-        "US-011"
+        "US-007"
       ],
       "labels": [
-        "frontend",
-        "visualization"
+        "operator",
+        "consumption"
+      ]
+    },
+    {
+      "id": "US-010",
+      "title": "Scheduling Accuracy Rate",
+      "description": "As a Contract Manager, I want to view the accuracy rate per unit/period, to identify deviations and improve scheduling",
+      "acceptanceCriteria": [
+        "Calculation: (1 - |Scheduled - Actual| / Scheduled) x 100%",
+        "Consider contract tolerances in analysis",
+        "Deviation history by period (daily, weekly, monthly)",
+        "Recordable cause analysis (weather, production, maintenance, etc.)",
+        "Trend charts"
       ],
-      "completionNotes": "Completed by agent"
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-009"
+      ],
+      "labels": [
+        "manager",
+        "analytics"
+      ]
+    },
+    {
+      "id": "US-011",
+      "title": "Scheduling Deviation Alerts",
+      "description": "As a System, I want to alert when deviation exceeds the configured threshold, so that corrective actions can be taken quickly",
+      "acceptanceCriteria": [
+        "Configurable threshold by Admin (e.g., deviation > 10%)",
+        "Automatic email alert when threshold exceeded",
+        "Visual indicator on dashboard",
+        "Does not include automatic action suggestions (alert only)"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-009",
+        "US-012"
+      ],
+      "labels": [
+        "system",
+        "alert"
+      ]
+    },
+    {
+      "id": "US-012",
+      "title": "Administrative Parameter Panel",
+      "description": "As an Admin, I want to configure system calculation parameters, to adjust business rules as needed",
+      "acceptanceCriteria": [
+        "Alert thresholds (deviation %, expiration advance notice)",
+        "Penalty calculation formulas (take-or-pay, fines)",
+        "Business rules by contract type",
+        "Contract templates with default fields",
+        "Customizable fields per organization",
+        "Only Admin profile has access"
+      ],
+      "priority": 2,
+      "passes": false,
+      "dependsOn": [
+        "US-001"
+      ],
+      "labels": [
+        "admin",
+        "settings"
+      ]
     },
     {
       "id": "US-013",
-      "title": "Build Petrobras export functionality",
-      "description": "Create the report export feature for generating Petrobras-formatted XLSX files",
+      "title": "User Management by Organization",
+      "description": "As an Admin/Contract Manager, I want to manage users and their permissions, to control who accesses what in the system",
       "acceptanceCriteria": [
-        "GET /gas/reports/petrobras endpoint accepts month parameter",
-        "Preview endpoint returns data before export",
-        "Download generates XLSX with correct column structure",
-        "Filename follows pattern: RC_{MONTH}_{YEAR}_Petrobras.xlsx",
-        "All daily entries for the month included",
-        "Contract tolerance data included"
+        "User invitation by email",
+        "Profile assignment (Admin, Manager, Operator, Viewer)",
+        "Operator can be linked to specific units",
+        "User deactivation (soft delete)"
       ],
-      "priority": 3,
+      "priority": 1,
       "passes": true,
       "dependsOn": [
-        "US-010"
+        "US-001"
       ],
       "labels": [
-        "backend",
-        "reports",
-        "export"
+        "admin",
+        "manager",
+        "users"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-014",
-      "title": "Create react-email templates",
-      "description": "Create email templates for missing entry alerts and other notifications using react-email",
+      "title": "History and Audit Log",
+      "description": "As an Admin, I want to view change history, to track who did what in the system",
       "acceptanceCriteria": [
-        "MissingDailyEntryEmail template created",
-        "Template includes user name, unit name, date",
-        "Link to entry form included in email",
-        "Template renders correctly in email clients",
-        "Portuguese content used"
-      ],
-      "priority": 4,
-      "passes": true,
-      "dependsOn": [
-        "US-004"
-      ],
-      "labels": [
-        "email",
-        "notifications"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-015",
-      "title": "Implement NotificationService with Resend",
-      "description": "Create the notification service that sends emails using Resend integration",
-      "acceptanceCriteria": [
-        "NotificationService class created in apps/server/src/services/",
-        "Resend client configured with API key from environment",
-        "sendMissingEntryAlert method implemented",
-        "Email rendered from react-email template",
-        "Correct from address and subject line"
-      ],
-      "priority": 4,
-      "passes": true,
-      "dependsOn": [
-        "US-014"
-      ],
-      "labels": [
-        "backend",
-        "notifications",
-        "email"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-016",
-      "title": "Set up scheduled jobs for alerts",
-      "description": "Create scheduled tasks that check for missing entries and send alerts at 6 PM daily",
-      "acceptanceCriteria": [
-        "Scheduled job runs at 6 PM local time",
-        "Job checks all units for missing entries for current day",
-        "Email sent to unit operators if entry missing",
-        "Escalation email sent to supervisor after 2 hours (8 PM)",
-        "Job logs execution results"
-      ],
-      "priority": 4,
-      "passes": true,
-      "dependsOn": [
-        "US-015"
-      ],
-      "labels": [
-        "backend",
-        "scheduled-tasks"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-017",
-      "title": "Add notification preferences to user settings",
-      "description": "Add user settings to control notification preferences for email alerts",
-      "acceptanceCriteria": [
-        "User can enable/disable missing entry alerts",
-        "User can set preferred notification time",
-        "Supervisor escalation can be configured",
-        "Settings saved to user profile",
-        "Settings UI accessible from user menu"
-      ],
-      "priority": 4,
-      "passes": true,
-      "dependsOn": [
-        "US-016"
-      ],
-      "labels": [
-        "frontend",
-        "settings",
-        "notifications"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-018",
-      "title": "Create admin page for equipment configuration",
-      "description": "Build the admin page at /gas/admin for managing equipment constants",
-      "acceptanceCriteria": [
-        "Route created at apps/web/src/routes/gas/admin.tsx",
-        "List all units with their equipment",
-        "Edit consumption rate for any equipment",
-        "Set effective date for constant changes",
-        "Add notes explaining changes",
-        "Historical constants viewable in audit log"
-      ],
-      "priority": 4,
-      "passes": true,
-      "dependsOn": [
-        "US-009"
-      ],
-      "labels": [
-        "frontend",
-        "admin"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-019",
-      "title": "Create reports page with date filter",
-      "description": "Build the reports page at /gas/reports with month selection and export options",
-      "acceptanceCriteria": [
-        "Route created at apps/web/src/routes/gas/reports.tsx",
-        "Month selector for date range",
-        "Preview table showing monthly data",
-        "Download button for Petrobras export",
-        "Loading state during export generation"
+        "Log of all write operations (create, update, delete)",
+        "Record: user, date/time, entity, changed field, previous value, new value",
+        "Filters by entity, user, period",
+        "Log export"
       ],
       "priority": 3,
-      "passes": true,
+      "passes": false,
       "dependsOn": [
-        "US-013"
+        "US-001"
       ],
       "labels": [
-        "frontend",
-        "reports"
-      ],
-      "completionNotes": "Completed by agent"
-    },
-    {
-      "id": "US-020",
-      "title": "Add monthly trend chart to dashboard",
-      "description": "Implement a chart visualization showing consumption trends over the selected month",
-      "acceptanceCriteria": [
-        "Line chart showing daily QDS, QDP, QDR values",
-        "X-axis shows dates of the month",
-        "Y-axis shows consumption in m³",
-        "Tolerance bands shown as shaded regions",
-        "Chart legend for each metric",
-        "Interactive tooltips on hover"
-      ],
-      "priority": 3,
-      "passes": true,
-      "dependsOn": [
-        "US-012"
-      ],
-      "labels": [
-        "frontend",
-        "charts",
-        "visualization"
-      ],
-      "completionNotes": "Completed by agent"
+        "admin",
+        "audit"
+      ]
     }
   ],
   "metadata": {
-    "updatedAt": "2026-01-20T04:51:39.117Z"
+    "updatedAt": "2026-01-20T20:32:20.321Z"
   }
 }

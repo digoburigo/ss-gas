@@ -27,8 +27,8 @@ import {
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import type { Member } from "../data/schema";
-import { DataTablePagination, DataTableToolbar } from "~/components/data-table";
 import { authClient } from "~/clients/auth-client";
+import { DataTablePagination, DataTableToolbar } from "~/components/data-table";
 import { useTableUrlState } from "~/hooks/use-table-url-state";
 import { profiles, roles } from "../data/data";
 import { DataTableBulkActions } from "./data-table-bulk-actions";

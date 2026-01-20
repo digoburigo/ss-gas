@@ -20,8 +20,8 @@ import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import { authClient } from "~/clients/auth-client";
 import { ConfirmDialog } from "~/components/confirm-dialog";
-import { ContractsMutateDrawer } from "./contracts-mutate-drawer";
 import { ContractUploadDrawer } from "./contract-upload-drawer";
+import { ContractsMutateDrawer } from "./contracts-mutate-drawer";
 import { useContracts } from "./contracts-provider";
 
 export function ContractsDialogs() {

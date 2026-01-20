@@ -32,8 +32,8 @@ import type { NavigateFn } from "~/hooks/use-table-url-state";
 import { DataTablePagination, DataTableToolbar } from "~/components/data-table";
 import { useTableUrlState } from "~/hooks/use-table-url-state";
 import { schedulingStatuses } from "../data/data";
-import { useSchedulingDashboard } from "./scheduling-dashboard-provider";
 import { createColumns } from "./scheduling-dashboard-columns";
+import { useSchedulingDashboard } from "./scheduling-dashboard-provider";
 
 export interface UnitSchedulingStatus {
   id: string;
@@ -133,7 +133,9 @@ export function SchedulingDashboardTable() {
 
   // Summary counts
   const summary = useMemo(() => {
-    const scheduled = unitStatuses.filter((u) => u.status === "scheduled").length;
+    const scheduled = unitStatuses.filter(
+      (u) => u.status === "scheduled",
+    ).length;
     const pending = unitStatuses.filter((u) => u.status === "pending").length;
     const late = unitStatuses.filter((u) => u.status === "late").length;
     return { scheduled, pending, late, total: unitStatuses.length };
@@ -198,7 +200,9 @@ export function SchedulingDashboardTable() {
     globalFilterFn: (row, _columnId, filterValue) => {
       const unitName = String(row.original.unitName || "").toLowerCase();
       const unitCode = String(row.original.unitCode || "").toLowerCase();
-      const contractName = String(row.original.contractName || "").toLowerCase();
+      const contractName = String(
+        row.original.contractName || "",
+      ).toLowerCase();
       const searchValue = String(filterValue).toLowerCase();
 
       return (
@@ -261,13 +265,17 @@ export function SchedulingDashboardTable() {
           <p className="text-2xl font-bold">{summary.total}</p>
         </div>
         <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-900 dark:bg-green-900/20">
-          <p className="text-sm text-green-700 dark:text-green-400">Programado</p>
+          <p className="text-sm text-green-700 dark:text-green-400">
+            Programado
+          </p>
           <p className="text-2xl font-bold text-green-700 dark:text-green-400">
             {summary.scheduled}
           </p>
         </div>
         <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-900/20">
-          <p className="text-sm text-yellow-700 dark:text-yellow-400">Pendente</p>
+          <p className="text-sm text-yellow-700 dark:text-yellow-400">
+            Pendente
+          </p>
           <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-400">
             {summary.pending}
           </p>

@@ -22,24 +22,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const envSchema = z.object({
-	/**
-	 * Since vite is only used during development, we can assume the structure
-	 * will resemble a URL such as: http://localhost:3001.
-	 * This will then be used to set the vite dev server's host and port.
-	 */
-	PUBLIC_WEB_URL: z.url().optional().default("http://localhost:3001"),
+  /**
+   * Since vite is only used during development, we can assume the structure
+   * will resemble a URL such as: http://localhost:3001.
+   * This will then be used to set the vite dev server's host and port.
+   */
+  PUBLIC_WEB_URL: z.url().optional().default("http://localhost:3001"),
 
-	/**
-	 * Set this if you want to run or deploy your app at a base URL. This is
-	 * usually required for deploying a repository to Github/Gitlab pages.
-	 */
-	PUBLIC_BASE_PATH: z
-		.string()
-		.optional()
-		.default("/")
-		.refine((val) => val.startsWith("/"), {
-			message: 'Base path must start with "/"',
-		}),
+  /**
+   * Set this if you want to run or deploy your app at a base URL. This is
+   * usually required for deploying a repository to Github/Gitlab pages.
+   */
+  PUBLIC_BASE_PATH: z
+    .string()
+    .optional()
+    .default("/")
+    .refine((val) => val.startsWith("/"), {
+      message: 'Base path must start with "/"',
+    }),
 });
 
 const ReactCompilerConfig = {};
@@ -50,69 +50,69 @@ const host = webUrl.hostname;
 const port = parseInt(webUrl.port, 10);
 
 export default defineConfig({
-	plugins: [
-		tsConfigPaths({
-			projects: ["./tsconfig.json"],
-		}),
-		devtools(),
-		tanstackRouter({
-			routeToken: "layout",
-			autoCodeSplitting: true,
-		}),
-		tailwindcss(),
-		react({
-			babel: {
-				plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
-			},
-		}),
-		Icons({ compiler: "jsx", jsx: "react" }),
-		VitePWA({
-			registerType: "autoUpdate",
-			manifest: {
-				name: "clinic",
-				short_name: "clinic",
-				description: "clinic",
-				theme_color: "#0c0c0c",
-			},
-			pwaAssets: { disabled: false, config: true },
-			devOptions: { enabled: true },
-		}),
-	],
-	// base: env.PUBLIC_BASE_PATH,
-	envPrefix: "PUBLIC_",
-	server: {
-		host,
-		port,
-		strictPort: true,
-	},
-	// build: {
-	//   rollupOptions: {
-	//     output: {
-	//       /**
-	//        * Modified from:
-	//        * https://github.com/vitejs/vite/discussions/9440#discussioncomment-11430454
-	//        */
-	//       manualChunks(id) {
-	//         if (id.includes("node_modules")) {
-	//           const modulePath = id.split("node_modules/")[1];
-	//           const topLevelFolder = modulePath?.split("/")[0];
-	//           if (topLevelFolder !== ".pnpm") {
-	//             return topLevelFolder;
-	//           }
-	//           const scopedPackageName = modulePath?.split("/")[1];
-	//           const chunkName =
-	//             scopedPackageName?.split("@")[
-	//               scopedPackageName.startsWith("@") ? 1 : 0
-	//             ];
-	//           return chunkName;
-	//         }
-	//       },
-	//     },
-	//   },
-	// },
-	resolve: {
-		alias: {
-			"~": path.resolve(__dirname, "./src"),
-		},
-	},
+  plugins: [
+    tsConfigPaths({
+      projects: ["./tsconfig.json"],
+    }),
+    devtools(),
+    tanstackRouter({
+      routeToken: "layout",
+      autoCodeSplitting: true,
+    }),
+    tailwindcss(),
+    react({
+      babel: {
+        plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
+      },
+    }),
+    Icons({ compiler: "jsx", jsx: "react" }),
+    VitePWA({
+      registerType: "autoUpdate",
+      manifest: {
+        name: "clinic",
+        short_name: "clinic",
+        description: "clinic",
+        theme_color: "#0c0c0c",
+      },
+      pwaAssets: { disabled: false, config: true },
+      devOptions: { enabled: true },
+    }),
+  ],
+  // base: env.PUBLIC_BASE_PATH,
+  envPrefix: "PUBLIC_",
+  server: {
+    host,
+    port,
+    strictPort: true,
+  },
+  // build: {
+  //   rollupOptions: {
+  //     output: {
+  //       /**
+  //        * Modified from:
+  //        * https://github.com/vitejs/vite/discussions/9440#discussioncomment-11430454
+  //        */
+  //       manualChunks(id) {
+  //         if (id.includes("node_modules")) {
+  //           const modulePath = id.split("node_modules/")[1];
+  //           const topLevelFolder = modulePath?.split("/")[0];
+  //           if (topLevelFolder !== ".pnpm") {
+  //             return topLevelFolder;
+  //           }
+  //           const scopedPackageName = modulePath?.split("/")[1];
+  //           const chunkName =
+  //             scopedPackageName?.split("@")[
+  //               scopedPackageName.startsWith("@") ? 1 : 0
+  //             ];
+  //           return chunkName;
+  //         }
+  //       },
+  //     },
+  //   },
+  // },
+  resolve: {
+    alias: {
+      "~": path.resolve(__dirname, "./src"),
+    },
+  },
 });

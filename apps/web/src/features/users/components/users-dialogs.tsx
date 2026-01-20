@@ -1,9 +1,9 @@
+import { UsersAssignUnitsDialog } from "./users-assign-units-dialog";
 import { UsersDeactivateDialog } from "./users-deactivate-dialog";
 import { UsersEditProfileDialog } from "./users-edit-profile-dialog";
 import { UsersInviteDialog } from "./users-invite-dialog";
-import { UsersReactivateDialog } from "./users-reactivate-dialog";
-import { UsersAssignUnitsDialog } from "./users-assign-units-dialog";
 import { useUsers } from "./users-provider";
+import { UsersReactivateDialog } from "./users-reactivate-dialog";
 
 export function UsersDialogs() {
   const { open, setOpen, currentMember, setCurrentMember } = useUsers();

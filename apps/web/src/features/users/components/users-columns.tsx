@@ -85,7 +85,7 @@ export const usersColumns: ColumnDef<Member>[] = [
           </Avatar>
           <div className="flex flex-col">
             <span className="font-medium">{user.name}</span>
-            <span className="text-xs text-muted-foreground">{user.email}</span>
+            <span className="text-muted-foreground text-xs">{user.email}</span>
           </div>
         </div>
       );
@@ -109,7 +109,7 @@ export const usersColumns: ColumnDef<Member>[] = [
 
       if (!profileInfo) {
         return (
-          <span className="text-sm text-muted-foreground">Visualizador</span>
+          <span className="text-muted-foreground text-sm">Visualizador</span>
         );
       }
 
@@ -189,7 +189,7 @@ export const usersColumns: ColumnDef<Member>[] = [
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as Date;
       return (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {format(date, "dd/MM/yyyy", { locale: ptBR })}
         </span>
       );

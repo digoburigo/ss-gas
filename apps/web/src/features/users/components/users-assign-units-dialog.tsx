@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { MapPin, Check } from "lucide-react";
-import { toast } from "sonner";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
+import { Check, MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@acme/ui/button";
 import { Checkbox } from "@acme/ui/checkbox";
@@ -141,7 +141,7 @@ export function UsersAssignUnitsDialog({
         <ScrollArea className="max-h-[300px] pr-4">
           <div className="space-y-2">
             {units.length === 0 ? (
-              <p className="py-4 text-center text-sm text-muted-foreground">
+              <p className="text-muted-foreground py-4 text-center text-sm">
                 Nenhuma unidade consumidora cadastrada.
               </p>
             ) : (
@@ -150,7 +150,7 @@ export function UsersAssignUnitsDialog({
                 return (
                   <div
                     key={unit.id}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/50"
+                    className="hover:bg-muted/50 flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors"
                     onClick={() => toggleUnit(unit.id)}
                     role="button"
                     tabIndex={0}
@@ -167,14 +167,12 @@ export function UsersAssignUnitsDialog({
                     />
                     <div className="flex-1">
                       <p className="font-medium">{unit.name}</p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         Código: {unit.code}
                         {unit.city && ` • ${unit.city}`}
                       </p>
                     </div>
-                    {isSelected && (
-                      <Check className="h-4 w-4 text-primary" />
-                    )}
+                    {isSelected && <Check className="text-primary h-4 w-4" />}
                   </div>
                 );
               })
@@ -182,7 +180,7 @@ export function UsersAssignUnitsDialog({
           </div>
         </ScrollArea>
 
-        <div className="text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-sm">
           {selectedUnits.size} unidade(s) selecionada(s)
         </div>
 

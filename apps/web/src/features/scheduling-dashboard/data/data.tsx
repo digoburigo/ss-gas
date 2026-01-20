@@ -1,8 +1,4 @@
-import {
-  AlertTriangle,
-  CheckCircle,
-  CircleDashed,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle, CircleDashed } from "lucide-react";
 
 export const schedulingStatuses = [
   {

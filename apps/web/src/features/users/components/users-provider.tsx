@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import type { Member, Invitation } from "../data/schema";
+import type { Invitation, Member } from "../data/schema";
 import useDialogState from "~/hooks/use-dialog-state";
 
 type UsersDialogType =
@@ -30,14 +30,16 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <UsersContext value={{
-      open,
-      setOpen,
-      currentMember,
-      setCurrentMember,
-      currentInvitation,
-      setCurrentInvitation,
-    }}>
+    <UsersContext
+      value={{
+        open,
+        setOpen,
+        currentMember,
+        setCurrentMember,
+        currentInvitation,
+        setCurrentInvitation,
+      }}
+    >
       {children}
     </UsersContext>
   );

@@ -9,7 +9,11 @@ export function ContractsPrimaryButtons() {
 
   return (
     <div className="flex gap-2">
-      <Button variant="outline" className="space-x-1" onClick={() => setOpen("upload")}>
+      <Button
+        variant="outline"
+        className="space-x-1"
+        onClick={() => setOpen("upload")}
+      >
         <span>Upload com IA</span> <Upload size={18} />
       </Button>
       <Button className="space-x-1" onClick={() => setOpen("create")}>

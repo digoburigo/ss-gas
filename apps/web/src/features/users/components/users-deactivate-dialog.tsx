@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import { AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
-import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 
 import { Button } from "@acme/ui/button";
 import {
@@ -66,12 +66,13 @@ export function UsersDeactivateDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-start">
-          <DialogTitle className="flex items-center gap-2 text-destructive">
+          <DialogTitle className="text-destructive flex items-center gap-2">
             <AlertTriangle className="h-5 w-5" />
             Desativar Usuário
           </DialogTitle>
           <DialogDescription>
-            Tem certeza que deseja desativar <strong>{member.user.name}</strong>?
+            Tem certeza que deseja desativar <strong>{member.user.name}</strong>
+            ?
             <br />
             <br />O usuário perderá o acesso ao sistema mas poderá ser reativado
             posteriormente.
