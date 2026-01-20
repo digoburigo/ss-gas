@@ -14,6 +14,14 @@ import {
 	CardTitle,
 } from "@acme/ui/card";
 import {
+	type ChartConfig,
+	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@acme/ui/chart";
+import {
 	Tooltip,
 	TooltipContent,
 	TooltipTrigger,
@@ -29,6 +37,14 @@ import {
 	TrendingUp,
 } from "lucide-react";
 import { useMemo } from "react";
+import {
+	CartesianGrid,
+	Line,
+	LineChart,
+	ReferenceArea,
+	XAxis,
+	YAxis,
+} from "recharts";
 import { api } from "~/clients/api-client";
 import { ConfigDrawer } from "~/components/config-drawer";
 import { Header } from "~/components/layout/header";
@@ -126,6 +142,24 @@ function formatPercent(value: number): string {
 	return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
 }
 
+/**
+ * Chart configuration for the monthly trend chart
+ */
+const trendChartConfig = {
+	qds: {
+		label: "QDS - Previsto",
+		color: "hsl(38, 92%, 50%)",
+	},
+	qdp: {
+		label: "QDP - Programado",
+		color: "hsl(271, 81%, 56%)",
+	},
+	qdr: {
+		label: "QDR - Real",
+		color: "hsl(142, 71%, 45%)",
+	},
+} satisfies ChartConfig;
+
 export function GasDashboard() {
 	const currentMonth = useMemo(() => getCurrentMonth(), []);
 
@@ -218,6 +252,48 @@ export function GasDashboard() {
 				upperLimit: latestDay.deviations.moleculeUpperLimit,
 				lowerLimit: latestDay.deviations.moleculeLowerLimit,
 				tolerance: data.contract.moleculeTolerancePercent,
+			},
+		};
+	}, [data]);
+
+	// Prepare data for the trend chart
+	const chartData = useMemo(() => {
+		if (!data?.dailySummaries || data.dailySummaries.length === 0) {
+			return { data: [], toleranceBands: null };
+		}
+
+		// Transform daily summaries to chart format
+		const transformedData = data.dailySummaries.map((day) => ({
+			date: new Date(day.date).toLocaleDateString("pt-BR", {
+				day: "2-digit",
+				month: "2-digit",
+			}),
+			fullDate: new Date(day.date).toLocaleDateString("pt-BR", {
+				weekday: "short",
+				day: "2-digit",
+				month: "2-digit",
+			}),
+			qds: day.qdsTotal,
+			qdp: day.qdpTotal > 0 ? day.qdpTotal : null,
+			qdr: day.qdrTotal > 0 ? day.qdrTotal : null,
+			transportUpperLimit: day.deviations.transportUpperLimit,
+			transportLowerLimit: day.deviations.transportLowerLimit,
+			moleculeUpperLimit: day.deviations.moleculeUpperLimit,
+			moleculeLowerLimit: day.deviations.moleculeLowerLimit,
+		}));
+
+		// Calculate tolerance bands from contract data
+		const contract = data.contract;
+		const qdc = contract.qdcContracted;
+		const transportUpper = qdc * (1 + contract.transportToleranceUpperPercent / 100);
+		const transportLower = qdc * (1 - contract.transportToleranceLowerPercent / 100);
+
+		return {
+			data: transformedData,
+			toleranceBands: {
+				transportUpper,
+				transportLower,
+				qdc,
 			},
 		};
 	}, [data]);
@@ -494,6 +570,125 @@ export function GasDashboard() {
 						</Tooltip>
 					</div>
 				)}
+
+				{/* Monthly Trend Chart */}
+				<Card>
+					<CardHeader>
+						<CardTitle>Tendência Mensal de Consumo</CardTitle>
+						<CardDescription>
+							Visualização diária de QDS, QDP e QDR com faixas de tolerância
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						{isLoading ? (
+							<div className="flex h-[350px] items-center justify-center">
+								<p className="text-muted-foreground text-sm">
+									Carregando gráfico...
+								</p>
+							</div>
+						) : chartData.data.length > 0 ? (
+							<ChartContainer
+								config={trendChartConfig}
+								className="aspect-auto h-[350px] w-full"
+							>
+								<LineChart
+									data={chartData.data}
+									margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+								>
+									<defs>
+										{/* Gradient for tolerance band shading */}
+										<linearGradient id="toleranceBand" x1="0" y1="0" x2="0" y2="1">
+											<stop offset="0%" stopColor="hsl(142, 71%, 45%)" stopOpacity={0.15} />
+											<stop offset="50%" stopColor="hsl(142, 71%, 45%)" stopOpacity={0.08} />
+											<stop offset="100%" stopColor="hsl(142, 71%, 45%)" stopOpacity={0.15} />
+										</linearGradient>
+									</defs>
+									<CartesianGrid strokeDasharray="3 3" vertical={false} />
+									<XAxis
+										dataKey="date"
+										tickLine={false}
+										axisLine={false}
+										tickMargin={8}
+										minTickGap={32}
+										tick={{ fontSize: 12 }}
+									/>
+									<YAxis
+										tickLine={false}
+										axisLine={false}
+										tickMargin={8}
+										tick={{ fontSize: 12 }}
+										tickFormatter={(value) =>
+											`${(value / 1000).toLocaleString("pt-BR")}k`
+										}
+										domain={["auto", "auto"]}
+									/>
+									{/* Tolerance band as shaded region */}
+									{chartData.toleranceBands && (
+										<ReferenceArea
+											y1={chartData.toleranceBands.transportLower}
+											y2={chartData.toleranceBands.transportUpper}
+											fill="url(#toleranceBand)"
+											fillOpacity={1}
+											stroke="hsl(142, 71%, 45%)"
+											strokeOpacity={0.3}
+											strokeDasharray="4 4"
+										/>
+									)}
+									<ChartTooltip
+										cursor={{ strokeDasharray: "3 3" }}
+										content={
+											<ChartTooltipContent
+												labelFormatter={(value) => {
+													if (typeof value === "string") {
+														return value;
+													}
+													return String(value);
+												}}
+												indicator="line"
+											/>
+										}
+									/>
+									<ChartLegend content={<ChartLegendContent />} />
+									{/* QDS Line - Previsto (Amber) */}
+									<Line
+										dataKey="qds"
+										type="monotone"
+										stroke="var(--color-qds)"
+										strokeWidth={2}
+										dot={{ r: 3, fill: "var(--color-qds)" }}
+										activeDot={{ r: 5 }}
+									/>
+									{/* QDP Line - Programado (Purple) */}
+									<Line
+										dataKey="qdp"
+										type="monotone"
+										stroke="var(--color-qdp)"
+										strokeWidth={2}
+										dot={{ r: 3, fill: "var(--color-qdp)" }}
+										activeDot={{ r: 5 }}
+										connectNulls
+									/>
+									{/* QDR Line - Real (Green) */}
+									<Line
+										dataKey="qdr"
+										type="monotone"
+										stroke="var(--color-qdr)"
+										strokeWidth={2}
+										dot={{ r: 3, fill: "var(--color-qdr)" }}
+										activeDot={{ r: 5 }}
+										connectNulls
+									/>
+								</LineChart>
+							</ChartContainer>
+						) : (
+							<div className="flex h-[350px] items-center justify-center">
+								<p className="text-muted-foreground text-sm">
+									Nenhum dado disponível para o mês selecionado.
+								</p>
+							</div>
+						)}
+					</CardContent>
+				</Card>
 
 				{/* Error display */}
 				{error ? (
