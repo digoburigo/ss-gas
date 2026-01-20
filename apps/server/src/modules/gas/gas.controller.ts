@@ -3,6 +3,7 @@ import { Elysia, t } from "elysia";
 import ExcelJS from "exceljs";
 
 import { betterAuth } from "../../plugins/better-auth";
+import { ContractAlertService } from "../../services";
 import { GasCalculationService } from "./gas.service";
 
 /**
@@ -1946,4 +1947,125 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				}),
 			},
 		},
+	)
+
+	/**
+	 * GET /gas/alerts/:alertId/sent-logs
+	 *
+	 * Returns the log of sent emails for a specific contract alert.
+	 * Used by the UI to display email dispatch history.
+	 */
+	.get(
+		"/alerts/:alertId/sent-logs",
+		async ({ params, query, session, status }) => {
+			const { alertId } = params;
+			const limit = query.limit ?? 50;
+
+			// Verify alert exists and belongs to user's organization
+			const alert = await db.gasContractAlert.findUnique({
+				where: { id: alertId },
+			});
+
+			if (!alert) {
+				return status(404, { error: "Alert not found" });
+			}
+
+			if (alert.organizationId !== session.activeOrganizationId) {
+				return status(403, { error: "Access denied" });
+			}
+
+			const logs = await ContractAlertService.getSentLogsForAlert(
+				alertId,
+				limit
+			);
+
+			return {
+				alertId,
+				logs,
+			};
+		},
+		{
+			auth: true,
+			params: t.Object({
+				alertId: t.String(),
+			}),
+			query: t.Object({
+				limit: t.Optional(t.Number({ minimum: 1, maximum: 200 })),
+			}),
+			response: {
+				200: t.Object({
+					alertId: t.String(),
+					logs: t.Array(
+						t.Object({
+							id: t.String(),
+							recipientEmail: t.String(),
+							sentAt: t.Date(),
+							advanceNoticeDays: t.Number(),
+							status: t.String(),
+							errorMessage: t.Nullable(t.String()),
+						})
+					),
+				}),
+				403: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		}
+	)
+
+	/**
+	 * POST /gas/alerts/process
+	 *
+	 * Manually triggers processing of due contract alerts.
+	 * Useful for testing or forcing alert dispatch outside the scheduled time.
+	 * Returns a summary of sent emails.
+	 */
+	.post(
+		"/alerts/process",
+		async ({ organizationRole, status }) => {
+			// Only allow admins to manually trigger alert processing
+			if (organizationRole !== "admin" && organizationRole !== "owner") {
+				return status(403, { error: "Only organization admins can trigger alert processing" });
+			}
+
+			const result = await ContractAlertService.processAndDispatchAlerts();
+
+			return {
+				success: true,
+				...result,
+			};
+		},
+		{
+			auth: true,
+			response: {
+				200: t.Object({
+					success: t.Boolean(),
+					totalAlerts: t.Number(),
+					totalEmails: t.Number(),
+					sentEmails: t.Number(),
+					failedEmails: t.Number(),
+					details: t.Array(
+						t.Object({
+							alertName: t.String(),
+							contractName: t.String(),
+							advanceNoticeDays: t.Number(),
+							results: t.Array(
+								t.Object({
+									alertId: t.String(),
+									email: t.String(),
+									status: t.Union([t.Literal("sent"), t.Literal("failed")]),
+									errorMessage: t.Optional(t.String()),
+								})
+							),
+						})
+					),
+				}),
+				403: t.Object({
+					error: t.String(),
+				}),
+			},
+		}
 	);

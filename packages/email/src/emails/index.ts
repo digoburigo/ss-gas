@@ -1,3 +1,4 @@
+export { default as ContractAlertEmail } from "./ContractAlertEmail";
 export { default as EmailVerificationEmail } from "./EmailVerificationEmail";
 export { default as MissingDailyEntryEmail } from "./MissingDailyEntryEmail";
 export { default as OrganizationInvitationEmail } from "./OrganizationInvitationEmail";

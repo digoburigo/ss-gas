@@ -1,5 +1,5 @@
 import type { Row } from "@tanstack/react-table";
-import { MoreHorizontal, Pencil, Power, Trash2 } from "lucide-react";
+import { History, MoreHorizontal, Pencil, Power, Trash2 } from "lucide-react";
 
 import type {
   GasContract,
@@ -39,6 +39,11 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     setOpen("toggle-active");
   };
 
+  const handleViewHistory = () => {
+    setCurrentRow(row.original);
+    setOpen("view-history");
+  };
+
   const handleDelete = () => {
     setCurrentRow(row.original);
     setOpen("delete");
@@ -55,10 +60,14 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           <span className="sr-only">Abrir menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
+      <DropdownMenuContent align="end" className="w-[180px]">
         <DropdownMenuItem onClick={handleEdit}>
           <Pencil className="mr-2 h-4 w-4" />
           Editar
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleViewHistory}>
+          <History className="mr-2 h-4 w-4" />
+          Ver Histórico
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleToggleActive}>
           <Power className="mr-2 h-4 w-4" />

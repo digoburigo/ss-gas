@@ -13,6 +13,7 @@ import {
 } from "@acme/ui/alert-dialog";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
+import { ContractAlertsHistoryDialog } from "./contract-alerts-history-dialog";
 import { ContractAlertsMutateDrawer } from "./contract-alerts-mutate-drawer";
 import { useContractAlerts } from "./contract-alerts-provider";
 
@@ -140,6 +141,9 @@ export function ContractAlertsDialogs() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* View History Dialog */}
+      <ContractAlertsHistoryDialog />
     </>
   );
 }
