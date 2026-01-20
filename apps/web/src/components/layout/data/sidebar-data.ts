@@ -1,6 +1,7 @@
 import {
   AudioWaveform,
   Bell,
+  BellRing,
   Bug,
   Building2,
   Calendar,
@@ -73,6 +74,11 @@ export const sidebarData: SidebarData = {
               title: "Contratos",
               url: "/gas/contracts",
               icon: FileSignature,
+            },
+            {
+              title: "Alertas",
+              url: "/gas/contract-alerts",
+              icon: BellRing,
             },
             {
               title: "Unidades Consumidoras",

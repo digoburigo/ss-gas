@@ -1228,6 +1228,9 @@ model GasContract {
     // Audit log entries for this contract
     auditLogs GasContractAuditLog[]
 
+    // Alert configurations for this contract
+    alerts GasContractAlert[]
+
     @@allow('create', auth() != null)
     @@allow('read,update,delete', auth().organizationId == organizationId)
 
@@ -1283,6 +1286,116 @@ model GasUnitOperator {
     @@allow('create,read,update,delete', auth() != null)
 
     @@map("gas_unit_operators")
+}
+
+// GAS CONTRACT ALERT CONFIGURATION ======================================================
+
+// Types of default/system-defined events for contract alerts
+enum GasAlertEventType {
+  contract_expiration        // Contract end date
+  renewal_deadline           // Renewal notification date
+  daily_scheduling           // Daily scheduling deadline
+  monthly_declaration        // Monthly declaration deadline
+  adjustment_date            // Price adjustment date
+  take_or_pay_expiration     // Take-or-pay credit expiration
+  make_up_gas_expiration     // Make-up gas credit expiration
+  custom                     // Custom user-defined event
+}
+
+// Recurrence options for alerts
+enum GasAlertRecurrence {
+  once                       // One-time alert (for dates that don't repeat)
+  daily                      // Daily recurring
+  weekly                     // Weekly recurring
+  monthly                    // Monthly recurring
+  yearly                     // Yearly recurring (e.g., for annual contract dates)
+}
+
+// Contract alert configuration
+model GasContractAlert {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    contractId String
+    contract GasContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+    // Alert definition
+    eventType GasAlertEventType @default(custom)
+    eventName String                      // Display name (e.g., "Vencimento do Contrato", "Data de Reajuste")
+    eventDescription String?              // Optional description
+
+    // Target date/time for the event
+    eventDate DateTime?                   // The actual date of the event (null for recurring based on contract fields)
+    eventTime String?                     // Optional time (e.g., "10:00")
+
+    // Recurrence
+    recurrence GasAlertRecurrence @default(once)
+
+    // Advance notice configuration (days before the event to send alerts)
+    advanceNoticeDays Int[]               // Array of days before event to send alerts (e.g., [30, 15, 7, 1])
+
+    // Status
+    active Boolean @default(true)
+
+    // Audit fields
+    createdAt DateTime @default(now())
+    createdById String? @default(auth().userId)
+    updatedAt DateTime @updatedAt
+
+    organizationId String? @default(auth().organizationId)
+
+    // Recipients for this alert
+    recipients GasContractAlertRecipient[]
+
+    // Sent alert history
+    sentAlerts GasAlertSentLog[]
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+
+    @@index([contractId])
+    @@map("gas_contract_alerts")
+}
+
+// Recipients for a specific alert
+model GasContractAlertRecipient {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    alertId String
+    alert GasContractAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+    email String                          // Recipient email address
+    name String?                          // Optional recipient name for personalization
+
+    createdAt DateTime @default(now())
+
+    @@unique([alertId, email])
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+
+    @@map("gas_contract_alert_recipients")
+}
+
+// Log of sent alerts (for tracking/history)
+model GasAlertSentLog {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    alertId String
+    alert GasContractAlert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+    recipientEmail String                 // Email that was sent to
+    sentAt DateTime @default(now())       // When the email was sent
+    advanceNoticeDays Int                 // Which advance notice triggered this (e.g., 30, 15, 7, 1)
+    status String @default("sent")        // sent, failed, bounced
+    errorMessage String?                  // Error details if failed
+
+    @@index([alertId])
+    @@index([sentAt])
+
+    @@allow('create', auth() != null)
+    @@allow('read', auth() != null)
+
+    @@map("gas_alert_sent_logs")
 }
 
 // USER NOTIFICATION PREFERENCES ======================================================

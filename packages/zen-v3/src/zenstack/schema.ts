@@ -4132,6 +4132,12 @@ export class SchemaType implements SchemaDef {
                     type: "GasContractAuditLog",
                     array: true,
                     relation: { opposite: "contract" }
+                },
+                alerts: {
+                    name: "alerts",
+                    type: "GasContractAlert",
+                    array: true,
+                    relation: { opposite: "contract" }
                 }
             },
             attributes: [
@@ -4277,6 +4283,233 @@ export class SchemaType implements SchemaDef {
             uniqueFields: {
                 id: { type: "String" },
                 memberId_unitId: { memberId: { type: "String" }, unitId: { type: "String" } }
+            }
+        },
+        GasContractAlert: {
+            name: "GasContractAlert",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                contractId: {
+                    name: "contractId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "contract"
+                    ]
+                },
+                contract: {
+                    name: "contract",
+                    type: "GasContract",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("contractId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "alerts", fields: ["contractId"], references: ["id"], onDelete: "Cascade" }
+                },
+                eventType: {
+                    name: "eventType",
+                    type: "GasAlertEventType",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("custom") }] }],
+                    default: "custom"
+                },
+                eventName: {
+                    name: "eventName",
+                    type: "String"
+                },
+                eventDescription: {
+                    name: "eventDescription",
+                    type: "String",
+                    optional: true
+                },
+                eventDate: {
+                    name: "eventDate",
+                    type: "DateTime",
+                    optional: true
+                },
+                eventTime: {
+                    name: "eventTime",
+                    type: "String",
+                    optional: true
+                },
+                recurrence: {
+                    name: "recurrence",
+                    type: "GasAlertRecurrence",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("once") }] }],
+                    default: "once"
+                },
+                advanceNoticeDays: {
+                    name: "advanceNoticeDays",
+                    type: "Int",
+                    array: true
+                },
+                active: {
+                    name: "active",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(true) }] }],
+                    default: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"])
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                },
+                organizationId: {
+                    name: "organizationId",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"])
+                },
+                recipients: {
+                    name: "recipients",
+                    type: "GasContractAlertRecipient",
+                    array: true,
+                    relation: { opposite: "alert" }
+                },
+                sentAlerts: {
+                    name: "sentAlerts",
+                    type: "GasAlertSentLog",
+                    array: true,
+                    relation: { opposite: "alert" }
+                }
+            },
+            attributes: [
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("contractId")]) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_contract_alerts") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
+            }
+        },
+        GasContractAlertRecipient: {
+            name: "GasContractAlertRecipient",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                alertId: {
+                    name: "alertId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "alert"
+                    ]
+                },
+                alert: {
+                    name: "alert",
+                    type: "GasContractAlert",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("alertId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "recipients", fields: ["alertId"], references: ["id"], onDelete: "Cascade" }
+                },
+                email: {
+                    name: "email",
+                    type: "String"
+                },
+                name: {
+                    name: "name",
+                    type: "String",
+                    optional: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                }
+            },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("alertId"), ExpressionUtils.field("email")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_contract_alert_recipients") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" },
+                alertId_email: { alertId: { type: "String" }, email: { type: "String" } }
+            }
+        },
+        GasAlertSentLog: {
+            name: "GasAlertSentLog",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                alertId: {
+                    name: "alertId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "alert"
+                    ]
+                },
+                alert: {
+                    name: "alert",
+                    type: "GasContractAlert",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("alertId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "sentAlerts", fields: ["alertId"], references: ["id"], onDelete: "Cascade" }
+                },
+                recipientEmail: {
+                    name: "recipientEmail",
+                    type: "String"
+                },
+                sentAt: {
+                    name: "sentAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                advanceNoticeDays: {
+                    name: "advanceNoticeDays",
+                    type: "Int"
+                },
+                status: {
+                    name: "status",
+                    type: "String",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("sent") }] }],
+                    default: "sent"
+                },
+                errorMessage: {
+                    name: "errorMessage",
+                    type: "String",
+                    optional: true
+                }
+            },
+            attributes: [
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("alertId")]) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("sentAt")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_alert_sent_logs") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
             }
         },
         UserNotificationPreferences: {
@@ -4466,6 +4699,27 @@ export class SchemaType implements SchemaDef {
                 calculated: "calculated",
                 meter: "meter",
                 manual: "manual"
+            }
+        },
+        GasAlertEventType: {
+            values: {
+                contract_expiration: "contract_expiration",
+                renewal_deadline: "renewal_deadline",
+                daily_scheduling: "daily_scheduling",
+                monthly_declaration: "monthly_declaration",
+                adjustment_date: "adjustment_date",
+                take_or_pay_expiration: "take_or_pay_expiration",
+                make_up_gas_expiration: "make_up_gas_expiration",
+                custom: "custom"
+            }
+        },
+        GasAlertRecurrence: {
+            values: {
+                once: "once",
+                daily: "daily",
+                weekly: "weekly",
+                monthly: "monthly",
+                yearly: "yearly"
             }
         }
     } as const;

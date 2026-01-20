@@ -49,6 +49,9 @@ export type GasRealConsumption = $ModelResult<$Schema, "GasRealConsumption">;
 export type GasContract = $ModelResult<$Schema, "GasContract">;
 export type GasContractAuditLog = $ModelResult<$Schema, "GasContractAuditLog">;
 export type GasUnitOperator = $ModelResult<$Schema, "GasUnitOperator">;
+export type GasContractAlert = $ModelResult<$Schema, "GasContractAlert">;
+export type GasContractAlertRecipient = $ModelResult<$Schema, "GasContractAlertRecipient">;
+export type GasAlertSentLog = $ModelResult<$Schema, "GasAlertSentLog">;
 export type UserNotificationPreferences = $ModelResult<$Schema, "UserNotificationPreferences">;
 /**
  * Shape of the `auth()` function
@@ -78,3 +81,7 @@ export const LineStatusValue = $schema.enums.LineStatusValue.values;
 export type LineStatusValue = (typeof LineStatusValue)[keyof typeof LineStatusValue];
 export const ConsumptionSource = $schema.enums.ConsumptionSource.values;
 export type ConsumptionSource = (typeof ConsumptionSource)[keyof typeof ConsumptionSource];
+export const GasAlertEventType = $schema.enums.GasAlertEventType.values;
+export type GasAlertEventType = (typeof GasAlertEventType)[keyof typeof GasAlertEventType];
+export const GasAlertRecurrence = $schema.enums.GasAlertRecurrence.values;
+export type GasAlertRecurrence = (typeof GasAlertRecurrence)[keyof typeof GasAlertRecurrence];
