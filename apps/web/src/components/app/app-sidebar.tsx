@@ -1,4 +1,9 @@
 import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@acme/ui/collapsible";
+import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
@@ -9,9 +14,17 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	SidebarMenuSub,
+	SidebarMenuSubButton,
+	SidebarMenuSubItem,
 } from "@acme/ui/sidebar";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboardIcon, ListTodoIcon, Package } from "lucide-react";
+import {
+	ChevronRight,
+	Flame,
+	LayoutDashboardIcon,
+	Package,
+} from "lucide-react";
 
 import { authClient } from "~/clients/auth-client";
 import { OrganizationSwitcher } from "./organization-switcher";
@@ -24,14 +37,28 @@ const menuItems = [
 		icon: LayoutDashboardIcon,
 	},
 	{
-		title: "Todos",
-		url: "/todos",
-		icon: ListTodoIcon,
-	},
-	{
 		title: "Produtos",
 		url: "/products",
 		icon: Package,
+	},
+];
+
+const gasMenuItems = [
+	{
+		title: "Painel",
+		url: "/gas",
+	},
+	{
+		title: "Lançamento Diário",
+		url: "/gas/entry",
+	},
+	{
+		title: "Relatórios",
+		url: "/gas/reports",
+	},
+	{
+		title: "Administração",
+		url: "/gas/admin",
 	},
 ];
 
@@ -74,6 +101,45 @@ export function AppSidebar() {
 									</SidebarMenuItem>
 								);
 							})}
+
+							{/* Gas Menu with Collapsible Sub-items */}
+							<Collapsible
+								asChild
+								defaultOpen={currentPath.startsWith("/gas")}
+								className="group/collapsible"
+							>
+								<SidebarMenuItem>
+									<CollapsibleTrigger asChild>
+										<SidebarMenuButton
+											isActive={currentPath.startsWith("/gas")}
+											tooltip="Gás"
+										>
+											<Flame className="size-4" />
+											<span>Gás</span>
+											<ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+										</SidebarMenuButton>
+									</CollapsibleTrigger>
+									<CollapsibleContent>
+										<SidebarMenuSub>
+											{gasMenuItems.map((item) => {
+												const isSubActive = currentPath === item.url;
+												return (
+													<SidebarMenuSubItem key={item.url}>
+														<SidebarMenuSubButton
+															asChild
+															isActive={isSubActive}
+														>
+															<Link to={item.url}>
+																<span>{item.title}</span>
+															</Link>
+														</SidebarMenuSubButton>
+													</SidebarMenuSubItem>
+												);
+											})}
+										</SidebarMenuSub>
+									</CollapsibleContent>
+								</SidebarMenuItem>
+							</Collapsible>
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>

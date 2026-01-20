@@ -47,6 +47,104 @@ export const gasController = new Elysia({ prefix: "/gas" })
 	.get("/", () => ({ message: "Gas module" }))
 
 	/**
+	 * GET /gas/units
+	 *
+	 * Returns all units for the current organization with their equipment.
+	 * Used by the daily entry page to select a unit and display its equipment.
+	 */
+	.get(
+		"/units",
+		async ({ session }) => {
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				include: {
+					equipment: {
+						where: { active: true },
+						orderBy: { orderIndex: "asc" },
+						include: {
+							constants: {
+								where: {
+									effectiveTo: null,
+								},
+								orderBy: { effectiveFrom: "desc" },
+								take: 1,
+							},
+						},
+					},
+				},
+				orderBy: { code: "asc" },
+			});
+
+			// Transform to include currentConstant in equipment
+			const transformedUnits = units.map((unit) => ({
+				...unit,
+				equipment: unit.equipment.map((eq) => {
+					const constant = eq.constants[0];
+					return {
+						id: eq.id,
+						code: eq.code,
+						name: eq.name,
+						type: eq.type,
+						orderIndex: eq.orderIndex,
+						currentConstant: constant
+							? {
+									id: constant.id,
+									consumptionRate: constant.consumptionRate,
+									consumptionUnit: constant.consumptionUnit,
+									effectiveFrom: constant.effectiveFrom,
+								}
+							: null,
+					};
+				}),
+			}));
+
+			return { units: transformedUnits };
+		},
+		{
+			auth: true,
+			response: {
+				200: t.Object({
+					units: t.Array(
+						t.Object({
+							id: t.String(),
+							code: t.String(),
+							name: t.String(),
+							equipment: t.Array(
+								t.Object({
+									id: t.String(),
+									code: t.String(),
+									name: t.String(),
+									type: t.Union([
+										t.Literal("atomizer"),
+										t.Literal("line"),
+										t.Literal("dryer"),
+										t.Literal("other"),
+									]),
+									orderIndex: t.Number(),
+									currentConstant: t.Nullable(
+										t.Object({
+											id: t.String(),
+											consumptionRate: t.Number(),
+											consumptionUnit: t.Union([
+												t.Literal("m3_per_hour"),
+												t.Literal("m3_per_day"),
+											]),
+											effectiveFrom: t.Date(),
+										})
+									),
+								})
+							),
+						})
+					),
+				}),
+			},
+		}
+	)
+
+	/**
 	 * POST /gas/units/:unitId/entries
 	 *
 	 * Creates a new daily entry for a unit with validation and auto-calculation.
