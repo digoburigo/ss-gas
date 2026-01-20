@@ -1,5 +1,6 @@
 import { authDb, db } from "@acme/zen-v3";
 import { Elysia, t } from "elysia";
+import ExcelJS from "exceljs";
 
 import { betterAuth } from "../../plugins/better-auth";
 import { GasCalculationService } from "./gas.service";
@@ -716,6 +717,720 @@ export const gasController = new Elysia({ prefix: "/gas" })
 						}),
 					),
 				}),
+				400: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
+	)
+
+	/**
+	 * GET /gas/reports/petrobras
+	 *
+	 * Returns preview data for Petrobras report export.
+	 * Query parameter:
+	 * - month: YYYY-MM format (required)
+	 *
+	 * Returns:
+	 * - All daily entries for the month with calculated values
+	 * - Contract tolerance information
+	 * - Suggested filename following pattern: RC_{MONTH}_{YEAR}_Petrobras.xlsx
+	 */
+	.get(
+		"/reports/petrobras",
+		async ({ query, status, session }) => {
+			const { month } = query;
+
+			// Validate month format
+			const monthRegex = /^\d{4}-\d{2}$/;
+			if (!monthRegex.test(month)) {
+				return status(400, {
+					error: "Invalid month format. Expected YYYY-MM",
+				});
+			}
+
+			// Parse month to get start and end dates
+			const parts = month.split("-").map(Number);
+			const year = parts[0] ?? 0;
+			const monthNum = parts[1] ?? 1;
+			const startDate = new Date(year, monthNum - 1, 1);
+			const endDate = new Date(year, monthNum, 0); // Last day of month
+
+			// Get active contract
+			const contract = await db.gasContract.findFirst({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+					effectiveFrom: { lte: endDate },
+					OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }],
+				},
+				orderBy: { effectiveFrom: "desc" },
+			});
+
+			if (!contract) {
+				return status(404, { error: "No active contract found" });
+			}
+
+			// Get all units for the organization
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { code: "asc" },
+			});
+
+			// Get all daily entries for the month across all units
+			const entries = await db.gasDailyEntry.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+				include: {
+					unit: true,
+				},
+				orderBy: [{ date: "asc" }, { unit: { code: "asc" } }],
+			});
+
+			// Get all daily plans for the month
+			const plans = await db.gasDailyPlan.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+				orderBy: { date: "asc" },
+			});
+
+			// Get all real consumption data for the month
+			const realConsumptions = await db.gasRealConsumption.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+				orderBy: { date: "asc" },
+			});
+
+			// Build report rows grouped by date
+			const reportRows: Array<{
+				date: Date;
+				dayOfWeek: string;
+				qdcContracted: number;
+				qdsTotal: number;
+				qdpTotal: number;
+				qdrTotal: number;
+				transportUpperLimit: number;
+				transportLowerLimit: number;
+				moleculeUpperLimit: number;
+				moleculeLowerLimit: number;
+				transportDeviation: number;
+				moleculeDeviation: number;
+				transportStatus: "within" | "exceeded_upper" | "exceeded_lower";
+				moleculeStatus: "within" | "exceeded";
+				overallStatus: "ok" | "nok";
+				units: Array<{
+					unitCode: string;
+					unitName: string;
+					qds: number;
+					qdp: number | null;
+					qdr: number | null;
+				}>;
+			}> = [];
+
+			// Group data by date
+			const dateGroups: Record<
+				string,
+				{
+					date: Date;
+					entries: typeof entries;
+					plans: typeof plans;
+					realConsumptions: typeof realConsumptions;
+				}
+			> = {};
+
+			// Initialize date groups for all days in the month
+			const currentDate = new Date(startDate);
+			while (currentDate <= endDate) {
+				const dateKey = currentDate.toISOString().split("T")[0] ?? "";
+				dateGroups[dateKey] = {
+					date: new Date(currentDate),
+					entries: [],
+					plans: [],
+					realConsumptions: [],
+				};
+				currentDate.setDate(currentDate.getDate() + 1);
+			}
+
+			// Populate date groups with entries
+			for (const entry of entries) {
+				const dateKey = entry.date.toISOString().split("T")[0] ?? "";
+				if (dateGroups[dateKey]) {
+					dateGroups[dateKey].entries.push(entry);
+				}
+			}
+
+			for (const plan of plans) {
+				const dateKey = plan.date.toISOString().split("T")[0] ?? "";
+				if (dateGroups[dateKey]) {
+					dateGroups[dateKey].plans.push(plan);
+				}
+			}
+
+			for (const rc of realConsumptions) {
+				const dateKey = rc.date.toISOString().split("T")[0] ?? "";
+				if (dateGroups[dateKey]) {
+					dateGroups[dateKey].realConsumptions.push(rc);
+				}
+			}
+
+			// Day of week names in Portuguese
+			const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+			// Process each date group
+			for (const dateKey of Object.keys(dateGroups).sort()) {
+				const group = dateGroups[dateKey];
+				if (!group) continue;
+
+				// Calculate totals
+				let qdsTotal = 0;
+				let qdpTotal = 0;
+				let qdrTotal = 0;
+
+				const unitData: Array<{
+					unitCode: string;
+					unitName: string;
+					qds: number;
+					qdp: number | null;
+					qdr: number | null;
+				}> = [];
+
+				for (const unit of units) {
+					const entry = group.entries.find((e) => e.unitId === unit.id);
+					const plan = group.plans.find((p) => p.unitId === unit.id);
+					const rc = group.realConsumptions.find((r) => r.unitId === unit.id);
+
+					const qds = entry
+						? (entry.qdsManual ?? entry.qdsCalculated)
+						: 0;
+					const qdp = plan?.qdpValue ?? null;
+					const qdr = rc?.qdrValue ?? null;
+
+					qdsTotal += qds;
+					if (qdp !== null) qdpTotal += qdp;
+					if (qdr !== null) qdrTotal += qdr;
+
+					unitData.push({
+						unitCode: unit.code,
+						unitName: unit.name,
+						qds,
+						qdp,
+						qdr,
+					});
+				}
+
+				// Calculate deviations
+				const deviations = GasCalculationService.calculateDeviations(
+					{ qdsCalculated: qdsTotal },
+					{
+						qdcContracted: contract.qdcContracted,
+						transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
+						transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+						moleculeTolerancePercent: contract.moleculeTolerancePercent,
+					},
+				);
+
+				reportRows.push({
+					date: group.date,
+					dayOfWeek: dayNames[group.date.getDay()] ?? "",
+					qdcContracted: contract.qdcContracted,
+					qdsTotal,
+					qdpTotal,
+					qdrTotal,
+					transportUpperLimit: deviations.transportUpperLimit,
+					transportLowerLimit: deviations.transportLowerLimit,
+					moleculeUpperLimit: deviations.moleculeUpperLimit,
+					moleculeLowerLimit: deviations.moleculeLowerLimit,
+					transportDeviation: deviations.transportDeviation,
+					moleculeDeviation: deviations.moleculeDeviation,
+					transportStatus: deviations.transportStatus,
+					moleculeStatus: deviations.moleculeStatus,
+					overallStatus:
+						deviations.transportStatus === "within" &&
+						deviations.moleculeStatus === "within"
+							? "ok"
+							: "nok",
+					units: unitData,
+				});
+			}
+
+			// Generate suggested filename
+			const monthNames = [
+				"Janeiro",
+				"Fevereiro",
+				"Março",
+				"Abril",
+				"Maio",
+				"Junho",
+				"Julho",
+				"Agosto",
+				"Setembro",
+				"Outubro",
+				"Novembro",
+				"Dezembro",
+			];
+			const monthName = monthNames[monthNum - 1] ?? "";
+			const suggestedFilename = `RC_${monthName}_${year}_Petrobras.xlsx`;
+
+			return {
+				month,
+				year,
+				monthName,
+				suggestedFilename,
+				contract: {
+					id: contract.id,
+					name: contract.name,
+					qdcContracted: contract.qdcContracted,
+					transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
+					transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+					moleculeTolerancePercent: contract.moleculeTolerancePercent,
+				},
+				units: units.map((u) => ({
+					id: u.id,
+					code: u.code,
+					name: u.name,
+				})),
+				rows: reportRows,
+				summary: {
+					totalDays: reportRows.length,
+					daysWithData: reportRows.filter((r) => r.qdsTotal > 0).length,
+					daysOk: reportRows.filter((r) => r.overallStatus === "ok").length,
+					daysNok: reportRows.filter((r) => r.overallStatus === "nok").length,
+					averageQds:
+						reportRows.length > 0
+							? reportRows.reduce((sum, r) => sum + r.qdsTotal, 0) /
+								reportRows.length
+							: 0,
+				},
+			};
+		},
+		{
+			auth: true,
+			query: t.Object({
+				month: t.String(),
+			}),
+			response: {
+				200: t.Object({
+					month: t.String(),
+					year: t.Number(),
+					monthName: t.String(),
+					suggestedFilename: t.String(),
+					contract: t.Object({
+						id: t.String(),
+						name: t.String(),
+						qdcContracted: t.Number(),
+						transportToleranceUpperPercent: t.Number(),
+						transportToleranceLowerPercent: t.Number(),
+						moleculeTolerancePercent: t.Number(),
+					}),
+					units: t.Array(
+						t.Object({
+							id: t.String(),
+							code: t.String(),
+							name: t.String(),
+						}),
+					),
+					rows: t.Array(
+						t.Object({
+							date: t.Date(),
+							dayOfWeek: t.String(),
+							qdcContracted: t.Number(),
+							qdsTotal: t.Number(),
+							qdpTotal: t.Number(),
+							qdrTotal: t.Number(),
+							transportUpperLimit: t.Number(),
+							transportLowerLimit: t.Number(),
+							moleculeUpperLimit: t.Number(),
+							moleculeLowerLimit: t.Number(),
+							transportDeviation: t.Number(),
+							moleculeDeviation: t.Number(),
+							transportStatus: t.Union([
+								t.Literal("within"),
+								t.Literal("exceeded_upper"),
+								t.Literal("exceeded_lower"),
+							]),
+							moleculeStatus: t.Union([
+								t.Literal("within"),
+								t.Literal("exceeded"),
+							]),
+							overallStatus: t.Union([t.Literal("ok"), t.Literal("nok")]),
+							units: t.Array(
+								t.Object({
+									unitCode: t.String(),
+									unitName: t.String(),
+									qds: t.Number(),
+									qdp: t.Nullable(t.Number()),
+									qdr: t.Nullable(t.Number()),
+								}),
+							),
+						}),
+					),
+					summary: t.Object({
+						totalDays: t.Number(),
+						daysWithData: t.Number(),
+						daysOk: t.Number(),
+						daysNok: t.Number(),
+						averageQds: t.Number(),
+					}),
+				}),
+				400: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
+	)
+
+	/**
+	 * GET /gas/reports/petrobras/download
+	 *
+	 * Downloads the Petrobras report as an XLSX file.
+	 * Query parameter:
+	 * - month: YYYY-MM format (required)
+	 *
+	 * Returns:
+	 * - XLSX file with filename: RC_{MONTH}_{YEAR}_Petrobras.xlsx
+	 */
+	.get(
+		"/reports/petrobras/download",
+		async ({ query, status, session, set }) => {
+			const { month } = query;
+
+			// Validate month format
+			const monthRegex = /^\d{4}-\d{2}$/;
+			if (!monthRegex.test(month)) {
+				return status(400, {
+					error: "Invalid month format. Expected YYYY-MM",
+				});
+			}
+
+			// Parse month to get start and end dates
+			const parts = month.split("-").map(Number);
+			const year = parts[0] ?? 0;
+			const monthNum = parts[1] ?? 1;
+			const startDate = new Date(year, monthNum - 1, 1);
+			const endDate = new Date(year, monthNum, 0); // Last day of month
+
+			// Get active contract
+			const contract = await db.gasContract.findFirst({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+					effectiveFrom: { lte: endDate },
+					OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }],
+				},
+				orderBy: { effectiveFrom: "desc" },
+			});
+
+			if (!contract) {
+				return status(404, { error: "No active contract found" });
+			}
+
+			// Get all units for the organization
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { code: "asc" },
+			});
+
+			// Get all daily entries for the month across all units
+			const entries = await db.gasDailyEntry.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+				include: {
+					unit: true,
+				},
+				orderBy: [{ date: "asc" }, { unit: { code: "asc" } }],
+			});
+
+			// Get all daily plans and real consumption
+			const plans = await db.gasDailyPlan.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+			});
+
+			const realConsumptions = await db.gasRealConsumption.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: {
+						gte: startDate,
+						lte: endDate,
+					},
+				},
+			});
+
+			// Create workbook
+			const workbook = new ExcelJS.Workbook();
+			workbook.creator = "Sistema RC - Gestão de Consumo de Gás";
+			workbook.created = new Date();
+
+			const worksheet = workbook.addWorksheet("Relatório Petrobras");
+
+			// Define columns
+			const columns: Partial<ExcelJS.Column>[] = [
+				{ header: "Data", key: "date", width: 12 },
+				{ header: "Dia", key: "dayOfWeek", width: 6 },
+				{ header: "QDC (m³)", key: "qdc", width: 15 },
+			];
+
+			// Add unit columns for QDS
+			for (const unit of units) {
+				columns.push({
+					header: `QDS ${unit.code} (m³)`,
+					key: `qds_${unit.code}`,
+					width: 15,
+				});
+			}
+
+			// Add total and tolerance columns
+			columns.push(
+				{ header: "QDS Total (m³)", key: "qdsTotal", width: 15 },
+				{ header: "QDP Total (m³)", key: "qdpTotal", width: 15 },
+				{ header: "QDR Total (m³)", key: "qdrTotal", width: 15 },
+				{ header: "Lim. Sup. Transporte (m³)", key: "transportUpper", width: 20 },
+				{ header: "Lim. Inf. Transporte (m³)", key: "transportLower", width: 20 },
+				{ header: "Desvio Transporte (m³)", key: "transportDev", width: 18 },
+				{ header: "Status Transporte", key: "transportStatus", width: 16 },
+				{ header: "Lim. Sup. Molécula (m³)", key: "moleculeUpper", width: 18 },
+				{ header: "Lim. Inf. Molécula (m³)", key: "moleculeLower", width: 18 },
+				{ header: "Desvio Molécula (m³)", key: "moleculeDev", width: 16 },
+				{ header: "Status Molécula", key: "moleculeStatus", width: 14 },
+				{ header: "Status Geral", key: "overallStatus", width: 12 },
+			);
+
+			worksheet.columns = columns;
+
+			// Style header row
+			const headerRow = worksheet.getRow(1);
+			headerRow.font = { bold: true };
+			headerRow.fill = {
+				type: "pattern",
+				pattern: "solid",
+				fgColor: { argb: "FF4472C4" },
+			};
+			headerRow.font = { bold: true, color: { argb: "FFFFFFFF" } };
+
+			// Day of week names in Portuguese
+			const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+			// Group entries by date
+			const dateGroups: Record<string, typeof entries> = {};
+			for (const entry of entries) {
+				const dateKey = entry.date.toISOString().split("T")[0] ?? "";
+				if (!dateGroups[dateKey]) {
+					dateGroups[dateKey] = [];
+				}
+				dateGroups[dateKey].push(entry);
+			}
+
+			// Add data rows for each day of the month
+			const currentDate = new Date(startDate);
+			while (currentDate <= endDate) {
+				const dateKey = currentDate.toISOString().split("T")[0] ?? "";
+				const dayEntries = dateGroups[dateKey] ?? [];
+
+				// Calculate totals for this day
+				let qdsTotal = 0;
+				let qdpTotal = 0;
+				let qdrTotal = 0;
+
+				const rowData: Record<string, unknown> = {
+					date: currentDate.toLocaleDateString("pt-BR"),
+					dayOfWeek: dayNames[currentDate.getDay()] ?? "",
+					qdc: contract.qdcContracted,
+				};
+
+				// Add unit-specific QDS values
+				for (const unit of units) {
+					const entry = dayEntries.find((e) => e.unitId === unit.id);
+					const qds = entry ? (entry.qdsManual ?? entry.qdsCalculated) : 0;
+					rowData[`qds_${unit.code}`] = qds;
+					qdsTotal += qds;
+
+					// Find QDP and QDR for this unit
+					const plan = plans.find(
+						(p) =>
+							p.unitId === unit.id &&
+							p.date.toISOString().split("T")[0] === dateKey,
+					);
+					const rc = realConsumptions.find(
+						(r) =>
+							r.unitId === unit.id &&
+							r.date.toISOString().split("T")[0] === dateKey,
+					);
+
+					if (plan) qdpTotal += plan.qdpValue;
+					if (rc) qdrTotal += rc.qdrValue;
+				}
+
+				// Calculate deviations
+				const deviations = GasCalculationService.calculateDeviations(
+					{ qdsCalculated: qdsTotal },
+					{
+						qdcContracted: contract.qdcContracted,
+						transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
+						transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+						moleculeTolerancePercent: contract.moleculeTolerancePercent,
+					},
+				);
+
+				// Add totals and deviation data
+				rowData.qdsTotal = qdsTotal;
+				rowData.qdpTotal = qdpTotal;
+				rowData.qdrTotal = qdrTotal;
+				rowData.transportUpper = deviations.transportUpperLimit;
+				rowData.transportLower = deviations.transportLowerLimit;
+				rowData.transportDev = deviations.transportDeviation;
+				rowData.transportStatus =
+					deviations.transportStatus === "within"
+						? "OK"
+						: deviations.transportStatus === "exceeded_upper"
+							? "ACIMA"
+							: "ABAIXO";
+				rowData.moleculeUpper = deviations.moleculeUpperLimit;
+				rowData.moleculeLower = deviations.moleculeLowerLimit;
+				rowData.moleculeDev = deviations.moleculeDeviation;
+				rowData.moleculeStatus =
+					deviations.moleculeStatus === "within" ? "OK" : "EXCEDIDO";
+				rowData.overallStatus =
+					deviations.transportStatus === "within" &&
+					deviations.moleculeStatus === "within"
+						? "OK"
+						: "NOK";
+
+				const row = worksheet.addRow(rowData);
+
+				// Color-code status cells
+				const overallStatusCell = row.getCell("overallStatus");
+				if (rowData.overallStatus === "OK") {
+					overallStatusCell.fill = {
+						type: "pattern",
+						pattern: "solid",
+						fgColor: { argb: "FF92D050" }, // Green
+					};
+				} else {
+					overallStatusCell.fill = {
+						type: "pattern",
+						pattern: "solid",
+						fgColor: { argb: "FFFF6B6B" }, // Red
+					};
+				}
+
+				currentDate.setDate(currentDate.getDate() + 1);
+			}
+
+			// Add summary row
+			worksheet.addRow({});
+			const summaryRow = worksheet.addRow({
+				date: "RESUMO",
+				dayOfWeek: "",
+				qdc: contract.qdcContracted,
+			});
+			summaryRow.font = { bold: true };
+
+			// Format number columns
+			const numericColumns = [
+				"qdc",
+				"qdsTotal",
+				"qdpTotal",
+				"qdrTotal",
+				"transportUpper",
+				"transportLower",
+				"transportDev",
+				"moleculeUpper",
+				"moleculeLower",
+				"moleculeDev",
+			];
+			for (const unit of units) {
+				numericColumns.push(`qds_${unit.code}`);
+			}
+
+			for (const colKey of numericColumns) {
+				const col = worksheet.getColumn(colKey);
+				col.numFmt = "#,##0";
+			}
+
+			// Generate filename
+			const monthNames = [
+				"Janeiro",
+				"Fevereiro",
+				"Marco",
+				"Abril",
+				"Maio",
+				"Junho",
+				"Julho",
+				"Agosto",
+				"Setembro",
+				"Outubro",
+				"Novembro",
+				"Dezembro",
+			];
+			const monthName = monthNames[monthNum - 1] ?? "";
+			const filename = `RC_${monthName}_${year}_Petrobras.xlsx`;
+
+			// Generate buffer
+			const buffer = await workbook.xlsx.writeBuffer();
+
+			// Set response headers for file download
+			set.headers["Content-Type"] =
+				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+			set.headers["Content-Disposition"] =
+				`attachment; filename="${filename}"`;
+
+			return buffer;
+		},
+		{
+			auth: true,
+			query: t.Object({
+				month: t.String(),
+			}),
+			response: {
 				400: t.Object({
 					error: t.String(),
 				}),
