@@ -919,9 +919,23 @@ model TutorialStepProgress {
 model GasUnit {
     id String @id @default(dbgenerated("uuidv7()"))
 
-    code String
-    name String
+    code String                  // Meter code - unique identifier for the metering point
+    name String                  // Display name
     description String?
+
+    // Address fields
+    address String?              // Street address
+    city String?
+    state String?
+    zipCode String?
+
+    // Responsible parties - stored as JSON array of emails
+    responsibleEmails String[]   // Array of email addresses for notifications
+
+    // Contract linkage
+    contractId String?
+    contract GasContract? @relation(fields: [contractId], references: [id], onDelete: SetNull)
+
     active Boolean @default(true)
 
     createdAt DateTime @default(now())
@@ -1129,6 +1143,9 @@ model GasContract {
 
     organizationId String? @default(auth().organizationId)
     organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    // Consumer units linked to this contract
+    units GasUnit[]
 
     @@allow('create', auth() != null)
     @@allow('read,update,delete', auth().organizationId == organizationId)

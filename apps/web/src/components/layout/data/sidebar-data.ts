@@ -7,6 +7,7 @@ import {
 	Construction,
 	FileX,
 	Flame,
+	Gauge,
 	GalleryVerticalEnd,
 	HelpCircle,
 	LayoutDashboard,
@@ -63,6 +64,11 @@ export const sidebarData: SidebarData = {
 						{
 							title: "Painel",
 							url: "/gas",
+						},
+						{
+							title: "Unidades Consumidoras",
+							url: "/gas/consumer-units",
+							icon: Gauge,
 						},
 						{
 							title: "Lançamento Diário",

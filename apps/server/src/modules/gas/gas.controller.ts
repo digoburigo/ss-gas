@@ -47,6 +47,98 @@ export const gasController = new Elysia({ prefix: "/gas" })
 	.get("/", () => ({ message: "Gas module" }))
 
 	/**
+	 * GET /gas/consumer-units/:unitId/can-delete
+	 *
+	 * Checks if a consumer unit can be deleted.
+	 * A unit cannot be deleted if it has pending schedules (daily plans not yet submitted).
+	 */
+	.get(
+		"/consumer-units/:unitId/can-delete",
+		async ({ params, session, status }) => {
+			const { unitId } = params;
+
+			// Verify unit exists and belongs to user's organization
+			const unit = await db.gasUnit.findUnique({
+				where: { id: unitId },
+			});
+
+			if (!unit) {
+				return status(404, { error: "Unit not found" });
+			}
+
+			if (unit.organizationId !== session.activeOrganizationId) {
+				return status(403, { error: "Access denied" });
+			}
+
+			// Check for pending schedules (daily plans that are not yet submitted or future dates)
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+
+			const pendingSchedules = await db.gasDailyPlan.count({
+				where: {
+					unitId,
+					OR: [
+						// Plans that haven't been submitted yet
+						{ submitted: false },
+						// Future plans
+						{ date: { gte: today } },
+					],
+				},
+			});
+
+			// Check for daily entries in the current month or future
+			const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+			const pendingEntries = await db.gasDailyEntry.count({
+				where: {
+					unitId,
+					date: { gte: firstDayOfMonth },
+				},
+			});
+
+			const hasPendingSchedules = pendingSchedules > 0;
+			const hasPendingEntries = pendingEntries > 0;
+
+			if (hasPendingSchedules || hasPendingEntries) {
+				return {
+					canDelete: false,
+					reason: hasPendingSchedules
+						? `Esta unidade possui ${pendingSchedules} agendamento(s) pendente(s) ou futuro(s). Cancele ou conclua os agendamentos antes de excluir.`
+						: `Esta unidade possui ${pendingEntries} lançamento(s) no mês atual. Aguarde a virada do mês ou exclua os lançamentos manualmente.`,
+					pendingSchedules,
+					pendingEntries,
+				};
+			}
+
+			return {
+				canDelete: true,
+				reason: null,
+				pendingSchedules: 0,
+				pendingEntries: 0,
+			};
+		},
+		{
+			auth: true,
+			params: t.Object({
+				unitId: t.String(),
+			}),
+			response: {
+				200: t.Object({
+					canDelete: t.Boolean(),
+					reason: t.Nullable(t.String()),
+					pendingSchedules: t.Number(),
+					pendingEntries: t.Number(),
+				}),
+				403: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
+	)
+
+	/**
 	 * GET /gas/units
 	 *
 	 * Returns all units for the current organization with their equipment.

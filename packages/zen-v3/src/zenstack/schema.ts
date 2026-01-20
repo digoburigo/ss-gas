@@ -3116,6 +3116,46 @@ export class SchemaType implements SchemaDef {
                     type: "String",
                     optional: true
                 },
+                address: {
+                    name: "address",
+                    type: "String",
+                    optional: true
+                },
+                city: {
+                    name: "city",
+                    type: "String",
+                    optional: true
+                },
+                state: {
+                    name: "state",
+                    type: "String",
+                    optional: true
+                },
+                zipCode: {
+                    name: "zipCode",
+                    type: "String",
+                    optional: true
+                },
+                responsibleEmails: {
+                    name: "responsibleEmails",
+                    type: "String",
+                    array: true
+                },
+                contractId: {
+                    name: "contractId",
+                    type: "String",
+                    optional: true,
+                    foreignKeyFor: [
+                        "contract"
+                    ]
+                },
+                contract: {
+                    name: "contract",
+                    type: "GasContract",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("contractId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "units", fields: ["contractId"], references: ["id"], onDelete: "SetNull" }
+                },
                 active: {
                     name: "active",
                     type: "Boolean",
@@ -3896,6 +3936,12 @@ export class SchemaType implements SchemaDef {
                     optional: true,
                     attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array([ExpressionUtils.field("organizationId")]) }, { name: "references", value: ExpressionUtils.array([ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
                     relation: { opposite: "gasContracts", fields: ["organizationId"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                },
+                units: {
+                    name: "units",
+                    type: "GasUnit",
+                    array: true,
+                    relation: { opposite: "contract" }
                 }
             },
             attributes: [
