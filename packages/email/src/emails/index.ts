@@ -1,4 +1,5 @@
 export { default as EmailVerificationEmail } from "./EmailVerificationEmail";
+export { default as MissingDailyEntryEmail } from "./MissingDailyEntryEmail";
 export { default as OrganizationInvitationEmail } from "./OrganizationInvitationEmail";
 export { default as PatientRegistrationEmail } from "./PatientRegistrationEmail";
 export { default as ResetPasswordEmail } from "./ResetPasswordEmail";
