@@ -23,6 +23,7 @@ import {
   ServerOff,
   Settings,
   Shield,
+  ShieldAlert,
   ShieldCheck,
   Target,
   UserCog,
@@ -118,6 +119,11 @@ export const sidebarData: SidebarData = {
             {
               title: "Administração",
               url: "/gas/admin",
+            },
+            {
+              title: "Parâmetros Admin",
+              url: "/gas/admin-parameters",
+              icon: ShieldAlert,
             },
           ],
         },

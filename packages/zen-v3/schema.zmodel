@@ -189,6 +189,9 @@ model Organization {
 
   gasUnits GasUnit[]
   gasContracts GasContract[]
+  gasSystemParameters GasSystemParameter[]
+  gasContractTemplates GasContractTemplate[]
+  gasCustomFields GasCustomField[]
 
   @@unique([slug])
   @@unique([cnpj])
@@ -1396,6 +1399,138 @@ model GasAlertSentLog {
     @@allow('read', auth() != null)
 
     @@map("gas_alert_sent_logs")
+}
+
+// GAS SYSTEM PARAMETERS ======================================================
+// Administrative parameters for the gas management system (US-012)
+
+// Types of system parameters
+enum GasParameterCategory {
+  alert_thresholds            // Deviation %, expiration advance notice
+  penalty_formulas            // Take-or-pay, fines calculations
+  business_rules              // Rules by contract type
+  contract_templates          // Default fields for contracts
+  custom_fields               // Customizable fields per organization
+}
+
+model GasSystemParameter {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    // Parameter identification
+    category GasParameterCategory
+    key String                      // Unique key within category (e.g., "deviation_threshold", "take_or_pay_formula")
+    name String                     // Display name (e.g., "Limiar de Desvio", "Fórmula Take-or-Pay")
+    description String?             // Help text for the parameter
+
+    // Value storage (JSON for flexibility)
+    value String                    // JSON-encoded value
+    valueType String @default("number")  // number, percentage, formula, json, boolean, string
+
+    // Scope
+    contractType String?            // If parameter is specific to a contract type (null = all types)
+
+    // Defaults and constraints
+    defaultValue String?            // Default value for reset
+    minValue Float?                 // Minimum allowed value (for numbers)
+    maxValue Float?                 // Maximum allowed value (for numbers)
+
+    // Ordering for UI
+    orderIndex Int @default(0)
+
+    // Status
+    active Boolean @default(true)
+
+    // Audit fields
+    createdAt DateTime @default(now())
+    createdById String? @default(auth().userId)
+    updatedAt DateTime @updatedAt
+    updatedById String?
+
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@unique([organizationId, category, key])
+
+    // Only admin profile can manage system parameters
+    @@deny('all', auth() == null)
+    @@allow('read', auth().organizationId == organizationId)
+    @@allow('create,update,delete', auth().organizationId == organizationId && auth().organizationRole == 'admin')
+
+    @@index([organizationId, category])
+    @@map("gas_system_parameters")
+}
+
+// Contract templates for default field values
+model GasContractTemplate {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    // Template identification
+    name String                     // Template name (e.g., "Contrato Industrial Padrão")
+    description String?             // Template description
+    contractType String?            // Contract type this template applies to
+
+    // Template values (JSON for flexibility)
+    templateValues String           // JSON object with default field values
+
+    // Status
+    active Boolean @default(true)
+    isDefault Boolean @default(false)  // If true, used as default for new contracts
+
+    // Audit fields
+    createdAt DateTime @default(now())
+    createdById String? @default(auth().userId)
+    updatedAt DateTime @updatedAt
+
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@unique([organizationId, name])
+
+    // Only admin profile can manage templates
+    @@deny('all', auth() == null)
+    @@allow('read', auth().organizationId == organizationId)
+    @@allow('create,update,delete', auth().organizationId == organizationId && auth().organizationRole == 'admin')
+
+    @@map("gas_contract_templates")
+}
+
+// Custom fields configuration per organization
+model GasCustomField {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    // Field definition
+    fieldName String                // Internal field name (e.g., "custom_field_1")
+    displayName String              // Display label (e.g., "Número do Processo")
+    fieldType String @default("text")  // text, number, date, select, boolean
+    required Boolean @default(false)
+
+    // For select fields
+    options String?                 // JSON array of options for select fields
+
+    // Target entity
+    entityType String               // Which entity this field applies to: contract, unit, etc.
+
+    // Ordering
+    orderIndex Int @default(0)
+
+    // Status
+    active Boolean @default(true)
+
+    // Audit fields
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@unique([organizationId, entityType, fieldName])
+
+    // Only admin profile can manage custom fields
+    @@deny('all', auth() == null)
+    @@allow('read', auth().organizationId == organizationId)
+    @@allow('create,update,delete', auth().organizationId == organizationId && auth().organizationRole == 'admin')
+
+    @@map("gas_custom_fields")
 }
 
 // USER NOTIFICATION PREFERENCES ======================================================

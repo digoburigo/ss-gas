@@ -55,9 +55,11 @@ import { Route as AuthenticatedClientsNewRouteImport } from './routes/_authentic
 import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients/$clientId'
 import { Route as AuthenticatedGasSchedulingIndexRouteImport } from './routes/_authenticated/gas/scheduling/index'
 import { Route as AuthenticatedGasSchedulingDashboardIndexRouteImport } from './routes/_authenticated/gas/scheduling-dashboard/index'
+import { Route as AuthenticatedGasSchedulingAccuracyIndexRouteImport } from './routes/_authenticated/gas/scheduling-accuracy/index'
 import { Route as AuthenticatedGasContractsIndexRouteImport } from './routes/_authenticated/gas/contracts/index'
 import { Route as AuthenticatedGasContractAlertsIndexRouteImport } from './routes/_authenticated/gas/contract-alerts/index'
 import { Route as AuthenticatedGasConsumerUnitsIndexRouteImport } from './routes/_authenticated/gas/consumer-units/index'
+import { Route as AuthenticatedGasAdminParametersIndexRouteImport } from './routes/_authenticated/gas/admin-parameters/index'
 import { Route as AuthenticatedGasActualConsumptionIndexRouteImport } from './routes/_authenticated/gas/actual-consumption/index'
 import { Route as AuthenticatedAdminOrganizationsIndexRouteImport } from './routes/_authenticated/admin/organizations/index'
 
@@ -307,6 +309,12 @@ const AuthenticatedGasSchedulingDashboardIndexRoute =
     path: '/scheduling-dashboard/',
     getParentRoute: () => AuthenticatedGasLayoutRoute,
   } as any)
+const AuthenticatedGasSchedulingAccuracyIndexRoute =
+  AuthenticatedGasSchedulingAccuracyIndexRouteImport.update({
+    id: '/scheduling-accuracy/',
+    path: '/scheduling-accuracy/',
+    getParentRoute: () => AuthenticatedGasLayoutRoute,
+  } as any)
 const AuthenticatedGasContractsIndexRoute =
   AuthenticatedGasContractsIndexRouteImport.update({
     id: '/contracts/',
@@ -323,6 +331,12 @@ const AuthenticatedGasConsumerUnitsIndexRoute =
   AuthenticatedGasConsumerUnitsIndexRouteImport.update({
     id: '/consumer-units/',
     path: '/consumer-units/',
+    getParentRoute: () => AuthenticatedGasLayoutRoute,
+  } as any)
+const AuthenticatedGasAdminParametersIndexRoute =
+  AuthenticatedGasAdminParametersIndexRouteImport.update({
+    id: '/admin-parameters/',
+    path: '/admin-parameters/',
     getParentRoute: () => AuthenticatedGasLayoutRoute,
   } as any)
 const AuthenticatedGasActualConsumptionIndexRoute =
@@ -384,9 +398,11 @@ export interface FileRoutesByFullPath {
   '/users/': typeof AuthenticatedUsersIndexRoute
   '/admin/organizations/': typeof AuthenticatedAdminOrganizationsIndexRoute
   '/gas/actual-consumption/': typeof AuthenticatedGasActualConsumptionIndexRoute
+  '/gas/admin-parameters/': typeof AuthenticatedGasAdminParametersIndexRoute
   '/gas/consumer-units/': typeof AuthenticatedGasConsumerUnitsIndexRoute
   '/gas/contract-alerts/': typeof AuthenticatedGasContractAlertsIndexRoute
   '/gas/contracts/': typeof AuthenticatedGasContractsIndexRoute
+  '/gas/scheduling-accuracy/': typeof AuthenticatedGasSchedulingAccuracyIndexRoute
   '/gas/scheduling-dashboard/': typeof AuthenticatedGasSchedulingDashboardIndexRoute
   '/gas/scheduling/': typeof AuthenticatedGasSchedulingIndexRoute
 }
@@ -432,9 +448,11 @@ export interface FileRoutesByTo {
   '/users': typeof AuthenticatedUsersIndexRoute
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsIndexRoute
   '/gas/actual-consumption': typeof AuthenticatedGasActualConsumptionIndexRoute
+  '/gas/admin-parameters': typeof AuthenticatedGasAdminParametersIndexRoute
   '/gas/consumer-units': typeof AuthenticatedGasConsumerUnitsIndexRoute
   '/gas/contract-alerts': typeof AuthenticatedGasContractAlertsIndexRoute
   '/gas/contracts': typeof AuthenticatedGasContractsIndexRoute
+  '/gas/scheduling-accuracy': typeof AuthenticatedGasSchedulingAccuracyIndexRoute
   '/gas/scheduling-dashboard': typeof AuthenticatedGasSchedulingDashboardIndexRoute
   '/gas/scheduling': typeof AuthenticatedGasSchedulingIndexRoute
 }
@@ -486,9 +504,11 @@ export interface FileRoutesById {
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/admin/organizations/': typeof AuthenticatedAdminOrganizationsIndexRoute
   '/_authenticated/gas/actual-consumption/': typeof AuthenticatedGasActualConsumptionIndexRoute
+  '/_authenticated/gas/admin-parameters/': typeof AuthenticatedGasAdminParametersIndexRoute
   '/_authenticated/gas/consumer-units/': typeof AuthenticatedGasConsumerUnitsIndexRoute
   '/_authenticated/gas/contract-alerts/': typeof AuthenticatedGasContractAlertsIndexRoute
   '/_authenticated/gas/contracts/': typeof AuthenticatedGasContractsIndexRoute
+  '/_authenticated/gas/scheduling-accuracy/': typeof AuthenticatedGasSchedulingAccuracyIndexRoute
   '/_authenticated/gas/scheduling-dashboard/': typeof AuthenticatedGasSchedulingDashboardIndexRoute
   '/_authenticated/gas/scheduling/': typeof AuthenticatedGasSchedulingIndexRoute
 }
@@ -540,9 +560,11 @@ export interface FileRouteTypes {
     | '/users/'
     | '/admin/organizations/'
     | '/gas/actual-consumption/'
+    | '/gas/admin-parameters/'
     | '/gas/consumer-units/'
     | '/gas/contract-alerts/'
     | '/gas/contracts/'
+    | '/gas/scheduling-accuracy/'
     | '/gas/scheduling-dashboard/'
     | '/gas/scheduling/'
   fileRoutesByTo: FileRoutesByTo
@@ -588,9 +610,11 @@ export interface FileRouteTypes {
     | '/users'
     | '/admin/organizations'
     | '/gas/actual-consumption'
+    | '/gas/admin-parameters'
     | '/gas/consumer-units'
     | '/gas/contract-alerts'
     | '/gas/contracts'
+    | '/gas/scheduling-accuracy'
     | '/gas/scheduling-dashboard'
     | '/gas/scheduling'
   id:
@@ -641,9 +665,11 @@ export interface FileRouteTypes {
     | '/_authenticated/users/'
     | '/_authenticated/admin/organizations/'
     | '/_authenticated/gas/actual-consumption/'
+    | '/_authenticated/gas/admin-parameters/'
     | '/_authenticated/gas/consumer-units/'
     | '/_authenticated/gas/contract-alerts/'
     | '/_authenticated/gas/contracts/'
+    | '/_authenticated/gas/scheduling-accuracy/'
     | '/_authenticated/gas/scheduling-dashboard/'
     | '/_authenticated/gas/scheduling/'
   fileRoutesById: FileRoutesById
@@ -991,6 +1017,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGasSchedulingDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedGasLayoutRoute
     }
+    '/_authenticated/gas/scheduling-accuracy/': {
+      id: '/_authenticated/gas/scheduling-accuracy/'
+      path: '/scheduling-accuracy'
+      fullPath: '/gas/scheduling-accuracy/'
+      preLoaderRoute: typeof AuthenticatedGasSchedulingAccuracyIndexRouteImport
+      parentRoute: typeof AuthenticatedGasLayoutRoute
+    }
     '/_authenticated/gas/contracts/': {
       id: '/_authenticated/gas/contracts/'
       path: '/contracts'
@@ -1010,6 +1043,13 @@ declare module '@tanstack/react-router' {
       path: '/consumer-units'
       fullPath: '/gas/consumer-units/'
       preLoaderRoute: typeof AuthenticatedGasConsumerUnitsIndexRouteImport
+      parentRoute: typeof AuthenticatedGasLayoutRoute
+    }
+    '/_authenticated/gas/admin-parameters/': {
+      id: '/_authenticated/gas/admin-parameters/'
+      path: '/admin-parameters'
+      fullPath: '/gas/admin-parameters/'
+      preLoaderRoute: typeof AuthenticatedGasAdminParametersIndexRouteImport
       parentRoute: typeof AuthenticatedGasLayoutRoute
     }
     '/_authenticated/gas/actual-consumption/': {
@@ -1053,9 +1093,11 @@ interface AuthenticatedGasLayoutRouteChildren {
   AuthenticatedGasReportsRoute: typeof AuthenticatedGasReportsRoute
   AuthenticatedGasIndexRoute: typeof AuthenticatedGasIndexRoute
   AuthenticatedGasActualConsumptionIndexRoute: typeof AuthenticatedGasActualConsumptionIndexRoute
+  AuthenticatedGasAdminParametersIndexRoute: typeof AuthenticatedGasAdminParametersIndexRoute
   AuthenticatedGasConsumerUnitsIndexRoute: typeof AuthenticatedGasConsumerUnitsIndexRoute
   AuthenticatedGasContractAlertsIndexRoute: typeof AuthenticatedGasContractAlertsIndexRoute
   AuthenticatedGasContractsIndexRoute: typeof AuthenticatedGasContractsIndexRoute
+  AuthenticatedGasSchedulingAccuracyIndexRoute: typeof AuthenticatedGasSchedulingAccuracyIndexRoute
   AuthenticatedGasSchedulingDashboardIndexRoute: typeof AuthenticatedGasSchedulingDashboardIndexRoute
   AuthenticatedGasSchedulingIndexRoute: typeof AuthenticatedGasSchedulingIndexRoute
 }
@@ -1068,11 +1110,15 @@ const AuthenticatedGasLayoutRouteChildren: AuthenticatedGasLayoutRouteChildren =
     AuthenticatedGasIndexRoute: AuthenticatedGasIndexRoute,
     AuthenticatedGasActualConsumptionIndexRoute:
       AuthenticatedGasActualConsumptionIndexRoute,
+    AuthenticatedGasAdminParametersIndexRoute:
+      AuthenticatedGasAdminParametersIndexRoute,
     AuthenticatedGasConsumerUnitsIndexRoute:
       AuthenticatedGasConsumerUnitsIndexRoute,
     AuthenticatedGasContractAlertsIndexRoute:
       AuthenticatedGasContractAlertsIndexRoute,
     AuthenticatedGasContractsIndexRoute: AuthenticatedGasContractsIndexRoute,
+    AuthenticatedGasSchedulingAccuracyIndexRoute:
+      AuthenticatedGasSchedulingAccuracyIndexRoute,
     AuthenticatedGasSchedulingDashboardIndexRoute:
       AuthenticatedGasSchedulingDashboardIndexRoute,
     AuthenticatedGasSchedulingIndexRoute: AuthenticatedGasSchedulingIndexRoute,
