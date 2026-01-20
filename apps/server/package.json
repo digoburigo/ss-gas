@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@acme/auth": "workspace:*",
+    "@acme/email": "workspace:*",
     "@acme/zen-v3": "workspace:*",
     "@better-upload/server": "^3.0.12",
     "@elysiajs/cors": "^1.4.1",
