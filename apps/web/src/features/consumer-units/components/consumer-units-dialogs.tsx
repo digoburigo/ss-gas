@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
-import { apiClient } from "~/clients/api-client";
+import { api } from "~/clients/api-client";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import { ConsumerUnitsMutateDrawer } from "./consumer-units-mutate-drawer";
 import { useConsumerUnits } from "./consumer-units-provider";
@@ -55,7 +55,7 @@ export function ConsumerUnitsDialogs() {
     // First check if unit has pending schedules via API endpoint
     try {
       const response =
-        await apiClient.api.gas["consumer-units"][currentRow.id][
+        await api.gas["consumer-units"][currentRow.id][
           "can-delete"
         ].get();
 

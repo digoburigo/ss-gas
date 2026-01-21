@@ -10,7 +10,9 @@ type ActualConsumptionContextType = {
   open: ActualConsumptionDialogType | null;
   setOpen: (str: ActualConsumptionDialogType | null) => void;
   currentRow: GasRealConsumption | null;
-  setCurrentRow: React.Dispatch<React.SetStateAction<GasRealConsumption | null>>;
+  setCurrentRow: React.Dispatch<
+    React.SetStateAction<GasRealConsumption | null>
+  >;
 };
 
 const ActualConsumptionContext =

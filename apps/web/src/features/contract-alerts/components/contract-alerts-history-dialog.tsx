@@ -33,9 +33,9 @@ export function ContractAlertsHistoryDialog() {
     queryKey: ["alert-sent-logs", currentRow?.id],
     queryFn: async () => {
       if (!currentRow) return { alertId: "", logs: [] as SentLog[] };
-      const response = await api.gas.alerts({ alertId: currentRow.id })[
-        "sent-logs"
-      ].get();
+      const response = await api.gas
+        .alerts({ alertId: currentRow.id })
+        ["sent-logs"].get();
       if (response.error) {
         throw new Error("Failed to fetch sent logs");
       }
@@ -80,16 +80,16 @@ export function ContractAlertsHistoryDialog() {
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <AlertTriangle className="text-destructive h-10 w-10 mb-2" />
+              <AlertTriangle className="text-destructive mb-2 h-10 w-10" />
               <p className="text-destructive">Erro ao carregar histórico</p>
             </div>
           ) : logs.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <Mail className="text-muted-foreground h-10 w-10 mb-2" />
+              <Mail className="text-muted-foreground mb-2 h-10 w-10" />
               <p className="text-muted-foreground">
                 Nenhum email foi enviado para este alerta ainda.
               </p>
-              <p className="text-muted-foreground text-sm mt-1">
+              <p className="text-muted-foreground mt-1 text-sm">
                 Os emails serão enviados automaticamente de acordo com a
                 configuração de antecedência.
               </p>
@@ -109,7 +109,9 @@ export function ContractAlertsHistoryDialog() {
                     )}
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-medium">{log.recipientEmail}</span>
+                        <span className="font-medium">
+                          {log.recipientEmail}
+                        </span>
                         <Badge
                           variant={
                             log.status === "sent" ? "default" : "destructive"
@@ -127,9 +129,13 @@ export function ContractAlertsHistoryDialog() {
                         </Badge>
                       </div>
                       <p className="text-muted-foreground mt-1 text-sm">
-                        {format(new Date(log.sentAt), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
-                          locale: ptBR,
-                        })}
+                        {format(
+                          new Date(log.sentAt),
+                          "dd 'de' MMMM 'de' yyyy 'às' HH:mm",
+                          {
+                            locale: ptBR,
+                          },
+                        )}
                       </p>
                       {log.errorMessage && (
                         <p className="text-destructive mt-1 text-sm">

@@ -1,6 +1,12 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { LucideIcon } from "lucide-react";
-import { AlertTriangle, Calculator, CheckCircle, Gauge, HandMetal } from "lucide-react";
+import {
+  AlertTriangle,
+  Calculator,
+  CheckCircle,
+  Gauge,
+  HandMetal,
+} from "lucide-react";
 
 import type {
   ConsumptionSource,
@@ -229,9 +235,17 @@ export const columns: ColumnDef<RealConsumptionWithRelations>[] = [
       const isWithinLimit = Math.abs(deviation.percent) <= 10;
 
       if (value.includes("within_limit") && isWithinLimit) return true;
-      if (value.includes("above_limit") && !isWithinLimit && deviation.absolute > 0)
+      if (
+        value.includes("above_limit") &&
+        !isWithinLimit &&
+        deviation.absolute > 0
+      )
         return true;
-      if (value.includes("below_limit") && !isWithinLimit && deviation.absolute < 0)
+      if (
+        value.includes("below_limit") &&
+        !isWithinLimit &&
+        deviation.absolute < 0
+      )
         return true;
 
       return false;

@@ -163,6 +163,6 @@ export async function generateMetadata({
 
 export function generateStaticParams() { 
   return Promise.resolve(
-    [{"slug":["ContractAlertEmail"]},{"slug":["EmailVerificationEmail"]},{"slug":["MissingDailyEntryEmail"]},{"slug":["OrganizationInvitationEmail"]},{"slug":["PatientRegistrationEmail"]},{"slug":["ResetPasswordEmail"]},{"slug":["TestEmail"]},{"slug":["UserPatientPasswordEmail"]},{"slug":["welcome"]}]
+    [{"slug":["ContractAlertEmail"]},{"slug":["DeviationAlertEmail"]},{"slug":["EmailVerificationEmail"]},{"slug":["MissingDailyEntryEmail"]},{"slug":["OrganizationInvitationEmail"]},{"slug":["PatientRegistrationEmail"]},{"slug":["ResetPasswordEmail"]},{"slug":["TestEmail"]},{"slug":["UserPatientPasswordEmail"]},{"slug":["welcome"]}]
   );
 }

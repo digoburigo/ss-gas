@@ -59,7 +59,9 @@ export function ActualConsumptionForm({
   const [selectedDate, setSelectedDate] = useState(
     defaultValues?.date ?? new Date().toISOString().split("T")[0] ?? "",
   );
-  const [actualVolume, setActualVolume] = useState(defaultValues?.qdrValue ?? 0);
+  const [actualVolume, setActualVolume] = useState(
+    defaultValues?.qdrValue ?? 0,
+  );
   const [selectedSource, setSelectedSource] = useState<ConsumptionSource>(
     defaultValues?.source ?? "meter",
   );
@@ -112,7 +114,8 @@ export function ActualConsumptionForm({
         qdrValue: actualVolume, // Use the tracked volume (may be calculated from meter readings)
         source: selectedSource,
         meterReading: selectedSource === "meter" ? meterReading : null,
-        previousMeterReading: selectedSource === "meter" ? previousMeterReading : null,
+        previousMeterReading:
+          selectedSource === "meter" ? previousMeterReading : null,
         notes: value.notes,
       });
     },
@@ -351,7 +354,9 @@ export function ActualConsumptionForm({
           <Label>Volume Consumido (QDR)</Label>
           <div className="bg-muted rounded-md p-3">
             <span className="text-lg font-bold">
-              {actualVolume.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}{" "}
+              {actualVolume.toLocaleString("pt-BR", {
+                maximumFractionDigits: 2,
+              })}{" "}
               {contract?.volumeUnit ?? "m³"}
             </span>
             <span className="text-muted-foreground ml-2 text-sm">

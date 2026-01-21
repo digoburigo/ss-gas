@@ -11,16 +11,20 @@ const actualConsumptionSearchSchema = z.object({
     .optional()
     .catch([]),
   deviation: z
-    .array(z.enum(["within_limit", "above_limit", "below_limit", "no_schedule"]))
+    .array(
+      z.enum(["within_limit", "above_limit", "below_limit", "no_schedule"]),
+    )
     .optional()
     .catch([]),
   filter: z.string().optional().catch(""),
 });
 
-export const Route = createFileRoute("/_authenticated/gas/actual-consumption/")({
-  validateSearch: actualConsumptionSearchSchema,
-  component: RouteComponent,
-});
+export const Route = createFileRoute("/_authenticated/gas/actual-consumption/")(
+  {
+    validateSearch: actualConsumptionSearchSchema,
+    component: RouteComponent,
+  },
+);
 
 export default function RouteComponent() {
   return <ActualConsumption />;
