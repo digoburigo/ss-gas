@@ -8,6 +8,9 @@
   "packageManager": "pnpm@10.30.1",
   "scripts": {
     "build": "turbo run build",
+    "build:spa": "turbo run build -F @acme/web... -F @acme/server...",
+    "build:front": "turbo run build -F @acme/web...",
+    "build:server": "turbo run build -F @acme/server...",
     "clean": "git clean -xdf node_modules .turbo",
     "clean:workspaces": "turbo run clean",
     "auth:generate": "pnpm -F @acme/auth generate",

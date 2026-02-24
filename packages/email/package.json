@@ -8,7 +8,7 @@
 		"./emails": "./src/emails/index.ts"
 	},
 	"scripts": {
-		"build": "email build --dir ./src/emails",
+		"build": "echo 'Email package: no build step required'",
 		"clean": "rm -rf .turbo node_modules",
 		"dev": "email dev -p 3003 --dir ./src/emails",
 		"format": "biome format --write .",
