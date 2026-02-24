@@ -14,8 +14,20 @@ import { DataTableColumnHeader } from "~/components/data-table/column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 
 type DailyPlanWithRelations = GasDailyPlan & {
-  unit: GasUnit & { contract: GasContract | null };
-  createdByUser: User | null;
+  unit: GasUnit & {
+    contract:
+      | Pick<
+          GasContract,
+          | "id"
+          | "name"
+          | "qdcContracted"
+          | "transportToleranceUpperPercent"
+          | "transportToleranceLowerPercent"
+          | "volumeUnit"
+        >
+      | null;
+  };
+  createdByUser: Pick<User, "id" | "name"> | null;
   submittedByUser: User | null;
 };
 

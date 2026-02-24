@@ -257,7 +257,7 @@ function GasAdminPage() {
       {
         where: { equipmentId: historyEquipmentId ?? undefined },
         include: {
-          createdByUser: { select: { id: true, name: true, email: true } },
+          createdByUser: true,
           equipment: { include: { unit: true } },
         },
         orderBy: { effectiveFrom: "desc" },

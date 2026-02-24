@@ -55,6 +55,7 @@ export function SchedulingDashboardTable() {
   // Fetch all active units
   const { data: units = [], isFetching: isFetchingUnits } =
     client.gasUnit.useFindMany({
+      take: 99,
       where: { active: true },
       include: {
         contract: {
@@ -72,12 +73,9 @@ export function SchedulingDashboardTable() {
   const dateStr = format(selectedDate, "yyyy-MM-dd");
   const { data: dailyPlans = [], isFetching: isFetchingPlans } =
     client.gasDailyPlan.useFindMany({
+      take: 99,
       where: {
         date: new Date(dateStr),
-      },
-      include: {
-        unit: true,
-        createdByUser: true,
       },
     });
 

@@ -1,13 +1,17 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
-import type { GasUnit } from "@acme/zen-v3/zenstack/models";
+import type { GasContract, GasUnit } from "@acme/zen-v3/zenstack/models";
 import { Badge } from "@acme/ui/badge";
 import { Checkbox } from "@acme/ui/checkbox";
 
 import { DataTableColumnHeader } from "~/components/data-table";
 import { DataTableRowActions } from "./data-table-row-actions";
 
-export const consumerUnitsColumns: ColumnDef<GasUnit>[] = [
+type GasUnitWithContract = GasUnit & {
+  contract?: Pick<GasContract, "id" | "name"> | null;
+};
+
+export const consumerUnitsColumns: ColumnDef<GasUnitWithContract>[] = [
   {
     id: "select",
     header: ({ table }) => (

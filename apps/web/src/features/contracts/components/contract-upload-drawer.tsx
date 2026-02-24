@@ -225,6 +225,15 @@ export function ContractUploadDrawer({
     penaltyCalculationMethod: string;
     latePaymentPenaltyPercent: number | null;
     latePaymentInterestPercent: number | null;
+    cmcMinUsagePercent: number | null;
+    pvemaTolerancePercent: number | null;
+    pvemeTolerancePercent: number | null;
+    overdemandTier1MaxPercent: number | null;
+    overdemandTier2MaxPercent: number | null;
+    overdemandTier2Multiplier: number | null;
+    overdemandTier3Multiplier: number | null;
+    tusdTariffPerUnit: number | null;
+    penaltyFormulasJson: string;
     effectiveFrom: string;
     effectiveTo: string;
     renewalDate: string;
@@ -271,6 +280,15 @@ export function ContractUploadDrawer({
       penaltyCalculationMethod: data.penaltyCalculationMethod || null,
       latePaymentPenaltyPercent: data.latePaymentPenaltyPercent,
       latePaymentInterestPercent: data.latePaymentInterestPercent,
+      cmcMinUsagePercent: data.cmcMinUsagePercent,
+      pvemaTolerancePercent: data.pvemaTolerancePercent,
+      pvemeTolerancePercent: data.pvemeTolerancePercent,
+      overdemandTier1MaxPercent: data.overdemandTier1MaxPercent,
+      overdemandTier2MaxPercent: data.overdemandTier2MaxPercent,
+      overdemandTier2Multiplier: data.overdemandTier2Multiplier,
+      overdemandTier3Multiplier: data.overdemandTier3Multiplier,
+      tusdTariffPerUnit: data.tusdTariffPerUnit,
+      penaltyFormulasJson: data.penaltyFormulasJson || null,
       effectiveFrom: new Date(data.effectiveFrom),
       effectiveTo: data.effectiveTo ? new Date(data.effectiveTo) : null,
       renewalDate: data.renewalDate ? new Date(data.renewalDate) : null,

@@ -27,7 +27,19 @@ interface DailySchedulingFormProps {
   isSubmitting?: boolean;
 }
 
-type UnitWithContract = GasUnit & { contract: GasContract | null };
+type UnitWithContract = GasUnit & {
+  contract:
+    | Pick<
+        GasContract,
+        | "id"
+        | "name"
+        | "qdcContracted"
+        | "transportToleranceUpperPercent"
+        | "transportToleranceLowerPercent"
+        | "volumeUnit"
+      >
+    | null;
+};
 
 export function DailySchedulingForm({
   defaultValues,
@@ -39,7 +51,18 @@ export function DailySchedulingForm({
   // Fetch active units with their contracts
   const { data: units = [] } = client.gasUnit.useFindMany({
     where: { active: true },
-    include: { contract: true },
+    include: {
+      contract: {
+        select: {
+          id: true,
+          name: true,
+          qdcContracted: true,
+          transportToleranceUpperPercent: true,
+          transportToleranceLowerPercent: true,
+          volumeUnit: true,
+        },
+      },
+    },
     orderBy: { name: "asc" },
   });
 

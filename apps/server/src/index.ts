@@ -1,6 +1,5 @@
 import { db } from "@acme/zen-v3";
 import { cors } from "@elysiajs/cors";
-import { node } from "@elysiajs/node";
 import { fromTypes, openapi } from "@elysiajs/openapi";
 import { Elysia, t } from "elysia";
 import { sql } from "kysely";
@@ -18,7 +17,6 @@ const trustedOrigins = [
 ].map((url) => new URL(url).origin);
 
 export const app = new Elysia({
-	adapter: node(),
 	prefix: "/api",
 })
 	.use(
@@ -97,9 +95,14 @@ export const app = new Elysia({
 				}),
 			},
 		},
-	)
-	.listen(3000, ({ hostname, port }) => {
+	);
+
+export default app;
+
+if (!process.env.VERCEL) {
+	app.listen({ hostname: "0.0.0.0", port: 3000 }, ({ hostname, port }) => {
 		console.log(`🦊 Elysia is running at ${hostname}:${port}`);
 	});
+}
 
 export type App = typeof app;

@@ -15,7 +15,7 @@ import {
 } from "@tanstack/react-table";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 
-import type { GasUnit } from "@acme/zen-v3/zenstack/models";
+import type { GasContract, GasUnit } from "@acme/zen-v3/zenstack/models";
 import { cn } from "@acme/ui";
 import {
   Table,
@@ -37,11 +37,21 @@ const route = getRouteApi("/_authenticated/gas/consumer-units/");
 export function ConsumerUnitsTable() {
   const client = useClientQueries(schema);
   const { data: units = [], isFetching } = client.gasUnit.useFindMany({
+    take: 99,
     include: {
-      contract: true,
+      contract: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
     orderBy: { code: "asc" },
   });
+
+  type GasUnitWithContract = GasUnit & {
+    contract?: Pick<GasContract, "id" | "name"> | null;
+  };
 
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({});
@@ -67,7 +77,7 @@ export function ConsumerUnitsTable() {
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data: units as GasUnit[],
+    data: units as GasUnitWithContract[],
     columns,
     state: {
       sorting,

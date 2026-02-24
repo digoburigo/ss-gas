@@ -47,13 +47,24 @@ function SchedulingAccuracyContent() {
       include: {
         unit: {
           include: {
-            contract: true,
+            contract: {
+              select: {
+                id: true,
+                name: true,
+                transportToleranceUpperPercent: true,
+              },
+            },
             dailyPlans: {
               where: {
                 date: {
                   gte: dateRange.start,
                   lte: dateRange.end,
                 },
+              },
+              select: {
+                id: true,
+                date: true,
+                qdpValue: true,
               },
             },
           },

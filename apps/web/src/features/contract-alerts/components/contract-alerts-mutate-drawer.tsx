@@ -18,8 +18,8 @@ import { schema } from "@acme/zen-v3/zenstack/schema";
 import { ContractAlertForm } from "./contract-alert-form";
 
 type GasContractAlertWithRelations = GasContractAlert & {
-  contract?: GasContract | null;
-  recipients?: GasContractAlertRecipient[];
+  contract?: Pick<GasContract, "id" | "name"> | null;
+  recipients?: Array<Pick<GasContractAlertRecipient, "id" | "email" | "name">>;
 };
 
 type ContractAlertsMutateDrawerProps = {

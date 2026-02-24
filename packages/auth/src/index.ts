@@ -66,7 +66,7 @@ export function initAuth<
 			"exp://",
 			"https://*.exp.direct",
 			"http://localhost:*",
-			process.env.PUBLIC_WEB_URL ?? "",
+			...(process.env.PUBLIC_WEB_URL ? [process.env.PUBLIC_WEB_URL] : []),
 		],
 		onAPIError: {
 			onError(error, ctx) {

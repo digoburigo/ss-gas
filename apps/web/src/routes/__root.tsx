@@ -6,16 +6,16 @@ import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { setDefaultOptions } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { scan } from "react-scan"; // must be imported before React and React DOM
+// import { scan } from "react-scan"; // must be imported before React and React DOM
 import { Toaster } from "sonner";
 
 import { authClient } from "~/clients/auth-client";
 
 setDefaultOptions({ locale: ptBR });
 
-scan({
-  enabled: true,
-});
+// scan({
+//   enabled: true,
+// });
 
 export const Route = createRootRoute({
   component: RootComponent,

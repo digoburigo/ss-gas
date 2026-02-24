@@ -15,8 +15,8 @@ import { eventTypeOptions, recurrenceOptions } from "../data/data";
 import { DataTableRowActions } from "./data-table-row-actions";
 
 type GasContractAlertWithRelations = GasContractAlert & {
-  contract?: GasContract | null;
-  recipients?: GasContractAlertRecipient[];
+  contract?: Pick<GasContract, "id" | "name"> | null;
+  recipients?: Array<Pick<GasContractAlertRecipient, "id" | "email" | "name">>;
 };
 
 export const contractAlertsColumns: ColumnDef<GasContractAlertWithRelations>[] =

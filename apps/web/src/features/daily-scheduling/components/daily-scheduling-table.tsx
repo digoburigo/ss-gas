@@ -37,14 +37,28 @@ export function DailySchedulingTable() {
 
   const { data: dailyPlans = [], isFetching } = client.gasDailyPlan.useFindMany(
     {
+      take: 99,
       include: {
         unit: {
           include: {
-            contract: true,
+            contract: {
+              select: {
+                id: true,
+                name: true,
+                qdcContracted: true,
+                transportToleranceUpperPercent: true,
+                transportToleranceLowerPercent: true,
+                volumeUnit: true,
+              },
+            },
           },
         },
-        createdByUser: true,
-        submittedByUser: true,
+        createdByUser: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
       orderBy: [{ date: "desc" }, { createdAt: "desc" }],
     },

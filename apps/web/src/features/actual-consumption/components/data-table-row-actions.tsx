@@ -21,10 +21,10 @@ import { useActualConsumption } from "./actual-consumption-provider";
 
 type RealConsumptionWithRelations = GasRealConsumption & {
   unit: GasUnit & {
-    contract: GasContract | null;
-    dailyPlans?: GasDailyPlan[];
+    contract: Pick<GasContract, "id" | "name" | "volumeUnit"> | null;
+    dailyPlans?: Array<Pick<GasDailyPlan, "id" | "date" | "qdpValue">>;
   };
-  createdByUser: User | null;
+  createdByUser: Pick<User, "id" | "name"> | null;
 };
 
 interface DataTableRowActionsProps {

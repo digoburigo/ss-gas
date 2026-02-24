@@ -26,25 +26,25 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@zenstackhq/orm": "^3.2.1",
-    "@zenstackhq/plugin-policy": "^3.2.1",
-    "@zenstackhq/tanstack-query": "^3.2.1",
-    "dotenv": "^17.2.3",
+    "@zenstackhq/orm": "^3.3.3",
+    "@zenstackhq/plugin-policy": "^3.3.3",
+    "@zenstackhq/tanstack-query": "^3.3.3",
+    "dotenv": "^17.3.1",
     "kysely": "catalog:",
-    "pg": "^8.17.2",
+    "pg": "^8.18.0",
     "postgres": "^3.4.8",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@acme/tsconfig": "workspace:*",
-    "@faker-js/faker": "^10.2.0",
+    "@faker-js/faker": "^10.3.0",
     "@types/node": "catalog:",
     "@types/pg": "^8.16.0",
-    "@zenstackhq/cli": "^3.2.1",
-    "dotenv": "^17.2.3",
-    "drizzle-kit": "^0.31.8",
+    "@zenstackhq/cli": "^3.3.3",
+    "dotenv": "^17.3.1",
+    "drizzle-kit": "^0.31.9",
     "drizzle-orm": "^0.45.1",
-    "prisma": "^7.3.0",
+    "prisma": "^7.4.1",
     "typescript": "catalog:"
   }
 }

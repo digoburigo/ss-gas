@@ -75,6 +75,15 @@ interface ContractFormData {
   penaltyCalculationMethod: string;
   latePaymentPenaltyPercent: number | null;
   latePaymentInterestPercent: number | null;
+  cmcMinUsagePercent: number | null;
+  pvemaTolerancePercent: number | null;
+  pvemeTolerancePercent: number | null;
+  overdemandTier1MaxPercent: number | null;
+  overdemandTier2MaxPercent: number | null;
+  overdemandTier2Multiplier: number | null;
+  overdemandTier3Multiplier: number | null;
+  tusdTariffPerUnit: number | null;
+  penaltyFormulasJson: string;
   effectiveFrom: string;
   effectiveTo: string;
   renewalDate: string;
@@ -256,6 +265,43 @@ export function ContractExtractionForm({
         null,
       ) as number | null,
 
+      // CUSD Penalty Parameters
+      cmcMinUsagePercent: getFieldValue(
+        extractedData.cmcMinUsagePercent,
+        null,
+      ) as number | null,
+      pvemaTolerancePercent: getFieldValue(
+        extractedData.pvemaTolerancePercent,
+        null,
+      ) as number | null,
+      pvemeTolerancePercent: getFieldValue(
+        extractedData.pvemeTolerancePercent,
+        null,
+      ) as number | null,
+      overdemandTier1MaxPercent: getFieldValue(
+        extractedData.overdemandTier1MaxPercent,
+        null,
+      ) as number | null,
+      overdemandTier2MaxPercent: getFieldValue(
+        extractedData.overdemandTier2MaxPercent,
+        null,
+      ) as number | null,
+      overdemandTier2Multiplier: getFieldValue(
+        extractedData.overdemandTier2Multiplier,
+        null,
+      ) as number | null,
+      overdemandTier3Multiplier: getFieldValue(
+        extractedData.overdemandTier3Multiplier,
+        null,
+      ) as number | null,
+      tusdTariffPerUnit: getFieldValue(
+        extractedData.tusdTariffPerUnit,
+        null,
+      ) as number | null,
+      penaltyFormulasJson: extractedData.penaltyFormulas?.value
+        ? JSON.stringify(extractedData.penaltyFormulas.value, null, 2)
+        : "",
+
       // Important Events/Dates
       effectiveFrom: getFieldValue(extractedData.effectiveFrom, ""),
       effectiveTo: getFieldValue(extractedData.effectiveTo, ""),
@@ -316,6 +362,15 @@ export function ContractExtractionForm({
         penaltyCalculationMethod: z.string().optional(),
         latePaymentPenaltyPercent: z.number().nullable(),
         latePaymentInterestPercent: z.number().nullable(),
+        cmcMinUsagePercent: z.number().min(0).max(100).nullable(),
+        pvemaTolerancePercent: z.number().min(0).max(100).nullable(),
+        pvemeTolerancePercent: z.number().min(0).max(100).nullable(),
+        overdemandTier1MaxPercent: z.number().min(100).max(300).nullable(),
+        overdemandTier2MaxPercent: z.number().min(100).max(300).nullable(),
+        overdemandTier2Multiplier: z.number().min(0).nullable(),
+        overdemandTier3Multiplier: z.number().min(0).nullable(),
+        tusdTariffPerUnit: z.number().min(0).nullable(),
+        penaltyFormulasJson: z.string().optional(),
         effectiveFrom: z.string().min(1, "Data de início é obrigatória"),
         effectiveTo: z.string().optional(),
         renewalDate: z.string().optional(),
@@ -1126,6 +1181,321 @@ export function ContractExtractionForm({
                 value={field.state.value}
                 rows={2}
                 className={getFieldClass("penaltyCalculationMethod")}
+              />
+            </div>
+          )}
+        </form.Field>
+      </div>
+
+      {/* === Section 4b: CUSD Penalty Formulas === */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">Fórmulas CUSD</h3>
+        <Separator />
+        <p className="text-muted-foreground text-sm">
+          Parâmetros de penalidade específicos para contratos CUSD (distribuição
+          de gás canalizado). Deixe em branco se não aplicável.
+        </p>
+
+        {/* TUSD Tariff */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <form.Field name="tusdTariffPerUnit">
+            {(field) => (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor={field.name}>Tarifa TUSD (R$/m³)</Label>
+                  <ConfidenceIndicator
+                    confidence={getConfidence(extractedData.tusdTariffPerUnit)}
+                    source={extractedData.tusdTariffPerUnit?.source}
+                  />
+                </div>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  onBlur={field.handleBlur}
+                  onChange={(e) =>
+                    field.handleChange(
+                      e.target.value ? Number(e.target.value) : null,
+                    )
+                  }
+                  type="number"
+                  step="0.01"
+                  value={field.state.value ?? ""}
+                  className={getFieldClass("tusdTariffPerUnit")}
+                />
+              </div>
+            )}
+          </form.Field>
+        </div>
+
+        {/* CMC */}
+        <div className="space-y-4 rounded-lg border p-4">
+          <h4 className="font-medium">CMC — Consumo Mínimo Contratual</h4>
+          <div className="grid gap-4 md:grid-cols-2">
+            <form.Field name="cmcMinUsagePercent">
+              {(field) => (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={field.name}>Uso Mínimo CDC (%)</Label>
+                    <ConfidenceIndicator
+                      confidence={getConfidence(
+                        extractedData.cmcMinUsagePercent,
+                      )}
+                      source={extractedData.cmcMinUsagePercent?.source}
+                    />
+                  </div>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) =>
+                      field.handleChange(
+                        e.target.value ? Number(e.target.value) : null,
+                      )
+                    }
+                    type="number"
+                    step="0.1"
+                    value={field.state.value ?? ""}
+                    className={getFieldClass("cmcMinUsagePercent")}
+                    placeholder="Ex: 90"
+                  />
+                  <p className="text-muted-foreground text-xs">
+                    Penalidade se consumo &lt; CMC% da CDC
+                  </p>
+                </div>
+              )}
+            </form.Field>
+          </div>
+        </div>
+
+        {/* PVEMA / PVEME */}
+        <div className="space-y-4 rounded-lg border p-4">
+          <h4 className="font-medium">
+            PVEMA / PVEME — Pressão e Volume de Entrega
+          </h4>
+          <div className="grid gap-4 md:grid-cols-2">
+            <form.Field name="pvemaTolerancePercent">
+              {(field) => (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={field.name}>PVEMA — Tol. Sup. (%)</Label>
+                    <ConfidenceIndicator
+                      confidence={getConfidence(
+                        extractedData.pvemaTolerancePercent,
+                      )}
+                      source={extractedData.pvemaTolerancePercent?.source}
+                    />
+                  </div>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) =>
+                      field.handleChange(
+                        e.target.value ? Number(e.target.value) : null,
+                      )
+                    }
+                    type="number"
+                    step="0.1"
+                    value={field.state.value ?? ""}
+                    className={getFieldClass("pvemaTolerancePercent")}
+                    placeholder="Ex: 10"
+                  />
+                  <p className="text-muted-foreground text-xs">
+                    Tolerância superior sobre CDP (+%)
+                  </p>
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="pvemeTolerancePercent">
+              {(field) => (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={field.name}>PVEME — Tol. Inf. (%)</Label>
+                    <ConfidenceIndicator
+                      confidence={getConfidence(
+                        extractedData.pvemeTolerancePercent,
+                      )}
+                      source={extractedData.pvemeTolerancePercent?.source}
+                    />
+                  </div>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) =>
+                      field.handleChange(
+                        e.target.value ? Number(e.target.value) : null,
+                      )
+                    }
+                    type="number"
+                    step="0.1"
+                    value={field.state.value ?? ""}
+                    className={getFieldClass("pvemeTolerancePercent")}
+                    placeholder="Ex: 20"
+                  />
+                  <p className="text-muted-foreground text-xs">
+                    Tolerância inferior sobre CDP (-%)
+                  </p>
+                </div>
+              )}
+            </form.Field>
+          </div>
+        </div>
+
+        {/* Overdemand */}
+        <div className="space-y-4 rounded-lg border p-4">
+          <h4 className="font-medium">Sobredemanda</h4>
+          <div className="grid gap-4 md:grid-cols-2">
+            <form.Field name="overdemandTier1MaxPercent">
+              {(field) => (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={field.name}>Limite Sem Cobrança (%)</Label>
+                    <ConfidenceIndicator
+                      confidence={getConfidence(
+                        extractedData.overdemandTier1MaxPercent,
+                      )}
+                    />
+                  </div>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) =>
+                      field.handleChange(
+                        e.target.value ? Number(e.target.value) : null,
+                      )
+                    }
+                    type="number"
+                    step="0.1"
+                    value={field.state.value ?? ""}
+                    className={getFieldClass("overdemandTier1MaxPercent")}
+                    placeholder="Ex: 110"
+                  />
+                  <p className="text-muted-foreground text-xs">
+                    Até este % da CDC, sem cobrança extra
+                  </p>
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="overdemandTier2MaxPercent">
+              {(field) => (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={field.name}>Limite Faixa 2 (%)</Label>
+                    <ConfidenceIndicator
+                      confidence={getConfidence(
+                        extractedData.overdemandTier2MaxPercent,
+                      )}
+                    />
+                  </div>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) =>
+                      field.handleChange(
+                        e.target.value ? Number(e.target.value) : null,
+                      )
+                    }
+                    type="number"
+                    step="0.1"
+                    value={field.state.value ?? ""}
+                    className={getFieldClass("overdemandTier2MaxPercent")}
+                    placeholder="Ex: 115"
+                  />
+                  <p className="text-muted-foreground text-xs">
+                    Teto da faixa 2 (% da CDC)
+                  </p>
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="overdemandTier2Multiplier">
+              {(field) => (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={field.name}>Multiplicador Faixa 2</Label>
+                    <ConfidenceIndicator
+                      confidence={getConfidence(
+                        extractedData.overdemandTier2Multiplier,
+                      )}
+                    />
+                  </div>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) =>
+                      field.handleChange(
+                        e.target.value ? Number(e.target.value) : null,
+                      )
+                    }
+                    type="number"
+                    step="0.1"
+                    value={field.state.value ?? ""}
+                    className={getFieldClass("overdemandTier2Multiplier")}
+                    placeholder="Ex: 1.0"
+                  />
+                  <p className="text-muted-foreground text-xs">
+                    Multiplicador TUSD para faixa 2
+                  </p>
+                </div>
+              )}
+            </form.Field>
+
+            <form.Field name="overdemandTier3Multiplier">
+              {(field) => (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor={field.name}>Multiplicador Faixa 3</Label>
+                    <ConfidenceIndicator
+                      confidence={getConfidence(
+                        extractedData.overdemandTier3Multiplier,
+                      )}
+                    />
+                  </div>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={(e) =>
+                      field.handleChange(
+                        e.target.value ? Number(e.target.value) : null,
+                      )
+                    }
+                    type="number"
+                    step="0.1"
+                    value={field.state.value ?? ""}
+                    className={getFieldClass("overdemandTier3Multiplier")}
+                    placeholder="Ex: 1.5"
+                  />
+                  <p className="text-muted-foreground text-xs">
+                    Multiplicador TUSD para faixa 3 (acima do teto faixa 2)
+                  </p>
+                </div>
+              )}
+            </form.Field>
+          </div>
+        </div>
+
+        {/* Extracted Formulas JSON (read-only audit) */}
+        <form.Field name="penaltyFormulasJson">
+          {(field) => (
+            <div className="space-y-2">
+              <Label htmlFor={field.name}>Fórmulas Extraídas (auditoria)</Label>
+              <Textarea
+                id={field.name}
+                name={field.name}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                value={field.state.value}
+                rows={6}
+                className="font-mono text-xs"
+                readOnly
+                placeholder="As fórmulas extraídas pelo IA aparecerão aqui"
               />
             </div>
           )}

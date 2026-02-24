@@ -24,10 +24,10 @@ import { DataTableRowActions } from "./data-table-row-actions";
 
 type RealConsumptionWithRelations = GasRealConsumption & {
   unit: GasUnit & {
-    contract: GasContract | null;
-    dailyPlans?: GasDailyPlan[];
+    contract: Pick<GasContract, "id" | "name" | "volumeUnit"> | null;
+    dailyPlans?: Array<Pick<GasDailyPlan, "id" | "date" | "qdpValue">>;
   };
-  createdByUser: User | null;
+  createdByUser: Pick<User, "id" | "name"> | null;
 };
 
 // Helper to get the scheduled value for the same date

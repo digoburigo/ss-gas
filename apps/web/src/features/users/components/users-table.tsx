@@ -42,14 +42,11 @@ export function UsersTable() {
   // Get members from ZenStack with user relation
   const client = useClientQueries(schema);
   const { data: zenstackMembers = [], isPending } = client.member.useFindMany({
+    take: 99,
     where: { organizationId: activeOrganization?.id ?? "" },
     include: {
       user: true,
-      unitAssignments: {
-        select: {
-          unitId: true,
-        },
-      },
+      unitAssignments: true,
     },
   });
 

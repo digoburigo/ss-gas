@@ -59,6 +59,20 @@ const ExtractedContractSchema = t.Object({
 	latePaymentPenaltyPercent: ExtractedFieldSchema,
 	latePaymentInterestPercent: ExtractedFieldSchema,
 
+	// CUSD Penalty Parameters
+	cmcMinUsagePercent: ExtractedFieldSchema,
+	pvemaTolerancePercent: ExtractedFieldSchema,
+	pvemeTolerancePercent: ExtractedFieldSchema,
+	overdemandTier1MaxPercent: ExtractedFieldSchema,
+	overdemandTier2MaxPercent: ExtractedFieldSchema,
+	overdemandTier2Multiplier: ExtractedFieldSchema,
+	overdemandTier3Multiplier: ExtractedFieldSchema,
+	tusdTariffPerUnit: ExtractedFieldSchema,
+	penaltyFormulas: t.Object({
+		value: t.Union([t.Record(t.String(), t.Unknown()), t.Null()]),
+		confidence: t.Number({ minimum: 0, maximum: 1 }),
+	}),
+
 	// Important Events/Dates
 	effectiveFrom: ExtractedFieldSchema,
 	effectiveTo: ExtractedFieldSchema,
@@ -130,6 +144,37 @@ PENALIDADES:
 - penaltyCalculationMethod: Descrição do método de cálculo das penalidades
 - latePaymentPenaltyPercent: Multa por atraso no pagamento (%)
 - latePaymentInterestPercent: Juros de mora mensal (%)
+
+FÓRMULAS DE PENALIDADE CUSD (se aplicável):
+
+Se o contrato for um CUSD ou contrato de distribuição de gás canalizado, extraia:
+
+CMC (Cláusula 9.1):
+- cmcMinUsagePercent: Percentual mínimo de uso da CDC (ex: 90)
+
+PVEMA (Cláusula 9.2.1):
+- pvemaTolerancePercent: Tolerância superior sobre CDP (ex: 10 para +10%)
+
+PVEME (Cláusula 9.2.2):
+- pvemeTolerancePercent: Tolerância inferior sobre CDP (ex: 20 para -20%)
+
+Sobredemanda (Cláusula 9.3):
+- overdemandTier1MaxPercent: Limite sem cobrança (ex: 110)
+- overdemandTier2MaxPercent: Limite faixa 2 (ex: 115)
+- overdemandTier2Multiplier: Multiplicador TUSD faixa 2 (ex: 1.0)
+- overdemandTier3Multiplier: Multiplicador TUSD faixa 3 (ex: 1.5)
+
+TUSD:
+- tusdTariffPerUnit: Tarifa TUSD R$/m³
+
+penaltyFormulas: Objeto JSON com fórmulas completas extraídas:
+  { cmc: { formula, clause, min_usage_percent },
+    pvema: { formula, clause, tolerance_percent },
+    pveme: { formula, clause, tolerance_percent },
+    overdemand: { tiers: [...], clause },
+    late_payment: { fine_percent, interest_monthly_percent, clause } }
+
+Se o contrato não for CUSD, retorne null para estes campos com confidence 0.
 
 DATAS IMPORTANTES:
 - effectiveFrom: Data de início do contrato (YYYY-MM-DD)

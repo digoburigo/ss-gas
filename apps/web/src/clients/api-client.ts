@@ -7,12 +7,11 @@ if (!import.meta.env.PUBLIC_SERVER_URL) {
 }
 
 const webUrl = new URL(import.meta.env.PUBLIC_SERVER_URL);
+const hostWithPort =
+  webUrl.port && webUrl.port !== "80" && webUrl.port !== "443"
+    ? `${webUrl.hostname}:${webUrl.port}`
+    : webUrl.hostname;
 
-export const api = treaty<App>(
-  `${webUrl.protocol}//${webUrl.hostname}:${webUrl.port}`,
-  {
-    fetch: {
-      credentials: "include",
-    },
-  },
-).api;
+export const api = treaty<App>(hostWithPort, {
+  fetch: { credentials: "include" },
+}).api;

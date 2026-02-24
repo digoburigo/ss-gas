@@ -198,12 +198,14 @@ export function GasDashboard() {
     return date;
   }, []);
 
+  const now = useMemo(() => new Date(), []);
+
   const { data: recentConsumptions = [], isFetching: isFetchingConsumptions } =
     client.gasRealConsumption.useFindMany({
       where: {
         date: {
           gte: sevenDaysAgo,
-          lte: new Date(),
+          lte: now,
         },
       },
       include: {
@@ -213,7 +215,7 @@ export function GasDashboard() {
               where: {
                 date: {
                   gte: sevenDaysAgo,
-                  lte: new Date(),
+                  lte: now,
                 },
               },
             },

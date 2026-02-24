@@ -44,14 +44,32 @@ export function ActualConsumptionTable() {
 
   const { data: realConsumptions = [], isFetching } =
     client.gasRealConsumption.useFindMany({
+      take: 99,
       include: {
         unit: {
           include: {
-            contract: true,
-            dailyPlans: true,
+            contract: {
+              select: {
+                id: true,
+                name: true,
+                volumeUnit: true,
+              },
+            },
+            dailyPlans: {
+              select: {
+                id: true,
+                date: true,
+                qdpValue: true,
+              },
+            },
           },
         },
-        createdByUser: true,
+        createdByUser: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
       orderBy: [{ date: "desc" }, { createdAt: "desc" }],
     });

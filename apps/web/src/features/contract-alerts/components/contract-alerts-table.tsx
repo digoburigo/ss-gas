@@ -37,8 +37,8 @@ import { eventTypeOptions, statusOptions } from "../data/data";
 import { contractAlertsColumns as columns } from "./contract-alerts-columns";
 
 type GasContractAlertWithRelations = GasContractAlert & {
-  contract?: GasContract | null;
-  recipients?: GasContractAlertRecipient[];
+  contract?: Pick<GasContract, "id" | "name"> | null;
+  recipients?: Array<Pick<GasContractAlertRecipient, "id" | "email" | "name">>;
 };
 
 // @ts-expect-error - Route will be registered after build
@@ -48,9 +48,21 @@ export function ContractAlertsTable() {
   const client = useClientQueries(schema);
   const { data: alerts = [], isFetching } = client.gasContractAlert.useFindMany(
     {
+      take: 99,
       include: {
-        contract: true,
-        recipients: true,
+        contract: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        recipients: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
       },
       orderBy: { createdAt: "desc" },
     },

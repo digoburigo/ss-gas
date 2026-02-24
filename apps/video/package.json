@@ -1,0 +1,22 @@
+{
+  "name": "@acme/video",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx remotion studio",
+    "render": "npx remotion render GasPromoVideo out/gas-promo.mp4 --codec h264 --crf 18",
+    "build": "echo 'No build step needed'"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.428",
+    "@remotion/player": "4.0.428",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "remotion": "4.0.428"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "catalog:"
+  }
+}

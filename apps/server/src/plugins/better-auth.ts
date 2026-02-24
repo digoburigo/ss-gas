@@ -6,17 +6,24 @@ if (!process.env.AUTH_SECRET) {
 	throw new Error("AUTH_SECRET is not set");
 }
 
-const baseUrl =
-	process.env.VERCEL_ENV === "production"
-		? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-		: process.env.VERCEL_ENV === "preview"
-			? `https://${process.env.VERCEL_URL}`
-			: "http://localhost:3000";
+let baseUrl = "http://localhost:3000";
+if (process.env.BASE_URL) {
+	baseUrl = process.env.BASE_URL;
+} else if (process.env.VERCEL_ENV === "production") {
+	baseUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+} else if (process.env.VERCEL_ENV === "preview") {
+	baseUrl = `https://${process.env.VERCEL_URL}`;
+}
 console.log(`🚀 -> baseUrl:`, baseUrl);
+
+let productionUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "turbo.t3.gg"}`;
+if (process.env.BASE_URL) {
+	productionUrl = process.env.BASE_URL;
+}
 
 export const auth = initAuth({
 	baseUrl,
-	productionUrl: `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "turbo.t3.gg"}`,
+	productionUrl,
 	secret: process.env.AUTH_SECRET,
 	discordClientId: process.env.AUTH_DISCORD_ID!,
 	discordClientSecret: process.env.AUTH_DISCORD_SECRET!,

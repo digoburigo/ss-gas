@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TestRouteImport } from './routes/test'
+import { Route as ProductRouteImport } from './routes/product'
 import { Route as PlateRouteImport } from './routes/plate'
 import { Route as OrganizationsRouteImport } from './routes/organizations'
 import { Route as LandRouteImport } from './routes/land'
@@ -60,6 +61,7 @@ import { Route as AuthenticatedGasDeviationAlertsIndexRouteImport } from './rout
 import { Route as AuthenticatedGasContractsIndexRouteImport } from './routes/_authenticated/gas/contracts/index'
 import { Route as AuthenticatedGasContractAlertsIndexRouteImport } from './routes/_authenticated/gas/contract-alerts/index'
 import { Route as AuthenticatedGasConsumerUnitsIndexRouteImport } from './routes/_authenticated/gas/consumer-units/index'
+import { Route as AuthenticatedGasAuditLogIndexRouteImport } from './routes/_authenticated/gas/audit-log/index'
 import { Route as AuthenticatedGasAdminParametersIndexRouteImport } from './routes/_authenticated/gas/admin-parameters/index'
 import { Route as AuthenticatedGasActualConsumptionIndexRouteImport } from './routes/_authenticated/gas/actual-consumption/index'
 import { Route as AuthenticatedAdminOrganizationsIndexRouteImport } from './routes/_authenticated/admin/organizations/index'
@@ -67,6 +69,11 @@ import { Route as AuthenticatedAdminOrganizationsIndexRouteImport } from './rout
 const TestRoute = TestRouteImport.update({
   id: '/test',
   path: '/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductRoute = ProductRouteImport.update({
+  id: '/product',
+  path: '/product',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlateRoute = PlateRouteImport.update({
@@ -340,6 +347,12 @@ const AuthenticatedGasConsumerUnitsIndexRoute =
     path: '/consumer-units/',
     getParentRoute: () => AuthenticatedGasLayoutRoute,
   } as any)
+const AuthenticatedGasAuditLogIndexRoute =
+  AuthenticatedGasAuditLogIndexRouteImport.update({
+    id: '/audit-log/',
+    path: '/audit-log/',
+    getParentRoute: () => AuthenticatedGasLayoutRoute,
+  } as any)
 const AuthenticatedGasAdminParametersIndexRoute =
   AuthenticatedGasAdminParametersIndexRouteImport.update({
     id: '/admin-parameters/',
@@ -365,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
+  '/product': typeof ProductRoute
   '/test': typeof TestRoute
   '/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
   '/gas': typeof AuthenticatedGasLayoutRouteWithChildren
@@ -406,6 +420,7 @@ export interface FileRoutesByFullPath {
   '/admin/organizations/': typeof AuthenticatedAdminOrganizationsIndexRoute
   '/gas/actual-consumption/': typeof AuthenticatedGasActualConsumptionIndexRoute
   '/gas/admin-parameters/': typeof AuthenticatedGasAdminParametersIndexRoute
+  '/gas/audit-log/': typeof AuthenticatedGasAuditLogIndexRoute
   '/gas/consumer-units/': typeof AuthenticatedGasConsumerUnitsIndexRoute
   '/gas/contract-alerts/': typeof AuthenticatedGasContractAlertsIndexRoute
   '/gas/contracts/': typeof AuthenticatedGasContractsIndexRoute
@@ -419,6 +434,7 @@ export interface FileRoutesByTo {
   '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
+  '/product': typeof ProductRoute
   '/test': typeof TestRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
@@ -457,6 +473,7 @@ export interface FileRoutesByTo {
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsIndexRoute
   '/gas/actual-consumption': typeof AuthenticatedGasActualConsumptionIndexRoute
   '/gas/admin-parameters': typeof AuthenticatedGasAdminParametersIndexRoute
+  '/gas/audit-log': typeof AuthenticatedGasAuditLogIndexRoute
   '/gas/consumer-units': typeof AuthenticatedGasConsumerUnitsIndexRoute
   '/gas/contract-alerts': typeof AuthenticatedGasContractAlertsIndexRoute
   '/gas/contracts': typeof AuthenticatedGasContractsIndexRoute
@@ -472,6 +489,7 @@ export interface FileRoutesById {
   '/land': typeof LandRoute
   '/organizations': typeof OrganizationsRoute
   '/plate': typeof PlateRoute
+  '/product': typeof ProductRoute
   '/test': typeof TestRoute
   '/_authenticated/clients': typeof AuthenticatedClientsLayoutRouteWithChildren
   '/_authenticated/gas': typeof AuthenticatedGasLayoutRouteWithChildren
@@ -514,6 +532,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/organizations/': typeof AuthenticatedAdminOrganizationsIndexRoute
   '/_authenticated/gas/actual-consumption/': typeof AuthenticatedGasActualConsumptionIndexRoute
   '/_authenticated/gas/admin-parameters/': typeof AuthenticatedGasAdminParametersIndexRoute
+  '/_authenticated/gas/audit-log/': typeof AuthenticatedGasAuditLogIndexRoute
   '/_authenticated/gas/consumer-units/': typeof AuthenticatedGasConsumerUnitsIndexRoute
   '/_authenticated/gas/contract-alerts/': typeof AuthenticatedGasContractAlertsIndexRoute
   '/_authenticated/gas/contracts/': typeof AuthenticatedGasContractsIndexRoute
@@ -530,6 +549,7 @@ export interface FileRouteTypes {
     | '/land'
     | '/organizations'
     | '/plate'
+    | '/product'
     | '/test'
     | '/clients'
     | '/gas'
@@ -571,6 +591,7 @@ export interface FileRouteTypes {
     | '/admin/organizations/'
     | '/gas/actual-consumption/'
     | '/gas/admin-parameters/'
+    | '/gas/audit-log/'
     | '/gas/consumer-units/'
     | '/gas/contract-alerts/'
     | '/gas/contracts/'
@@ -584,6 +605,7 @@ export interface FileRouteTypes {
     | '/land'
     | '/organizations'
     | '/plate'
+    | '/product'
     | '/test'
     | '/forgot-password'
     | '/otp'
@@ -622,6 +644,7 @@ export interface FileRouteTypes {
     | '/admin/organizations'
     | '/gas/actual-consumption'
     | '/gas/admin-parameters'
+    | '/gas/audit-log'
     | '/gas/consumer-units'
     | '/gas/contract-alerts'
     | '/gas/contracts'
@@ -636,6 +659,7 @@ export interface FileRouteTypes {
     | '/land'
     | '/organizations'
     | '/plate'
+    | '/product'
     | '/test'
     | '/_authenticated/clients'
     | '/_authenticated/gas'
@@ -678,6 +702,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/organizations/'
     | '/_authenticated/gas/actual-consumption/'
     | '/_authenticated/gas/admin-parameters/'
+    | '/_authenticated/gas/audit-log/'
     | '/_authenticated/gas/consumer-units/'
     | '/_authenticated/gas/contract-alerts/'
     | '/_authenticated/gas/contracts/'
@@ -693,6 +718,7 @@ export interface RootRouteChildren {
   LandRoute: typeof LandRoute
   OrganizationsRoute: typeof OrganizationsRoute
   PlateRoute: typeof PlateRoute
+  ProductRoute: typeof ProductRoute
   TestRoute: typeof TestRoute
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authOtpRoute: typeof authOtpRoute
@@ -713,6 +739,13 @@ declare module '@tanstack/react-router' {
       path: '/test'
       fullPath: '/test'
       preLoaderRoute: typeof TestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product': {
+      id: '/product'
+      path: '/product'
+      fullPath: '/product'
+      preLoaderRoute: typeof ProductRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/plate': {
@@ -1065,6 +1098,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGasConsumerUnitsIndexRouteImport
       parentRoute: typeof AuthenticatedGasLayoutRoute
     }
+    '/_authenticated/gas/audit-log/': {
+      id: '/_authenticated/gas/audit-log/'
+      path: '/audit-log'
+      fullPath: '/gas/audit-log/'
+      preLoaderRoute: typeof AuthenticatedGasAuditLogIndexRouteImport
+      parentRoute: typeof AuthenticatedGasLayoutRoute
+    }
     '/_authenticated/gas/admin-parameters/': {
       id: '/_authenticated/gas/admin-parameters/'
       path: '/admin-parameters'
@@ -1114,6 +1154,7 @@ interface AuthenticatedGasLayoutRouteChildren {
   AuthenticatedGasIndexRoute: typeof AuthenticatedGasIndexRoute
   AuthenticatedGasActualConsumptionIndexRoute: typeof AuthenticatedGasActualConsumptionIndexRoute
   AuthenticatedGasAdminParametersIndexRoute: typeof AuthenticatedGasAdminParametersIndexRoute
+  AuthenticatedGasAuditLogIndexRoute: typeof AuthenticatedGasAuditLogIndexRoute
   AuthenticatedGasConsumerUnitsIndexRoute: typeof AuthenticatedGasConsumerUnitsIndexRoute
   AuthenticatedGasContractAlertsIndexRoute: typeof AuthenticatedGasContractAlertsIndexRoute
   AuthenticatedGasContractsIndexRoute: typeof AuthenticatedGasContractsIndexRoute
@@ -1133,6 +1174,7 @@ const AuthenticatedGasLayoutRouteChildren: AuthenticatedGasLayoutRouteChildren =
       AuthenticatedGasActualConsumptionIndexRoute,
     AuthenticatedGasAdminParametersIndexRoute:
       AuthenticatedGasAdminParametersIndexRoute,
+    AuthenticatedGasAuditLogIndexRoute: AuthenticatedGasAuditLogIndexRoute,
     AuthenticatedGasConsumerUnitsIndexRoute:
       AuthenticatedGasConsumerUnitsIndexRoute,
     AuthenticatedGasContractAlertsIndexRoute:
@@ -1249,6 +1291,7 @@ const rootRouteChildren: RootRouteChildren = {
   LandRoute: LandRoute,
   OrganizationsRoute: OrganizationsRoute,
   PlateRoute: PlateRoute,
+  ProductRoute: ProductRoute,
   TestRoute: TestRoute,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authOtpRoute: authOtpRoute,

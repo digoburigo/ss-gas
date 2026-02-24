@@ -37,6 +37,7 @@ const route = getRouteApi("/_authenticated/gas/contracts/");
 export function ContractsTable() {
   const client = useClientQueries(schema);
   const { data: contracts = [], isFetching } = client.gasContract.useFindMany({
+    take: 99,
     include: {
       units: true,
     },

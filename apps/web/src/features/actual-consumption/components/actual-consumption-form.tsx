@@ -36,7 +36,9 @@ interface ActualConsumptionFormProps {
   isSubmitting?: boolean;
 }
 
-type UnitWithContract = GasUnit & { contract: GasContract | null };
+type UnitWithContract = GasUnit & {
+  contract: Pick<GasContract, "id" | "name" | "volumeUnit"> | null;
+};
 
 export function ActualConsumptionForm({
   defaultValues,
@@ -48,7 +50,15 @@ export function ActualConsumptionForm({
   // Fetch active units with their contracts
   const { data: units = [] } = client.gasUnit.useFindMany({
     where: { active: true },
-    include: { contract: true },
+    include: {
+      contract: {
+        select: {
+          id: true,
+          name: true,
+          volumeUnit: true,
+        },
+      },
+    },
     orderBy: { name: "asc" },
   });
 

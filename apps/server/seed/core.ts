@@ -1,32 +1,29 @@
-import { authDb, db } from "@acme/zen-v3";
+import type { authDb as AuthDb, db as Db } from "@acme/zen-v3";
+import type { auth } from "../src/plugins/better-auth";
 
-import { auth } from "./src/plugins/better-auth";
+export interface CoreContext {
+	org: { id: string; name: string; slug: string };
+	user: { id: string };
+	// biome-ignore lint/suspicious/noExplicitAny: $setAuth returns any
+	userDb: any;
+}
 
-async function main() {
-	console.log("🌱 Clearing database...");
-
-	await Promise.all([
-		db.user.deleteMany(),
-		db.member.deleteMany(),
-		db.organization.deleteMany(),
-		db.todo.deleteMany(),
-		db.session.deleteMany(),
-		db.account.deleteMany(),
-		db.verification.deleteMany(),
-		db.invitation.deleteMany(),
-	]);
-
-	console.log("🌱 Seeding database...");
+export async function seedCore(
+	db: typeof Db,
+	authDb: typeof AuthDb,
+	authInstance: typeof auth,
+): Promise<CoreContext> {
+	console.log("🌱 Seeding core data...");
 
 	const [aUser, bUser] = await Promise.all([
-		auth.api.signUpEmail({
+		authInstance.api.signUpEmail({
 			body: {
 				email: "a@a.com",
 				password: "12345678",
 				name: "User A",
 			},
 		}),
-		auth.api.signUpEmail({
+		authInstance.api.signUpEmail({
 			body: {
 				email: "b@b.com",
 				password: "12345678",
@@ -77,8 +74,6 @@ async function main() {
 		}),
 	]);
 
-	console.log("🌱 Setting auth...");
-
 	const userDb = authDb.$setAuth({
 		userId: aUser.user.id,
 		organizationId: orgA?.id ?? "",
@@ -93,7 +88,11 @@ async function main() {
 		},
 	});
 
-	console.log("🌱 Database seeded successfully");
-}
+	console.log("✅ Core data seeded");
 
-main();
+	return {
+		org: orgA ?? { id: "", name: "Org A", slug: "org-a" },
+		user: { id: aUser.user.id },
+		userDb,
+	};
+}

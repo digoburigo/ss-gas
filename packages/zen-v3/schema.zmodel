@@ -1202,6 +1202,17 @@ model GasContract {
     latePaymentPenaltyPercent Float?      // Late payment penalty %
     latePaymentInterestPercent Float?     // Monthly interest for late payment %
 
+    // === CUSD Penalty Parameters ===
+    cmcMinUsagePercent          Float?   // CMC minimum usage % (e.g., 90 for 90%)
+    pvemaTolerancePercent       Float?   // PVEMA upper tolerance % (e.g., 10 for +10%)
+    pvemeTolerancePercent       Float?   // PVEME lower tolerance % (e.g., 20 for -20%)
+    overdemandTier1MaxPercent   Float?   // No-charge ceiling (e.g., 110 for 110% CDC)
+    overdemandTier2MaxPercent   Float?   // Tier 2 ceiling (e.g., 115 for 115% CDC)
+    overdemandTier2Multiplier   Float?   // Tier 2 TUSD multiplier (e.g., 1.0)
+    overdemandTier3Multiplier   Float?   // Tier 3 TUSD multiplier (e.g., 1.5)
+    tusdTariffPerUnit           Float?   // TUSD tariff (R$/m³)
+    penaltyFormulasJson         String?  // Full extracted formulas as JSON (audit reference)
+
     // === Important Events/Dates Section ===
     effectiveFrom DateTime @default(now())  // Contract start date
     effectiveTo DateTime?                    // Contract end date
