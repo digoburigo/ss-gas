@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "turborepo": {
+      "source": "vercel/turborepo",
+      "sourceType": "github",
+      "computedHash": "47e8b1424c901cd0f5530328cb7448c8828b19063997ea4a4b03164bbdc0fd39"
+    },
+    "vercel-deployment": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "computedHash": "388f52fe41c1d5b17d3c599e6c15c4758e871968ffdc2a03dc3aa681e8c8df0c"
+    }
+  }
+}

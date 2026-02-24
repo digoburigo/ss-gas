@@ -7,11 +7,17 @@ export default defineConfig({
 	clean: true,
 	platform: "node",
 	// Bundle all dependencies except Node.js built-ins
+	inlineOnly: false,
 	noExternal: (id) => {
 		// Bundle workspace packages
 		if (id.startsWith("@acme/")) return true;
 		// Bundle all other dependencies (except Node.js built-ins and absolute paths)
 		if (!id.startsWith("node:") && !id.startsWith("/")) return true;
 		return false;
+	},
+	inputOptions: {
+		transform: {
+			jsx: "react",
+		},
 	},
 });
