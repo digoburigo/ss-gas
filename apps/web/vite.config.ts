@@ -68,6 +68,9 @@ export default defineConfig({
     Icons({ compiler: "jsx", jsx: "react" }),
     VitePWA({
       registerType: "autoUpdate",
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+      },
       manifest: {
         name: "clinic",
         short_name: "clinic",
