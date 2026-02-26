@@ -1,7 +1,8 @@
-import { CalendarIcon, Search, X } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { CalendarIcon, Search, X } from "lucide-react";
 
+import { cn } from "@acme/ui";
 import { Button } from "@acme/ui/button";
 import { Calendar } from "@acme/ui/calendar";
 import { Input } from "@acme/ui/input";
@@ -13,9 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@acme/ui/select";
-import { cn } from "@acme/ui";
 
-import { entityTypes, actionTypes } from "../data/data";
+import { actionTypes, entityTypes } from "../data/data";
 import { useAuditLog } from "./audit-log-provider";
 
 type User = {

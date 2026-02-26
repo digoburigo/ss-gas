@@ -20,6 +20,7 @@ export function initAuth<
 	discordClientId: string;
 	discordClientSecret: string;
 	extraPlugins?: TExtraPlugins;
+	databaseHooks?: BetterAuthOptions["databaseHooks"];
 }) {
 	const config = {
 		// database: zenstackAdapter(db, {
@@ -73,6 +74,7 @@ export function initAuth<
 				console.error("BETTER AUTH API ERROR", error, ctx);
 			},
 		},
+		...(options.databaseHooks ? { databaseHooks: options.databaseHooks } : {}),
 	} satisfies BetterAuthOptions;
 
 	return betterAuth(config);

@@ -1,4 +1,4 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import { useState } from "react";
 import {
   flexRender,
@@ -8,8 +8,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import type { SortingState } from "@tanstack/react-table";
-import { Edit, Eye, Plus, Trash2 } from "lucide-react";
+import { Edit, Eye, LogIn, LogOut, Plus, Trash2 } from "lucide-react";
 
 import { Badge } from "@acme/ui/badge";
 import { Button } from "@acme/ui/button";
@@ -28,14 +27,14 @@ import {
   TooltipTrigger,
 } from "@acme/ui/tooltip";
 
-import { DataTableColumnHeader } from "~/components/data-table/column-header";
 import { DataTablePagination } from "~/components/data-table";
+import { DataTableColumnHeader } from "~/components/data-table/column-header";
 import {
-  getEntityTypeInfo,
-  getActionTypeInfo,
-  getActionColorClasses,
   formatFieldName,
   formatValue,
+  getActionColorClasses,
+  getActionTypeInfo,
+  getEntityTypeInfo,
 } from "../data/data";
 import { useAuditLog } from "./audit-log-provider";
 
@@ -127,8 +126,14 @@ const columns: ColumnDef<AuditLogEntry>[] = [
       const action = row.original.action;
       const actionInfo = getActionTypeInfo(action);
       const colorClasses = getActionColorClasses(action);
-      const Icon =
-        action === "create" ? Plus : action === "delete" ? Trash2 : Edit;
+      const iconMap: Record<string, typeof Plus> = {
+        create: Plus,
+        delete: Trash2,
+        login: LogIn,
+        logout: LogOut,
+        update: Edit,
+      };
+      const Icon = iconMap[action] ?? Edit;
 
       return (
         <Badge className={colorClasses.badge}>
@@ -148,7 +153,9 @@ const columns: ColumnDef<AuditLogEntry>[] = [
       if (!field) {
         return <span className="text-muted-foreground">-</span>;
       }
-      return <span className="font-mono text-sm">{formatFieldName(field)}</span>;
+      return (
+        <span className="font-mono text-sm">{formatFieldName(field)}</span>
+      );
     },
   },
   {
@@ -169,6 +176,22 @@ const columns: ColumnDef<AuditLogEntry>[] = [
         return (
           <span className="text-muted-foreground text-sm italic">
             Registro excluído
+          </span>
+        );
+      }
+
+      if (action === "login") {
+        return (
+          <span className="text-sm italic text-emerald-600 dark:text-emerald-400">
+            Usuário entrou no sistema
+          </span>
+        );
+      }
+
+      if (action === "logout") {
+        return (
+          <span className="text-sm italic text-amber-600 dark:text-amber-400">
+            Usuário saiu do sistema
           </span>
         );
       }
@@ -203,13 +226,13 @@ const columns: ColumnDef<AuditLogEntry>[] = [
               <div className="flex flex-col gap-2">
                 <div>
                   <p className="font-medium">Valor anterior:</p>
-                  <pre className="text-muted-foreground mt-1 max-h-32 overflow-auto whitespace-pre-wrap text-xs">
+                  <pre className="text-muted-foreground mt-1 max-h-32 overflow-auto text-xs whitespace-pre-wrap">
                     {oldFormatted}
                   </pre>
                 </div>
                 <div>
                   <p className="font-medium">Novo valor:</p>
-                  <pre className="mt-1 max-h-32 overflow-auto whitespace-pre-wrap text-xs">
+                  <pre className="mt-1 max-h-32 overflow-auto text-xs whitespace-pre-wrap">
                     {newFormatted}
                   </pre>
                 </div>

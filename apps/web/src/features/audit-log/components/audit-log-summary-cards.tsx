@@ -1,4 +1,4 @@
-import { Activity, Edit, Plus, Trash2, Users } from "lucide-react";
+import { Activity, Edit, LogIn, Plus, Trash2, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@acme/ui/card";
 import { Skeleton } from "@acme/ui/skeleton";
@@ -8,6 +8,7 @@ type AuditLogSummaryCardsProps = {
   createCount: number;
   updateCount: number;
   deleteCount: number;
+  loginCount: number;
   uniqueUsers: number;
   isLoading?: boolean;
 };
@@ -17,13 +18,14 @@ export function AuditLogSummaryCards({
   createCount,
   updateCount,
   deleteCount,
+  loginCount,
   uniqueUsers,
   isLoading = false,
 }: AuditLogSummaryCardsProps) {
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        {Array.from({ length: 5 }).map((_, i) => (
+      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+        {Array.from({ length: 6 }).map((_, i) => (
           <Card key={i}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <Skeleton className="h-4 w-24" />
@@ -39,7 +41,7 @@ export function AuditLogSummaryCards({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+    <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
@@ -49,9 +51,7 @@ export function AuditLogSummaryCards({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{totalLogs}</div>
-          <p className="text-muted-foreground text-xs">
-            alterações no período
-          </p>
+          <p className="text-muted-foreground text-xs">eventos no período</p>
         </CardContent>
       </Card>
 
@@ -92,13 +92,26 @@ export function AuditLogSummaryCards({
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Logins</CardTitle>
+          <LogIn className="h-4 w-4 text-emerald-500" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-emerald-600">
+            {loginCount}
+          </div>
+          <p className="text-muted-foreground text-xs">sessões iniciadas</p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Usuários Ativos</CardTitle>
           <Users className="text-muted-foreground h-4 w-4" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{uniqueUsers}</div>
           <p className="text-muted-foreground text-xs">
-            usuários com alterações
+            usuários com atividade
           </p>
         </CardContent>
       </Card>

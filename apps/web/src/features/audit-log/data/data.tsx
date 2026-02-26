@@ -6,6 +6,9 @@ import {
   FileSignature,
   Flame,
   Gauge,
+  LogIn,
+  LogOut,
+  Monitor,
   Plus,
   Settings,
   Trash2,
@@ -14,6 +17,12 @@ import {
 
 // Entity types for audit logs
 export const entityTypes = [
+  {
+    value: "session",
+    label: "Sessão",
+    icon: Monitor,
+    description: "Login e logout de usuários",
+  },
   {
     value: "contract",
     label: "Contrato",
@@ -99,6 +108,20 @@ export const actionTypes = [
     color: "red",
     description: "Registro excluído",
   },
+  {
+    value: "login",
+    label: "Login",
+    icon: LogIn,
+    color: "emerald",
+    description: "Usuário entrou no sistema",
+  },
+  {
+    value: "logout",
+    label: "Logout",
+    icon: LogOut,
+    color: "amber",
+    description: "Usuário saiu do sistema",
+  },
 ] as const;
 
 // Get entity type info
@@ -119,7 +142,8 @@ export function getActionColorClasses(action: string) {
         border: "border-l-green-500",
         bg: "bg-green-50 dark:bg-green-950/20",
         text: "text-green-600 dark:text-green-400",
-        badge: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+        badge:
+          "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
       };
     case "update":
       return {
@@ -134,6 +158,22 @@ export function getActionColorClasses(action: string) {
         bg: "bg-red-50 dark:bg-red-950/20",
         text: "text-red-600 dark:text-red-400",
         badge: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+      };
+    case "login":
+      return {
+        border: "border-l-emerald-500",
+        bg: "bg-emerald-50 dark:bg-emerald-950/20",
+        text: "text-emerald-600 dark:text-emerald-400",
+        badge:
+          "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300",
+      };
+    case "logout":
+      return {
+        border: "border-l-amber-500",
+        bg: "bg-amber-50 dark:bg-amber-950/20",
+        text: "text-amber-600 dark:text-amber-400",
+        badge:
+          "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300",
       };
     default:
       return {
@@ -187,6 +227,7 @@ export function isJsonValue(value: string | null): boolean {
 
 // Export format options
 export const exportFormats = [
+  { value: "xlsx", label: "Excel (XLSX)" },
   { value: "csv", label: "CSV" },
   { value: "json", label: "JSON" },
 ] as const;

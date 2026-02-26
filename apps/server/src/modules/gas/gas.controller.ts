@@ -5,7 +5,7 @@ import { Elysia, t } from "elysia";
 import ExcelJS from "exceljs";
 
 import { betterAuth } from "../../plugins/better-auth";
-import { ContractAlertService } from "../../services";
+import { AuditService, ContractAlertService } from "../../services";
 import { GasCalculationService } from "./gas.service";
 
 const APP_URL = process.env.PUBLIC_WEB_URL ?? "http://localhost:3001";
@@ -491,6 +491,25 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					},
 				});
 			}
+
+			// Audit log: entry created or updated
+			AuditService.log({
+				entityType: "consumption",
+				entityId: entry.id,
+				entityName: `${unit.name} - ${body.date}`,
+				action: existingEntry ? "update" : "create",
+				changes: existingEntry
+					? AuditService.computeChanges(
+							existingEntry as unknown as Record<string, unknown>,
+							entry as unknown as Record<string, unknown>,
+							["atomizerHours", "qdcAtomizer", "qdcLines", "qdsCalculated", "qdsManual", "observations"],
+						) ?? undefined
+					: undefined,
+				userId: user.id,
+				userName: user.name,
+				userEmail: user.email,
+				organizationId: session.activeOrganizationId ?? undefined,
+			});
 
 			// Return entry with line statuses and derived QDP
 			return {
@@ -1927,6 +1946,21 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				},
 			});
 
+			// Audit log: equipment constant updated
+			AuditService.logUpdate({
+				entityType: "parameter",
+				entityId: equipmentId,
+				entityName: `${equipment.unit.name} - ${equipment.name ?? equipment.code}`,
+				oldData: currentConstant
+					? { consumptionRate: currentConstant.consumptionRate }
+					: {},
+				newData: { consumptionRate: body.consumptionRate },
+				userId: user.id,
+				userName: user.name,
+				userEmail: user.email,
+				organizationId: session.activeOrganizationId ?? undefined,
+			});
+
 			return {
 				...newConstant,
 				previousConstant: currentConstant
@@ -2256,6 +2290,19 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				},
 			});
 
+			// Audit log: plan submitted
+			AuditService.logUpdate({
+				entityType: "plan",
+				entityId: planId,
+				entityName: `Programação ${plan.date instanceof Date ? plan.date.toISOString().split("T")[0] : plan.date}`,
+				oldData: { submitted: false },
+				newData: { submitted: true },
+				userId: user.id,
+				userName: user.name,
+				userEmail: user.email,
+				organizationId: undefined,
+			});
+
 			return {
 				id: updated.id,
 				submitted: updated.submitted,
@@ -2320,6 +2367,22 @@ export const gasController = new Elysia({ prefix: "/gas" })
 						? null
 						: (body.rejectionReason ?? null),
 				},
+			});
+
+			// Audit log: plan approved or rejected
+			AuditService.logUpdate({
+				entityType: "plan",
+				entityId: planId,
+				entityName: `Programação ${plan.date instanceof Date ? plan.date.toISOString().split("T")[0] : plan.date}`,
+				oldData: { approved: null },
+				newData: {
+					approved: body.approved,
+					...(body.rejectionReason ? { rejectionReason: body.rejectionReason } : {}),
+				},
+				userId: user.id,
+				userName: user.name,
+				userEmail: user.email,
+				organizationId: undefined,
 			});
 
 			return {
@@ -3501,6 +3564,120 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				startMonth: t.String(),
 				endMonth: t.String(),
 				contractId: t.Optional(t.String()),
+			}),
+		},
+	)
+
+	/**
+	 * GET /gas/audit-log/export
+	 *
+	 * Exports audit logs to Excel (XLSX) with filters.
+	 */
+	.get(
+		"/audit-log/export",
+		async ({ query, session }) => {
+			const where: Record<string, unknown> = {
+				organizationId: session.activeOrganizationId,
+			};
+
+			if (query.startDate && query.endDate) {
+				where.createdAt = {
+					gte: new Date(query.startDate),
+					lte: new Date(query.endDate),
+				};
+			}
+			if (query.entityType) where.entityType = query.entityType;
+			if (query.action) where.action = query.action;
+			if (query.userId) where.userId = query.userId;
+
+			const logs = await db.gasAuditLog.findMany({
+				where,
+				orderBy: { createdAt: "desc" },
+			});
+
+			const workbook = new ExcelJS.Workbook();
+			const sheet = workbook.addWorksheet("Audit Log");
+
+			sheet.columns = [
+				{ header: "Data/Hora", key: "createdAt", width: 22 },
+				{ header: "Usuário", key: "userName", width: 25 },
+				{ header: "E-mail", key: "userEmail", width: 30 },
+				{ header: "Tipo de Entidade", key: "entityType", width: 18 },
+				{ header: "Nome da Entidade", key: "entityName", width: 30 },
+				{ header: "Ação", key: "action", width: 14 },
+				{ header: "Campo", key: "field", width: 20 },
+				{ header: "Valor Anterior", key: "oldValue", width: 30 },
+				{ header: "Novo Valor", key: "newValue", width: 30 },
+				{ header: "Alterações", key: "changes", width: 40 },
+			];
+
+			const entityTypeLabels: Record<string, string> = {
+				session: "Sessão",
+				contract: "Contrato",
+				unit: "Unidade",
+				plan: "Programação",
+				consumption: "Consumo",
+				parameter: "Parâmetro",
+				template: "Template",
+				custom_field: "Campo Personalizado",
+				alert: "Alerta",
+				user: "Usuário",
+				organization: "Organização",
+			};
+
+			const actionLabels: Record<string, string> = {
+				create: "Criação",
+				update: "Atualização",
+				delete: "Exclusão",
+				login: "Login",
+				logout: "Logout",
+			};
+
+			for (const log of logs) {
+				sheet.addRow({
+					createdAt: log.createdAt instanceof Date
+						? log.createdAt.toLocaleString("pt-BR")
+						: new Date(log.createdAt).toLocaleString("pt-BR"),
+					userName: log.userName ?? "Sistema",
+					userEmail: log.userEmail ?? "-",
+					entityType: entityTypeLabels[log.entityType] ?? log.entityType,
+					entityName: log.entityName ?? "-",
+					action: actionLabels[log.action] ?? log.action,
+					field: log.field ?? "-",
+					oldValue: log.oldValue ?? "-",
+					newValue: log.newValue ?? "-",
+					changes: log.changes ?? "-",
+				});
+			}
+
+			// Style header row
+			const headerRow = sheet.getRow(1);
+			headerRow.font = { bold: true };
+			headerRow.fill = {
+				type: "pattern",
+				pattern: "solid",
+				fgColor: { argb: "FFE2E8F0" },
+			};
+
+			const buffer = await workbook.xlsx.writeBuffer();
+			const filename = `audit-log-${new Date().toISOString().split("T")[0]}.xlsx`;
+
+			return new Response(buffer as ArrayBuffer, {
+				headers: {
+					"Content-Type":
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					"Content-Disposition": `attachment; filename="${filename}"`,
+				},
+			});
+		},
+		{
+			auth: true,
+			query: t.Object({
+				startDate: t.Optional(t.String()),
+				endDate: t.Optional(t.String()),
+				entityType: t.Optional(t.String()),
+				action: t.Optional(t.String()),
+				userId: t.Optional(t.String()),
 			}),
 		},
 	);

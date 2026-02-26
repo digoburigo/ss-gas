@@ -3,8 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import { Download, History } from "lucide-react";
 
-import { schema } from "@acme/zen-v3/zenstack/schema";
-
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,21 +12,18 @@ import {
   BreadcrumbSeparator,
 } from "@acme/ui/breadcrumb";
 import { Button } from "@acme/ui/button";
+import { schema } from "@acme/zen-v3/zenstack/schema";
 
+import type { AuditLogEntry } from "./components/audit-log-table";
 import { ConfigDrawer } from "~/components/config-drawer";
 import { Header } from "~/components/layout/header";
 import { Main } from "~/components/layout/main";
 import { ProfileDropdown } from "~/components/profile-dropdown";
 import { Search } from "~/components/search";
 import { ThemeSwitch } from "~/components/theme-switch";
-
 import { AuditLogFilters } from "./components/audit-log-filters";
-import {
-  AuditLogProvider,
-  useAuditLog,
-} from "./components/audit-log-provider";
+import { AuditLogProvider, useAuditLog } from "./components/audit-log-provider";
 import { AuditLogSummaryCards } from "./components/audit-log-summary-cards";
-import type { AuditLogEntry } from "./components/audit-log-table";
 import { AuditLogTable } from "./components/audit-log-table";
 import { DetailsDialog } from "./components/details-dialog";
 import { ExportDialog } from "./components/export-dialog";
@@ -55,7 +50,14 @@ function AuditLogContent() {
         },
         ...(selectedEntityType ? { entityType: selectedEntityType } : {}),
         ...(selectedAction
-          ? { action: selectedAction as "create" | "update" | "delete" }
+          ? {
+              action: selectedAction as
+                | "create"
+                | "update"
+                | "delete"
+                | "login"
+                | "logout",
+            }
           : {}),
         ...(selectedUserId ? { userId: selectedUserId } : {}),
         ...(searchQuery
@@ -80,7 +82,10 @@ function AuditLogContent() {
 
   // Transform members to users for the filter
   const users = useMemo(() => {
-    const uniqueUsers = new Map<string, { id: string; name: string; email: string }>();
+    const uniqueUsers = new Map<
+      string,
+      { id: string; name: string; email: string }
+    >();
     for (const member of members) {
       if (member.user && !uniqueUsers.has(member.user.id)) {
         uniqueUsers.set(member.user.id, {
@@ -117,14 +122,20 @@ function AuditLogContent() {
     const createLogs = tableData.filter((l) => l.action === "create");
     const updateLogs = tableData.filter((l) => l.action === "update");
     const deleteLogs = tableData.filter((l) => l.action === "delete");
+    const loginLogs = tableData.filter((l) => l.action === "login");
+    const logoutLogs = tableData.filter((l) => l.action === "logout");
 
-    const uniqueUserIds = new Set(tableData.map((l) => l.userId).filter(Boolean));
+    const uniqueUserIds = new Set(
+      tableData.map((l) => l.userId).filter(Boolean),
+    );
 
     return {
       totalLogs: tableData.length,
       createCount: createLogs.length,
       updateCount: updateLogs.length,
       deleteCount: deleteLogs.length,
+      loginCount: loginLogs.length,
+      logoutCount: logoutLogs.length,
       uniqueUsers: uniqueUserIds.size,
     };
   }, [tableData]);
@@ -199,6 +210,7 @@ function AuditLogContent() {
           createCount={summaryStats.createCount}
           updateCount={summaryStats.updateCount}
           deleteCount={summaryStats.deleteCount}
+          loginCount={summaryStats.loginCount}
           uniqueUsers={summaryStats.uniqueUsers}
           isLoading={isFetchingLogs}
         />

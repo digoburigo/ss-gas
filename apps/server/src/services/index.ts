@@ -1,3 +1,4 @@
+export { AuditService } from "./audit.service";
 export { ContractAlertService } from "./contract-alert.service";
 
 export { NotificationService } from "./notification.service";

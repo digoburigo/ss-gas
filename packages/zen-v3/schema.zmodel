@@ -1577,27 +1577,29 @@ model GasCustomField {
 }
 
 // AUDIT LOG FOR SYSTEM CHANGES ======================================================
-// Tracks all write operations (create, update, delete) for audit purposes (US-014)
+// Tracks all system operations for comprehensive audit purposes (US-013)
 
 enum AuditAction {
   create
   update
   delete
+  login
+  logout
 }
 
 model GasAuditLog {
     id String @id @default(dbgenerated("uuidv7()"))
 
     // What was changed
-    entityType String            // Entity type: contract, unit, plan, consumption, parameter, etc.
-    entityId String              // ID of the changed entity
+    entityType String            // Entity type: session, contract, unit, plan, consumption, parameter, etc.
+    entityId String              // ID of the changed entity (or session ID for auth events)
     entityName String?           // Display name for easier reading (e.g., contract name, unit name)
 
     // What action was performed
-    action AuditAction           // create, update, delete
+    action AuditAction           // create, update, delete, login, logout
 
     // Change details (for updates)
-    field String?                // Which field was changed (null for create/delete)
+    field String?                // Which field was changed (null for create/delete/login/logout)
     oldValue String?             // Previous value (JSON serialized if complex)
     newValue String?             // New value (JSON serialized if complex)
 
@@ -1609,6 +1611,9 @@ model GasAuditLog {
     userName String?             // Stored for history even if user is deleted
     userEmail String?            // Stored for history
 
+    // Additional metadata (IP address, user agent, etc.)
+    metadata String?             // JSON object for extra info like IP, user agent
+
     // When the change was made
     createdAt DateTime @default(now())
 
@@ -1616,9 +1621,9 @@ model GasAuditLog {
     organizationId String? @default(auth().organizationId)
     organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-    // Only admin profile can read audit logs
+    // Allow reading audit logs for org members, allow system to create without auth (for login events)
     @@deny('all', auth() == null)
-    @@allow('create', auth() != null)
+    @@allow('create', true)
     @@allow('read', auth().organizationId == organizationId)
 
     @@index([organizationId])

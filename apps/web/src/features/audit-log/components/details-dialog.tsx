@@ -1,4 +1,4 @@
-import { Edit, Plus, Trash2 } from "lucide-react";
+import { Edit, LogIn, LogOut, Plus, Trash2 } from "lucide-react";
 
 import { Badge } from "@acme/ui/badge";
 import {
@@ -11,15 +11,15 @@ import {
 import { Separator } from "@acme/ui/separator";
 
 import type { AuditLogEntry } from "./audit-log-table";
-import { useAuditLog } from "./audit-log-provider";
 import {
-  getEntityTypeInfo,
-  getActionTypeInfo,
-  getActionColorClasses,
   formatFieldName,
   formatValue,
+  getActionColorClasses,
+  getActionTypeInfo,
+  getEntityTypeInfo,
   isJsonValue,
 } from "../data/data";
+import { useAuditLog } from "./audit-log-provider";
 
 type DetailsDialogProps = {
   log: AuditLogEntry | undefined;
@@ -35,8 +35,14 @@ export function DetailsDialog({ log }: DetailsDialogProps) {
   const entityInfo = getEntityTypeInfo(log.entityType);
   const actionInfo = getActionTypeInfo(log.action);
   const colorClasses = getActionColorClasses(log.action);
-  const Icon =
-    log.action === "create" ? Plus : log.action === "delete" ? Trash2 : Edit;
+  const iconMap: Record<string, typeof Plus> = {
+    create: Plus,
+    delete: Trash2,
+    login: LogIn,
+    logout: LogOut,
+    update: Edit,
+  };
+  const Icon = iconMap[log.action] ?? Edit;
   const EntityIcon = entityInfo?.icon;
 
   // Parse changes JSON if available
@@ -115,15 +121,33 @@ export function DetailsDialog({ log }: DetailsDialogProps) {
           {/* Changes */}
           {log.action === "create" && (
             <div className="text-muted-foreground text-sm">
-              <p className="font-medium text-foreground mb-2">Alteração</p>
+              <p className="text-foreground mb-2 font-medium">Alteração</p>
               <p className="italic">Novo registro criado no sistema.</p>
             </div>
           )}
 
           {log.action === "delete" && (
             <div className="text-muted-foreground text-sm">
-              <p className="font-medium text-foreground mb-2">Alteração</p>
+              <p className="text-foreground mb-2 font-medium">Alteração</p>
               <p className="italic">Registro removido do sistema.</p>
+            </div>
+          )}
+
+          {log.action === "login" && (
+            <div className="text-sm">
+              <p className="text-foreground mb-2 font-medium">Evento</p>
+              <p className="italic text-emerald-600 dark:text-emerald-400">
+                Usuário entrou no sistema.
+              </p>
+            </div>
+          )}
+
+          {log.action === "logout" && (
+            <div className="text-sm">
+              <p className="text-foreground mb-2 font-medium">Evento</p>
+              <p className="italic text-amber-600 dark:text-amber-400">
+                Usuário saiu do sistema.
+              </p>
             </div>
           )}
 
@@ -142,7 +166,7 @@ export function DetailsDialog({ log }: DetailsDialogProps) {
                       <span className="text-muted-foreground text-xs">
                         Valor anterior:
                       </span>
-                      <pre className="mt-1 max-h-24 overflow-auto whitespace-pre-wrap text-sm line-through opacity-60">
+                      <pre className="mt-1 max-h-24 overflow-auto text-sm whitespace-pre-wrap line-through opacity-60">
                         {formatValue(log.oldValue)}
                       </pre>
                     </div>
@@ -150,7 +174,7 @@ export function DetailsDialog({ log }: DetailsDialogProps) {
                       <span className="text-muted-foreground text-xs">
                         Novo valor:
                       </span>
-                      <pre className="mt-1 max-h-24 overflow-auto whitespace-pre-wrap text-sm font-medium">
+                      <pre className="mt-1 max-h-24 overflow-auto text-sm font-medium whitespace-pre-wrap">
                         {formatValue(log.newValue)}
                       </pre>
                     </div>

@@ -5025,6 +5025,11 @@ export class SchemaType implements SchemaDef {
                     type: "String",
                     optional: true
                 },
+                metadata: {
+                    name: "metadata",
+                    type: "String",
+                    optional: true
+                },
                 createdAt: {
                     name: "createdAt",
                     type: "DateTime",
@@ -5051,7 +5056,7 @@ export class SchemaType implements SchemaDef {
             },
             attributes: [
                 { name: "@@deny", args: [{ name: "operation", value: ExpressionUtils.literal("all") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "==", ExpressionUtils._null()) }] },
-                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.literal(true) }] },
                 { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
                 { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("organizationId")]) }] },
                 { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("entityType")]) }] },
@@ -5304,7 +5309,9 @@ export class SchemaType implements SchemaDef {
             values: {
                 create: "create",
                 update: "update",
-                delete: "delete"
+                delete: "delete",
+                login: "login",
+                logout: "logout"
             }
         }
     } as const;
