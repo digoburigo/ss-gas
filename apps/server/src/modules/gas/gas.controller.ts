@@ -88,7 +88,11 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			});
 
 			// Check for daily entries in the current month or future
-			const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+			const firstDayOfMonth = new Date(
+				today.getFullYear(),
+				today.getMonth(),
+				1,
+			);
 			const pendingEntries = await db.gasDailyEntry.count({
 				where: {
 					unitId,
@@ -226,15 +230,15 @@ export const gasController = new Elysia({ prefix: "/gas" })
 												t.Literal("m3_per_day"),
 											]),
 											effectiveFrom: t.Date(),
-										})
+										}),
 									),
-								})
+								}),
 							),
-						})
+						}),
 					),
 				}),
 			},
-		}
+		},
 	)
 
 	/**
@@ -439,7 +443,8 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					}
 					// Secondary atomizer
 					else if (eq.id === secondaryAtomizer?.id) {
-						eqStatus = (body.secondaryAtomizerScheduled ?? false) ? "on" : "off";
+						eqStatus =
+							(body.secondaryAtomizerScheduled ?? false) ? "on" : "off";
 						plannedHours = body.secondaryAtomizerHours ?? 0;
 					}
 				} else if (eqType === "line") {
@@ -460,7 +465,8 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				};
 			});
 
-			const qdpValue = body.qdsManual ?? GasCalculationService.calculateQdp(qdpEquipment);
+			const qdpValue =
+				body.qdsManual ?? GasCalculationService.calculateQdp(qdpEquipment);
 
 			// Upsert GasDailyPlan to persist QDP without manual input
 			const existingPlan = await db.gasDailyPlan.findFirst({
@@ -858,8 +864,10 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					{ qdsCalculated: summary.qdsTotal },
 					{
 						qdcContracted: contract.qdcContracted,
-						transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
-						transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+						transportToleranceUpperPercent:
+							contract.transportToleranceUpperPercent,
+						transportToleranceLowerPercent:
+							contract.transportToleranceLowerPercent,
 						moleculeTolerancePercent: contract.moleculeTolerancePercent,
 					},
 				);
@@ -896,8 +904,10 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					id: contract.id,
 					name: contract.name,
 					qdcContracted: contract.qdcContracted,
-					transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
-					transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+					transportToleranceUpperPercent:
+						contract.transportToleranceUpperPercent,
+					transportToleranceLowerPercent:
+						contract.transportToleranceLowerPercent,
 					moleculeTolerancePercent: contract.moleculeTolerancePercent,
 				},
 				units: units.map((u) => ({
@@ -1181,9 +1191,7 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					const plan = group.plans.find((p) => p.unitId === unit.id);
 					const rc = group.realConsumptions.find((r) => r.unitId === unit.id);
 
-					const qds = entry
-						? (entry.qdsManual ?? entry.qdsCalculated)
-						: 0;
+					const qds = entry ? (entry.qdsManual ?? entry.qdsCalculated) : 0;
 					const qdp = plan?.qdpValue ?? null;
 					const qdr = rc?.qdrValue ?? null;
 
@@ -1205,8 +1213,10 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					{ qdsCalculated: qdsTotal },
 					{
 						qdcContracted: contract.qdcContracted,
-						transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
-						transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+						transportToleranceUpperPercent:
+							contract.transportToleranceUpperPercent,
+						transportToleranceLowerPercent:
+							contract.transportToleranceLowerPercent,
 						moleculeTolerancePercent: contract.moleculeTolerancePercent,
 					},
 				);
@@ -1262,8 +1272,10 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					id: contract.id,
 					name: contract.name,
 					qdcContracted: contract.qdcContracted,
-					transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
-					transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+					transportToleranceUpperPercent:
+						contract.transportToleranceUpperPercent,
+					transportToleranceLowerPercent:
+						contract.transportToleranceLowerPercent,
 					moleculeTolerancePercent: contract.moleculeTolerancePercent,
 				},
 				units: units.map((u) => ({
@@ -1488,8 +1500,16 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				{ header: "QDS Total (m³)", key: "qdsTotal", width: 15 },
 				{ header: "QDP Total (m³)", key: "qdpTotal", width: 15 },
 				{ header: "QDR Total (m³)", key: "qdrTotal", width: 15 },
-				{ header: "Lim. Sup. Transporte (m³)", key: "transportUpper", width: 20 },
-				{ header: "Lim. Inf. Transporte (m³)", key: "transportLower", width: 20 },
+				{
+					header: "Lim. Sup. Transporte (m³)",
+					key: "transportUpper",
+					width: 20,
+				},
+				{
+					header: "Lim. Inf. Transporte (m³)",
+					key: "transportLower",
+					width: 20,
+				},
 				{ header: "Desvio Transporte (m³)", key: "transportDev", width: 18 },
 				{ header: "Status Transporte", key: "transportStatus", width: 16 },
 				{ header: "Lim. Sup. Molécula (m³)", key: "moleculeUpper", width: 18 },
@@ -1569,8 +1589,10 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					{ qdsCalculated: qdsTotal },
 					{
 						qdcContracted: contract.qdcContracted,
-						transportToleranceUpperPercent: contract.transportToleranceUpperPercent,
-						transportToleranceLowerPercent: contract.transportToleranceLowerPercent,
+						transportToleranceUpperPercent:
+							contract.transportToleranceUpperPercent,
+						transportToleranceLowerPercent:
+							contract.transportToleranceLowerPercent,
 						moleculeTolerancePercent: contract.moleculeTolerancePercent,
 					},
 				);
@@ -1675,8 +1697,7 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			// Set response headers for file download
 			set.headers["Content-Type"] =
 				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-			set.headers["Content-Disposition"] =
-				`attachment; filename="${filename}"`;
+			set.headers["Content-Disposition"] = `attachment; filename="${filename}"`;
 
 			return buffer;
 		},
@@ -2040,7 +2061,7 @@ export const gasController = new Elysia({ prefix: "/gas" })
 
 			const logs = await ContractAlertService.getSentLogsForAlert(
 				alertId,
-				limit
+				limit,
 			);
 
 			return {
@@ -2067,7 +2088,7 @@ export const gasController = new Elysia({ prefix: "/gas" })
 							advanceNoticeDays: t.Number(),
 							status: t.String(),
 							errorMessage: t.Nullable(t.String()),
-						})
+						}),
 					),
 				}),
 				403: t.Object({
@@ -2077,7 +2098,7 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					error: t.String(),
 				}),
 			},
-		}
+		},
 	)
 
 	/**
@@ -2092,7 +2113,9 @@ export const gasController = new Elysia({ prefix: "/gas" })
 		async ({ organizationRole, status }) => {
 			// Only allow admins to manually trigger alert processing
 			if (organizationRole !== "admin" && organizationRole !== "owner") {
-				return status(403, { error: "Only organization admins can trigger alert processing" });
+				return status(403, {
+					error: "Only organization admins can trigger alert processing",
+				});
 			}
 
 			const result = await ContractAlertService.processAndDispatchAlerts();
@@ -2122,16 +2145,16 @@ export const gasController = new Elysia({ prefix: "/gas" })
 									email: t.String(),
 									status: t.Union([t.Literal("sent"), t.Literal("failed")]),
 									errorMessage: t.Optional(t.String()),
-								})
+								}),
 							),
-						})
+						}),
 					),
 				}),
 				403: t.Object({
 					error: t.String(),
 				}),
 			},
-		}
+		},
 	)
 
 	/**
@@ -2226,7 +2249,9 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					approved: body.approved,
 					approvedAt: new Date(),
 					approvedById: user.id,
-					rejectionReason: body.approved ? null : (body.rejectionReason ?? null),
+					rejectionReason: body.approved
+						? null
+						: (body.rejectionReason ?? null),
 				},
 			});
 
@@ -2252,6 +2277,202 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					approved: t.Nullable(t.Boolean()),
 					approvedAt: t.Nullable(t.Date()),
 					rejectionReason: t.Nullable(t.String()),
+				}),
+				400: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
+	)
+
+	/**
+	 * GET /gas/monthly-scorecard
+	 *
+	 * Returns monthly scorecard data: assertiveness rate, accumulated penalties,
+	 * and average accuracy for the selected month.
+	 *
+	 * Query parameters:
+	 * - month: YYYY-MM format (required)
+	 * - unitId: optional unit filter
+	 */
+	.get(
+		"/monthly-scorecard",
+		async ({ query, status, session }) => {
+			const { month, unitId } = query;
+
+			const monthRegex = /^\d{4}-\d{2}$/;
+			if (!monthRegex.test(month)) {
+				return status(400, {
+					error: "Invalid month format. Expected YYYY-MM",
+				});
+			}
+
+			const parts = month.split("-").map(Number);
+			const year = parts[0] ?? 0;
+			const monthNum = parts[1] ?? 1;
+			const startDate = new Date(year, monthNum - 1, 1);
+			const endDate = new Date(year, monthNum, 0);
+
+			// Get active contract with penalty parameters
+			const contract = await db.gasContract.findFirst({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+					effectiveFrom: { lte: endDate },
+					OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }],
+				},
+				orderBy: { effectiveFrom: "desc" },
+			});
+
+			if (!contract) {
+				return status(404, { error: "No active contract found" });
+			}
+
+			// Get units
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { code: "asc" },
+			});
+
+			const unitFilter = unitId
+				? { unitId }
+				: {
+						unit: { organizationId: session.activeOrganizationId ?? undefined },
+					};
+
+			// Get daily plans (QDP) for the month
+			const plans = await db.gasDailyPlan.findMany({
+				where: {
+					...unitFilter,
+					date: { gte: startDate, lte: endDate },
+				},
+				orderBy: { date: "asc" },
+			});
+
+			// Get real consumption (QDR) for the month
+			const realConsumptions = await db.gasRealConsumption.findMany({
+				where: {
+					...unitFilter,
+					date: { gte: startDate, lte: endDate },
+				},
+				orderBy: { date: "asc" },
+			});
+
+			// Group QDP and QDR by date (aggregate across units if no unitId filter)
+			const dailyData = new Map<string, { qdp: number; qdr: number }>();
+
+			for (const plan of plans) {
+				const dateKey = plan.date.toISOString().split("T")[0] ?? "";
+				const existing = dailyData.get(dateKey) ?? { qdp: 0, qdr: 0 };
+				existing.qdp += plan.qdpValue;
+				dailyData.set(dateKey, existing);
+			}
+
+			for (const consumption of realConsumptions) {
+				const dateKey = consumption.date.toISOString().split("T")[0] ?? "";
+				const existing = dailyData.get(dateKey) ?? { qdp: 0, qdr: 0 };
+				existing.qdr += consumption.qdrValue;
+				dailyData.set(dateKey, existing);
+			}
+
+			// Calculate assertiveness and accuracy
+			const days = Array.from(dailyData.values());
+			const accuracyResult = GasCalculationService.calculateMonthlyAccuracy(
+				days,
+				contract.transportToleranceUpperPercent,
+				contract.transportToleranceLowerPercent,
+			);
+
+			// Calculate accumulated penalties
+			const penaltyParams = {
+				qdcContracted: contract.qdcContracted,
+				pvemaTolerancePercent:
+					contract.pvemaTolerancePercent ??
+					contract.transportToleranceUpperPercent,
+				pvemeTolerancePercent:
+					contract.pvemeTolerancePercent ??
+					contract.transportToleranceLowerPercent,
+				overdemandTier1MaxPercent: contract.overdemandTier1MaxPercent ?? 110,
+				overdemandTier2MaxPercent: contract.overdemandTier2MaxPercent ?? 115,
+				overdemandTier2Multiplier: contract.overdemandTier2Multiplier ?? 1.0,
+				overdemandTier3Multiplier: contract.overdemandTier3Multiplier ?? 1.5,
+				tusdTariffPerUnit: contract.tusdTariffPerUnit ?? 0,
+				basePricePerUnit: contract.basePricePerUnit ?? 0,
+			};
+
+			const dailyQdrValues = days.map((d) => d.qdr);
+			const penalties = GasCalculationService.calculateMonthlyPenalties(
+				dailyQdrValues,
+				penaltyParams,
+			);
+
+			return {
+				month,
+				contract: {
+					id: contract.id,
+					name: contract.name,
+					qdcContracted: contract.qdcContracted,
+					transportToleranceUpperPercent:
+						contract.transportToleranceUpperPercent,
+					transportToleranceLowerPercent:
+						contract.transportToleranceLowerPercent,
+				},
+				units: units.map((u) => ({ id: u.id, code: u.code, name: u.name })),
+				scorecard: {
+					assertivenessRate: accuracyResult.assertivenessRate,
+					averageAccuracyRate: accuracyResult.averageAccuracyRate,
+					daysWithData: accuracyResult.daysWithData,
+					daysWithinTolerance: accuracyResult.daysWithinTolerance,
+					penalties: {
+						pvema: penalties.pvema,
+						pveme: penalties.pveme,
+						sobredemanda: penalties.sobredemanda,
+						total: penalties.total,
+					},
+				},
+			};
+		},
+		{
+			auth: true,
+			query: t.Object({
+				month: t.String(),
+				unitId: t.Optional(t.String()),
+			}),
+			response: {
+				200: t.Object({
+					month: t.String(),
+					contract: t.Object({
+						id: t.String(),
+						name: t.String(),
+						qdcContracted: t.Number(),
+						transportToleranceUpperPercent: t.Number(),
+						transportToleranceLowerPercent: t.Number(),
+					}),
+					units: t.Array(
+						t.Object({
+							id: t.String(),
+							code: t.String(),
+							name: t.String(),
+						}),
+					),
+					scorecard: t.Object({
+						assertivenessRate: t.Number(),
+						averageAccuracyRate: t.Number(),
+						daysWithData: t.Number(),
+						daysWithinTolerance: t.Number(),
+						penalties: t.Object({
+							pvema: t.Number(),
+							pveme: t.Number(),
+							sobredemanda: t.Number(),
+							total: t.Number(),
+						}),
+					}),
 				}),
 				400: t.Object({
 					error: t.String(),
