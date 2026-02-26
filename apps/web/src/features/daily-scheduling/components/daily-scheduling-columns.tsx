@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { CheckCircle, CircleDashed, Clock, Send, XCircle } from "lucide-react";
+import { CheckCircle, CircleDashed, Send, XCircle } from "lucide-react";
 
 import type {
   GasContract,
@@ -8,54 +8,25 @@ import type {
   User,
 } from "@acme/zen-v3/zenstack/models";
 import { Badge } from "@acme/ui/badge";
-import { Checkbox } from "@acme/ui/checkbox";
 
 import { DataTableColumnHeader } from "~/components/data-table/column-header";
-import { DataTableRowActions } from "./data-table-row-actions";
 
-type DailyPlanWithRelations = GasDailyPlan & {
+export type DailyPlanWithRelations = GasDailyPlan & {
   unit: GasUnit & {
-    contract:
-      | Pick<
-          GasContract,
-          | "id"
-          | "name"
-          | "qdcContracted"
-          | "transportToleranceUpperPercent"
-          | "transportToleranceLowerPercent"
-          | "volumeUnit"
-        >
-      | null;
+    contract: Pick<
+      GasContract,
+      | "id"
+      | "name"
+      | "qdcContracted"
+      | "transportToleranceUpperPercent"
+      | "transportToleranceLowerPercent"
+      | "volumeUnit"
+    > | null;
   };
   createdByUser: Pick<User, "id" | "name"> | null;
-  submittedByUser: User | null;
 };
 
 export const columns: ColumnDef<DailyPlanWithRelations>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Selecionar todos"
-        className="translate-y-[2px]"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Selecionar linha"
-        className="translate-y-[2px]"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "date",
     header: ({ column }) => (
@@ -260,9 +231,5 @@ export const columns: ColumnDef<DailyPlanWithRelations>[] = [
         </div>
       );
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

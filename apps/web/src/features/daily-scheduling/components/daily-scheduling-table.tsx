@@ -2,7 +2,7 @@
 
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import { getRouteApi } from "@tanstack/react-router";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import {
   flexRender,
   getCoreRowModel,
@@ -26,6 +26,7 @@ import {
 } from "@acme/ui/table";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
+import type { DailyPlanWithRelations } from "./daily-scheduling-columns";
 import type { NavigateFn } from "~/hooks/use-table-url-state";
 import { DataTablePagination, DataTableToolbar } from "~/components/data-table";
 import { useTableUrlState } from "~/hooks/use-table-url-state";
@@ -34,6 +35,7 @@ import { columns } from "./daily-scheduling-columns";
 
 export function DailySchedulingTable() {
   const client = useClientQueries(schema);
+  const routerNavigate = useNavigate();
 
   const { data: dailyPlans = [], isFetching } = client.gasDailyPlan.useFindMany(
     {
@@ -65,7 +67,6 @@ export function DailySchedulingTable() {
   );
 
   // Local UI-only states
-  const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -74,7 +75,6 @@ export function DailySchedulingTable() {
   let navigate: NavigateFn = () => {};
 
   try {
-    // @ts-expect-error - Route may not be registered yet during initial build
     const route = getRouteApi("/_authenticated/gas/scheduling/");
     search = route.useSearch() as Record<string, unknown>;
     navigate = route.useNavigate() as unknown as NavigateFn;
@@ -106,13 +106,10 @@ export function DailySchedulingTable() {
     state: {
       sorting,
       columnVisibility,
-      rowSelection,
       columnFilters,
       globalFilter,
       pagination,
     },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     globalFilterFn: (row, _columnId, filterValue) => {
@@ -144,6 +141,13 @@ export function DailySchedulingTable() {
   useEffect(() => {
     ensurePageInRange(pageCount);
   }, [pageCount, ensurePageInRange]);
+
+  const handleRowClick = (row: DailyPlanWithRelations) => {
+    routerNavigate({
+      to: "/gas/scheduling-dashboard",
+      search: { filter: row.unit.name },
+    });
+  };
 
   if (isFetching) {
     return (
@@ -199,7 +203,9 @@ export function DailySchedulingTable() {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-muted/50 cursor-pointer"
+                  onClick={() => handleRowClick(row.original)}
+                  title="Clique para abrir no Painel de Programação"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

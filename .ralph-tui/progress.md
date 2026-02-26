@@ -14,6 +14,7 @@ after each iteration and it's included in prompts for context.
 - **Auth DB vs plain DB**: Use `authDb.$setAuth(...)` (as `userDb`) for creating records that need `createdById` auto-set. Use plain `db` for reads and updates that don't need auth context.
 - **ZenStack compound unique**: Model `@@unique([unitId, date])` creates a compound key. For upsert, use findFirst + create/update pattern since the compound key name varies.
 - **Unit tests**: Use `bun:test` for server-side tests. No vitest setup needed. Run with `bun test <path>`.
+- **Read-only feature pattern**: To make a feature read-only, remove the provider/context (dialog state), form, drawer, row actions, and checkbox columns. Add `useNavigate()` with `onClick` on `<TableRow>` for drill-through navigation.
 
 ---
 
@@ -54,5 +55,25 @@ after each iteration and it's included in prompts for context.
   - When wiring frontend to Elysia, always verify: route path, body shape vs `t.Object()` schema, and date format expectations
   - Upsert pattern: `findFirst + create/update` with `deleteMany` for child records before re-creating them
   - Pre-existing typecheck failure in `@acme/tailwind-config` is unrelated; web app now has 0 TS errors
+---
+
+## 2026-02-25 - US-002
+- Converted the "Programação Diária" tab (`/gas/scheduling`) from a full CRUD interface to a read-only summary view
+- Removed all edit controls: "Nova Programação" button, row actions dropdown (edit/delete/submit), create/update drawer, form, delete/submit confirmation dialogs, checkbox selection column
+- Added "Somente leitura" badge next to the page title for clear visual indication
+- Updated subtitle to explain this is a summary and link to the Painel de Programação for editing
+- Added "Ir para o Painel" button in the header area
+- Made table rows clickable — clicking navigates to `/gas/scheduling-dashboard?filter=<unitName>` to filter by that unit
+- Removed `submittedByUser` from the `DailyPlanWithRelations` type (was required but never fetched, causing a type error)
+- Removed unused `@ts-expect-error` directive that was no longer needed
+- Files changed:
+  - `apps/web/src/features/daily-scheduling/index.tsx` — removed provider, dialogs, primary buttons; added read-only badge, link to dashboard, "Ir para o Painel" button
+  - `apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx` — removed select checkbox column, actions column, unused imports (Checkbox, DataTableRowActions, Clock); exported `DailyPlanWithRelations` type; removed `submittedByUser` from type
+  - `apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx` — removed row selection state/config; added `useNavigate` for row click navigation; made rows clickable with cursor-pointer and tooltip
+- **Learnings:**
+  - The feature provider pattern (`*-provider.tsx`) is only needed for CRUD features with dialog state; read-only views can skip it entirely
+  - When removing columns from TanStack Table, also remove the corresponding `enableRowSelection` and `onRowSelectionChange` from table config
+  - Pre-existing ESLint config broken (`@repo/eslint-config` not found) — linter hook fails but not due to code quality
+  - `@ts-expect-error` directives may become stale when routes are properly registered — check after modifications
 ---
 
