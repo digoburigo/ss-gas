@@ -5,6 +5,7 @@ import { ProfileDropdown } from "~/components/profile-dropdown";
 import { Search } from "~/components/search";
 import { ThemeSwitch } from "~/components/theme-switch";
 import { SchedulingDashboardDatePicker } from "./components/scheduling-dashboard-date-picker";
+import { SchedulingDashboardEntryDrawer } from "./components/scheduling-dashboard-entry-drawer";
 import { SchedulingDashboardProvider } from "./components/scheduling-dashboard-provider";
 import { SchedulingDashboardTable } from "./components/scheduling-dashboard-table";
 
@@ -27,13 +28,15 @@ export function SchedulingDashboard() {
               Painel de Programação Diária
             </h2>
             <p className="text-muted-foreground">
-              Visualize o status de programação de todas as unidades.
+              Crie, submeta e aprove a programação diária de todas as unidades.
             </p>
           </div>
           <SchedulingDashboardDatePicker />
         </div>
         <SchedulingDashboardTable />
       </Main>
+
+      <SchedulingDashboardEntryDrawer />
     </SchedulingDashboardProvider>
   );
 }

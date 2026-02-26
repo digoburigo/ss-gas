@@ -6,18 +6,36 @@ import { ptBR } from "date-fns/locale";
 import {
   AlertTriangle,
   CheckCircle,
+  CheckCircle2,
   CircleDashed,
-  ExternalLink,
+  Clock,
+  Send,
+  XCircle,
 } from "lucide-react";
 
 import { Badge } from "@acme/ui/badge";
 import { Button } from "@acme/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@acme/ui/tooltip";
 
 import type { UnitSchedulingStatus } from "./scheduling-dashboard-table";
 import { DataTableColumnHeader } from "~/components/data-table";
 import { schedulingStatuses } from "../data/data";
 
-export function createColumns(): ColumnDef<UnitSchedulingStatus>[] {
+interface ColumnActions {
+  onCreateEntry: (unitId: string) => void;
+  onSubmitPlan: (planId: string) => void;
+  onApprovePlan: (planId: string) => void;
+  onRejectPlan: (planId: string) => void;
+}
+
+export function createColumns(
+  actions: ColumnActions,
+): ColumnDef<UnitSchedulingStatus>[] {
   return [
     {
       accessorKey: "unitName",
@@ -45,7 +63,7 @@ export function createColumns(): ColumnDef<UnitSchedulingStatus>[] {
           {row.original.contractName ?? "—"}
         </span>
       ),
-      filterFn: (row, id, value: string[]) => {
+      filterFn: (row, _id, value: string[]) => {
         if (!value || value.length === 0) return true;
         return value.includes(row.original.contractId ?? "");
       },
@@ -82,7 +100,7 @@ export function createColumns(): ColumnDef<UnitSchedulingStatus>[] {
           </Badge>
         );
       },
-      filterFn: (row, id, value: string[]) => {
+      filterFn: (row, _id, value: string[]) => {
         if (!value || value.length === 0) return true;
         return value.includes(row.original.status);
       },
@@ -91,7 +109,7 @@ export function createColumns(): ColumnDef<UnitSchedulingStatus>[] {
     {
       accessorKey: "scheduledVolume",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Volume Programado" />
+        <DataTableColumnHeader column={column} title="QDP (m³)" />
       ),
       cell: ({ row }) => {
         const volume = row.original.scheduledVolume;
@@ -99,10 +117,83 @@ export function createColumns(): ColumnDef<UnitSchedulingStatus>[] {
           return <span className="text-muted-foreground">—</span>;
         }
         return (
-          <span className="font-mono">{volume.toLocaleString("pt-BR")} m³</span>
+          <span className="font-mono">
+            {volume.toLocaleString("pt-BR")} m³
+          </span>
         );
       },
       enableSorting: true,
+    },
+    {
+      accessorKey: "workflow",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Fluxo" />
+      ),
+      cell: ({ row }) => {
+        const { planId, submitted, approved, rejectionReason } = row.original;
+
+        if (!planId) {
+          return <span className="text-muted-foreground text-sm">—</span>;
+        }
+
+        if (approved === true) {
+          return (
+            <Badge
+              variant="outline"
+              className="border-emerald-300 bg-emerald-100 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+            >
+              <CheckCircle2 className="mr-1 h-3 w-3" />
+              Aprovado
+            </Badge>
+          );
+        }
+
+        if (approved === false) {
+          return (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant="outline"
+                    className="border-red-300 bg-red-100 text-red-700 dark:border-red-800 dark:bg-red-900/30 dark:text-red-400"
+                  >
+                    <XCircle className="mr-1 h-3 w-3" />
+                    Rejeitado
+                  </Badge>
+                </TooltipTrigger>
+                {rejectionReason && (
+                  <TooltipContent>
+                    <p>{rejectionReason}</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+          );
+        }
+
+        if (submitted) {
+          return (
+            <Badge
+              variant="outline"
+              className="border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+            >
+              <Clock className="mr-1 h-3 w-3" />
+              Aguardando Aprovação
+            </Badge>
+          );
+        }
+
+        return (
+          <Badge
+            variant="outline"
+            className="border-gray-300 bg-gray-100 text-gray-700 dark:border-gray-700 dark:bg-gray-800/30 dark:text-gray-400"
+          >
+            <CircleDashed className="mr-1 h-3 w-3" />
+            Rascunho
+          </Badge>
+        );
+      },
+      enableSorting: false,
     },
     {
       accessorKey: "scheduledAt",
@@ -125,20 +216,55 @@ export function createColumns(): ColumnDef<UnitSchedulingStatus>[] {
     {
       id: "actions",
       cell: ({ row }) => {
-        const isScheduled = row.original.status === "scheduled";
+        const { planId, submitted, approved, status } = row.original;
+        const isScheduled = status === "scheduled";
+
         return (
-          <div className="flex items-center justify-end gap-2">
-            {!isScheduled && (
+          <div className="flex items-center justify-end gap-1">
+            {/* Programar button - show when not scheduled or to edit existing */}
+            <Button
+              variant={isScheduled ? "ghost" : "outline"}
+              size="sm"
+              onClick={() => actions.onCreateEntry(row.original.unitId)}
+            >
+              {isScheduled ? "Editar" : "Programar"}
+            </Button>
+
+            {/* Submit button - show when plan exists, not yet submitted */}
+            {planId && !submitted && (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  window.location.href = "/gas/scheduling";
-                }}
+                onClick={() => actions.onSubmitPlan(planId)}
+                className="text-blue-600 hover:text-blue-700"
               >
-                Programar
-                <ExternalLink className="ml-1 h-3 w-3" />
+                <Send className="mr-1 h-3 w-3" />
+                Submeter
               </Button>
+            )}
+
+            {/* Approve/Reject buttons - show when submitted but not yet reviewed */}
+            {planId && submitted && approved === null && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => actions.onApprovePlan(planId)}
+                  className="text-emerald-600 hover:text-emerald-700"
+                >
+                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                  Aprovar
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => actions.onRejectPlan(planId)}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <XCircle className="mr-1 h-3 w-3" />
+                  Rejeitar
+                </Button>
+              </>
             )}
           </div>
         );

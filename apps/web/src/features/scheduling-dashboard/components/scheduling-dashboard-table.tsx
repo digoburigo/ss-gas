@@ -2,6 +2,7 @@
 
 import type { SortingState, VisibilityState } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {
   flexRender,
@@ -14,8 +15,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
-import { format, isAfter, isSameDay, parseISO, startOfDay } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { format, isAfter, isSameDay, startOfDay } from "date-fns";
+import { toast } from "sonner";
 
 import { cn } from "@acme/ui";
 import {
@@ -29,6 +30,7 @@ import {
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import type { NavigateFn } from "~/hooks/use-table-url-state";
+import { api } from "~/clients/api-client";
 import { DataTablePagination, DataTableToolbar } from "~/components/data-table";
 import { useTableUrlState } from "~/hooks/use-table-url-state";
 import { schedulingStatuses } from "../data/data";
@@ -46,11 +48,17 @@ export interface UnitSchedulingStatus {
   scheduledVolume: number | null;
   scheduledAt: Date | null;
   date: Date;
+  planId: string | null;
+  submitted: boolean;
+  approved: boolean | null;
+  rejectionReason: string | null;
 }
 
 export function SchedulingDashboardTable() {
   const client = useClientQueries(schema);
-  const { selectedDate } = useSchedulingDashboard();
+  const queryClient = useQueryClient();
+  const { selectedDate, setDrawerOpen, setSelectedUnitId } =
+    useSchedulingDashboard();
 
   // Fetch all active units
   const { data: units = [], isFetching: isFetchingUnits } =
@@ -69,7 +77,7 @@ export function SchedulingDashboardTable() {
       orderBy: { name: "asc" },
     });
 
-  // Fetch daily plans for the selected date
+  // Fetch daily plans for the selected date with workflow fields
   const dateStr = format(selectedDate, "yyyy-MM-dd");
   const { data: dailyPlans = [], isFetching: isFetchingPlans } =
     client.gasDailyPlan.useFindMany({
@@ -78,6 +86,83 @@ export function SchedulingDashboardTable() {
         date: new Date(dateStr),
       },
     });
+
+  // Submit plan mutation
+  const submitPlanMutation = useMutation({
+    mutationFn: async (planId: string) => {
+      const response = await api.gas["daily-plans"]({ planId }).submit.post({});
+      if (response.error) {
+        const errorObj = response.error as { error?: string };
+        throw new Error(errorObj.error ?? "Failed to submit plan");
+      }
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Programação submetida para aprovação!");
+      queryClient.invalidateQueries({ queryKey: ["GasDailyPlan"] });
+      queryClient.invalidateQueries({ queryKey: ["gasDailyPlan"] });
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao submeter: ${error.message}`);
+    },
+  });
+
+  // Approve plan mutation
+  const approvePlanMutation = useMutation({
+    mutationFn: async ({
+      planId,
+      approved,
+      rejectionReason,
+    }: {
+      planId: string;
+      approved: boolean;
+      rejectionReason?: string;
+    }) => {
+      const response = await api.gas["daily-plans"]({ planId }).approve.post({
+        approved,
+        rejectionReason,
+      });
+      if (response.error) {
+        const errorObj = response.error as { error?: string };
+        throw new Error(errorObj.error ?? "Failed to approve plan");
+      }
+      return response.data;
+    },
+    onSuccess: (_data, variables) => {
+      toast.success(
+        variables.approved
+          ? "Programação aprovada!"
+          : "Programação rejeitada.",
+      );
+      queryClient.invalidateQueries({ queryKey: ["GasDailyPlan"] });
+      queryClient.invalidateQueries({ queryKey: ["gasDailyPlan"] });
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro: ${error.message}`);
+    },
+  });
+
+  const handleCreateEntry = (unitId: string) => {
+    setSelectedUnitId(unitId);
+    setDrawerOpen("create-entry");
+  };
+
+  const handleSubmitPlan = (planId: string) => {
+    submitPlanMutation.mutate(planId);
+  };
+
+  const handleApprovePlan = (planId: string) => {
+    approvePlanMutation.mutate({ planId, approved: true });
+  };
+
+  const handleRejectPlan = (planId: string) => {
+    const reason = window.prompt("Motivo da rejeição (opcional):");
+    approvePlanMutation.mutate({
+      planId,
+      approved: false,
+      rejectionReason: reason ?? undefined,
+    });
+  };
 
   // Compute the status for each unit
   const unitStatuses = useMemo((): UnitSchedulingStatus[] => {
@@ -88,19 +173,15 @@ export function SchedulingDashboardTable() {
     const isPast = isAfter(today, selectedDay);
 
     return units.map((unit) => {
-      // Find if this unit has a plan for the selected date
       const plan = dailyPlans.find((p) => p.unitId === unit.id);
 
       let status: "scheduled" | "pending" | "late" = "pending";
 
       if (plan) {
-        // Has a scheduled plan
         status = "scheduled";
       } else if (isPast && !isToday) {
-        // Date is in the past and no schedule - late
         status = "late";
       } else if (isToday) {
-        // Today - check if past deadline
         const deadlineStr = unit.contract?.dailySchedulingDeadline;
         if (deadlineStr) {
           const [hours, minutes] = deadlineStr.split(":").map(Number);
@@ -125,6 +206,10 @@ export function SchedulingDashboardTable() {
         scheduledVolume: plan?.qdpValue ?? null,
         scheduledAt: plan?.createdAt ? new Date(plan.createdAt) : null,
         date: selectedDate,
+        planId: plan?.id ?? null,
+        submitted: plan?.submitted ?? false,
+        approved: plan?.approved ?? null,
+        rejectionReason: plan?.rejectionReason ?? null,
       };
     });
   }, [units, dailyPlans, selectedDate]);
@@ -136,11 +221,19 @@ export function SchedulingDashboardTable() {
     ).length;
     const pending = unitStatuses.filter((u) => u.status === "pending").length;
     const late = unitStatuses.filter((u) => u.status === "late").length;
-    return { scheduled, pending, late, total: unitStatuses.length };
+    const submitted = unitStatuses.filter((u) => u.submitted).length;
+    const approved = unitStatuses.filter((u) => u.approved === true).length;
+    return {
+      scheduled,
+      pending,
+      late,
+      submitted,
+      approved,
+      total: unitStatuses.length,
+    };
   }, [unitStatuses]);
 
   // Local UI-only states
-  const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -177,22 +270,27 @@ export function SchedulingDashboardTable() {
     ],
   });
 
-  const columns = useMemo(() => createColumns(), []);
+  const columns = useMemo(
+    () =>
+      createColumns({
+        onCreateEntry: handleCreateEntry,
+        onSubmitPlan: handleSubmitPlan,
+        onApprovePlan: handleApprovePlan,
+        onRejectPlan: handleRejectPlan,
+      }),
+    [],
+  );
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: unitStatuses,
     columns,
     state: {
       sorting,
       columnVisibility,
-      rowSelection,
       columnFilters,
       globalFilter,
       pagination,
     },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
     globalFilterFn: (row, _columnId, filterValue) => {
@@ -257,7 +355,7 @@ export function SchedulingDashboardTable() {
       )}
     >
       {/* Summary Cards */}
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
         <div className="rounded-lg border p-4">
           <p className="text-muted-foreground text-sm">Total de Unidades</p>
           <p className="text-2xl font-bold">{summary.total}</p>
@@ -278,10 +376,20 @@ export function SchedulingDashboardTable() {
             {summary.pending}
           </p>
         </div>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-900/20">
-          <p className="text-sm text-red-700 dark:text-red-400">Atrasado</p>
-          <p className="text-2xl font-bold text-red-700 dark:text-red-400">
-            {summary.late}
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-900/20">
+          <p className="text-sm text-blue-700 dark:text-blue-400">
+            Submetido
+          </p>
+          <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
+            {summary.submitted}
+          </p>
+        </div>
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900 dark:bg-emerald-900/20">
+          <p className="text-sm text-emerald-700 dark:text-emerald-400">
+            Aprovado
+          </p>
+          <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+            {summary.approved}
           </p>
         </div>
       </div>
@@ -334,7 +442,6 @@ export function SchedulingDashboardTable() {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
                   className={cn(
                     row.original.status === "pending" &&
                       "bg-yellow-50/50 dark:bg-yellow-900/10",

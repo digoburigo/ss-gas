@@ -15,6 +15,8 @@ after each iteration and it's included in prompts for context.
 - **ZenStack compound unique**: Model `@@unique([unitId, date])` creates a compound key. For upsert, use findFirst + create/update pattern since the compound key name varies.
 - **Unit tests**: Use `bun:test` for server-side tests. No vitest setup needed. Run with `bun test <path>`.
 - **Read-only feature pattern**: To make a feature read-only, remove the provider/context (dialog state), form, drawer, row actions, and checkbox columns. Add `useNavigate()` with `onClick` on `<TableRow>` for drill-through navigation.
+- **Elysia Treaty nested path params**: For deeply nested routes like `/gas/daily-plans/:planId/submit`, use `api.gas["daily-plans"]({ planId }).submit.post({})` — bracket notation for hyphenated path segments, function call for params.
+- **Dashboard drawer pattern**: Reuse existing form components (e.g., `DailyEntryForm`) inside a `Sheet` drawer opened from table row actions. Provider holds `drawerOpen` state + `selectedUnitId`.
 
 ---
 
@@ -75,5 +77,32 @@ after each iteration and it's included in prompts for context.
   - When removing columns from TanStack Table, also remove the corresponding `enableRowSelection` and `onRowSelectionChange` from table config
   - Pre-existing ESLint config broken (`@repo/eslint-config` not found) — linter hook fails but not due to code quality
   - `@ts-expect-error` directives may become stale when routes are properly registered — check after modifications
+---
+
+## 2026-02-25 - US-003
+- Transformed the Scheduling Dashboard (`/gas/scheduling-dashboard`) from a read-only status view into the single point of entry for creating and managing daily schedules
+- Added server-side endpoints:
+  - `POST /gas/daily-plans/:planId/submit` — marks a plan as submitted with timestamp and user
+  - `POST /gas/daily-plans/:planId/approve` — approves or rejects a submitted plan with optional rejection reason
+- Added entry creation drawer: clicking "Programar" on any unit row opens a `Sheet` with the full `DailyEntryForm` (equipment ON/OFF toggles, atomizer hours, QDP auto-calculation)
+- Added workflow columns: "Fluxo" column shows Rascunho → Aguardando Aprovação → Aprovado/Rejeitado badges
+- Added workflow action buttons in the actions column: Submeter, Aprovar, Rejeitar (with prompt for rejection reason)
+- Updated summary cards from 4 to 5: Total, Programado, Pendente, Submetido, Aprovado
+- Updated subtitle to reflect entry capabilities: "Crie, submeta e aprove a programação diária de todas as unidades."
+- Extended `UnitSchedulingStatus` interface with `planId`, `submitted`, `approved`, `rejectionReason` fields
+- Existing date picker (prev/next day, calendar popup, "Hoje" button) already satisfies date navigation AC
+- Files changed:
+  - `apps/server/src/modules/gas/gas.controller.ts` — added POST submit + approve endpoints
+  - `apps/web/src/features/scheduling-dashboard/index.tsx` — added entry drawer component
+  - `apps/web/src/features/scheduling-dashboard/components/scheduling-dashboard-provider.tsx` — added `drawerOpen`, `selectedUnitId` state
+  - `apps/web/src/features/scheduling-dashboard/components/scheduling-dashboard-entry-drawer.tsx` — new drawer with DailyEntryForm
+  - `apps/web/src/features/scheduling-dashboard/components/scheduling-dashboard-columns.tsx` — added workflow column, action buttons (Programar/Editar, Submeter, Aprovar, Rejeitar)
+  - `apps/web/src/features/scheduling-dashboard/components/scheduling-dashboard-table.tsx` — added workflow data, submit/approve mutations, handler functions
+- **Learnings:**
+  - Elysia Treaty for hyphenated paths: `api.gas["daily-plans"]({ planId }).submit.post({})` — bracket notation for the segment, function call for the param
+  - Reuse the shared `DailyEntryForm` component inside a Sheet — it accepts `unit`, `defaultValues`, and `onSubmit` making it composable
+  - ZenStack `useFindMany` returns plan fields including `submitted`, `approved`, `rejectionReason` without extra configuration
+  - `window.prompt()` is sufficient for rejection reason input in MVP — can be upgraded to a dialog later
+  - The `columns` factory function can accept an `actions` object to decouple column definitions from component state/handlers
 ---
 

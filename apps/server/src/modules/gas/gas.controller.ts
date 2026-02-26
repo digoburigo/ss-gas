@@ -2132,4 +2132,133 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				}),
 			},
 		}
+	)
+
+	/**
+	 * POST /gas/daily-plans/:planId/submit
+	 *
+	 * Submits a daily plan for approval.
+	 * Sets submitted=true, submittedAt, and submittedById.
+	 */
+	.post(
+		"/daily-plans/:planId/submit",
+		async ({ params, user, status }) => {
+			const { planId } = params;
+
+			const plan = await db.gasDailyPlan.findUnique({
+				where: { id: planId },
+			});
+
+			if (!plan) {
+				return status(404, { error: "Plan not found" });
+			}
+
+			if (plan.submitted) {
+				return status(400, { error: "Plan is already submitted" });
+			}
+
+			const updated = await db.gasDailyPlan.update({
+				where: { id: planId },
+				data: {
+					submitted: true,
+					submittedAt: new Date(),
+					submittedById: user.id,
+				},
+			});
+
+			return {
+				id: updated.id,
+				submitted: updated.submitted,
+				submittedAt: updated.submittedAt,
+			};
+		},
+		{
+			auth: true,
+			params: t.Object({
+				planId: t.String(),
+			}),
+			response: {
+				200: t.Object({
+					id: t.String(),
+					submitted: t.Boolean(),
+					submittedAt: t.Nullable(t.Date()),
+				}),
+				400: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
+	)
+
+	/**
+	 * POST /gas/daily-plans/:planId/approve
+	 *
+	 * Approves or rejects a submitted daily plan.
+	 * Body: { approved: boolean, rejectionReason?: string }
+	 */
+	.post(
+		"/daily-plans/:planId/approve",
+		async ({ params, body, user, status }) => {
+			const { planId } = params;
+
+			const plan = await db.gasDailyPlan.findUnique({
+				where: { id: planId },
+			});
+
+			if (!plan) {
+				return status(404, { error: "Plan not found" });
+			}
+
+			if (!plan.submitted) {
+				return status(400, { error: "Plan must be submitted before approval" });
+			}
+
+			if (plan.approved !== null) {
+				return status(400, { error: "Plan has already been reviewed" });
+			}
+
+			const updated = await db.gasDailyPlan.update({
+				where: { id: planId },
+				data: {
+					approved: body.approved,
+					approvedAt: new Date(),
+					approvedById: user.id,
+					rejectionReason: body.approved ? null : (body.rejectionReason ?? null),
+				},
+			});
+
+			return {
+				id: updated.id,
+				approved: updated.approved,
+				approvedAt: updated.approvedAt,
+				rejectionReason: updated.rejectionReason,
+			};
+		},
+		{
+			auth: true,
+			params: t.Object({
+				planId: t.String(),
+			}),
+			body: t.Object({
+				approved: t.Boolean(),
+				rejectionReason: t.Optional(t.String()),
+			}),
+			response: {
+				200: t.Object({
+					id: t.String(),
+					approved: t.Nullable(t.Boolean()),
+					approvedAt: t.Nullable(t.Date()),
+					rejectionReason: t.Nullable(t.String()),
+				}),
+				400: t.Object({
+					error: t.String(),
+				}),
+				404: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
 	);
