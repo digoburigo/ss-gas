@@ -82,6 +82,49 @@ interface DailyConsumptionData {
 }
 
 /**
+ * CUSD contract penalty parameters
+ */
+interface CusdPenaltyParams {
+	qdcContracted: number;
+	pvemaTolerancePercent: number;
+	pvemeTolerancePercent: number;
+	overdemandTier1MaxPercent: number;
+	overdemandTier2MaxPercent: number;
+	overdemandTier2Multiplier: number;
+	overdemandTier3Multiplier: number;
+	tusdTariffPerUnit: number;
+	basePricePerUnit: number;
+}
+
+/**
+ * Result of daily penalty calculations
+ */
+interface DailyPenaltyResult {
+	pvema: number;
+	pveme: number;
+	sobredemanda: number;
+	total: number;
+}
+
+/**
+ * Daily data point for monthly calculations
+ */
+interface MonthlyDayEntry {
+	qdp: number;
+	qdr: number;
+}
+
+/**
+ * Result of monthly assertiveness/accuracy calculations
+ */
+interface MonthlyAccuracyResult {
+	assertivenessRate: number;
+	averageAccuracyRate: number;
+	daysWithData: number;
+	daysWithinTolerance: number;
+}
+
+/**
  * Gas Calculation Service
  *
  * Provides methods for calculating gas consumption metrics:
@@ -261,6 +304,176 @@ export const GasCalculationService = {
 			moleculeStatus,
 		};
 	},
+
+	/**
+	 * Calculate PVEMA (Penalidade por Volume Excedente - Medição Acima)
+	 *
+	 * Penalty for daily consumption exceeding the upper transport tolerance.
+	 * Formula: max(0, consumption - upperLimit) × basePricePerUnit
+	 *
+	 * Upper limit = QDC × (1 + pvemaTolerancePercent / 100)
+	 */
+	calculatePvema(consumption: number, params: CusdPenaltyParams): number {
+		const upperLimit =
+			params.qdcContracted * (1 + params.pvemaTolerancePercent / 100);
+		const excess = Math.max(0, consumption - upperLimit);
+		return round2(excess * params.basePricePerUnit);
+	},
+
+	/**
+	 * Calculate PVEME (Penalidade por Volume Excedente - Medição abaixo)
+	 *
+	 * Penalty for daily consumption falling below the lower transport tolerance.
+	 * Formula: max(0, lowerLimit - consumption) × basePricePerUnit
+	 *
+	 * Lower limit = QDC × (1 - pvemeTolerancePercent / 100)
+	 */
+	calculatePveme(consumption: number, params: CusdPenaltyParams): number {
+		const lowerLimit =
+			params.qdcContracted * (1 - params.pvemeTolerancePercent / 100);
+		const deficit = Math.max(0, lowerLimit - consumption);
+		return round2(deficit * params.basePricePerUnit);
+	},
+
+	/**
+	 * Calculate Sobredemanda (Overdemand) penalty
+	 *
+	 * Tiered penalty for consumption above QDC:
+	 * - Tier 1 (up to tier1MaxPercent of QDC): no charge
+	 * - Tier 2 (tier1MaxPercent to tier2MaxPercent of QDC): tier2Multiplier × TUSD × volume
+	 * - Tier 3 (above tier2MaxPercent of QDC): tier3Multiplier × TUSD × volume
+	 */
+	calculateSobredemanda(
+		consumption: number,
+		params: CusdPenaltyParams,
+	): number {
+		const qdc = params.qdcContracted;
+		const tier1Limit = qdc * (params.overdemandTier1MaxPercent / 100);
+		const tier2Limit = qdc * (params.overdemandTier2MaxPercent / 100);
+
+		if (consumption <= tier1Limit) {
+			return 0;
+		}
+
+		let penalty = 0;
+
+		// Tier 2 volume: between tier1Limit and tier2Limit
+		const tier2Volume = Math.min(consumption, tier2Limit) - tier1Limit;
+		if (tier2Volume > 0) {
+			penalty +=
+				tier2Volume *
+				params.tusdTariffPerUnit *
+				params.overdemandTier2Multiplier;
+		}
+
+		// Tier 3 volume: above tier2Limit
+		const tier3Volume = consumption - tier2Limit;
+		if (tier3Volume > 0) {
+			penalty +=
+				tier3Volume *
+				params.tusdTariffPerUnit *
+				params.overdemandTier3Multiplier;
+		}
+
+		return round2(penalty);
+	},
+
+	/**
+	 * Calculate all daily penalties (PVEMA + PVEME + Sobredemanda)
+	 */
+	calculateDailyPenalties(
+		consumption: number,
+		params: CusdPenaltyParams,
+	): DailyPenaltyResult {
+		const pvema = this.calculatePvema(consumption, params);
+		const pveme = this.calculatePveme(consumption, params);
+		const sobredemanda = this.calculateSobredemanda(consumption, params);
+
+		return {
+			pvema,
+			pveme,
+			sobredemanda,
+			total: round2(pvema + pveme + sobredemanda),
+		};
+	},
+
+	/**
+	 * Calculate accumulated monthly penalties across all days
+	 */
+	calculateMonthlyPenalties(
+		dailyConsumptions: number[],
+		params: CusdPenaltyParams,
+	): DailyPenaltyResult {
+		const totals = { pvema: 0, pveme: 0, sobredemanda: 0, total: 0 };
+
+		for (const consumption of dailyConsumptions) {
+			const daily = this.calculateDailyPenalties(consumption, params);
+			totals.pvema += daily.pvema;
+			totals.pveme += daily.pveme;
+			totals.sobredemanda += daily.sobredemanda;
+		}
+
+		totals.pvema = round2(totals.pvema);
+		totals.pveme = round2(totals.pveme);
+		totals.sobredemanda = round2(totals.sobredemanda);
+		totals.total = round2(totals.pvema + totals.pveme + totals.sobredemanda);
+
+		return totals;
+	},
+
+	/**
+	 * Calculate monthly assertiveness and accuracy rates
+	 *
+	 * Assertiveness rate: % of days where QDR is within transport tolerance of QDP
+	 * - Within tolerance means: QDP × (1 - lowerPct/100) ≤ QDR ≤ QDP × (1 + upperPct/100)
+	 *
+	 * Average accuracy rate: mean of (QDR / QDP × 100) across days with data
+	 * - Days where QDP = 0 are excluded from accuracy calculation
+	 */
+	calculateMonthlyAccuracy(
+		days: MonthlyDayEntry[],
+		toleranceUpperPercent: number,
+		toleranceLowerPercent: number,
+	): MonthlyAccuracyResult {
+		const validDays = days.filter((d) => d.qdp > 0 || d.qdr > 0);
+
+		if (validDays.length === 0) {
+			return {
+				assertivenessRate: 0,
+				averageAccuracyRate: 0,
+				daysWithData: 0,
+				daysWithinTolerance: 0,
+			};
+		}
+
+		let daysWithinTolerance = 0;
+		let accuracySum = 0;
+		let accuracyDays = 0;
+
+		for (const day of validDays) {
+			const upperLimit = day.qdp * (1 + toleranceUpperPercent / 100);
+			const lowerLimit = day.qdp * (1 - toleranceLowerPercent / 100);
+
+			if (day.qdr >= lowerLimit && day.qdr <= upperLimit) {
+				daysWithinTolerance++;
+			}
+
+			if (day.qdp > 0) {
+				accuracySum += (day.qdr / day.qdp) * 100;
+				accuracyDays++;
+			}
+		}
+
+		return {
+			assertivenessRate: round2(
+				(daysWithinTolerance / validDays.length) * 100,
+			),
+			averageAccuracyRate:
+				accuracyDays > 0 ? round2(accuracySum / accuracyDays) : 0,
+			daysWithData: validDays.length,
+			daysWithinTolerance,
+		};
+	},
 };
 
 /**
@@ -276,13 +489,24 @@ function normalizeToHourlyRate(
 	return rate;
 }
 
+/**
+ * Round to 2 decimal places
+ */
+function round2(value: number): number {
+	return Math.round(value * 100) / 100;
+}
+
 // Export types for external use
 export type {
 	AtomizerInput,
 	ContractTolerances,
+	CusdPenaltyParams,
 	DailyConsumptionData,
+	DailyPenaltyResult,
 	DeviationResult,
 	EquipmentConstant,
 	LineWithStatus,
+	MonthlyAccuracyResult,
+	MonthlyDayEntry,
 	QdpEquipmentInput,
 };

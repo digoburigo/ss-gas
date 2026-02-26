@@ -106,3 +106,24 @@ after each iteration and it's included in prompts for context.
   - The `columns` factory function can accept an `actions` object to decouple column definitions from component state/handlers
 ---
 
+## 2026-02-25 - US-007
+- Implemented CUSD penalty calculation methods in `gas.service.ts`: `calculatePvema`, `calculatePveme`, `calculateSobredemanda`, `calculateDailyPenalties`, `calculateMonthlyPenalties`
+- Implemented monthly accuracy/assertiveness methods: `calculateMonthlyAccuracy`
+- Added 34 new unit tests (total now 54) covering:
+  - PVEMA: within tolerance, at boundary, above tolerance, zero consumption, large excess scenario
+  - PVEME: within tolerance, at boundary, below tolerance, zero consumption, slight deficit scenario
+  - Sobredemanda: within tier 1, tier 2 only, tier 2+3, boundary values, zero consumption
+  - Daily penalties: combined scenarios (normal, high, low, zero)
+  - Monthly penalties: accumulated across days, empty array, partial month
+  - Monthly accuracy: normal month, empty data, zero QDP days, all-within, all-exceeded, partial month
+- Files changed:
+  - `apps/server/src/modules/gas/gas.service.ts` — added interfaces (`CusdPenaltyParams`, `DailyPenaltyResult`, `MonthlyDayEntry`, `MonthlyAccuracyResult`) and 6 new calculation methods + `round2` helper
+  - `apps/server/src/modules/gas/gas.service.test.ts` — added 34 new tests for penalty and accuracy calculations
+- **Learnings:**
+  - CUSD penalty formulas are per-day calculations: PVEMA for upper excess, PVEME for lower deficit, Sobredemanda for tiered overdemand — they are independent and can all apply on the same day
+  - Sobredemanda tiers are based on % of QDC (not tolerance limits), so tier 1 max of 110% means up to 110% of QDC is free, not 110% of tolerance
+  - Monthly penalties are simple daily sums — no complex accumulation logic needed
+  - Assertiveness rate counts days within tolerance as % of days with data; accuracy rate averages QDR/QDP ratios only for days where QDP > 0
+  - Contract model already has all needed fields (`pvemaTolerancePercent`, `pvemeTolerancePercent`, `overdemandTier*`, `tusdTariffPerUnit`, `basePricePerUnit`)
+---
+
