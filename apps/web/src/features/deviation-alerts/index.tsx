@@ -1,17 +1,18 @@
-import { useMemo, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
+import { toast } from "sonner";
 
-import { schema } from "@acme/zen-v3/zenstack/schema";
 import type { GasSystemParameter } from "@acme/zen-v3/zenstack/models";
+import { schema } from "@acme/zen-v3/zenstack/schema";
 
+import type { DeviationAlert } from "./components/deviation-alerts-table";
+import { api } from "~/clients/api-client";
 import { ConfigDrawer } from "~/components/config-drawer";
 import { Header } from "~/components/layout/header";
 import { Main } from "~/components/layout/main";
 import { ProfileDropdown } from "~/components/profile-dropdown";
 import { Search } from "~/components/search";
 import { ThemeSwitch } from "~/components/theme-switch";
-
-import { calculateDeviationPercent, isDeviationExceedsThreshold } from "./data/data";
 import { AcknowledgeDialog } from "./components/acknowledge-dialog";
 import { DeviationAlertsFilters } from "./components/deviation-alerts-filters";
 import {
@@ -19,9 +20,12 @@ import {
   useDeviationAlerts,
 } from "./components/deviation-alerts-provider";
 import { DeviationAlertsSummaryCards } from "./components/deviation-alerts-summary-cards";
-import type { DeviationAlert } from "./components/deviation-alerts-table";
 import { DeviationAlertsTable } from "./components/deviation-alerts-table";
 import { SendEmailDialog } from "./components/send-email-dialog";
+import {
+  calculateDeviationPercent,
+  isDeviationExceedsThreshold,
+} from "./data/data";
 
 function DeviationAlertsContent() {
   const client = useClientQueries(schema);
@@ -46,7 +50,9 @@ function DeviationAlertsContent() {
   // Update threshold when parameter is loaded
   useEffect(() => {
     if (thresholdParam) {
-      const value = Number.parseFloat((thresholdParam as GasSystemParameter).value);
+      const value = Number.parseFloat(
+        (thresholdParam as GasSystemParameter).value,
+      );
       if (!Number.isNaN(value)) {
         setThresholdPercent(value);
       }
@@ -97,6 +103,14 @@ function DeviationAlertsContent() {
       orderBy: { date: "desc" },
     });
 
+  // Track acknowledged alerts locally (deviations are computed, not persisted)
+  const [acknowledgedAlerts, setAcknowledgedAlerts] = useState<
+    Set<string>
+  >(new Set());
+  const [emailSentAlerts, setEmailSentAlerts] = useState<
+    Map<string, Date>
+  >(new Map());
+
   // Process data for deviation alerts
   const alerts: DeviationAlert[] = useMemo(() => {
     const result: DeviationAlert[] = [];
@@ -122,6 +136,9 @@ function DeviationAlertsContent() {
         continue;
       }
 
+      const isAcknowledged = acknowledgedAlerts.has(consumption.id);
+      const emailSentAt = emailSentAlerts.get(consumption.id) ?? null;
+
       result.push({
         id: consumption.id,
         date: consumption.date.toString(),
@@ -133,14 +150,14 @@ function DeviationAlertsContent() {
         actual,
         deviation,
         deviationPercent,
-        status: "active",
-        emailSent: false,
-        emailSentAt: null,
+        status: isAcknowledged ? "acknowledged" : "active",
+        emailSent: emailSentAt !== null,
+        emailSentAt: emailSentAt?.toISOString() ?? null,
       });
     }
 
     return result;
-  }, [consumptions, thresholdPercent]);
+  }, [consumptions, thresholdPercent, acknowledgedAlerts, emailSentAlerts]);
 
   // Filter alerts by status
   const filteredAlerts = useMemo(() => {
@@ -177,21 +194,52 @@ function DeviationAlertsContent() {
     return unit?.responsibleEmails ?? [];
   }, [selectedAlert, units]);
 
-  // Handle sending email (would integrate with email service)
-  const handleSendEmail = (
-    alertId: string,
-    recipients: string[],
-    message: string,
-  ) => {
-    // TODO: Implement email sending via API
-    console.log("Sending email:", { alertId, recipients, message });
-  };
+  // Handle sending email via API
+  const handleSendEmail = useCallback(
+    async (alertId: string, recipients: string[], message: string) => {
+      const alert = alerts.find((a) => a.id === alertId);
+      if (!alert) return;
 
-  // Handle acknowledging alert (would update record)
-  const handleAcknowledge = (alertId: string, notes: string) => {
-    // TODO: Implement status update via mutation
-    console.log("Acknowledging alert:", { alertId, notes });
-  };
+      try {
+        const response = await api.gas["deviation-alerts"]["send-email"].post({
+          recipients,
+          message,
+          unitName: alert.unitName,
+          unitCode: alert.unitCode,
+          contractName: alert.contractName,
+          date: new Date(alert.date).toLocaleDateString("pt-BR", {
+            timeZone: "UTC",
+          }),
+          scheduledVolume: alert.scheduled,
+          actualVolume: alert.actual,
+          deviationPercent: alert.deviationPercent,
+          thresholdPercent,
+        });
+
+        if (response.error) {
+          toast.error("Erro ao enviar e-mail de alerta");
+          return;
+        }
+
+        setEmailSentAlerts((prev) => new Map(prev).set(alertId, new Date()));
+        toast.success(
+          `E-mail enviado para ${response.data.sent} destinatário(s)`,
+        );
+      } catch {
+        toast.error("Erro ao enviar e-mail de alerta");
+      }
+    },
+    [alerts, thresholdPercent],
+  );
+
+  // Handle acknowledging alert (local state for computed alerts)
+  const handleAcknowledge = useCallback(
+    (alertId: string, _notes: string) => {
+      setAcknowledgedAlerts((prev) => new Set(prev).add(alertId));
+      toast.success("Alerta reconhecido com sucesso");
+    },
+    [],
+  );
 
   return (
     <>

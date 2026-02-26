@@ -39,9 +39,13 @@ import { contractAlertsColumns as columns } from "./contract-alerts-columns";
 type GasContractAlertWithRelations = GasContractAlert & {
   contract?: Pick<GasContract, "id" | "name"> | null;
   recipients?: Array<Pick<GasContractAlertRecipient, "id" | "email" | "name">>;
+  sentAlerts?: Array<{
+    id: string;
+    status: string;
+    sentAt: Date;
+  }>;
 };
 
-// @ts-expect-error - Route will be registered after build
 const route = getRouteApi("/_authenticated/gas/contract-alerts/");
 
 export function ContractAlertsTable() {
@@ -61,6 +65,15 @@ export function ContractAlertsTable() {
             id: true,
             email: true,
             name: true,
+          },
+        },
+        sentAlerts: {
+          orderBy: { sentAt: "desc" },
+          take: 1,
+          select: {
+            id: true,
+            status: true,
+            sentAt: true,
           },
         },
       },

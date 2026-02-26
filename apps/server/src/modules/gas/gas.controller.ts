@@ -1,3 +1,5 @@
+import { sendEmail } from "@acme/email";
+import { DeviationAlertEmail } from "@acme/email/emails";
 import { authDb, db } from "@acme/zen-v3";
 import { Elysia, t } from "elysia";
 import ExcelJS from "exceljs";
@@ -5,6 +7,8 @@ import ExcelJS from "exceljs";
 import { betterAuth } from "../../plugins/better-auth";
 import { ContractAlertService } from "../../services";
 import { GasCalculationService } from "./gas.service";
+
+const APP_URL = process.env.PUBLIC_WEB_URL ?? "http://localhost:3001";
 
 /**
  * Line status value type matching ZenStack enum
@@ -2479,6 +2483,151 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				}),
 				404: t.Object({
 					error: t.String(),
+				}),
+			},
+		},
+	)
+
+	/**
+	 * POST /gas/alerts/retry
+	 *
+	 * Retries all failed alert deliveries from the last 7 days.
+	 * Admin only.
+	 */
+	.post(
+		"/alerts/retry",
+		async ({ organizationRole, status }) => {
+			if (organizationRole !== "admin" && organizationRole !== "owner") {
+				return status(403, {
+					error: "Only organization admins can retry failed alerts",
+				});
+			}
+
+			const result = await ContractAlertService.retryFailedAlerts();
+
+			return {
+				success: true,
+				...result,
+			};
+		},
+		{
+			auth: true,
+			response: {
+				200: t.Object({
+					success: t.Boolean(),
+					totalRetried: t.Number(),
+					succeeded: t.Number(),
+					stillFailing: t.Number(),
+					details: t.Array(
+						t.Object({
+							alertId: t.String(),
+							email: t.String(),
+							status: t.Union([t.Literal("sent"), t.Literal("failed")]),
+							errorMessage: t.Optional(t.String()),
+						}),
+					),
+				}),
+				403: t.Object({
+					error: t.String(),
+				}),
+			},
+		},
+	)
+
+	/**
+	 * POST /gas/deviation-alerts/send-email
+	 *
+	 * Sends a deviation alert email to specified recipients.
+	 */
+	.post(
+		"/deviation-alerts/send-email",
+		async ({ body, status }) => {
+			const {
+				recipients,
+				message,
+				unitName,
+				unitCode,
+				contractName,
+				date,
+				scheduledVolume,
+				actualVolume,
+				deviationPercent,
+				thresholdPercent,
+			} = body;
+
+			const results: Array<{
+				email: string;
+				status: "sent" | "failed";
+				errorMessage?: string;
+			}> = [];
+
+			for (const recipient of recipients) {
+				try {
+					const emailTemplate = DeviationAlertEmail({
+						recipientName: undefined,
+						unitName,
+						unitCode,
+						contractName: contractName ?? undefined,
+						date,
+						scheduledVolume,
+						actualVolume,
+						deviationPercent,
+						thresholdPercent,
+						dashboardLink: `${APP_URL}/gas/deviation-alerts`,
+					});
+
+					await sendEmail({
+						emailTemplate,
+						to: recipient,
+						subject: `[SS-GAS] Alerta de Desvio: ${unitName} - ${deviationPercent > 0 ? "+" : ""}${deviationPercent.toFixed(1)}%${message ? ` | ${message.slice(0, 50)}` : ""}`,
+					});
+
+					results.push({ email: recipient, status: "sent" });
+				} catch (error) {
+					const errorMessage =
+						error instanceof Error ? error.message : "Unknown error";
+					results.push({ email: recipient, status: "failed", errorMessage });
+				}
+			}
+
+			const sent = results.filter((r) => r.status === "sent").length;
+			const failed = results.filter((r) => r.status === "failed").length;
+
+			return {
+				success: failed === 0,
+				totalEmails: results.length,
+				sent,
+				failed,
+				results,
+			};
+		},
+		{
+			auth: true,
+			body: t.Object({
+				recipients: t.Array(t.String()),
+				message: t.Optional(t.String()),
+				unitName: t.String(),
+				unitCode: t.String(),
+				contractName: t.Nullable(t.String()),
+				date: t.String(),
+				scheduledVolume: t.Number(),
+				actualVolume: t.Number(),
+				deviationPercent: t.Number(),
+				thresholdPercent: t.Number(),
+			}),
+			response: {
+				200: t.Object({
+					success: t.Boolean(),
+					totalEmails: t.Number(),
+					sent: t.Number(),
+					failed: t.Number(),
+					results: t.Array(
+						t.Object({
+							email: t.String(),
+							status: t.Union([t.Literal("sent"), t.Literal("failed")]),
+							errorMessage: t.Optional(t.String()),
+						}),
+					),
 				}),
 			},
 		},

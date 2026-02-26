@@ -148,3 +148,61 @@ after each iteration and it's included in prompts for context.
   - Pre-existing typecheck errors in `ChartTooltipContent` are a known issue with recharts types — not caused by new code
 ---
 
+## 2026-02-25 - US-006
+- Implemented monthly scorecard (Placar Mensal) on `/gas/scheduling-accuracy` page as a new "Placar Mensal" tab
+- Created server endpoint `GET /gas/monthly-scorecard` with query params `month` (YYYY-MM) and optional `unitId`
+  - Fetches GasDailyPlan (QDP) and GasRealConsumption (QDR) for the month, groups by date
+  - Uses `GasCalculationService.calculateMonthlyAccuracy()` for assertiveness/accuracy rates
+  - Uses `GasCalculationService.calculateMonthlyPenalties()` for PVEMA + PVEME + Sobredemanda
+  - Falls back to transport tolerance values when CUSD-specific penalty params are null on the contract
+- Created `MonthlyScorecard` component with 3 color-coded cards:
+  - Taxa de Assertividade (%) — days within tolerance / total days
+  - Taxa de Acurácia Média (%) — mean QDR/QDP × 100
+  - Penalidade Acumulada (R$) — PVEMA + PVEME + Sobredemanda breakdown
+- Month/year selector (last 12 months dropdown) and unit filter
+- Contract info displayed as read-only reference
+- Green/yellow/red thresholds with badges and color-coded borders
+- Tolerance reference card showing contract upper/lower limits and QDC
+- Files changed:
+  - `apps/server/src/modules/gas/gas.controller.ts` — added `GET /gas/monthly-scorecard` endpoint
+  - `apps/web/src/features/scheduling-accuracy/components/monthly-scorecard.tsx` — new scorecard component
+  - `apps/web/src/features/scheduling-accuracy/index.tsx` — added "Placar Mensal" tab (now default), imported MonthlyScorecard
+- **Learnings:**
+  - CUSD penalty params on contract model are all optional (nullable) — need fallback defaults when building `CusdPenaltyParams` for calculation
+  - Elysia Treaty for hyphenated endpoints: `api.gas["monthly-scorecard"].get({ query: {...} })` — bracket notation for the segment
+  - The scorecard reuses `GasCalculationService` methods from US-007 directly on the server, avoiding duplicating calculation logic on the frontend
+  - `useQuery` from TanStack Query works well for the scorecard since it's a simple GET with query params — no need for ZenStack client queries here
+  - Biome auto-fix with `--write` handles formatting; `--unsafe` removes unused imports
+---
+
+## 2026-02-25 - US-008
+- Reinforced the alerts system across contract alerts, deviation alerts, and scheduled jobs
+- **Server-side changes:**
+  - Added `retryFailedAlerts()` method to `ContractAlertService` — queries failed GasAlertSentLog entries from the last 7 days, retries sending, and updates original log status on success
+  - Added `POST /gas/alerts/retry` endpoint (admin-only) to manually trigger retry of failed alerts
+  - Added `POST /gas/deviation-alerts/send-email` endpoint for sending deviation alert emails to specified recipients using the `DeviationAlertEmail` template
+  - Added retry cron job at 10 AM daily in `scheduled-jobs.ts` plugin
+  - Exported `DeviationAlertEmail` from `@acme/email/emails` package (template existed but was not exported)
+- **Frontend changes:**
+  - Replaced TODO stubs in deviation alerts `index.tsx` with real API calls for email sending via `api.gas["deviation-alerts"]["send-email"].post()`
+  - Added local state tracking for acknowledged alerts and email sent status (since deviations are computed, not persisted)
+  - Added "Entrega" (delivery status) column to contract alerts table showing sent/pending/failed with tooltip dates
+  - Included `sentAlerts` relation in contract alerts ZenStack query to power the status column
+  - Fixed unused `@ts-expect-error` in `contract-alerts-table.tsx`
+- Files changed:
+  - `apps/server/src/services/contract-alert.service.ts` — added `retryFailedAlerts()` method
+  - `apps/server/src/modules/gas/gas.controller.ts` — added retry and deviation email endpoints, imported `sendEmail` and `DeviationAlertEmail`
+  - `apps/server/src/plugins/scheduled-jobs.ts` — added `retryFailedAlerts` cron job at 10 AM
+  - `apps/web/src/features/deviation-alerts/index.tsx` — replaced TODO stubs with real API calls, added acknowledgement/email state tracking
+  - `apps/web/src/features/contract-alerts/components/contract-alerts-columns.tsx` — added "Entrega" delivery status column with Tooltip
+  - `apps/web/src/features/contract-alerts/components/contract-alerts-table.tsx` — added `sentAlerts` to query, fixed `@ts-expect-error`
+  - `packages/email/src/emails/index.ts` — exported `DeviationAlertEmail`
+- **Learnings:**
+  - `DeviationAlertEmail` template already existed in `packages/email/src/emails/` but wasn't exported from the barrel file — always check exports when using email templates
+  - Deviation alerts are computed on-the-fly (comparing GasRealConsumption vs GasDailyPlan), not persisted as records — acknowledgement state must be stored locally or in a separate model
+  - GasAlertSentLog `include: { alert: { include: { ... } } }` fetches the full alert with relations, enabling retry without re-fetching alert config
+  - Elysia Treaty for nested hyphenated paths: `api.gas["deviation-alerts"]["send-email"].post({})` — each path segment with hyphens uses bracket notation
+  - Pre-existing TS error in `DataTableRowActions` due to duplicate type definitions in different files (columns vs row-actions) — not introduced by this change
+  - Cron jobs in `@elysiajs/cron` are chained with `.use()` — each job is an independent plugin
+---
+

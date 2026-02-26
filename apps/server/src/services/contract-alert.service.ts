@@ -351,6 +351,78 @@ export const ContractAlertService = {
 	},
 
 	/**
+	 * Retry all failed alert deliveries from the last 7 days.
+	 * Updates the original log status on success and creates new logs on re-failure.
+	 */
+	async retryFailedAlerts(): Promise<{
+		totalRetried: number;
+		succeeded: number;
+		stillFailing: number;
+		details: SendAlertResult[];
+	}> {
+		const sevenDaysAgo = new Date();
+		sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+		const failedLogs = await db.gasAlertSentLog.findMany({
+			where: {
+				status: "failed",
+				sentAt: { gte: sevenDaysAgo },
+			},
+			include: {
+				alert: {
+					include: {
+						contract: {
+							select: {
+								id: true,
+								name: true,
+								units: { select: { id: true, name: true } },
+							},
+						},
+						recipients: {
+							select: { id: true, email: true, name: true },
+						},
+					},
+				},
+			},
+		});
+
+		const summary = {
+			totalRetried: failedLogs.length,
+			succeeded: 0,
+			stillFailing: 0,
+			details: [] as SendAlertResult[],
+		};
+
+		for (const log of failedLogs) {
+			const recipient = log.alert.recipients.find(
+				(r) => r.email === log.recipientEmail,
+			);
+
+			const result = await this.sendAlertEmail(
+				log.alert as AlertWithDetails,
+				log.recipientEmail,
+				recipient?.name ?? null,
+				log.advanceNoticeDays,
+			);
+
+			if (result.status === "sent") {
+				// Mark the original failed log as retried successfully
+				await db.gasAlertSentLog.update({
+					where: { id: log.id },
+					data: { status: "sent", errorMessage: null },
+				});
+				summary.succeeded++;
+			} else {
+				summary.stillFailing++;
+			}
+
+			summary.details.push(result);
+		}
+
+		return summary;
+	},
+
+	/**
 	 * Get sent email logs for a specific alert
 	 */
 	async getSentLogsForAlert(

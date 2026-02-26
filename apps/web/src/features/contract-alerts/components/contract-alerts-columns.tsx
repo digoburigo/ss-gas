@@ -1,6 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { CheckCircle2, Clock, XCircle } from "lucide-react";
 
 import type {
   GasContract,
@@ -9,6 +10,12 @@ import type {
 } from "@acme/zen-v3/zenstack/models";
 import { Badge } from "@acme/ui/badge";
 import { Checkbox } from "@acme/ui/checkbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@acme/ui/tooltip";
 
 import { DataTableColumnHeader } from "~/components/data-table";
 import { eventTypeOptions, recurrenceOptions } from "../data/data";
@@ -17,6 +24,11 @@ import { DataTableRowActions } from "./data-table-row-actions";
 type GasContractAlertWithRelations = GasContractAlert & {
   contract?: Pick<GasContract, "id" | "name"> | null;
   recipients?: Array<Pick<GasContractAlertRecipient, "id" | "email" | "name">>;
+  sentAlerts?: Array<{
+    id: string;
+    status: string;
+    sentAt: Date;
+  }>;
 };
 
 export const contractAlertsColumns: ColumnDef<GasContractAlertWithRelations>[] =
@@ -163,7 +175,7 @@ export const contractAlertsColumns: ColumnDef<GasContractAlertWithRelations>[] =
         }
         return (
           <div className="flex flex-col">
-            <span className="truncate text-sm">{recipients[0].email}</span>
+            <span className="truncate text-sm">{recipients[0]?.email}</span>
             {recipients.length > 1 && (
               <span className="text-muted-foreground text-xs">
                 +{recipients.length - 1}{" "}
@@ -192,6 +204,67 @@ export const contractAlertsColumns: ColumnDef<GasContractAlertWithRelations>[] =
         const active = row.getValue<boolean>(id);
         return value.includes(active ? "active" : "inactive");
       },
+    },
+    {
+      id: "delivery",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Entrega" />
+      ),
+      cell: ({ row }) => {
+        const sentAlerts = row.original.sentAlerts;
+        if (!sentAlerts || sentAlerts.length === 0) {
+          return (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="text-muted-foreground h-4 w-4" />
+                    <Badge variant="outline" className="text-xs">
+                      Pendente
+                    </Badge>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Nenhum email enviado ainda
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          );
+        }
+
+        const lastSent = sentAlerts[0]!;
+        const isFailed = lastSent.status === "failed";
+
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-1.5">
+                  {isFailed ? (
+                    <XCircle className="h-4 w-4 text-red-500" />
+                  ) : (
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  )}
+                  <Badge
+                    variant={isFailed ? "destructive" : "default"}
+                    className="text-xs"
+                  >
+                    {isFailed ? "Falhou" : "Enviado"}
+                  </Badge>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                {format(
+                  new Date(lastSent.sentAt),
+                  "dd/MM/yyyy 'às' HH:mm",
+                  { locale: ptBR },
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      },
+      enableSorting: false,
     },
     {
       id: "actions",

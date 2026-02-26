@@ -8,6 +8,7 @@ import { ContractAlertService, ScheduledJobsService } from "../services";
  * - 6 PM daily: Check for missing entries and alert unit operators
  * - 8 PM daily: Escalate missing entries to supervisors
  * - 9 AM daily: Process and dispatch contract alerts
+ * - 10 AM daily: Retry failed alert deliveries
  */
 export const scheduledJobs = new Elysia({ name: "scheduledJobs" })
 	.use(
@@ -68,6 +69,30 @@ export const scheduledJobs = new Elysia({ name: "scheduledJobs" })
 				} catch (error) {
 					console.error(
 						`[${new Date().toISOString()}] Error in processContractAlerts job:`,
+						error
+					);
+				}
+			},
+		})
+	)
+	.use(
+		cron({
+			name: "retryFailedAlerts",
+			pattern: Patterns.everyDayAt("10:00"),
+			timezone: "America/Sao_Paulo",
+			async run() {
+				console.log(
+					`[${new Date().toISOString()}] Running scheduled job: retryFailedAlerts`
+				);
+				try {
+					const result =
+						await ContractAlertService.retryFailedAlerts();
+					console.log(
+						`[${new Date().toISOString()}] Failed alerts retried: ${result.totalRetried} total, ${result.succeeded} succeeded, ${result.stillFailing} still failing`
+					);
+				} catch (error) {
+					console.error(
+						`[${new Date().toISOString()}] Error in retryFailedAlerts job:`,
 						error
 					);
 				}
