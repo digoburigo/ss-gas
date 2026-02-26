@@ -6,7 +6,10 @@ after each iteration and it's included in prompts for context.
 ## Codebase Patterns (Study These First)
 
 - **GasCalculationService** (`apps/server/src/modules/gas/gas.service.ts`): Pure calculation functions with no DB deps. Add new methods here for gas math, keep them stateless.
-- **Entry creation flow**: POST `/gas/units/:unitId/entries` in `gas.controller.ts` does validation → calculation → DB write → side effects (line statuses, daily plan upsert). Follow this pattern for new endpoints.
+- **Entry creation flow**: POST `/gas/units/:unitId/entries` in `gas.controller.ts` does validation → calculation → upsert (create or update) → side effects (line statuses, daily plan upsert). Follow this pattern for new endpoints.
+- **Elysia Treaty path params**: Use function call syntax `api.gas.units({ unitId }).entries.post(body)` for parameterized routes (not bracket `[unitId]` notation — bracket works at runtime but fails TypeScript).
+- **Data shape mismatch pitfall**: Frontend form may use different shapes than server schema (e.g., `Record<id, status>` vs `Array<{equipmentId, status}>`). Always check Elysia `t.Object()` schemas when wiring up API calls.
+- **Date format for Elysia**: Elysia's `t.String({ format: "date" })` expects `YYYY-MM-DD`, not ISO 8601 datetime. Format with `getFullYear()-getMonth()-getDate()` before sending.
 - **Frontend mirrors server calc**: `daily-entry-form.tsx` duplicates calculation logic client-side for real-time preview. Keep both in sync.
 - **Auth DB vs plain DB**: Use `authDb.$setAuth(...)` (as `userDb`) for creating records that need `createdById` auto-set. Use plain `db` for reads and updates that don't need auth context.
 - **ZenStack compound unique**: Model `@@unique([unitId, date])` creates a compound key. For upsert, use findFirst + create/update pattern since the compound key name varies.
@@ -31,5 +34,25 @@ after each iteration and it's included in prompts for context.
   - Server uses `bun` runtime, so `bun:test` works out of the box without any vitest setup
   - QDP formula is effectively the same as QDS (sum of equipment consumption), but stored separately in `GasDailyPlan` for the scheduling workflow
   - `GasDailyPlan` has submission/approval workflow fields — auto-derived QDP is created without submitting, leaving the workflow intact
+---
+
+## 2026-02-25 - US-004
+- Investigated and fixed daily entry persistence bug — entries were never reaching the server
+- Root causes found and fixed:
+  1. **Route mismatch (CRITICAL)**: Frontend called `api.gas.entries.post()` (→ `POST /api/gas/entries`) but server expects `POST /api/gas/units/:unitId/entries`. Fixed to `api.gas.units({ unitId }).entries.post(body)`.
+  2. **lineStatuses shape mismatch**: Form sent `Record<string, "on"|"off">` but server expects `Array<{equipmentId, status}>`. Added `Object.entries()` conversion.
+  3. **Date format mismatch**: Form sent full ISO datetime (`toISOString()`) but server schema has `format: "date"` (YYYY-MM-DD). Fixed to format as `YYYY-MM-DD`.
+  4. **qdsManual field not mapped**: Form had separate `qdsManualOverride` + `qdsManualValue` fields but sent them raw. Fixed to map to server's single `qdsManual` field conditionally.
+  5. **No upsert support**: Server returned 409 Conflict for duplicate date+unit. Changed to upsert: update existing entry + delete/recreate line statuses.
+  6. **Type error (pre-existing)**: `Equipment.currentConstant` type didn't accept `null` from API response. Added `| null` to union type.
+- Files changed:
+  - `apps/web/src/routes/_authenticated/gas/entry.tsx` — fixed Treaty API call path, data shape transformation, date formatting, qdsManual mapping, error handling
+  - `apps/server/src/modules/gas/gas.controller.ts` — changed POST to upsert (findFirst + create/update), removed 409 response, fixed date parsing
+  - `apps/web/src/components/gas/daily-entry-form.tsx` — fixed `currentConstant` type to accept `null`
+- **Learnings:**
+  - Elysia Treaty function call syntax `api.gas.units({ unitId })` is required for TS; bracket `[unitId]` works at runtime but fails typecheck
+  - When wiring frontend to Elysia, always verify: route path, body shape vs `t.Object()` schema, and date format expectations
+  - Upsert pattern: `findFirst + create/update` with `deleteMany` for child records before re-creating them
+  - Pre-existing typecheck failure in `@acme/tailwind-config` is unrelated; web app now has 0 TS errors
 ---
 

@@ -36,7 +36,7 @@ interface Equipment {
   currentConstant?: {
     consumptionRate: number;
     consumptionUnit: ConsumptionUnit;
-  };
+  } | null;
 }
 
 /**

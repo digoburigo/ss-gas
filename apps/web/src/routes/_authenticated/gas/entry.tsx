@@ -49,10 +49,26 @@ function DailyEntryPage() {
   const selectedUnit = units.find((u) => u.id === selectedUnitId) ?? units[0];
 
   const submitMutation = useMutation({
-    mutationFn: async (data: Parameters<typeof api.gas.entries.post>[0]) => {
-      const response = await api.gas.entries.post(data);
+    mutationFn: async ({
+      unitId,
+      ...body
+    }: {
+      unitId: string;
+      date: string;
+      atomizerScheduled?: boolean;
+      atomizerHours?: number;
+      secondaryAtomizerScheduled?: boolean;
+      secondaryAtomizerHours?: number;
+      qdsManual?: number;
+      observations?: string;
+      lineStatuses?: Array<{ equipmentId: string; status: "on" | "off" }>;
+    }) => {
+      const response = await api.gas.units({ unitId }).entries.post(body);
       if (response.error) {
-        const errorObj = response.error as { error?: string };
+        const errorObj = response.error as {
+          error?: string;
+          existingEntryId?: string;
+        };
         throw new Error(errorObj.error ?? "Failed to create entry");
       }
       return response.data;
@@ -131,18 +147,31 @@ function DailyEntryPage() {
             unit={selectedUnit}
             isSubmitting={submitMutation.isPending}
             onSubmit={async (data) => {
-              await submitMutation.mutateAsync({
-                unitId: selectedUnit.id,
-                date: data.date.toISOString(),
-                atomizerScheduled: data.atomizerScheduled,
-                atomizerHours: data.atomizerHours,
-                secondaryAtomizerScheduled: data.secondaryAtomizerScheduled,
-                secondaryAtomizerHours: data.secondaryAtomizerHours,
-                lineStatuses: data.lineStatuses,
-                observations: data.observations,
-                qdsManualOverride: data.qdsManualOverride,
-                qdsManualValue: data.qdsManualValue,
-              });
+              try {
+                // Format date as YYYY-MM-DD (server expects format: "date")
+                const dateStr = `${data.date.getFullYear()}-${String(data.date.getMonth() + 1).padStart(2, "0")}-${String(data.date.getDate()).padStart(2, "0")}`;
+
+                // Convert lineStatuses from Record<id, status> to Array<{equipmentId, status}>
+                const lineStatuses = Object.entries(data.lineStatuses).map(
+                  ([equipmentId, status]) => ({ equipmentId, status }),
+                );
+
+                await submitMutation.mutateAsync({
+                  unitId: selectedUnit.id,
+                  date: dateStr,
+                  atomizerScheduled: data.atomizerScheduled,
+                  atomizerHours: data.atomizerHours,
+                  secondaryAtomizerScheduled: data.secondaryAtomizerScheduled,
+                  secondaryAtomizerHours: data.secondaryAtomizerHours,
+                  lineStatuses,
+                  observations: data.observations || undefined,
+                  qdsManual: data.qdsManualOverride
+                    ? data.qdsManualValue
+                    : undefined,
+                });
+              } catch {
+                // Error already handled by mutation onError callback
+              }
             }}
           />
         )}

@@ -271,23 +271,16 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				return status(404, { error: "Unit not found" });
 			}
 
-			// Parse date
-			const entryDate = new Date(body.date);
+			// Parse date - append T00:00:00.000Z to ensure UTC midnight
+			const entryDate = new Date(`${body.date}T00:00:00.000Z`);
 
-			// Check if entry already exists for this unit and date
+			// Check if entry already exists for this unit and date (for upsert)
 			const existingEntry = await db.gasDailyEntry.findFirst({
 				where: {
 					unitId,
 					date: entryDate,
 				},
 			});
-
-			if (existingEntry) {
-				return status(409, {
-					error: "Entry already exists for this date",
-					existingEntryId: existingEntry.id,
-				});
-			}
 
 			// Get unit equipment with current constants
 			const equipment = await db.gasEquipment.findMany({
@@ -384,22 +377,39 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				qdcLines,
 			);
 
-			// Create the entry with calculated values
-			const entry = await userDb.gasDailyEntry.create({
-				data: {
-					unitId,
-					date: entryDate,
-					atomizerScheduled: body.atomizerScheduled ?? true,
-					atomizerHours: body.atomizerHours ?? 0,
-					secondaryAtomizerScheduled: body.secondaryAtomizerScheduled,
-					secondaryAtomizerHours: body.secondaryAtomizerHours,
-					qdcAtomizer,
-					qdcLines,
-					qdsCalculated,
-					qdsManual: body.qdsManual,
-					observations: body.observations,
-				},
-			});
+			// Upsert the entry: update if exists, create if not
+			const entryData = {
+				atomizerScheduled: body.atomizerScheduled ?? true,
+				atomizerHours: body.atomizerHours ?? 0,
+				secondaryAtomizerScheduled: body.secondaryAtomizerScheduled,
+				secondaryAtomizerHours: body.secondaryAtomizerHours,
+				qdcAtomizer,
+				qdcLines,
+				qdsCalculated,
+				qdsManual: body.qdsManual,
+				observations: body.observations,
+			};
+
+			let entry;
+			if (existingEntry) {
+				entry = await db.gasDailyEntry.update({
+					where: { id: existingEntry.id },
+					data: entryData,
+				});
+
+				// Delete existing line statuses before re-creating
+				await db.gasLineStatus.deleteMany({
+					where: { entryId: existingEntry.id },
+				});
+			} else {
+				entry = await userDb.gasDailyEntry.create({
+					data: {
+						unitId,
+						date: entryDate,
+						...entryData,
+					},
+				});
+			}
 
 			// Create line statuses for all lines
 			const lineStatusRecords = [];
@@ -517,10 +527,6 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				}),
 				404: t.Object({
 					error: t.String(),
-				}),
-				409: t.Object({
-					error: t.String(),
-					existingEntryId: t.String(),
 				}),
 			},
 		},
