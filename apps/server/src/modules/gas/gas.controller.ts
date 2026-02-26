@@ -704,19 +704,45 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			});
 
 			// Get active contract for tolerance calculations
-			const contract = await db.gasContract.findFirst({
-				where: {
-					organizationId: session.activeOrganizationId ?? undefined,
-					active: true,
-					effectiveFrom: { lte: endDate },
-					OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }],
-				},
-				orderBy: { effectiveFrom: "desc" },
-			});
+			// If contractId is specified, use that contract directly
+			// Otherwise, find the most recent active contract for the organization
+			const contract = query.contractId
+				? await db.gasContract.findFirst({
+						where: {
+							id: query.contractId,
+							organizationId: session.activeOrganizationId ?? undefined,
+						},
+					})
+				: await db.gasContract.findFirst({
+						where: {
+							organizationId: session.activeOrganizationId ?? undefined,
+							active: true,
+							effectiveFrom: { lte: endDate },
+							OR: [
+								{ effectiveTo: null },
+								{ effectiveTo: { gte: startDate } },
+							],
+						},
+						orderBy: { effectiveFrom: "desc" },
+					});
 
 			if (!contract) {
 				return status(404, { error: "No active contract found" });
 			}
+
+			// Get all contracts for this organization (for frontend contract selector)
+			const allContracts = await db.gasContract.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				include: {
+					unitContracts: {
+						select: { unitId: true, isPrimary: true },
+					},
+				},
+				orderBy: { name: "asc" },
+			});
 
 			// Get all daily entries for the month across all units
 			const entries = await db.gasDailyEntry.findMany({
@@ -914,6 +940,12 @@ export const gasController = new Elysia({ prefix: "/gas" })
 						contract.transportToleranceLowerPercent,
 					moleculeTolerancePercent: contract.moleculeTolerancePercent,
 				},
+				contracts: allContracts.map((c) => ({
+					id: c.id,
+					name: c.name,
+					qdcContracted: c.qdcContracted,
+					unitIds: c.unitContracts.map((uc) => uc.unitId),
+				})),
 				units: units.map((u) => ({
 					id: u.id,
 					code: u.code,
@@ -926,6 +958,7 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			auth: true,
 			query: t.Object({
 				month: t.String(),
+				contractId: t.Optional(t.String()),
 			}),
 			response: {
 				200: t.Object({
@@ -938,6 +971,14 @@ export const gasController = new Elysia({ prefix: "/gas" })
 						transportToleranceLowerPercent: t.Number(),
 						moleculeTolerancePercent: t.Number(),
 					}),
+					contracts: t.Array(
+						t.Object({
+							id: t.String(),
+							name: t.String(),
+							qdcContracted: t.Number(),
+							unitIds: t.Array(t.String()),
+						}),
+					),
 					units: t.Array(
 						t.Object({
 							id: t.String(),
@@ -1028,16 +1069,26 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			const startDate = new Date(year, monthNum - 1, 1);
 			const endDate = new Date(year, monthNum, 0); // Last day of month
 
-			// Get active contract
-			const contract = await db.gasContract.findFirst({
-				where: {
-					organizationId: session.activeOrganizationId ?? undefined,
-					active: true,
-					effectiveFrom: { lte: endDate },
-					OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }],
-				},
-				orderBy: { effectiveFrom: "desc" },
-			});
+			// Get active contract (or specific contract if contractId provided)
+			const contract = query.contractId
+				? await db.gasContract.findFirst({
+						where: {
+							id: query.contractId,
+							organizationId: session.activeOrganizationId ?? undefined,
+						},
+					})
+				: await db.gasContract.findFirst({
+						where: {
+							organizationId: session.activeOrganizationId ?? undefined,
+							active: true,
+							effectiveFrom: { lte: endDate },
+							OR: [
+								{ effectiveTo: null },
+								{ effectiveTo: { gte: startDate } },
+							],
+						},
+						orderBy: { effectiveFrom: "desc" },
+					});
 
 			if (!contract) {
 				return status(404, { error: "No active contract found" });
@@ -1305,6 +1356,7 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			auth: true,
 			query: t.Object({
 				month: t.String(),
+				contractId: t.Optional(t.String()),
 			}),
 			response: {
 				200: t.Object({
@@ -1410,16 +1462,26 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			const startDate = new Date(year, monthNum - 1, 1);
 			const endDate = new Date(year, monthNum, 0); // Last day of month
 
-			// Get active contract
-			const contract = await db.gasContract.findFirst({
-				where: {
-					organizationId: session.activeOrganizationId ?? undefined,
-					active: true,
-					effectiveFrom: { lte: endDate },
-					OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }],
-				},
-				orderBy: { effectiveFrom: "desc" },
-			});
+			// Get active contract (or specific contract if contractId provided)
+			const contract = query.contractId
+				? await db.gasContract.findFirst({
+						where: {
+							id: query.contractId,
+							organizationId: session.activeOrganizationId ?? undefined,
+						},
+					})
+				: await db.gasContract.findFirst({
+						where: {
+							organizationId: session.activeOrganizationId ?? undefined,
+							active: true,
+							effectiveFrom: { lte: endDate },
+							OR: [
+								{ effectiveTo: null },
+								{ effectiveTo: { gte: startDate } },
+							],
+						},
+						orderBy: { effectiveFrom: "desc" },
+					});
 
 			if (!contract) {
 				return status(404, { error: "No active contract found" });
@@ -1709,6 +1771,7 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			auth: true,
 			query: t.Object({
 				month: t.String(),
+				contractId: t.Optional(t.String()),
 			}),
 			response: {
 				400: t.Object({
@@ -2321,19 +2384,39 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			const endDate = new Date(year, monthNum, 0);
 
 			// Get active contract with penalty parameters
-			const contract = await db.gasContract.findFirst({
-				where: {
-					organizationId: session.activeOrganizationId ?? undefined,
-					active: true,
-					effectiveFrom: { lte: endDate },
-					OR: [{ effectiveTo: null }, { effectiveTo: { gte: startDate } }],
-				},
-				orderBy: { effectiveFrom: "desc" },
-			});
+			// If contractId is specified, use that contract directly
+			const contract = query.contractId
+				? await db.gasContract.findFirst({
+						where: {
+							id: query.contractId,
+							organizationId: session.activeOrganizationId ?? undefined,
+						},
+					})
+				: await db.gasContract.findFirst({
+						where: {
+							organizationId: session.activeOrganizationId ?? undefined,
+							active: true,
+							effectiveFrom: { lte: endDate },
+							OR: [
+								{ effectiveTo: null },
+								{ effectiveTo: { gte: startDate } },
+							],
+						},
+						orderBy: { effectiveFrom: "desc" },
+					});
 
 			if (!contract) {
 				return status(404, { error: "No active contract found" });
 			}
+
+			// Get all contracts for selector
+			const allContracts = await db.gasContract.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { name: "asc" },
+			});
 
 			// Get units
 			const units = await db.gasUnit.findMany({
@@ -2427,6 +2510,11 @@ export const gasController = new Elysia({ prefix: "/gas" })
 					transportToleranceLowerPercent:
 						contract.transportToleranceLowerPercent,
 				},
+				contracts: allContracts.map((c) => ({
+					id: c.id,
+					name: c.name,
+					qdcContracted: c.qdcContracted,
+				})),
 				units: units.map((u) => ({ id: u.id, code: u.code, name: u.name })),
 				scorecard: {
 					assertivenessRate: accuracyResult.assertivenessRate,
@@ -2447,6 +2535,7 @@ export const gasController = new Elysia({ prefix: "/gas" })
 			query: t.Object({
 				month: t.String(),
 				unitId: t.Optional(t.String()),
+				contractId: t.Optional(t.String()),
 			}),
 			response: {
 				200: t.Object({
@@ -2458,6 +2547,13 @@ export const gasController = new Elysia({ prefix: "/gas" })
 						transportToleranceUpperPercent: t.Number(),
 						transportToleranceLowerPercent: t.Number(),
 					}),
+					contracts: t.Array(
+						t.Object({
+							id: t.String(),
+							name: t.String(),
+							qdcContracted: t.Number(),
+						}),
+					),
 					units: t.Array(
 						t.Object({
 							id: t.String(),

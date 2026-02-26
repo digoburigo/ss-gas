@@ -103,19 +103,57 @@ export const contractsColumns: ColumnDef<GasContract>[] = [
       <DataTableColumnHeader column={column} title="Unidades" />
     ),
     cell: ({ row }) => {
-      const units = row.original.units;
-      if (!units || units.length === 0) {
+      // Merge units from legacy FK and from unitContracts join table
+      const original = row.original as Record<string, unknown>;
+      const legacyUnits =
+        (original.units as Array<{ id: string; name: string }>) ?? [];
+      const joinUnits = original.unitContracts;
+      const joinUnitList = Array.isArray(joinUnits)
+        ? joinUnits.map(
+            (uc: {
+              unit: { id: string; name: string };
+              isPrimary: boolean;
+            }) => ({
+              ...uc.unit,
+              isPrimary: uc.isPrimary,
+            }),
+          )
+        : [];
+
+      // Deduplicate by id, preferring join table entries
+      const unitMap = new Map<
+        string,
+        { id: string; name: string; isPrimary?: boolean }
+      >();
+      for (const u of legacyUnits) {
+        unitMap.set(u.id, u);
+      }
+      for (const u of joinUnitList) {
+        unitMap.set(u.id, u);
+      }
+      const allUnits = Array.from(unitMap.values());
+
+      if (allUnits.length === 0) {
         return <span className="text-muted-foreground">Nenhuma</span>;
       }
       return (
-        <div className="flex flex-col">
-          <span className="text-sm">{units.length} unidade(s)</span>
-          {units.length > 0 && (
-            <span className="text-muted-foreground max-w-24 truncate text-xs">
-              {units[0].name}
-              {units.length > 1 && ` +${units.length - 1}`}
+        <div className="flex flex-col gap-0.5">
+          <span className="text-sm font-medium">
+            {allUnits.length} unidade(s)
+          </span>
+          {allUnits.map((u) => (
+            <span
+              key={u.id}
+              className="text-muted-foreground max-w-32 truncate text-xs"
+            >
+              {u.name}
+              {u.isPrimary && (
+                <span className="text-primary ml-1 text-[10px]">
+                  (primário)
+                </span>
+              )}
             </span>
-          )}
+          ))}
         </div>
       );
     },

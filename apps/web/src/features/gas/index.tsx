@@ -1,7 +1,7 @@
-import { useMemo, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import { Link } from "@tanstack/react-router";
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import {
   Activity,
   Calculator,
@@ -19,10 +19,8 @@ import {
   YAxis,
 } from "recharts";
 
-import type { GasSystemParameter } from "@acme/zen-v3/zenstack/models";
-import { schema } from "@acme/zen-v3/zenstack/schema";
-
 import type { ChartConfig } from "@acme/ui/chart";
+import type { GasSystemParameter } from "@acme/zen-v3/zenstack/models";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -46,9 +44,11 @@ import {
   ChartTooltipContent,
 } from "@acme/ui/chart";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@acme/ui/tooltip";
+import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import { api } from "~/clients/api-client";
 import { ConfigDrawer } from "~/components/config-drawer";
+import { ContractSelector } from "~/components/gas/contract-selector";
 import { Header } from "~/components/layout/header";
 import { Main } from "~/components/layout/main";
 import { ProfileDropdown } from "~/components/profile-dropdown";
@@ -171,6 +171,7 @@ export function GasDashboard() {
   const currentMonth = useMemo(() => getCurrentMonth(), []);
   const client = useClientQueries(schema);
   const [thresholdPercent, setThresholdPercent] = useState(10);
+  const [selectedContractId, setSelectedContractId] = useState("");
 
   // Fetch threshold from admin parameters
   const { data: thresholdParam } = client.gasSystemParameter.useFindFirst({
@@ -184,7 +185,9 @@ export function GasDashboard() {
   // Update threshold when parameter is loaded
   useEffect(() => {
     if (thresholdParam) {
-      const value = Number.parseFloat((thresholdParam as GasSystemParameter).value);
+      const value = Number.parseFloat(
+        (thresholdParam as GasSystemParameter).value,
+      );
       if (!Number.isNaN(value)) {
         setThresholdPercent(value);
       }
@@ -263,10 +266,13 @@ export function GasDashboard() {
   }, [recentConsumptions, thresholdPercent]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["gas", "consolidated", currentMonth],
+    queryKey: ["gas", "consolidated", currentMonth, selectedContractId],
     queryFn: async () => {
       const response = await api.gas.consolidated.get({
-        query: { month: currentMonth },
+        query: {
+          month: currentMonth,
+          ...(selectedContractId ? { contractId: selectedContractId } : {}),
+        },
       });
       if (response.error) {
         const errorObj = response.error as { error?: string };
@@ -437,6 +443,15 @@ export function GasDashboard() {
               Gerencie o consumo de gás das unidades.
             </p>
           </div>
+          {data?.contracts && data.contracts.length > 1 && (
+            <ContractSelector
+              contracts={data.contracts}
+              value={selectedContractId || data.contract.id}
+              onChange={setSelectedContractId}
+              label="Contrato"
+              className="min-w-[200px]"
+            />
+          )}
         </div>
 
         {/* Summary Cards - QDC, QDS, QDP, QDR */}

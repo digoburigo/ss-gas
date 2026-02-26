@@ -44,6 +44,7 @@ export interface UnitSchedulingStatus {
   unitCode: string;
   contractId: string | null;
   contractName: string | null;
+  contractNames: string[];
   status: "scheduled" | "pending" | "late";
   scheduledVolume: number | null;
   scheduledAt: Date | null;
@@ -71,6 +72,16 @@ export function SchedulingDashboardTable() {
             id: true,
             name: true,
             dailySchedulingDeadline: true,
+          },
+        },
+        unitContracts: {
+          include: {
+            contract: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
       },
@@ -130,9 +141,7 @@ export function SchedulingDashboardTable() {
     },
     onSuccess: (_data, variables) => {
       toast.success(
-        variables.approved
-          ? "Programação aprovada!"
-          : "Programação rejeitada.",
+        variables.approved ? "Programação aprovada!" : "Programação rejeitada.",
       );
       queryClient.invalidateQueries({ queryKey: ["GasDailyPlan"] });
       queryClient.invalidateQueries({ queryKey: ["gasDailyPlan"] });
@@ -195,6 +204,17 @@ export function SchedulingDashboardTable() {
         }
       }
 
+      // Collect contract names from join table (or fallback to legacy FK)
+      const joinContracts = (unit as Record<string, unknown>).unitContracts;
+      const contractNames =
+        Array.isArray(joinContracts) && joinContracts.length > 0
+          ? joinContracts.map(
+              (uc: { contract: { name: string } }) => uc.contract.name,
+            )
+          : unit.contract?.name
+            ? [unit.contract.name]
+            : [];
+
       return {
         id: unit.id,
         unitId: unit.id,
@@ -202,6 +222,7 @@ export function SchedulingDashboardTable() {
         unitCode: unit.code,
         contractId: unit.contractId,
         contractName: unit.contract?.name ?? null,
+        contractNames,
         status,
         scheduledVolume: plan?.qdpValue ?? null,
         scheduledAt: plan?.createdAt ? new Date(plan.createdAt) : null,
@@ -242,7 +263,6 @@ export function SchedulingDashboardTable() {
   let navigate: NavigateFn = () => {};
 
   try {
-    // @ts-expect-error - Route may not be registered yet during initial build
     const route = getRouteApi("/_authenticated/gas/scheduling-dashboard/");
     search = route.useSearch() as Record<string, unknown>;
     navigate = route.useNavigate() as unknown as NavigateFn;
@@ -377,9 +397,7 @@ export function SchedulingDashboardTable() {
           </p>
         </div>
         <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-900/20">
-          <p className="text-sm text-blue-700 dark:text-blue-400">
-            Submetido
-          </p>
+          <p className="text-sm text-blue-700 dark:text-blue-400">Submetido</p>
           <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
             {summary.submitted}
           </p>

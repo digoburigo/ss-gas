@@ -59,6 +59,7 @@ import {
 
 import { api } from "~/clients/api-client";
 import { ConfigDrawer } from "~/components/config-drawer";
+import { ContractSelector } from "~/components/gas/contract-selector";
 import { Header } from "~/components/layout/header";
 import { Main } from "~/components/layout/main";
 import { ProfileDropdown } from "~/components/profile-dropdown";
@@ -222,9 +223,7 @@ function ComparisonTooltip({
       <div className="space-y-1 text-xs">
         <div className="flex items-center justify-between gap-4">
           <span style={{ color: "hsl(271, 81%, 56%)" }}>QDP (Programado)</span>
-          <span className="font-medium">
-            {formatValue(entry.qdp)} m³
-          </span>
+          <span className="font-medium">{formatValue(entry.qdp)} m³</span>
         </div>
         <div className="flex items-center justify-between gap-4">
           <span
@@ -236,9 +235,7 @@ function ComparisonTooltip({
           >
             QDR (Realizado)
           </span>
-          <span className="font-medium">
-            {formatValue(entry.qdr)} m³
-          </span>
+          <span className="font-medium">{formatValue(entry.qdr)} m³</span>
         </div>
         {entry.qdp > 0 && (
           <>
@@ -278,6 +275,7 @@ function GasReportsPage() {
   const monthOptions = useMemo(() => generateMonthOptions(), []);
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [isDownloading, setIsDownloading] = useState(false);
+  const [selectedContractId, setSelectedContractId] = useState("");
 
   // State for the QDP vs QDR comparison chart
   const [comparisonMonth, setComparisonMonth] = useState(getCurrentMonth());
@@ -285,10 +283,19 @@ function GasReportsPage() {
 
   // Fetch preview data
   const { data, isLoading, error } = useQuery({
-    queryKey: ["gas", "reports", "petrobras", selectedMonth],
+    queryKey: [
+      "gas",
+      "reports",
+      "petrobras",
+      selectedMonth,
+      selectedContractId,
+    ],
     queryFn: async () => {
       const response = await api.gas.reports.petrobras.get({
-        query: { month: selectedMonth },
+        query: {
+          month: selectedMonth,
+          ...(selectedContractId ? { contractId: selectedContractId } : {}),
+        },
       });
       if (response.error) {
         const errorObj = response.error as { error?: string };
@@ -301,14 +308,14 @@ function GasReportsPage() {
   });
 
   // Fetch consolidated data for QDP vs QDR comparison chart
-  const {
-    data: consolidatedData,
-    isLoading: isLoadingComparison,
-  } = useQuery({
-    queryKey: ["gas", "consolidated", comparisonMonth],
+  const { data: consolidatedData, isLoading: isLoadingComparison } = useQuery({
+    queryKey: ["gas", "consolidated", comparisonMonth, selectedContractId],
     queryFn: async () => {
       const response = await api.gas.consolidated.get({
-        query: { month: comparisonMonth },
+        query: {
+          month: comparisonMonth,
+          ...(selectedContractId ? { contractId: selectedContractId } : {}),
+        },
       });
       if (response.error) {
         const errorObj = response.error as { error?: string };
@@ -355,9 +362,12 @@ function GasReportsPage() {
       }
 
       // Calculate tolerance limits based on QDP
-      const upperLimit = qdp > 0 ? qdp * (1 + (toleranceBands?.upperPercent ?? 10) / 100) : 0;
-      const lowerLimit = qdp > 0 ? qdp * (1 - (toleranceBands?.lowerPercent ?? 20) / 100) : 0;
-      const exceedsTolerance = qdp > 0 && (qdr > upperLimit || qdr < lowerLimit);
+      const upperLimit =
+        qdp > 0 ? qdp * (1 + (toleranceBands?.upperPercent ?? 10) / 100) : 0;
+      const lowerLimit =
+        qdp > 0 ? qdp * (1 - (toleranceBands?.lowerPercent ?? 20) / 100) : 0;
+      const exceedsTolerance =
+        qdp > 0 && (qdr > upperLimit || qdr < lowerLimit);
 
       return {
         date: new Date(day.date).toLocaleDateString("pt-BR", {
@@ -479,6 +489,16 @@ function GasReportsPage() {
               Visualize e exporte relatórios mensais de consumo de gás.
             </p>
           </div>
+          {consolidatedData?.contracts &&
+            consolidatedData.contracts.length > 1 && (
+              <ContractSelector
+                contracts={consolidatedData.contracts}
+                value={selectedContractId || consolidatedData.contract.id}
+                onChange={setSelectedContractId}
+                label="Contrato"
+                className="min-w-[200px]"
+              />
+            )}
         </div>
 
         {/* QDP vs QDR Comparison Chart */}
@@ -521,9 +541,7 @@ function GasReportsPage() {
                     <SelectValue placeholder="Selecione a unidade" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={UNIT_ALL}>
-                      Todas as Unidades
-                    </SelectItem>
+                    <SelectItem value={UNIT_ALL}>Todas as Unidades</SelectItem>
                     {unitOptions.map((unit) => (
                       <SelectItem key={unit.id} value={unit.id}>
                         {unit.code} - {unit.name}

@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import { toast } from "sonner";
 
@@ -26,28 +27,40 @@ export function ConsumerUnitsMutateDrawer({
 }: ConsumerUnitsMutateDrawerProps) {
   const isUpdate = !!currentRow;
   const client = useClientQueries(schema);
+  const queryClient = useQueryClient();
 
-  const { mutate: createUnit, isPending: isCreating } =
+  // Fetch existing unit contracts for the current unit (when editing)
+  const unitIdForQuery = currentRow?.id ?? "";
+  const { data: existingUnitContracts = [] } =
+    client.gasUnitContract.useFindMany({
+      where: { unitId: unitIdForQuery },
+    });
+
+  const { mutateAsync: createUnit, isPending: isCreating } =
     client.gasUnit.useCreate({
-      onSuccess: () => {
-        toast.success("Unidade consumidora criada com sucesso");
-        onOpenChange(false);
-      },
       onError: (error) => {
         toast.error(error.message);
       },
     });
 
-  const { mutate: updateUnit, isPending: isUpdating } =
+  const { mutateAsync: updateUnit, isPending: isUpdating } =
     client.gasUnit.useUpdate({
-      onSuccess: () => {
-        toast.success("Unidade consumidora atualizada com sucesso");
-        onOpenChange(false);
-      },
       onError: (error) => {
         toast.error(error.message);
       },
     });
+
+  const { mutateAsync: createUnitContract } = client.gasUnitContract.useCreate(
+    {},
+  );
+
+  const { mutateAsync: deleteUnitContract } = client.gasUnitContract.useDelete(
+    {},
+  );
+
+  const { mutateAsync: updateUnitContract } = client.gasUnitContract.useUpdate(
+    {},
+  );
 
   const handleSubmit = async (data: {
     code: string;
@@ -59,6 +72,8 @@ export function ConsumerUnitsMutateDrawer({
     zipCode: string;
     responsibleEmails: string[];
     contractId: string;
+    contractIds: string[];
+    primaryContractId: string;
     active: boolean;
   }) => {
     const payload = {
@@ -74,17 +89,75 @@ export function ConsumerUnitsMutateDrawer({
       active: data.active,
     };
 
+    let unitId: string;
+
     if (isUpdate && currentRow) {
-      updateUnit({
+      await updateUnit({
         data: payload,
         where: { id: currentRow.id },
       });
+      unitId = currentRow.id;
     } else {
-      createUnit({
-        data: payload,
-      });
+      const result = await createUnit({ data: payload });
+      unitId = result.id;
     }
+
+    // Sync unit contracts (many-to-many)
+    const existingIds = new Set(
+      existingUnitContracts.map((uc) => uc.contractId),
+    );
+    const desiredIds = new Set(data.contractIds);
+
+    // Delete removed contracts
+    for (const uc of existingUnitContracts) {
+      if (!desiredIds.has(uc.contractId)) {
+        await deleteUnitContract({ where: { id: uc.id } });
+      }
+    }
+
+    // Create new contracts
+    for (const contractId of data.contractIds) {
+      if (!existingIds.has(contractId)) {
+        await createUnitContract({
+          data: {
+            unitId,
+            contractId,
+            isPrimary: contractId === data.primaryContractId,
+          },
+        });
+      }
+    }
+
+    // Update isPrimary for existing contracts
+    for (const uc of existingUnitContracts) {
+      if (desiredIds.has(uc.contractId)) {
+        const shouldBePrimary = uc.contractId === data.primaryContractId;
+        if (uc.isPrimary !== shouldBePrimary) {
+          await updateUnitContract({
+            data: { isPrimary: shouldBePrimary },
+            where: { id: uc.id },
+          });
+        }
+      }
+    }
+
+    // Invalidate queries to refresh data
+    queryClient.invalidateQueries({ queryKey: ["GasUnitContract"] });
+    queryClient.invalidateQueries({ queryKey: ["gasUnitContract"] });
+    queryClient.invalidateQueries({ queryKey: ["GasUnit"] });
+    queryClient.invalidateQueries({ queryKey: ["gasUnit"] });
+
+    toast.success(
+      isUpdate
+        ? "Unidade consumidora atualizada com sucesso"
+        : "Unidade consumidora criada com sucesso",
+    );
+    onOpenChange(false);
   };
+
+  // Build default values from existing unitContracts
+  const existingContractIds = existingUnitContracts.map((uc) => uc.contractId);
+  const primaryContract = existingUnitContracts.find((uc) => uc.isPrimary);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -114,6 +187,16 @@ export function ConsumerUnitsMutateDrawer({
                     zipCode: currentRow.zipCode ?? "",
                     responsibleEmails: currentRow.responsibleEmails ?? [],
                     contractId: currentRow.contractId ?? "",
+                    contractIds:
+                      existingContractIds.length > 0
+                        ? existingContractIds
+                        : currentRow.contractId
+                          ? [currentRow.contractId]
+                          : [],
+                    primaryContractId:
+                      primaryContract?.contractId ??
+                      currentRow.contractId ??
+                      "",
                     active: currentRow.active,
                   }
                 : undefined

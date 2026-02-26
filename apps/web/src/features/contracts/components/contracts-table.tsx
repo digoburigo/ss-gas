@@ -40,6 +40,11 @@ export function ContractsTable() {
     take: 99,
     include: {
       units: true,
+      unitContracts: {
+        include: {
+          unit: true,
+        },
+      },
     },
     orderBy: { name: "asc" },
   });

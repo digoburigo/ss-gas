@@ -58,11 +58,27 @@ export function createColumns(
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Contrato" />
       ),
-      cell: ({ row }) => (
-        <span className="text-muted-foreground">
-          {row.original.contractName ?? "—"}
-        </span>
-      ),
+      cell: ({ row }) => {
+        const names = row.original.contractNames ?? [];
+        if (names.length === 0) {
+          return <span className="text-muted-foreground">—</span>;
+        }
+        if (names.length === 1) {
+          return <span className="text-muted-foreground">{names[0]}</span>;
+        }
+        return (
+          <div className="flex flex-col">
+            {names.map((name, i) => (
+              <span key={name} className="text-muted-foreground text-xs">
+                {name}
+                {i === 0 && (
+                  <span className="text-primary ml-1 text-[10px]">(pri.)</span>
+                )}
+              </span>
+            ))}
+          </div>
+        );
+      },
       filterFn: (row, _id, value: string[]) => {
         if (!value || value.length === 0) return true;
         return value.includes(row.original.contractId ?? "");
@@ -117,9 +133,7 @@ export function createColumns(
           return <span className="text-muted-foreground">—</span>;
         }
         return (
-          <span className="font-mono">
-            {volume.toLocaleString("pt-BR")} m³
-          </span>
+          <span className="font-mono">{volume.toLocaleString("pt-BR")} m³</span>
         );
       },
       enableSorting: true,

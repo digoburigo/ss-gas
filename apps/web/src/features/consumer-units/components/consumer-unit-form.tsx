@@ -22,6 +22,8 @@ interface ConsumerUnitFormData {
   zipCode: string;
   responsibleEmails: string[];
   contractId: string;
+  contractIds: string[];
+  primaryContractId: string;
   active: boolean;
 }
 
@@ -55,6 +57,11 @@ export function ConsumerUnitForm({
       zipCode: defaultValues?.zipCode ?? "",
       responsibleEmails: defaultValues?.responsibleEmails ?? [],
       contractId: defaultValues?.contractId ?? "",
+      contractIds:
+        defaultValues?.contractIds ??
+        (defaultValues?.contractId ? [defaultValues.contractId] : []),
+      primaryContractId:
+        defaultValues?.primaryContractId ?? defaultValues?.contractId ?? "",
       active: defaultValues?.active ?? true,
     },
     onSubmit: async ({ value }) => {
@@ -71,6 +78,8 @@ export function ConsumerUnitForm({
         zipCode: z.string().optional(),
         responsibleEmails: z.array(z.string().email()),
         contractId: z.string().optional(),
+        contractIds: z.array(z.string()),
+        primaryContractId: z.string().optional(),
         active: z.boolean(),
       }),
     },
@@ -291,27 +300,133 @@ export function ConsumerUnitForm({
 
       {/* Contract Linkage */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium">Vinculação ao Contrato</h3>
-        <form.Field name="contractId">
+        <h3 className="text-lg font-medium">Vinculação a Contratos</h3>
+        <p className="text-muted-foreground text-sm">
+          Selecione um ou mais contratos para esta unidade. O contrato primário
+          será usado como padrão nos cálculos.
+        </p>
+
+        {/* Add contract select */}
+        <form.Field name="contractIds">
           {(field) => (
-            <div className="space-y-2">
-              <Label htmlFor={field.name}>Contrato</Label>
-              <NativeSelect
-                id={field.name}
-                name={field.name}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-                value={field.state.value}
-              >
-                <NativeSelectOption value="">
-                  Selecione um contrato
-                </NativeSelectOption>
-                {(contracts as GasContract[]).map((contract) => (
-                  <NativeSelectOption key={contract.id} value={contract.id}>
-                    {contract.name}
+            <div className="space-y-3">
+              <Label>Contratos Vinculados</Label>
+              <div className="flex gap-2">
+                <NativeSelect
+                  id="add-contract-select"
+                  value=""
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    if (id && !field.state.value.includes(id)) {
+                      const newIds = [...field.state.value, id];
+                      field.handleChange(newIds);
+                      // Set as primary if it's the first contract
+                      if (newIds.length === 1) {
+                        form.setFieldValue("primaryContractId", id);
+                        form.setFieldValue("contractId", id);
+                      }
+                    }
+                    e.target.value = "";
+                  }}
+                >
+                  <NativeSelectOption value="">
+                    Adicionar contrato...
                   </NativeSelectOption>
-                ))}
-              </NativeSelect>
+                  {(contracts as GasContract[])
+                    .filter((c) => !field.state.value.includes(c.id))
+                    .map((contract) => (
+                      <NativeSelectOption key={contract.id} value={contract.id}>
+                        {contract.name}
+                      </NativeSelectOption>
+                    ))}
+                </NativeSelect>
+              </div>
+
+              {/* List selected contracts */}
+              {field.state.value.length > 0 ? (
+                <div className="space-y-2">
+                  {field.state.value.map((contractId) => {
+                    const contract = (contracts as GasContract[]).find(
+                      (c) => c.id === contractId,
+                    );
+                    if (!contract) return null;
+                    const isPrimary =
+                      form.getFieldValue("primaryContractId") === contractId;
+                    return (
+                      <div
+                        key={contractId}
+                        className="bg-secondary/50 flex items-center justify-between rounded-md border px-3 py-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">
+                            {contract.name}
+                          </span>
+                          {isPrimary && (
+                            <span className="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-xs font-medium">
+                              Primário
+                            </span>
+                          )}
+                          <span className="text-muted-foreground text-xs">
+                            QDC:{" "}
+                            {contract.qdcContracted?.toLocaleString("pt-BR")}{" "}
+                            {contract.volumeUnit}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {!isPrimary && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 text-xs"
+                              onClick={() => {
+                                form.setFieldValue(
+                                  "primaryContractId",
+                                  contractId,
+                                );
+                                form.setFieldValue("contractId", contractId);
+                              }}
+                            >
+                              Definir primário
+                            </Button>
+                          )}
+                          <button
+                            type="button"
+                            className="hover:text-destructive p-1"
+                            onClick={() => {
+                              const newIds = field.state.value.filter(
+                                (id) => id !== contractId,
+                              );
+                              field.handleChange(newIds);
+                              // If removed contract was primary, set first remaining as primary
+                              if (isPrimary && newIds.length > 0) {
+                                form.setFieldValue(
+                                  "primaryContractId",
+                                  newIds[0] ?? "",
+                                );
+                                form.setFieldValue(
+                                  "contractId",
+                                  newIds[0] ?? "",
+                                );
+                              } else if (newIds.length === 0) {
+                                form.setFieldValue("primaryContractId", "");
+                                form.setFieldValue("contractId", "");
+                              }
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-muted-foreground text-sm italic">
+                  Nenhum contrato vinculado.
+                </p>
+              )}
+
               {field.state.meta.errors.map((error) => (
                 <p className="text-destructive text-sm" key={error?.message}>
                   {error?.message}

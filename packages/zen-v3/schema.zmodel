@@ -977,6 +977,9 @@ model GasUnit {
     // Operator assignments - which operators can work with this unit
     operatorAssignments GasUnitOperator[]
 
+    // Multiple contracts per unit (many-to-many)
+    unitContracts GasUnitContract[]
+
     @@unique([organizationId, code])
 
     @@allow('create', auth() != null)
@@ -1237,8 +1240,11 @@ model GasContract {
     organizationId String? @default(auth().organizationId)
     organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-    // Consumer units linked to this contract
+    // Consumer units linked to this contract (legacy single-contract FK)
     units GasUnit[]
+
+    // Multiple units per contract (many-to-many via join table)
+    unitContracts GasUnitContract[]
 
     // Audit log entries for this contract
     auditLogs GasContractAuditLog[]
@@ -1301,6 +1307,31 @@ model GasUnitOperator {
     @@allow('create,read,update,delete', auth() != null)
 
     @@map("gas_unit_operators")
+}
+
+// GAS UNIT ↔ CONTRACT MANY-TO-MANY ======================================================
+// Join model linking units to contracts, enabling multiple contracts per unit (e.g., Dexco with 3 contracts)
+
+model GasUnitContract {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    unitId String
+    unit GasUnit @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+    contractId String
+    contract GasContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+    // Whether this is the primary/default contract for the unit
+    isPrimary Boolean @default(false)
+
+    createdAt DateTime @default(now())
+
+    @@unique([unitId, contractId])
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth() != null)
+
+    @@map("gas_unit_contracts")
 }
 
 // GAS CONTRACT ALERT CONFIGURATION ======================================================
