@@ -3,6 +3,7 @@ import {
   Bell,
   Calculator,
   ClipboardList,
+  Cog,
   FileText,
   Settings2,
 } from "lucide-react";
@@ -39,6 +40,12 @@ export const parameterCategories = [
     description: "Configure campos adicionais para contratos e unidades",
     icon: Settings2,
   },
+  {
+    value: "equipment",
+    label: "Equipamentos",
+    description: "Gerencie equipamentos, vincule a unidades e configure constantes",
+    icon: Cog,
+  },
 ] as const;
 
 // Contract types for business rules
@@ -55,7 +62,8 @@ export const defaultAlertThresholds = [
   {
     key: "deviation_threshold_percent",
     name: "Limiar de Desvio (%)",
-    description: "Percentual de desvio entre consumo programado e real que dispara alerta",
+    description:
+      "Percentual de desvio entre consumo programado e real que dispara alerta",
     valueType: "percentage",
     defaultValue: "10",
     minValue: 1,
@@ -64,7 +72,8 @@ export const defaultAlertThresholds = [
   {
     key: "contract_expiration_notice_days",
     name: "Aviso de Vencimento (dias)",
-    description: "Dias de antecedência para alertar sobre vencimento de contrato",
+    description:
+      "Dias de antecedência para alertar sobre vencimento de contrato",
     valueType: "number",
     defaultValue: "30",
     minValue: 1,
@@ -73,7 +82,8 @@ export const defaultAlertThresholds = [
   {
     key: "renewal_notice_days",
     name: "Aviso de Renovação (dias)",
-    description: "Dias de antecedência para alertar sobre renovação de contrato",
+    description:
+      "Dias de antecedência para alertar sobre renovação de contrato",
     valueType: "number",
     defaultValue: "60",
     minValue: 1,
@@ -82,7 +92,8 @@ export const defaultAlertThresholds = [
   {
     key: "scheduling_deadline_hours",
     name: "Prazo de Programação (horas)",
-    description: "Horas antes do deadline para alertar sobre programação pendente",
+    description:
+      "Horas antes do deadline para alertar sobre programação pendente",
     valueType: "number",
     defaultValue: "2",
     minValue: 1,
@@ -91,7 +102,8 @@ export const defaultAlertThresholds = [
   {
     key: "take_or_pay_warning_percent",
     name: "Alerta Take-or-Pay (%)",
-    description: "Percentual do take-or-pay para iniciar alertas de consumo baixo",
+    description:
+      "Percentual do take-or-pay para iniciar alertas de consumo baixo",
     valueType: "percentage",
     defaultValue: "85",
     minValue: 50,
@@ -104,7 +116,8 @@ export const defaultPenaltyFormulas = [
   {
     key: "take_or_pay_penalty_percent",
     name: "Multa Take-or-Pay (%)",
-    description: "Percentual de multa sobre o valor não consumido do take-or-pay",
+    description:
+      "Percentual de multa sobre o valor não consumido do take-or-pay",
     valueType: "percentage",
     defaultValue: "100",
     minValue: 0,
@@ -140,7 +153,8 @@ export const defaultPenaltyFormulas = [
   {
     key: "imbalance_penalty_formula",
     name: "Fórmula de Desequilíbrio",
-    description: "Fórmula para cálculo de penalidade por desequilíbrio de consumo",
+    description:
+      "Fórmula para cálculo de penalidade por desequilíbrio de consumo",
     valueType: "formula",
     defaultValue: "(deviation * base_price * 1.5)",
   },
@@ -151,7 +165,8 @@ export const defaultBusinessRules = [
   {
     key: "scheduling_required",
     name: "Programação Obrigatória",
-    description: "Se a programação diária é obrigatória para este tipo de contrato",
+    description:
+      "Se a programação diária é obrigatória para este tipo de contrato",
     valueType: "boolean",
     defaultValue: "true",
   },
@@ -203,10 +218,7 @@ export const entityTypes = [
 ] as const;
 
 // Helper to format parameter value for display
-export function formatParameterValue(
-  value: string,
-  valueType: string,
-): string {
+export function formatParameterValue(value: string, valueType: string): string {
   switch (valueType) {
     case "percentage":
       return `${value}%`;

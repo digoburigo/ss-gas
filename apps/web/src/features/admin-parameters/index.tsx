@@ -17,7 +17,6 @@ import { Main } from "~/components/layout/main";
 import { ProfileDropdown } from "~/components/profile-dropdown";
 import { Search } from "~/components/search";
 import { ThemeSwitch } from "~/components/theme-switch";
-
 import {
   AdminParametersProvider,
   useAdminParameters,
@@ -26,6 +25,7 @@ import { AlertThresholdsTab } from "./components/alert-thresholds-tab";
 import { BusinessRulesTab } from "./components/business-rules-tab";
 import { ContractTemplatesTab } from "./components/contract-templates-tab";
 import { CustomFieldsTab } from "./components/custom-fields-tab";
+import { EquipmentManagementTab } from "./components/equipment-management-tab";
 import { PenaltyFormulasTab } from "./components/penalty-formulas-tab";
 import { parameterCategories } from "./data/data";
 
@@ -73,7 +73,8 @@ function AdminParametersContent() {
                 Parâmetros Administrativos
               </h2>
               <p className="text-muted-foreground">
-                Configure parâmetros do sistema, regras de negócio e personalizações.
+                Configure parâmetros do sistema, regras de negócio e
+                personalizações.
               </p>
             </div>
           </div>
@@ -81,9 +82,7 @@ function AdminParametersContent() {
 
         <Tabs
           value={activeTab}
-          onValueChange={(value) =>
-            setActiveTab(value as typeof activeTab)
-          }
+          onValueChange={(value) => setActiveTab(value as typeof activeTab)}
           className="space-y-4"
         >
           <TabsList className="flex-wrap">
@@ -120,6 +119,10 @@ function AdminParametersContent() {
 
           <TabsContent value="custom_fields">
             <CustomFieldsTab />
+          </TabsContent>
+
+          <TabsContent value="equipment">
+            <EquipmentManagementTab />
           </TabsContent>
         </Tabs>
       </Main>

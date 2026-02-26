@@ -2631,4 +2631,44 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				}),
 			},
 		},
+	)
+
+	/**
+	 * GET /gas/equipment/:equipmentId/can-delete
+	 *
+	 * Checks if an equipment can be deleted.
+	 * Equipment cannot be deleted if it has associated daily entries (line statuses).
+	 */
+	.get(
+		"/equipment/:equipmentId/can-delete",
+		async ({ params, status }) => {
+			const { equipmentId } = params;
+
+			const equipment = await db.gasEquipment.findUnique({
+				where: { id: equipmentId },
+			});
+
+			if (!equipment) {
+				return status(404, { error: "Equipment not found" });
+			}
+
+			const lineStatusCount = await db.gasLineStatus.count({
+				where: { equipmentId },
+			});
+
+			if (lineStatusCount > 0) {
+				return {
+					canDelete: false,
+					reason: `Este equipamento possui ${lineStatusCount} lançamento(s) diário(s) associado(s). Remova os lançamentos antes de excluir.`,
+				};
+			}
+
+			return { canDelete: true, reason: null };
+		},
+		{
+			detail: {
+				summary: "Check if equipment can be deleted",
+				tags: ["Gas Equipment"],
+			},
+		},
 	);

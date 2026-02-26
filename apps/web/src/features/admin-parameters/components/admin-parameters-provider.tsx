@@ -5,7 +5,8 @@ type ParameterCategory =
   | "penalty_formulas"
   | "business_rules"
   | "contract_templates"
-  | "custom_fields";
+  | "custom_fields"
+  | "equipment";
 
 interface AdminParametersContextValue {
   activeTab: ParameterCategory;
@@ -22,15 +23,27 @@ interface AdminParametersContextValue {
   setSelectedContractType: (type: string | null) => void;
 }
 
-const AdminParametersContext = createContext<AdminParametersContextValue | null>(null);
+const AdminParametersContext =
+  createContext<AdminParametersContextValue | null>(null);
 
-export function AdminParametersProvider({ children }: { children: React.ReactNode }) {
-  const [activeTab, setActiveTab] = useState<ParameterCategory>("alert_thresholds");
-  const [editingParameterId, setEditingParameterId] = useState<string | null>(null);
-  const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
+export function AdminParametersProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [activeTab, setActiveTab] =
+    useState<ParameterCategory>("alert_thresholds");
+  const [editingParameterId, setEditingParameterId] = useState<string | null>(
+    null,
+  );
+  const [editingTemplateId, setEditingTemplateId] = useState<string | null>(
+    null,
+  );
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedContractType, setSelectedContractType] = useState<string | null>(null);
+  const [selectedContractType, setSelectedContractType] = useState<
+    string | null
+  >(null);
 
   return (
     <AdminParametersContext.Provider
@@ -57,7 +70,9 @@ export function AdminParametersProvider({ children }: { children: React.ReactNod
 export function useAdminParameters() {
   const context = useContext(AdminParametersContext);
   if (!context) {
-    throw new Error("useAdminParameters must be used within AdminParametersProvider");
+    throw new Error(
+      "useAdminParameters must be used within AdminParametersProvider",
+    );
   }
   return context;
 }

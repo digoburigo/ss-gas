@@ -206,3 +206,36 @@ after each iteration and it's included in prompts for context.
   - Cron jobs in `@elysiajs/cron` are chained with `.use()` — each job is an independent plugin
 ---
 
+## 2026-02-25 - US-010
+- Implemented full equipment CRUD management as a new "Equipamentos" tab in the Admin Parameters page (`/gas/admin-parameters`)
+- **Server-side changes:**
+  - Added `GET /gas/equipment/:equipmentId/can-delete` endpoint to validate equipment deletion (blocks if equipment has associated daily entries/line statuses)
+- **Frontend changes:**
+  - Created `EquipmentManagementTab` component as a self-contained tab with:
+    - Data table with columns: Código, Nome, Tipo, Unidade, Constante Atual, Ordem, Status, Ações
+    - Filters by search text (code/name), equipment type, unit, and active status
+    - Create/Edit equipment via Sheet drawer (code, name, type, unit, order index, active)
+    - Deactivate/reactivate equipment (soft toggle via ConfirmDialog)
+    - Delete equipment with validation (API check for associated daily entries)
+    - Constants management panel (Sheet drawer per equipment):
+      - View all consumption constants ordered by date
+      - Add new constants with rate, unit, effective from/to, notes
+      - End constant validity (set effectiveTo = today)
+      - Delete constants
+  - Added "equipment" value to `ParameterCategory` type in admin-parameters provider
+  - Added "Equipamentos" entry with Cog icon to `parameterCategories` data array
+  - Imported and rendered `EquipmentManagementTab` in the admin-parameters Tabs component
+- Files changed:
+  - `apps/server/src/modules/gas/gas.controller.ts` — added can-delete endpoint for equipment
+  - `apps/web/src/features/admin-parameters/components/equipment-management-tab.tsx` — new comprehensive equipment management component
+  - `apps/web/src/features/admin-parameters/components/admin-parameters-provider.tsx` — added "equipment" to ParameterCategory union
+  - `apps/web/src/features/admin-parameters/data/data.tsx` — added Cog import and equipment category entry
+  - `apps/web/src/features/admin-parameters/index.tsx` — imported and rendered EquipmentManagementTab
+- **Learnings:**
+  - ZenStack client `useFindMany` with `include: { constants: true }` fetches all related `GasEquipmentConstant` records inline, making it easy to display the "current constant" without a separate query
+  - For self-contained CRUD tabs (no separate route), a single component with internal state can replace the full Provider + Table + Columns + Form + Dialogs + RowActions pattern — simpler for admin-embedded features
+  - Equipment links to units via `unitId` (not to contracts directly); the unit→contract link provides indirect contract association
+  - `@tanstack/react-form` zod validators: form default values must match zod types exactly — `z.string().optional()` doesn't work when default is `""` (a string, not undefined); use `z.string()` instead
+  - The `can-delete` endpoint pattern (check-before-delete) works well for equipment: count `GasLineStatus` records where `equipmentId` matches
+---
+
