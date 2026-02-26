@@ -28,17 +28,15 @@ interface DailySchedulingFormProps {
 }
 
 type UnitWithContract = GasUnit & {
-  contract:
-    | Pick<
-        GasContract,
-        | "id"
-        | "name"
-        | "qdcContracted"
-        | "transportToleranceUpperPercent"
-        | "transportToleranceLowerPercent"
-        | "volumeUnit"
-      >
-    | null;
+  contract: Pick<
+    GasContract,
+    | "id"
+    | "name"
+    | "qdcContracted"
+    | "transportToleranceUpperPercent"
+    | "transportToleranceLowerPercent"
+    | "volumeUnit"
+  > | null;
 };
 
 export function DailySchedulingForm({

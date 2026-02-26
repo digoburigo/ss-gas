@@ -1,4 +1,4 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import { useState } from "react";
 import {
   flexRender,
@@ -8,7 +8,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import type { SortingState } from "@tanstack/react-table";
 import { AlertTriangle, CheckCircle, FileText } from "lucide-react";
 
 import { Badge } from "@acme/ui/badge";
@@ -22,8 +21,8 @@ import {
   TableRow,
 } from "@acme/ui/table";
 
-import { DataTableColumnHeader } from "~/components/data-table/column-header";
 import { DataTablePagination } from "~/components/data-table";
+import { DataTableColumnHeader } from "~/components/data-table/column-header";
 import { deviationCauses, getAccuracyStatus } from "../data/data";
 import { useSchedulingAccuracy } from "./scheduling-accuracy-provider";
 
@@ -164,7 +163,9 @@ const columns: ColumnDef<AccuracyRecord>[] = [
               }
             >
               {isPositive ? "+" : ""}
-              {deviation.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}{" "}
+              {deviation.toLocaleString("pt-BR", {
+                maximumFractionDigits: 2,
+              })}{" "}
               m³
             </span>
             <span className="text-muted-foreground text-xs">

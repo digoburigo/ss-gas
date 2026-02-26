@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
-import { AlertTriangle, Check, ClipboardList, Loader2, RefreshCcw, Save } from "lucide-react";
+import {
+  AlertTriangle,
+  Check,
+  ClipboardList,
+  Loader2,
+  RefreshCcw,
+  Save,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import type { GasSystemParameter } from "@acme/zen-v3/zenstack/models";
@@ -29,16 +36,23 @@ import {
 
 export function BusinessRulesTab() {
   const client = useClientQueries(schema);
-  const [selectedContractType, setSelectedContractType] = useState<string>("all");
+  const [selectedContractType, setSelectedContractType] =
+    useState<string>("all");
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
 
   // Fetch existing parameters for selected contract type
-  const { data: parameters = [], isLoading, refetch } = client.gasSystemParameter.useFindMany({
+  const {
+    data: parameters = [],
+    isLoading,
+    refetch,
+  } = client.gasSystemParameter.useFindMany({
     where: {
       category: "business_rules",
       active: true,
-      ...(selectedContractType !== "all" ? { contractType: selectedContractType } : {}),
+      ...(selectedContractType !== "all"
+        ? { contractType: selectedContractType }
+        : {}),
     },
     orderBy: { orderIndex: "asc" },
   });
@@ -54,16 +68,19 @@ export function BusinessRulesTab() {
   });
 
   // Create mutation
-  const { mutate: createParameter, mutateAsync: createParameterAsync, isPending: isCreating } =
-    client.gasSystemParameter.useCreate({
-      onSuccess: () => {
-        toast.success("Regra criada com sucesso");
-        refetch();
-      },
-      onError: (error: Error) => {
-        toast.error(`Erro ao criar regra: ${error.message}`);
-      },
-    });
+  const {
+    mutate: createParameter,
+    mutateAsync: createParameterAsync,
+    isPending: isCreating,
+  } = client.gasSystemParameter.useCreate({
+    onSuccess: () => {
+      toast.success("Regra criada com sucesso");
+      refetch();
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao criar regra: ${error.message}`);
+    },
+  });
 
   // Update mutation
   const { mutate: updateParameter, isPending: isUpdating } =
@@ -80,9 +97,12 @@ export function BusinessRulesTab() {
 
   // Initialize default parameters if none exist
   const handleInitializeDefaults = async () => {
-    const targetParams = selectedContractType === "all" ? allParameters : parameters;
+    const targetParams =
+      selectedContractType === "all" ? allParameters : parameters;
     for (const param of defaultBusinessRules) {
-      const exists = (targetParams as GasSystemParameter[]).some((p) => p.key === param.key);
+      const exists = (targetParams as GasSystemParameter[]).some(
+        (p) => p.key === param.key,
+      );
       if (!exists) {
         await createParameterAsync({
           data: {
@@ -95,7 +115,8 @@ export function BusinessRulesTab() {
             defaultValue: param.defaultValue,
             minValue: "minValue" in param ? param.minValue : undefined,
             maxValue: "maxValue" in param ? param.maxValue : undefined,
-            contractType: selectedContractType === "all" ? null : selectedContractType,
+            contractType:
+              selectedContractType === "all" ? null : selectedContractType,
             orderIndex: defaultBusinessRules.indexOf(param),
           },
         });
@@ -105,8 +126,11 @@ export function BusinessRulesTab() {
 
   // Get value for a parameter, using default if not found
   const getParameterValue = (key: string): string => {
-    const targetParams = selectedContractType === "all" ? allParameters : parameters;
-    const param = (targetParams as GasSystemParameter[]).find((p) => p.key === key);
+    const targetParams =
+      selectedContractType === "all" ? allParameters : parameters;
+    const param = (targetParams as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     if (param) return param.value;
     const defaultParam = defaultBusinessRules.find((p) => p.key === key);
     return defaultParam?.defaultValue ?? "";
@@ -120,8 +144,11 @@ export function BusinessRulesTab() {
 
   // Handle save
   const handleSave = (key: string) => {
-    const targetParams = selectedContractType === "all" ? allParameters : parameters;
-    const param = (targetParams as GasSystemParameter[]).find((p) => p.key === key);
+    const targetParams =
+      selectedContractType === "all" ? allParameters : parameters;
+    const param = (targetParams as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     if (param) {
       updateParameter({
         where: { id: param.id },
@@ -139,9 +166,12 @@ export function BusinessRulesTab() {
             value: editValue,
             valueType: defaultParam.valueType,
             defaultValue: defaultParam.defaultValue,
-            minValue: "minValue" in defaultParam ? defaultParam.minValue : undefined,
-            maxValue: "maxValue" in defaultParam ? defaultParam.maxValue : undefined,
-            contractType: selectedContractType === "all" ? null : selectedContractType,
+            minValue:
+              "minValue" in defaultParam ? defaultParam.minValue : undefined,
+            maxValue:
+              "maxValue" in defaultParam ? defaultParam.maxValue : undefined,
+            contractType:
+              selectedContractType === "all" ? null : selectedContractType,
             orderIndex: defaultBusinessRules.indexOf(defaultParam),
           },
         });
@@ -151,8 +181,11 @@ export function BusinessRulesTab() {
 
   // Handle reset to default
   const handleReset = (key: string) => {
-    const targetParams = selectedContractType === "all" ? allParameters : parameters;
-    const param = (targetParams as GasSystemParameter[]).find((p) => p.key === key);
+    const targetParams =
+      selectedContractType === "all" ? allParameters : parameters;
+    const param = (targetParams as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     const defaultParam = defaultBusinessRules.find((p) => p.key === key);
     if (param && defaultParam) {
       updateParameter({
@@ -165,8 +198,11 @@ export function BusinessRulesTab() {
   // Handle boolean toggle
   const handleToggle = (key: string, newValue: boolean) => {
     setEditValue(newValue.toString());
-    const targetParams = selectedContractType === "all" ? allParameters : parameters;
-    const param = (targetParams as GasSystemParameter[]).find((p) => p.key === key);
+    const targetParams =
+      selectedContractType === "all" ? allParameters : parameters;
+    const param = (targetParams as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     if (param) {
       updateParameter({
         where: { id: param.id },
@@ -184,7 +220,8 @@ export function BusinessRulesTab() {
             value: newValue.toString(),
             valueType: defaultParam.valueType,
             defaultValue: defaultParam.defaultValue,
-            contractType: selectedContractType === "all" ? null : selectedContractType,
+            contractType:
+              selectedContractType === "all" ? null : selectedContractType,
             orderIndex: defaultBusinessRules.indexOf(defaultParam),
           },
         });
@@ -192,7 +229,8 @@ export function BusinessRulesTab() {
     }
   };
 
-  const targetParams = selectedContractType === "all" ? allParameters : parameters;
+  const targetParams =
+    selectedContractType === "all" ? allParameters : parameters;
 
   if (isLoading) {
     return (
@@ -238,7 +276,10 @@ export function BusinessRulesTab() {
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Contract Type Selector */}
-        <Tabs value={selectedContractType} onValueChange={setSelectedContractType}>
+        <Tabs
+          value={selectedContractType}
+          onValueChange={setSelectedContractType}
+        >
           <TabsList className="mb-4">
             <TabsTrigger value="all">Padrão (Todos)</TabsTrigger>
             {contractTypes.map((type) => (
@@ -250,7 +291,9 @@ export function BusinessRulesTab() {
 
           <TabsContent value={selectedContractType} className="space-y-4">
             {defaultBusinessRules.map((defaultParam) => {
-              const param = (targetParams as GasSystemParameter[]).find((p) => p.key === defaultParam.key);
+              const param = (targetParams as GasSystemParameter[]).find(
+                (p) => p.key === defaultParam.key,
+              );
               const isEditing = editingKey === defaultParam.key;
               const currentValue = param?.value ?? defaultParam.defaultValue;
               const isDefault = currentValue === defaultParam.defaultValue;
@@ -262,7 +305,9 @@ export function BusinessRulesTab() {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <Label className="font-medium">{defaultParam.name}</Label>
+                          <Label className="font-medium">
+                            {defaultParam.name}
+                          </Label>
                           {isDefault && (
                             <Badge variant="secondary" className="text-xs">
                               Padrão
@@ -270,7 +315,11 @@ export function BusinessRulesTab() {
                           )}
                           {selectedContractType !== "all" && (
                             <Badge variant="outline" className="text-xs">
-                              {contractTypes.find((t) => t.value === selectedContractType)?.label}
+                              {
+                                contractTypes.find(
+                                  (t) => t.value === selectedContractType,
+                                )?.label
+                              }
                             </Badge>
                           )}
                         </div>
@@ -307,9 +356,15 @@ export function BusinessRulesTab() {
                                 onChange={(e) => setEditValue(e.target.value)}
                                 className="w-32"
                               >
-                                <NativeSelectOption value="daily">Diário</NativeSelectOption>
-                                <NativeSelectOption value="weekly">Semanal</NativeSelectOption>
-                                <NativeSelectOption value="monthly">Mensal</NativeSelectOption>
+                                <NativeSelectOption value="daily">
+                                  Diário
+                                </NativeSelectOption>
+                                <NativeSelectOption value="weekly">
+                                  Semanal
+                                </NativeSelectOption>
+                                <NativeSelectOption value="monthly">
+                                  Mensal
+                                </NativeSelectOption>
                               </NativeSelect>
                             ) : (
                               <Input
@@ -317,8 +372,16 @@ export function BusinessRulesTab() {
                                 value={editValue}
                                 onChange={(e) => setEditValue(e.target.value)}
                                 className="w-24"
-                                min={"minValue" in defaultParam ? defaultParam.minValue : undefined}
-                                max={"maxValue" in defaultParam ? defaultParam.maxValue : undefined}
+                                min={
+                                  "minValue" in defaultParam
+                                    ? defaultParam.minValue
+                                    : undefined
+                                }
+                                max={
+                                  "maxValue" in defaultParam
+                                    ? defaultParam.maxValue
+                                    : undefined
+                                }
                               />
                             )}
                             <Button
@@ -344,7 +407,10 @@ export function BusinessRulesTab() {
                         ) : (
                           <>
                             <span className="text-lg font-semibold">
-                              {formatParameterValue(currentValue, defaultParam.valueType)}
+                              {formatParameterValue(
+                                currentValue,
+                                defaultParam.valueType,
+                              )}
                             </span>
                             <Button
                               variant="ghost"

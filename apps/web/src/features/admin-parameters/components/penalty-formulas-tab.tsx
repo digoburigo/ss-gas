@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
-import { AlertTriangle, Calculator, Check, Code, Loader2, RefreshCcw, Save } from "lucide-react";
+import {
+  AlertTriangle,
+  Calculator,
+  Check,
+  Code,
+  Loader2,
+  RefreshCcw,
+  Save,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import type { GasSystemParameter } from "@acme/zen-v3/zenstack/models";
@@ -19,10 +27,7 @@ import { Skeleton } from "@acme/ui/skeleton";
 import { Textarea } from "@acme/ui/textarea";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
-import {
-  defaultPenaltyFormulas,
-  formatParameterValue,
-} from "../data/data";
+import { defaultPenaltyFormulas, formatParameterValue } from "../data/data";
 
 export function PenaltyFormulasTab() {
   const client = useClientQueries(schema);
@@ -30,22 +35,29 @@ export function PenaltyFormulasTab() {
   const [editValue, setEditValue] = useState("");
 
   // Fetch existing parameters
-  const { data: parameters = [], isLoading, refetch } = client.gasSystemParameter.useFindMany({
+  const {
+    data: parameters = [],
+    isLoading,
+    refetch,
+  } = client.gasSystemParameter.useFindMany({
     where: { category: "penalty_formulas", active: true },
     orderBy: { orderIndex: "asc" },
   });
 
   // Create mutation
-  const { mutate: createParameter, mutateAsync: createParameterAsync, isPending: isCreating } =
-    client.gasSystemParameter.useCreate({
-      onSuccess: () => {
-        toast.success("Fórmula criada com sucesso");
-        refetch();
-      },
-      onError: (error: Error) => {
-        toast.error(`Erro ao criar fórmula: ${error.message}`);
-      },
-    });
+  const {
+    mutate: createParameter,
+    mutateAsync: createParameterAsync,
+    isPending: isCreating,
+  } = client.gasSystemParameter.useCreate({
+    onSuccess: () => {
+      toast.success("Fórmula criada com sucesso");
+      refetch();
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao criar fórmula: ${error.message}`);
+    },
+  });
 
   // Update mutation
   const { mutate: updateParameter, isPending: isUpdating } =
@@ -63,7 +75,9 @@ export function PenaltyFormulasTab() {
   // Initialize default parameters if none exist
   const handleInitializeDefaults = async () => {
     for (const param of defaultPenaltyFormulas) {
-      const exists = (parameters as GasSystemParameter[]).some((p) => p.key === param.key);
+      const exists = (parameters as GasSystemParameter[]).some(
+        (p) => p.key === param.key,
+      );
       if (!exists) {
         await createParameterAsync({
           data: {
@@ -85,7 +99,9 @@ export function PenaltyFormulasTab() {
 
   // Get value for a parameter, using default if not found
   const getParameterValue = (key: string): string => {
-    const param = (parameters as GasSystemParameter[]).find((p) => p.key === key);
+    const param = (parameters as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     if (param) return param.value;
     const defaultParam = defaultPenaltyFormulas.find((p) => p.key === key);
     return defaultParam?.defaultValue ?? "";
@@ -99,7 +115,9 @@ export function PenaltyFormulasTab() {
 
   // Handle save
   const handleSave = (key: string) => {
-    const param = (parameters as GasSystemParameter[]).find((p) => p.key === key);
+    const param = (parameters as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     if (param) {
       updateParameter({
         where: { id: param.id },
@@ -117,8 +135,10 @@ export function PenaltyFormulasTab() {
             value: editValue,
             valueType: defaultParam.valueType,
             defaultValue: defaultParam.defaultValue,
-            minValue: "minValue" in defaultParam ? defaultParam.minValue : undefined,
-            maxValue: "maxValue" in defaultParam ? defaultParam.maxValue : undefined,
+            minValue:
+              "minValue" in defaultParam ? defaultParam.minValue : undefined,
+            maxValue:
+              "maxValue" in defaultParam ? defaultParam.maxValue : undefined,
             orderIndex: defaultPenaltyFormulas.indexOf(defaultParam),
           },
         });
@@ -128,7 +148,9 @@ export function PenaltyFormulasTab() {
 
   // Handle reset to default
   const handleReset = (key: string) => {
-    const param = (parameters as GasSystemParameter[]).find((p) => p.key === key);
+    const param = (parameters as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     const defaultParam = defaultPenaltyFormulas.find((p) => p.key === key);
     if (param && defaultParam) {
       updateParameter({
@@ -182,7 +204,9 @@ export function PenaltyFormulasTab() {
       </CardHeader>
       <CardContent className="space-y-4">
         {defaultPenaltyFormulas.map((defaultParam) => {
-          const param = (parameters as GasSystemParameter[]).find((p) => p.key === defaultParam.key);
+          const param = (parameters as GasSystemParameter[]).find(
+            (p) => p.key === defaultParam.key,
+          );
           const isEditing = editingKey === defaultParam.key;
           const currentValue = param?.value ?? defaultParam.defaultValue;
           const isDefault = currentValue === defaultParam.defaultValue;
@@ -195,7 +219,9 @@ export function PenaltyFormulasTab() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <Label className="font-medium">{defaultParam.name}</Label>
+                        <Label className="font-medium">
+                          {defaultParam.name}
+                        </Label>
                         {isFormula && (
                           <Badge variant="outline" className="text-xs">
                             <Code className="mr-1 h-3 w-3" />
@@ -215,7 +241,10 @@ export function PenaltyFormulasTab() {
                     {!isEditing && !isFormula && (
                       <div className="flex items-center gap-2">
                         <span className="text-lg font-semibold">
-                          {formatParameterValue(currentValue, defaultParam.valueType)}
+                          {formatParameterValue(
+                            currentValue,
+                            defaultParam.valueType,
+                          )}
                         </span>
                         <Button
                           variant="ghost"
@@ -282,8 +311,16 @@ export function PenaltyFormulasTab() {
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
                             className="w-24"
-                            min={"minValue" in defaultParam ? defaultParam.minValue : undefined}
-                            max={"maxValue" in defaultParam ? defaultParam.maxValue : undefined}
+                            min={
+                              "minValue" in defaultParam
+                                ? defaultParam.minValue
+                                : undefined
+                            }
+                            max={
+                              "maxValue" in defaultParam
+                                ? defaultParam.maxValue
+                                : undefined
+                            }
                           />
                           {defaultParam.valueType === "percentage" && (
                             <span className="text-muted-foreground">%</span>

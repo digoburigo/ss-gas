@@ -1,4 +1,5 @@
 import type { db as Db } from "@acme/zen-v3";
+import type { CoreContext } from "./core";
 import type { UnitRefs } from "./gas-units";
 import { getDateRange, randomVariation, selectWeightedCause } from "./utils";
 
@@ -7,10 +8,16 @@ export async function seedGasDailyData(
 	// biome-ignore lint/suspicious/noExplicitAny: $setAuth returns any
 	userDb: any,
 	refs: UnitRefs,
+	ctx: CoreContext,
 ): Promise<void> {
 	console.log("📅 Generating daily entries for the last 45 days...");
 
 	const dates = getDateRange(45);
+
+	// Plans older than 7 days will be seeded as approved
+	const sevenDaysAgo = new Date();
+	sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+	sevenDaysAgo.setHours(0, 0, 0, 0);
 
 	const unitConfigs = [
 		{
@@ -42,6 +49,7 @@ export async function seedGasDailyData(
 	let totalEntries = 0;
 	let totalLineStatuses = 0;
 	let totalPlans = 0;
+	let totalApprovedPlans = 0;
 	let totalConsumptions = 0;
 
 	for (const config of unitConfigs) {
@@ -116,15 +124,28 @@ export async function seedGasDailyData(
 
 			if (!skipQdp) {
 				qdpValue = Math.round(qdsCalculated * (0.95 + Math.random() * 0.1));
+
+				// Plans older than 7 days are seeded as approved (simulates real approval workflow)
+				const isOldPlan = date < sevenDaysAgo;
+				const approvalDate = isOldPlan
+					? new Date(date.getTime() + 4 * 60 * 60 * 1000) // 4h after the plan date
+					: undefined;
+
 				await userDb.gasDailyPlan.create({
 					data: {
 						unitId: config.unit.id,
 						date,
 						qdpValue,
 						submitted: true,
+						...(isOldPlan && {
+							approved: true,
+							approvedAt: approvalDate,
+							approvedById: ctx.user.id,
+						}),
 					},
 				});
 				totalPlans++;
+				if (isOldPlan) totalApprovedPlans++;
 			}
 
 			const skipQdr = Math.random() < 0.05;
@@ -174,10 +195,10 @@ export async function seedGasDailyData(
 	console.log("     - Criciúma: 1 atomizer + 8 lines (0-7)");
 	console.log("     - Joinville: 1 atomizer + 2 lines (1-2)");
 	console.log("     - Blumenau: 2 atomizers + 2 lines + 1 dryer");
-	console.log("   Contract: QDC 134,800 m³/d with tolerance bands");
+	console.log("   Contracts: 2 (CTG-2024-001 main + CTG-2025-002 secondary)");
 	console.log("   Daily Data (45 days):");
 	console.log(`     - GasDailyEntry: ${totalEntries} records`);
 	console.log(`     - GasLineStatus: ${totalLineStatuses} records`);
-	console.log(`     - GasDailyPlan: ${totalPlans} records`);
+	console.log(`     - GasDailyPlan: ${totalPlans} records (${totalApprovedPlans} approved)`);
 	console.log(`     - GasRealConsumption: ${totalConsumptions} records`);
 }

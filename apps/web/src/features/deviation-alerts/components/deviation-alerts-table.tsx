@@ -1,4 +1,4 @@
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, SortingState } from "@tanstack/react-table";
 import { useState } from "react";
 import {
   flexRender,
@@ -8,7 +8,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import type { SortingState } from "@tanstack/react-table";
 import {
   AlertTriangle,
   CheckCircle,
@@ -35,9 +34,9 @@ import {
   TooltipTrigger,
 } from "@acme/ui/tooltip";
 
-import { DataTableColumnHeader } from "~/components/data-table/column-header";
 import { DataTablePagination } from "~/components/data-table";
-import { getSeverityLevel, getSeverityColorClasses } from "../data/data";
+import { DataTableColumnHeader } from "~/components/data-table/column-header";
+import { getSeverityColorClasses, getSeverityLevel } from "../data/data";
 import { useDeviationAlerts } from "./deviation-alerts-provider";
 
 export type DeviationAlert = {
@@ -223,7 +222,10 @@ const columns: ColumnDef<DeviationAlert>[] = [
       }
 
       return (
-        <Badge variant="outline" className="flex items-center gap-1 text-muted-foreground">
+        <Badge
+          variant="outline"
+          className="text-muted-foreground flex items-center gap-1"
+        >
           <Mail className="h-3 w-3" />
           Pendente
         </Badge>
@@ -327,7 +329,9 @@ export function DeviationAlertsTable({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => {
-                const severity = getSeverityLevel(row.original.deviationPercent);
+                const severity = getSeverityLevel(
+                  row.original.deviationPercent,
+                );
                 const colorClasses = getSeverityColorClasses(
                   severity?.value ?? "medium",
                 );
@@ -336,7 +340,9 @@ export function DeviationAlertsTable({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className={row.original.status === "active" ? colorClasses.bg : ""}
+                    className={
+                      row.original.status === "active" ? colorClasses.bg : ""
+                    }
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>

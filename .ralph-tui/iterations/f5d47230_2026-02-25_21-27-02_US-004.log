@@ -1,0 +1,217 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-004
+- **Task Title**: Investigar e corrigir bug de salvamento do lançamento diário
+- **Description**: As a developer, I want to investigate and fix the daily entry persistence bug so that programações are saved correctly.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-02-26T00:27:02.065Z
+- **Ended At**: 2026-02-26T00:34:00.232Z
+- **Duration**: 6m 58s
+- **Input Tokens**: 214
+- **Output Tokens**: 16902
+- **Total Tokens**: 17116
+- **Agent**: claude
+- **Model**: claude-opus-4-6
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start by studying the progress file and the relevant code files to understand the bug.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.service.ts[0m
+Now let me read the full controller file since it was truncated.
+[94m[Read][0m [95m/Users/rodrigoburigo/.claude/projects/-Users-rodrigoburigo-Documents-Projects-JavaScript-ss-gas/644fbd8d-6546-446e-a37d-9e4183a25eec/tool-results/toolu_01FiAzv8WMtG8P7wwqGNf81a.txt[0m
+
+[91m[Error: File content (26294 tokens) exceeds maximum allowed tokens (25000). Please use offset and limit parameters to read specific portions of the file, or use the GrepTool to search for specific content.][0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/gas/daily-entry-form.tsx[0m
+
+[91m[Error: <tool_use_error>Sibling tool call errored</tool_use_error>][0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/gas/daily-entry-form.tsx[0m
+[94m[ToolSearch][0m query: [93mselect:TodoWrite[0m
+[94m[TodoWrite][0m
+Now let me look at the frontend form submission to understand how the save is called from the client side.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/gas/daily-entry-form.tsx[0m
+[94m[Grep][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src[0m pattern: [96mentries|daily-entry|onSubmit|handleSubmit|save|salvar[0m
+Let me find the page that hosts the daily entry form and makes the API call.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/entry.tsx[0m
+Now I can see the first major bug. The frontend calls `api.gas.entries.post(data)` with the data directly, but the server endpoint expects POST to `/gas/units/:unitId/entries`. Let me check the API client to understand the Treaty pattern.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/clients/api-client.ts[0m
+The api client is an Elysia Treaty client. The call `api.gas.entries.post(data)` would map to POST `/api/gas/entries` but the server endpoint is at `/gas/units/:unitId/entries`. This is a route mismatch!
+
+Let me check what the actual server app structure looks like.
+[94m[Grep][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src[0m pattern: [96mgasController|gas.*controller[0m
+[94m[Grep][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src[0m pattern: [96mapi\.gas[0m
+Found it. The frontend calls `api.gas.entries.post(data)` which maps to `POST /api/gas/entries`, but the server endpoint is `POST /api/gas/units/:unitId/entries`. The Treaty pattern requires the call to be `api.gas.units[unitId].entries.post(data)`.
+
+Let me also check what the `date` field looks like — the client sends `data.date.toISOString()` which is a full datetime string like `2026-02-25T00:00:00.000Z`, but the server schema expects `format: "date"` (YYYY-MM-DD). And the `lineStatuses` sent from the frontend is a `Record<string, LineStatusValue>` but the server expects an `Array<{equipmentId, status}>`.
+
+Let me verify these issues:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/index.ts[0m
+Now I have a clear picture of all the bugs. Let me summarize what I've found:
+
+**Bug 1 (CRITICAL): Route mismatch in API call.** The frontend calls `api.gas.entries.post(data)` which maps to `POST /api/gas/entries`, but the server expects `POST /api/gas/units/:unitId/entries`. The Treaty client should be called as `api.gas.units({ unitId }).entries.post(bodyData)`.
+
+**Bug 2: `lineStatuses` shape mismatch.** The form sends `lineStatuses` as `Record<string, LineStatusValue>` (e.g., `{equipmentId1: "on", equipmentId2: "off"}`), but the server expects `Array<{equipmentId, status}>`.
+
+**Bug 3: Date format mismatch.** The frontend sends `date: data.date.toISOString()` (full ISO datetime), but the server schema expects `format: "date"` (YYYY-MM-DD).
+
+**Bug 4: No update support.** If an entry already exists for the date, the server returns 409 Conflict. There's no PUT/PATCH endpoint to update an existing entry.
+
+**Bug 5: `qdsManual` not passed correctly.** The form has `qdsManualOverride` and `qdsManualValue` fields, but the mutation sends them as separate fields — but looking at the mutation call, it sends `qdsManualOverride` and `qdsManualValue` which don't match the server's `qdsManual` field.
+[94m[TodoWrite][0m
+Let me first look at how other Treaty calls are made in this codebase to confirm the pattern, and also verify what the `api.gas.entries.post` actually resolves to.
+[94m[Grep][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src[0m pattern: [96mapi\.gas\.(units|consumer-units|reports|consolidated|admin)[0m
+I see — the `api.gas.units.get()` on line 39 of entry.tsx correctly calls `GET /api/gas/units`. The Treaty pattern for parameterized routes uses function syntax: `api.gas.units({ unitId: "..." }).entries.post(body)`. But actually in Elysia Treaty v2, the pattern for path params like `:unitId` is `api.gas.units[unitId].entries.post(body)` or `api.gas.units({ unitId }).entries.post(body)`.
+
+Let me look at how the consumer-units delete check is called to confirm the pattern:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/consumer-units/components/consumer-units-dialogs.tsx[0m
+The Treaty pattern is confirmed: `api.gas["consumer-units"][currentRow.id]["can-delete"].get()` uses bracket notation for path params. So for `POST /gas/units/:unitId/entries`, the correct call should be `api.gas.units[unitId].entries.post(body)`.
+
+Now let me fix all the issues. I'll start with the frontend entry page:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/entry.tsx[0m edit: "  const submitMutation = useMutation({
+    mutatio..." → "  const submitMutation = useMutation({
+    mutatio..."
+Now fix the onSubmit handler to properly format the data:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/entry.tsx[0m edit: "          <DailyEntryForm
+            unit={select..." → "          <DailyEntryForm
+            unit={select..."
+[94m[TodoWrite][0m
+Now I need to add a PUT endpoint for updating existing entries (so editing doesn't create duplicates). Let me also change the POST to do an upsert so the user can re-save for the same date. Actually, looking at the acceptance criteria: "Verify editing an existing entry updates correctly (no duplicate records)". The simplest approach is to change POST to upsert behavior — if an entry exists for the date, update it instead of returning 409.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m
+Now I'll modify the POST endpoint to support upsert behavior — update if existing, create if not:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m edit: "			// Check if entry already exists for this unit ..." → "			// Check if entry already exists for this unit ..."
+Now replace the create-only logic with upsert:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m edit: "			// Create the entry with calculated values
+			c..." → "			// Upsert the entry: update if exists, create i..."
+Now I need to remove the 409 from the response schema since we no longer return it:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m edit: "			404: t.Object({
+					error: t.String(),
+				}),..." → "			404: t.Object({
+					error: t.String(),
+				}),"
+Now let me also check the date parsing issue. The server does `new Date(body.date)` where body.date is a string like "2026-02-25". `new Date("2026-02-25")` parses as UTC midnight, which could cause timezone issues. Let me fix the date parsing to ensure consistency:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m edit: "			// Parse date
+			const entryDate = new Date(bod..." → "			// Parse date - append T00:00:00.000Z to ensure..."
+[94m[TodoWrite][0m
+Now let me improve error handling on the frontend. The current toast already shows errors, but let me make sure the mutation properly handles different error cases and the form resets/invalidates queries properly after save:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/entry.tsx[0m
+The error handling looks good — `onError` already shows a toast. Now let me also wrap the `onSubmit` handler in a try/catch so that errors from the mutation are handled gracefully (the `mutateAsync` throws, and the form's `onSubmit` should catch it so the form doesn't break):
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/entry.tsx[0m edit: "            onSubmit={async (data) => {
+          ..." → "            onSubmit={async (data) => {
+          ..."
+[94m[TodoWrite][0m
+Now let me run the quality checks:
+[94m[Bash][0m Run Biome lint and format check $ npx ultracite check 2>&1 | tail -30
+The ultracite check doesn't work without config. Let me check what biome config exists and try the typecheck instead:
+[94m[Bash][0m Check for Biome config files $ cat biome.jsonc 2>/dev/null | head -5
+[94m[Bash][0m Run TypeScript type checking $ pnpm run typecheck 2>&1 | tail -30
+The typecheck failure is in `@acme/tailwind-config` which is pre-existing (noted in progress.md from US-001). Let me verify that my changes don't introduce any new type errors by checking just the files I changed:
+[94m[Bash][0m Check TypeScript errors in changed files only $ npx tsc --noEmit --pretty -p apps/web/tsconfig.json 2>&1 | grep -E "(entry\.tsx|gas\.controller)" | ...
+Two type errors. Let me fix them:
+
+1. **Line 66**: `api.gas.units[unitId]` — Treaty needs bracket notation with a string, but TS can't index the type. The correct Treaty v2 syntax for path params is `api.gas.units({ unitId }).entries.post(body)`.
+
+2. **Line 147**: The `Unit` type in the form component expects a specific shape that doesn't match. Let me check:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/entry.tsx[0m
+Let me check the Treaty pattern more carefully. Looking at how the consumer-units call works: `api.gas["consumer-units"][currentRow.id]["can-delete"].get()`. That uses bracket notation with a specific string value. The key difference for Treaty is that for parameterized routes like `:unitId`, the property access should work with the dynamic value. Let me check what the Treaty type shape looks like:
+[94m[Bash][0m Check the Treaty type error details $ npx tsc --noEmit --pretty -p apps/web/tsconfig.json 2>&1 | grep -A 5 "entry.tsx:66" | head -15
+[94m[Bash][0m Get full Treaty type error $ npx tsc --noEmit --pretty -p apps/web/tsconfig.json 2>&1 | grep -B 2 -A 10 "TS7053" | head -20
+The Treaty type reveals the correct pattern! It says `(params: { unitId: string | number; }) => { entries: { ... } }`. So `api.gas.units` is a **function** that takes `{ unitId }` as a parameter. The correct call is:
+
+```ts
+api.gas.units({ unitId }).entries.post(body)
+```
+
+The bracket notation `api.gas.units[unitId]` works at runtime but fails TS type checking. The same error exists for `consumer-units` too (pre-existing). Let me use the function call syntax:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/entry.tsx[0m edit: "      const response = await api.gas.units[unitId]..." → "      const response = await api.gas.units({ unitI..."
+Now for the second type error — the `Unit` type requires `currentConstant` to not have `id` and `effectiveFrom`, but the API returns them. Let me check:
+[94m[Bash][0m Check the Unit type error details $ npx tsc --noEmit --pretty -p apps/web/tsconfig.json 2>&1 | grep -B 2 -A 15 "TS2322.*entry.tsx" | hea...
+[94m[Bash][0m Check Unit type error at line 147 $ npx tsc --noEmit --pretty -p apps/web/tsconfig.json 2>&1 | grep -A 20 "entry.tsx:147" | head -25
+[94m[Bash][0m Check for remaining type errors in entry.tsx $ npx tsc --noEmit --pretty -p apps/web/tsconfig.json 2>&1 | grep "entry.tsx" 2>&1
+The issue is that the API returns `currentConstant` with `id` and `effectiveFrom` fields, but the `Unit` interface in `daily-entry-form.tsx` doesn't include them. The form's `Equipment` interface has `currentConstant?: { consumptionRate, consumptionUnit }` but the API data has `currentConstant: { id, consumptionRate, consumptionUnit, effectiveFrom } | null`.
+
+This is a pre-existing type mismatch between the API response type and the form's props. The simplest fix is to make the form's `Equipment.currentConstant` accept the extra fields. But actually, this is a pre-existing error not caused by my changes. Let me verify:
+[94m[Bash][0m Check if entry.tsx type error is pre-existing $ git stash pop
+The TS2322 error on line 131 (now 147 with my changes) was pre-existing. My changes actually fixed the two `TS2339` errors (the `api.gas.entries` property doesn't exist errors) and left the pre-existing TS2322 type mismatch. 
+
+Let me fix the pre-existing TS2322 too since it's in the file I'm modifying. The easiest fix is to update the `Equipment` interface in the form to accept the extra `currentConstant` fields:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/gas/daily-entry-form.tsx[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/gas/daily-entry-form.tsx[0m edit: "  currentConstant?: {
+    consumptionRate: number;..." → "  currentConstant?: {
+    consumptionRate: number;..."
+Wait, the problem was about extra fields (`id`, `effectiveFrom`) on `currentConstant`, not about nullability. TypeScript's structural typing should accept extra properties when passing to a function. Let me look more carefully at the error. The API response has `currentConstant: { id, consumptionRate, consumptionUnit, effectiveFrom } | null` but the form expects `currentConstant?: { consumptionRate, consumptionUnit }`. The issue is `null` vs `undefined` — the API can return `null` but the form type has `?` (optional/undefined).
+
+Adding `| null` should fix the type mismatch. Let me verify:
+[94m[Bash][0m Check if entry.tsx type errors are resolved $ npx tsc --noEmit --pretty -p apps/web/tsconfig.json 2>&1 | grep "entry.tsx" 2>&1
+All type errors in entry.tsx are resolved. Let me also verify no new errors were introduced in the form component or controller:
+[94m[Bash][0m Count total TypeScript errors in web app $ npx tsc --noEmit --pretty -p apps/web/tsconfig.json 2>&1 | grep -c "error TS"
+Zero TypeScript errors in the web app. Let me also verify the server compiles:
+[94m[Bash][0m Check server TypeScript errors in gas controller $ npx tsc --noEmit --pretty -p apps/server/tsconfig.json 2>&1 | grep "gas.controller" | head -5
+No errors. Let me also run the existing tests:
+[94m[Bash][0m Run gas service unit tests $ cd apps/server && bun test src/modules/gas/gas.service.test.ts 2>&1
+All 20 tests pass. Let me verify the final state of the changed files:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/entry.tsx[0m
+Everything looks good. Now let me commit and document learnings.
+[94m[TodoWrite][0m
+First, let me update the progress file with learnings:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "- **Entry creation flow**: POST `/gas/units/:unitI..." → "- **Entry creation flow**: POST `/gas/units/:unitI..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "  - `GasDailyPlan` has submission/approval workflo..." → "  - `GasDailyPlan` has submission/approval workflo..."
+Now let me commit:
+[94m[Bash][0m Show working tree status $ git status -s
+[94m[Bash][0m Show staged and unstaged changes for commit $ git diff apps/server/src/modules/gas/gas.controller.ts apps/web/src/routes/_authenticated/gas/entry....
+
+[91m[Error: Exit code 128
+fatal: ambiguous argument 'apps/server/src/modules/gas/gas.controller.ts': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+
+fatal: ambiguous argument 'apps/server/src/modules/gas/gas.controller.ts': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'][0m
+[94m[Bash][0m Show recent commit messages for style $ git log --oneline -5
+
+[91m[Error: <tool_use_error>Sibling tool call errored</tool_use_error>][0m
+[94m[Bash][0m Show diffs for files to commit $ cd /Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas && git diff -- apps/server/src/modules/...
+[94m[Bash][0m Show recent commits for message style $ git log --oneline -5
+Everything looks correct. Let me create the commit:
+[94m[Bash][0m Stage changed files for commit $ git add apps/server/src/modules/gas/gas.controller.ts apps/web/src/routes/_authenticated/gas/entry.t...
+[94m[Bash][0m Commit the bug fix $ git commit -m "$(cat <<'EOF' feat: US-004 - Investigar e corrigir bug de salvamento do lançamento di...
+[94m[Bash][0m Verify commit success $ git status -s
+[94m[TodoWrite][0m
+## Summary
+
+The daily entry save was **completely broken** — entries were never reaching the server. I found and fixed **6 bugs**:
+
+### Root Causes
+
+1. **Route mismatch (CRITICAL)**: Frontend called `api.gas.entries.post()` which maps to `POST /api/gas/entries` — a route that doesn't exist. Server expects `POST /api/gas/units/:unitId/entries`. Fixed to `api.gas.units({ unitId }).entries.post(body)`.
+
+2. **lineStatuses shape mismatch**: Form sent `Record<string, "on"|"off">` but server's Elysia schema expects `Array<{equipmentId, status}>`. Added `Object.entries()` conversion.
+
+3. **Date format mismatch**: Form sent full ISO datetime via `toISOString()` but server schema has `format: "date"` (YYYY-MM-DD). Fixed to format properly.
+
+4. **qdsManual not mapped**: Form had separate `qdsManualOverride` + `qdsManualValue` but sent them as-is. Server expects single `qdsManual` field. Fixed with conditional mapping.
+
+5. **No upsert support**: Server returned 409 Conflict on duplicate date+unit. Changed to upsert: update existing entry + delete/recreate line statuses.
+
+6. **Type error (pre-existing)**: `Equipment.currentConstant` didn't accept `null`. Fixed type union.
+
+### Files Changed
+- `apps/web/src/routes/_authenticated/gas/entry.tsx` — API call + data transformation
+- `apps/server/src/modules/gas/gas.controller.ts` — upsert logic + date parsing
+- `apps/web/src/components/gas/daily-entry-form.tsx` — type fix
+- `.ralph-tui/progress.md` — documented learnings
+
+### Quality
+- Web app: **0 TypeScript errors** (was 3 before, including 2 from this bug)
+- Server tests: **20/20 passing**
+
+<promise>COMPLETE</promise>

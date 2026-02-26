@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
-import { AlertTriangle, Bell, Check, Loader2, RefreshCcw, Save } from "lucide-react";
+import {
+  AlertTriangle,
+  Bell,
+  Check,
+  Loader2,
+  RefreshCcw,
+  Save,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import type { GasSystemParameter } from "@acme/zen-v3/zenstack/models";
@@ -18,10 +25,7 @@ import { Label } from "@acme/ui/label";
 import { Skeleton } from "@acme/ui/skeleton";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
-import {
-  defaultAlertThresholds,
-  formatParameterValue,
-} from "../data/data";
+import { defaultAlertThresholds, formatParameterValue } from "../data/data";
 
 export function AlertThresholdsTab() {
   const client = useClientQueries(schema);
@@ -29,22 +33,29 @@ export function AlertThresholdsTab() {
   const [editValue, setEditValue] = useState("");
 
   // Fetch existing parameters
-  const { data: parameters = [], isLoading, refetch } = client.gasSystemParameter.useFindMany({
+  const {
+    data: parameters = [],
+    isLoading,
+    refetch,
+  } = client.gasSystemParameter.useFindMany({
     where: { category: "alert_thresholds", active: true },
     orderBy: { orderIndex: "asc" },
   });
 
   // Create mutation
-  const { mutate: createParameter, mutateAsync: createParameterAsync, isPending: isCreating } =
-    client.gasSystemParameter.useCreate({
-      onSuccess: () => {
-        toast.success("Parâmetro criado com sucesso");
-        refetch();
-      },
-      onError: (error: Error) => {
-        toast.error(`Erro ao criar parâmetro: ${error.message}`);
-      },
-    });
+  const {
+    mutate: createParameter,
+    mutateAsync: createParameterAsync,
+    isPending: isCreating,
+  } = client.gasSystemParameter.useCreate({
+    onSuccess: () => {
+      toast.success("Parâmetro criado com sucesso");
+      refetch();
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao criar parâmetro: ${error.message}`);
+    },
+  });
 
   // Update mutation
   const { mutate: updateParameter, isPending: isUpdating } =
@@ -62,7 +73,9 @@ export function AlertThresholdsTab() {
   // Initialize default parameters if none exist
   const handleInitializeDefaults = async () => {
     for (const param of defaultAlertThresholds) {
-      const exists = (parameters as GasSystemParameter[]).some((p) => p.key === param.key);
+      const exists = (parameters as GasSystemParameter[]).some(
+        (p) => p.key === param.key,
+      );
       if (!exists) {
         await createParameterAsync({
           data: {
@@ -84,7 +97,9 @@ export function AlertThresholdsTab() {
 
   // Get value for a parameter, using default if not found
   const getParameterValue = (key: string): string => {
-    const param = (parameters as GasSystemParameter[]).find((p) => p.key === key);
+    const param = (parameters as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     if (param) return param.value;
     const defaultParam = defaultAlertThresholds.find((p) => p.key === key);
     return defaultParam?.defaultValue ?? "";
@@ -98,7 +113,9 @@ export function AlertThresholdsTab() {
 
   // Handle save
   const handleSave = (key: string) => {
-    const param = (parameters as GasSystemParameter[]).find((p) => p.key === key);
+    const param = (parameters as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     if (param) {
       updateParameter({
         where: { id: param.id },
@@ -116,8 +133,10 @@ export function AlertThresholdsTab() {
             value: editValue,
             valueType: defaultParam.valueType,
             defaultValue: defaultParam.defaultValue,
-            minValue: "minValue" in defaultParam ? defaultParam.minValue : undefined,
-            maxValue: "maxValue" in defaultParam ? defaultParam.maxValue : undefined,
+            minValue:
+              "minValue" in defaultParam ? defaultParam.minValue : undefined,
+            maxValue:
+              "maxValue" in defaultParam ? defaultParam.maxValue : undefined,
             orderIndex: defaultAlertThresholds.indexOf(defaultParam),
           },
         });
@@ -127,7 +146,9 @@ export function AlertThresholdsTab() {
 
   // Handle reset to default
   const handleReset = (key: string) => {
-    const param = (parameters as GasSystemParameter[]).find((p) => p.key === key);
+    const param = (parameters as GasSystemParameter[]).find(
+      (p) => p.key === key,
+    );
     const defaultParam = defaultAlertThresholds.find((p) => p.key === key);
     if (param && defaultParam) {
       updateParameter({
@@ -181,7 +202,9 @@ export function AlertThresholdsTab() {
       </CardHeader>
       <CardContent className="space-y-4">
         {defaultAlertThresholds.map((defaultParam) => {
-          const param = (parameters as GasSystemParameter[]).find((p) => p.key === defaultParam.key);
+          const param = (parameters as GasSystemParameter[]).find(
+            (p) => p.key === defaultParam.key,
+          );
           const isEditing = editingKey === defaultParam.key;
           const currentValue = param?.value ?? defaultParam.defaultValue;
           const isDefault = currentValue === defaultParam.defaultValue;
@@ -207,12 +230,24 @@ export function AlertThresholdsTab() {
                     {isEditing ? (
                       <>
                         <Input
-                          type={defaultParam.valueType === "percentage" ? "number" : "text"}
+                          type={
+                            defaultParam.valueType === "percentage"
+                              ? "number"
+                              : "text"
+                          }
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value)}
                           className="w-24"
-                          min={"minValue" in defaultParam ? defaultParam.minValue : undefined}
-                          max={"maxValue" in defaultParam ? defaultParam.maxValue : undefined}
+                          min={
+                            "minValue" in defaultParam
+                              ? defaultParam.minValue
+                              : undefined
+                          }
+                          max={
+                            "maxValue" in defaultParam
+                              ? defaultParam.maxValue
+                              : undefined
+                          }
                         />
                         {defaultParam.valueType === "percentage" && (
                           <span className="text-muted-foreground">%</span>
@@ -240,7 +275,10 @@ export function AlertThresholdsTab() {
                     ) : (
                       <>
                         <span className="text-lg font-semibold">
-                          {formatParameterValue(currentValue, defaultParam.valueType)}
+                          {formatParameterValue(
+                            currentValue,
+                            defaultParam.valueType,
+                          )}
                         </span>
                         <Button
                           variant="ghost"

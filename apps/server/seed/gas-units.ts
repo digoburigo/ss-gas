@@ -31,6 +31,11 @@ export async function seedGasUnits(
 			code: "CRI",
 			name: "Criciúma",
 			description: "Unidade de Criciúma - SC",
+			address: "Rua Cel. Pedro Benedet, 1120",
+			city: "Criciúma",
+			state: "SC",
+			zipCode: "88801-250",
+			responsibleEmails: ["operacao.cri@empresa.com.br", "supervisor.cri@empresa.com.br"],
 			active: true,
 			organizationId: ctx.org.id,
 		},
@@ -41,6 +46,11 @@ export async function seedGasUnits(
 			code: "JOI",
 			name: "Joinville",
 			description: "Unidade de Joinville - SC",
+			address: "Av. Santos Dumont, 4500",
+			city: "Joinville",
+			state: "SC",
+			zipCode: "89221-005",
+			responsibleEmails: ["operacao.joi@empresa.com.br"],
 			active: true,
 			organizationId: ctx.org.id,
 		},
@@ -51,6 +61,11 @@ export async function seedGasUnits(
 			code: "BLU",
 			name: "Blumenau",
 			description: "Unidade de Blumenau - SC",
+			address: "Rua 7 de Setembro, 2300",
+			city: "Blumenau",
+			state: "SC",
+			zipCode: "89010-200",
+			responsibleEmails: ["operacao.blu@empresa.com.br", "supervisor.blu@empresa.com.br"],
 			active: true,
 			organizationId: ctx.org.id,
 		},
@@ -251,6 +266,19 @@ export async function seedGasUnits(
 	});
 
 	console.log("✅ Equipment constants created");
+
+	// Operator assignment: User B → Criciúma unit
+	if (ctx.bUserMemberId) {
+		console.log("👷 Assigning User B (operator) to Criciúma unit...");
+		await userDb.gasUnitOperator.create({
+			data: {
+				memberId: ctx.bUserMemberId,
+				unitId: criciumaUnit.id,
+				notes: "Operador responsável pela unidade de Criciúma",
+			},
+		});
+		console.log("✅ Operator assignment created");
+	}
 
 	return {
 		criciumaUnit,

@@ -1,0 +1,191 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-002
+- **Task Title**: Aba Programação Diária como resumo read-only
+- **Description**: As a gestor, I want the 'Programação Diária' tab to show a read-only summary of schedules so that I have a quick overview without editing capabilities.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-02-26T00:34:01.253Z
+- **Ended At**: 2026-02-26T00:41:56.242Z
+- **Duration**: 7m 54s
+- **Input Tokens**: 41811
+- **Output Tokens**: 20689
+- **Total Tokens**: 62500
+- **Agent**: claude
+- **Model**: claude-opus-4-6
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+I'll start by studying the progress file and exploring the current codebase to understand what exists.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[Glob][0m pattern: [96mapps/web/src/features/daily-scheduling/**/*[0m
+[94m[Glob][0m pattern: [96mapps/web/src/features/gas/**/*[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/tasks/prd-mvp-programaai-ajustes-e-melhorias.md[0m
+Now let me read the existing daily-scheduling components and the route file.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/index.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-provider.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-primary-buttons.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/data/data.tsx[0m
+Now let me read the remaining components and the route files.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-dialogs.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-mutate-drawer.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/data-table-row-actions.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-form.tsx[0m
+[94m[Glob][0m pattern: [96mapps/web/src/routes/_authenticated/gas/scheduling*[0m
+Let me find the actual route file for the scheduling page and also check for the scheduling-dashboard route.
+[94m[Glob][0m pattern: [96mapps/web/src/routes/_authenticated/gas/**/*[0m
+[94m[Glob][0m pattern: [96mapps/web/src/features/scheduling-dashboard/**/*[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/scheduling/index.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/scheduling-dashboard/index.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/routes/_authenticated/gas/layout.tsx[0m
+Now I have a clear picture of the current state. Let me also check how the sidebar nav links are configured to understand the navigation structure.
+[94m[Grep][0m pattern: [96mscheduling[0m
+[94m[Grep][0m pattern: [96mscheduling-dashboard[0m
+[94m[Grep][0m pattern: [96mscheduling|Programação[0m
+[94m[Grep][0m pattern: [96mscheduling|programação|Programação[0m
+[94m[Grep][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src[0m pattern: [96mscheduling[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/layout/data/sidebar-data.ts[0m
+Now I have a complete understanding. Let me also quickly check what Badge and other UI components look like to know what's available.
+[94m[ToolSearch][0m query: [93mselect:TodoWrite[0m
+[94m[TodoWrite][0m
+Now I have a clear picture. The task is to transform the `/gas/scheduling` page from a full CRUD interface into a read-only summary view. Here's my plan:
+
+1. **Remove edit controls**: Remove the "Nova Programação" button, row actions dropdown (edit/delete/submit), dialogs, form, and drawer
+2. **Remove the select column** (checkboxes) from the table
+3. **Add row click** that navigates to `/gas/scheduling-dashboard` filtered by date/unit
+4. **Add read-only banner** to make it visually clear
+5. **Update subtitle text** to reflect read-only nature
+
+Let me start implementing.
+
+First, I'll update the main index to remove edit-related components:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/index.tsx[0m edit: "import { ConfigDrawer } from "~/components/config-..." → "import { Eye } from "lucide-react";
+import { Link ..."
+Now update the columns to remove the select checkbox column and the actions column, and add a clickable row behavior:
+[94m[Write][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx[0m "import type { ColumnDef } from "@tanstack/react-table";
+import { CheckCircle, CircleDashed, Send, XCircle } from "lucide-react";
+
+import type {
+  GasContract,
+  GasDailyPlan,
+  GasUnit,
+  User,
+} from... (6985 chars)"
+
+[91m[Error: <tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>][0m
+I already read it. Let me use Edit instead:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx[0m edit: "import type { ColumnDef } from "@tanstack/react-ta..." → "import type { ColumnDef } from "@tanstack/react-ta..."
+
+[91m[Error: <tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>][0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx[0m edit: "import type { ColumnDef } from "@tanstack/react-ta..." → "import type { ColumnDef } from "@tanstack/react-ta..."
+Now remove the select checkbox column and the actions column:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx[0m edit: "export const columns: ColumnDef<DailyPlanWithRelat..." → "export const columns: ColumnDef<DailyPlanWithRelat..."
+Now remove the actions column at the end:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx[0m edit: "  {
+    id: "actions",
+    cell: ({ row }) => <Dat..." → "];"
+Now update the table component to remove row selection, remove the provider dependency, and add clickable rows that navigate to the scheduling dashboard:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m
+Now I need to check how the scheduling-dashboard route accepts search params so I can navigate with date/unit filters.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/scheduling-dashboard/index.tsx[0m
+Let me check the scheduling-dashboard route's search schema more carefully and the date picker to understand what params it supports:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/scheduling-dashboard/components/scheduling-dashboard-date-picker.tsx[0m
+I see — the scheduling dashboard uses local state for the date via context, not URL params. The scheduling-dashboard route search schema only has `page`, `pageSize`, `status`, `contract`, and `filter` — no `date` or `unitId` param. Since I can't pass the date/unit as URL params to filter the dashboard without modifying the dashboard route (which is US-003 territory), I'll navigate to the scheduling-dashboard with a `filter` param that matches the unit name, which is what the existing global filter supports. Let me check the scheduling-dashboard table's filter logic:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/scheduling-dashboard/components/scheduling-dashboard-table.tsx[0m
+Now I understand the full picture. The scheduling-dashboard uses a `filter` search param for text filtering. I'll navigate to it with `filter` set to the unit name so it's pre-filtered. Now let me update the daily-scheduling table to remove row selection, remove the provider dependency, and add clickable rows:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m edit: ""use no memo";
+
+import type { SortingState, Visibi..." → ""use no memo";
+
+import type { SortingState, Visibi..."
+
+[91m[Error: <tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>][0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m edit: "import { getRouteApi } from "@tanstack/react-route..." → "import { getRouteApi, useNavigate } from "@tanstac..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m edit: "import { submissionStatuses } from "../data/data";..." → "import { submissionStatuses } from "../data/data";..."
+Now add the `routerNavigate` hook and remove row selection:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m edit: "export function DailySchedulingTable() {
+  const c..." → "export function DailySchedulingTable() {
+  const c..."
+Remove rowSelection state:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m edit: "  // Local UI-only states
+  const [rowSelection, s..." → "  // Local UI-only states
+  const [sorting, setSor..."
+Remove row selection from table config:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m edit: "    state: {
+      sorting,
+      columnVisibility..." → "    state: {
+      sorting,
+      columnVisibility..."
+Now add the row click handler and update the table rows:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m edit: "  const pageCount = table.getPageCount();
+  useEff..." → "  const pageCount = table.getPageCount();
+  useEff..."
+Now update the TableRow to be clickable:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m edit: "              table.getRowModel().rows.map((row) =..." → "              table.getRowModel().rows.map((row) =..."
+[94m[TodoWrite][0m
+Now let's run the typecheck:
+[94m[Bash][0m Run typecheck across the monorepo $ pnpm typecheck 2>&1 | tail -60
+The typecheck failures are all in `@acme/tailwind-config` and `@acme/eslint-config` — these are pre-existing issues noted in the progress log from US-001. They have nothing to do with our changes. Let me verify the web app specifically has no type errors:
+[94m[Bash][0m Run typecheck specifically for the web app $ cd /Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web && pnpm tsc --noEmit 2>&1 | ta...
+All errors are in `packages/ui` — pre-existing issues in editor components, nothing from our changes. Let me confirm there are zero errors in the daily-scheduling files:
+[94m[Bash][0m Check for type errors in daily-scheduling files specifically $ pnpm tsc --noEmit 2>&1 | grep -i "daily-scheduling\|scheduling/index" || echo "No errors in daily-sc...
+There are 2 errors in the daily-scheduling table. Let me check them more closely:
+[94m[Bash][0m Show full error context for daily-scheduling type errors $ pnpm tsc --noEmit 2>&1 | grep "daily-scheduling" -A 5
+Two issues to fix:
+
+1. **Line 78**: Unused `@ts-expect-error` — the route is now properly typed
+2. **Line 105**: The `submittedByUser` is in the type but not fetched in the query
+
+Let me read the current state of the table file and fix these:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m
+Fix 1: Remove the unused `@ts-expect-error`:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx[0m edit: "    // @ts-expect-error - Route may not be registe..." → "    const route = getRouteApi("/_authenticated/gas..."
+The linter error is pre-existing (broken ESLint config). Let me fix the second type error — the `submittedByUser` field is in the type but not fetched. Since we no longer need it (no actions column), I'll remove it from the type:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx[0m
+Remove `submittedByUser` from the type (it's not used in any column) and also remove the unused `User` import since `createdByUser` uses `Pick<User, ...>`:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx[0m edit: "export type DailyPlanWithRelations = GasDailyPlan ..." → "export type DailyPlanWithRelations = GasDailyPlan ..."
+The ESLint config issue is pre-existing (documented in progress.md from US-001). Let me verify the typecheck now passes for our files:
+[94m[Bash][0m Verify no type errors in daily-scheduling files $ pnpm tsc --noEmit 2>&1 | grep "daily-scheduling" || echo "No errors in daily-scheduling files"
+Zero type errors in our files. Now let me update the progress file and commit.
+[94m[TodoWrite][0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "- **Unit tests**: Use `bun:test` for server-side t..." → "- **Unit tests**: Use `bun:test` for server-side t..."
+Pre-existing ESLint issue, continuing. Now append the US-002 log entry:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "  - Pre-existing typecheck failure in `@acme/tailw..." → "  - Pre-existing typecheck failure in `@acme/tailw..."
+Now let me commit. Let me check the status first:
+[94m[Bash][0m Show working tree status $ cd /Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas && git status
+[94m[Bash][0m Show diff stats for changed files $ git diff --stat
+[94m[Bash][0m Show recent commit messages $ git log --oneline -5
+There are many other changed files beyond what I modified. I see a lot of changes that appear to come from automated formatting (ultracite/biome) applied to other features. Let me only stage the files I actually changed for US-002:
+[94m[Bash][0m Stage only the US-002 changed files $ git add \   apps/web/src/features/daily-scheduling/index.tsx \   apps/web/src/features/daily-schedul...
+[94m[Bash][0m Verify staged files are correct $ git diff --cached --stat
+Correct. Now commit:
+[94m[Bash][0m Commit US-002 changes $ git commit -m "$(cat <<'EOF' feat: US-002 - Aba Programação Diária como resumo read-only  Convert /g...
+[94m[Bash][0m Verify commit succeeded $ git status
+[94m[TodoWrite][0m
+## Summary
+
+US-002 is complete. Here's what was implemented:
+
+**Acceptance criteria met:**
+- `/gas/scheduling` now displays a read-only summary table (date, unit, QDP value, status) with no edit controls
+- All data entry/editing is only possible via `/gas/scheduling-dashboard`
+- Summary table shows submitted/approved/pending/rejected status per day per unit
+- Clicking a row navigates to the Painel de Programação filtered to that unit
+- Components in `apps/web/src/features/daily-scheduling/` updated — removed create button, form, drawer, row actions, dialogs, checkbox selection
+- Clear visual indication: "Somente leitura" badge next to title, descriptive subtitle with link, and "Ir para o Painel" button
+
+**Files changed (4):**
+- `apps/web/src/features/daily-scheduling/index.tsx` — removed provider/dialogs/buttons, added read-only badge + dashboard link
+- `apps/web/src/features/daily-scheduling/components/daily-scheduling-columns.tsx` — removed select/actions columns, exported type, fixed `submittedByUser` type mismatch
+- `apps/web/src/features/daily-scheduling/components/daily-scheduling-table.tsx` — removed row selection, added clickable row navigation
+- `.ralph-tui/progress.md` — documented learnings and patterns
+
+<promise>COMPLETE</promise>

@@ -104,12 +104,12 @@ function DeviationAlertsContent() {
     });
 
   // Track acknowledged alerts locally (deviations are computed, not persisted)
-  const [acknowledgedAlerts, setAcknowledgedAlerts] = useState<
-    Set<string>
-  >(new Set());
-  const [emailSentAlerts, setEmailSentAlerts] = useState<
-    Map<string, Date>
-  >(new Map());
+  const [acknowledgedAlerts, setAcknowledgedAlerts] = useState<Set<string>>(
+    new Set(),
+  );
+  const [emailSentAlerts, setEmailSentAlerts] = useState<Map<string, Date>>(
+    new Map(),
+  );
 
   // Process data for deviation alerts
   const alerts: DeviationAlert[] = useMemo(() => {
@@ -233,13 +233,10 @@ function DeviationAlertsContent() {
   );
 
   // Handle acknowledging alert (local state for computed alerts)
-  const handleAcknowledge = useCallback(
-    (alertId: string, _notes: string) => {
-      setAcknowledgedAlerts((prev) => new Set(prev).add(alertId));
-      toast.success("Alerta reconhecido com sucesso");
-    },
-    [],
-  );
+  const handleAcknowledge = useCallback((alertId: string, _notes: string) => {
+    setAcknowledgedAlerts((prev) => new Set(prev).add(alertId));
+    toast.success("Alerta reconhecido com sucesso");
+  }, []);
 
   return (
     <>

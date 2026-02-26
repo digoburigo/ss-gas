@@ -115,20 +115,22 @@ export function AccuracyFilters({ units }: AccuracyFiltersProps) {
                   day: (day: number) =>
                     (["D", "S", "T", "Q", "Q", "S", "S"] as const)[day] ?? "D",
                   month: (month: number) =>
-                    ([
-                      "Janeiro",
-                      "Fevereiro",
-                      "Março",
-                      "Abril",
-                      "Maio",
-                      "Junho",
-                      "Julho",
-                      "Agosto",
-                      "Setembro",
-                      "Outubro",
-                      "Novembro",
-                      "Dezembro",
-                    ] as const)[month] ?? "Janeiro",
+                    (
+                      [
+                        "Janeiro",
+                        "Fevereiro",
+                        "Março",
+                        "Abril",
+                        "Maio",
+                        "Junho",
+                        "Julho",
+                        "Agosto",
+                        "Setembro",
+                        "Outubro",
+                        "Novembro",
+                        "Dezembro",
+                      ] as const
+                    )[month] ?? "Janeiro",
                   ordinalNumber: (n: number) => `${n}`,
                   era: (era: number) => (era === 0 ? "AC" : "DC"),
                   quarter: (q: number) => `T${q}`,

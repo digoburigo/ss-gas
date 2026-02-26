@@ -15,8 +15,8 @@ import { Input } from "@acme/ui/input";
 import { Label } from "@acme/ui/label";
 import { Textarea } from "@acme/ui/textarea";
 
-import { useDeviationAlerts } from "./deviation-alerts-provider";
 import type { DeviationAlert } from "./deviation-alerts-table";
+import { useDeviationAlerts } from "./deviation-alerts-provider";
 
 type SendEmailDialogProps = {
   alert?: DeviationAlert;
@@ -30,7 +30,9 @@ export function SendEmailDialog({
   unitResponsibleEmails = [],
 }: SendEmailDialogProps) {
   const { open, setOpen } = useDeviationAlerts();
-  const [recipients, setRecipients] = useState(unitResponsibleEmails.join(", "));
+  const [recipients, setRecipients] = useState(
+    unitResponsibleEmails.join(", "),
+  );
   const [additionalMessage, setAdditionalMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
 
@@ -82,7 +84,7 @@ export function SendEmailDialog({
 
         {alert && (
           <div className="space-y-4">
-            <div className="rounded-lg border bg-muted/50 p-3">
+            <div className="bg-muted/50 rounded-lg border p-3">
               <div className="text-sm">
                 <p>
                   <strong>Unidade:</strong> {alert.unitName} ({alert.unitCode})

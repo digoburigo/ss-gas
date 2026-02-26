@@ -11,11 +11,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@acme/ui/dialog";
-import { Textarea } from "@acme/ui/textarea";
 import { Label } from "@acme/ui/label";
+import { Textarea } from "@acme/ui/textarea";
 
-import { useDeviationAlerts } from "./deviation-alerts-provider";
 import type { DeviationAlert } from "./deviation-alerts-table";
+import { useDeviationAlerts } from "./deviation-alerts-provider";
 
 type AcknowledgeDialogProps = {
   alert?: DeviationAlert;
@@ -68,7 +68,7 @@ export function AcknowledgeDialog({
 
         {alert && (
           <div className="space-y-4">
-            <div className="rounded-lg border bg-muted/50 p-3">
+            <div className="bg-muted/50 rounded-lg border p-3">
               <div className="text-sm">
                 <p>
                   <strong>Unidade:</strong> {alert.unitName} ({alert.unitCode})

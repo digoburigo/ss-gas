@@ -1,313 +1,341 @@
 {
-  "name": "Natural Gas Contract Management System (SS-GAS)",
-  "branchName": "feature/ss-gas-contracts",
+  "name": "MVP programa.ai — Ajustes e Melhorias",
+  "branchName": "feature/mvp-programaai-ajustes-melhorias",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Organization Management",
-      "description": "As a Global Admin, I want to register organizations (client companies), so that each company can manage its own contracts and units",
+      "title": "Derivação automática da programação diária a partir dos equipamentos",
+      "description": "As a operador, I want the daily schedule (QDP) to be automatically calculated from equipment ON/OFF status and consumption constants so that I don't need to enter values manually.",
       "acceptanceCriteria": [
-        "Form with: Name, CNPJ (tax ID), address, primary contact",
-        "Each organization is isolated (multi-tenant)",
-        "Global Admin can activate/deactivate organizations",
-        "Only users with the 'role' field on the User model (global admin) can create and manage organizations - NOT organization-scoped roles on the Member model"
+        "When equipment status changes (ON/OFF) in the equipment screen, QDP is recalculated automatically",
+        "Calculation uses formula: sum of (m³/h × horas previstas) for each ON equipment from GasEquipmentConstant",
+        "QDP value is persisted in GasDailyPlan without manual input",
+        "Equipment status toggle triggers real-time QDP recalculation on the frontend",
+        "Existing endpoint POST /gas/units/:unitId/entries updated to accept equipment status array and auto-calculate QDP",
+        "Unit tests validate calculation logic in gas.service.ts"
       ],
       "priority": 1,
       "passes": true,
       "dependsOn": [],
       "labels": [
-        "admin",
-        "organization"
+        "backend",
+        "frontend",
+        "core"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-002",
-      "title": "Consumer Units CRUD",
-      "description": "As a Contract Manager, I want to manage consumer units (metering points), to control each gas delivery point",
+      "title": "Aba Programação Diária como resumo read-only",
+      "description": "As a gestor, I want the 'Programação Diária' tab to show a read-only summary of schedules so that I have a quick overview without editing capabilities.",
       "acceptanceCriteria": [
-        "Fields: Name, meter code, address, linked contract, responsible parties (emails)",
-        "Each unit represents 1 metering point",
-        "Use ZenStack v3 TanStack Query on frontend",
-        "ElysiaJS endpoints with Kysely for complex operations",
-        "Validation: do not allow deletion of units with pending schedules"
+        "Route /gas/scheduling displays a summary table (date, unit, QDP value, status) — no edit controls",
+        "All data entry and editing is only possible via the Painel de Programação (/gas/scheduling-dashboard)",
+        "Summary table shows submitted/approved/pending status per day per unit",
+        "Clicking a row navigates to the Painel de Programação filtered to that date/unit",
+        "Components in apps/web/src/features/daily-scheduling/ updated to remove edit forms",
+        "Clear visual indication that the view is read-only"
       ],
-      "priority": 1,
+      "priority": 2,
       "passes": true,
       "dependsOn": [
         "US-001"
       ],
       "labels": [
-        "manager",
-        "unit"
+        "frontend"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-003",
-      "title": "Contract Upload and AI Extraction",
-      "description": "As a Contract Manager, I want to upload contracts in PDF and automatically extract data, to speed up contract registration",
+      "title": "Painel de Programação como ponto único de entrada",
+      "description": "As a operador, I want the Scheduling Dashboard to be the single place where I create and manage daily schedules so that the workflow is centralized.",
       "acceptanceCriteria": [
-        "PDF/image contract upload",
-        "AI extracts fields: supplier, contracted volume (DCQ), validity period, prices, flexibilities (take-or-pay, make-up gas, tolerances), adjustment clauses, penalties",
-        "Side-by-side display: original PDF + form with extracted data",
-        "User MUST review and confirm all fields before saving",
-        "Low confidence fields highlighted in yellow"
+        "/gas/scheduling-dashboard supports creating new daily plans directly",
+        "Equipment ON/OFF toggle integrated into the dashboard with auto QDP calculation (from US-001)",
+        "Submit/approve workflow works from within the dashboard",
+        "Date picker allows navigating to any day",
+        "Shows all units with their QDP values for the selected date",
+        "Components in apps/web/src/features/scheduling-dashboard/ updated with entry capabilities"
       ],
       "priority": 2,
       "passes": true,
       "dependsOn": [
-        "US-001",
-        "US-004"
+        "US-001"
       ],
       "labels": [
-        "manager",
-        "contract",
-        "ai"
+        "frontend"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-004",
-      "title": "Manual Contract Registration",
-      "description": "As a Contract Manager, I want to manually register/edit contracts, to enter contracts when automatic extraction is not sufficient",
+      "title": "Investigar e corrigir bug de salvamento do lançamento diário",
+      "description": "As a developer, I want to investigate and fix the daily entry persistence bug so that programações are saved correctly.",
       "acceptanceCriteria": [
-        "Complete form with all contract fields",
-        "Sections: Basic data, Volumes and flexibilities, Prices and adjustments, Penalties, Important events/dates",
-        "Link multiple units to a contract",
-        "Change history (audit log)"
+        "Investigate the save flow in POST /gas/units/:unitId/entries endpoint (gas.controller.ts)",
+        "Identify root cause of data not persisting (check GasDailyEntry, GasDailyPlan, GasLineStatus writes)",
+        "Fix the persistence issue",
+        "Verify data survives page reload after save",
+        "Verify editing an existing entry updates correctly (no duplicate records)",
+        "Test with multiple units and dates",
+        "Add error handling with user-visible feedback on save failure"
       ],
       "priority": 1,
       "passes": true,
-      "dependsOn": [
-        "US-001"
-      ],
+      "dependsOn": [],
       "labels": [
-        "manager",
-        "contract"
+        "backend",
+        "bugfix"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-005",
-      "title": "Deadline Alert Configuration",
-      "description": "As a Contract Manager, I want to configure alerts for important contract dates, to not miss critical deadlines",
+      "title": "Gráfico comparativo Planejado x Realizado",
+      "description": "As a gestor, I want a chart comparing planned (QDP) vs actual (QDR) consumption so that I can visualize deviations at a glance.",
       "acceptanceCriteria": [
-        "Default events: contract expiration, renewal, scheduling deadlines, adjustment dates, take-or-pay expiration",
-        "Customizable events per contract (name + date + recurrence)",
-        "Configure alert advance notice (e.g., 30, 15, 7, 1 day before)",
-        "Define responsible parties (emails) per alert"
+        "Bar or line chart on /gas/actual-consumption or /gas/reports showing QDP vs QDR per day",
+        "Date range selector (default: current month)",
+        "Unit filter (select one or all units)",
+        "Visual highlight when QDR exceeds tolerance bands (±10% / −20% per CUSD contract)",
+        "Tooltip shows exact values on hover",
+        "Chart is responsive and works on mobile",
+        "Data fetched from existing GasDailyPlan (QDP) and GasRealConsumption (QDR) models"
       ],
-      "priority": 2,
+      "priority": 3,
       "passes": true,
       "dependsOn": [
         "US-004"
       ],
       "labels": [
-        "manager",
-        "alert"
+        "frontend",
+        "charts"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-006",
-      "title": "Reminder Email Dispatch",
-      "description": "As a System, I want to send automatic emails to responsible parties, to ensure deadlines are met",
+      "title": "Placar mensal de consumo real",
+      "description": "As a gestor, I want a monthly scorecard showing assertiveness rate, accumulated penalties, and average accuracy so that I can track performance at a glance.",
       "acceptanceCriteria": [
-        "Individual email per event (1 alert = 1 email)",
-        "Template with: contract name, unit, event, date, required action",
-        "Direct link to contract/unit in the system",
-        "Log of sent emails (date, recipient, status)"
+        "Scorecard component displayed on /gas/actual-consumption or /gas/scheduling-accuracy",
+        "Taxa de assertividade (%): percentage of days where QDR is within tolerance of QDP (±10% upper / −20% lower per CUSD)",
+        "Penalidade acumulada (R$): sum of PVEMA + PVEME + Sobredemanda for the month using contract formulas",
+        "Taxa de acurácia média (%): mean of (QDR/QDP × 100) across all days in the month",
+        "Month/year selector",
+        "Unit and contract filter",
+        "Values validated against manual Excel calculations",
+        "Card-style layout with color coding (green/yellow/red thresholds)"
       ],
-      "priority": 2,
+      "priority": 3,
       "passes": true,
       "dependsOn": [
-        "US-005"
+        "US-007"
       ],
       "labels": [
-        "system",
-        "email",
-        "alert"
+        "frontend",
+        "backend"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-007",
-      "title": "Daily Consumption Scheduling by Unit",
-      "description": "As a Unit Operator, I want to register the daily gas volume schedule, to declare the expected consumption to the distributor",
+      "title": "Validar cálculos de penalidade e assertividade",
+      "description": "As a gestor, I want penalty and accuracy calculations to be verified so that I can trust the system's numbers.",
       "acceptanceCriteria": [
-        "Select unit and date",
-        "Enter scheduled volume (m3 or MMBtu)",
-        "Field for observations",
-        "Validation against contract limits (DCQ, tolerances)",
-        "Internal scheduling + declaration to distributor (DCQ)"
+        "PVEMA calculation follows CUSD formula: penalty for exceeding upper transport tolerance",
+        "PVEME calculation follows CUSD formula: penalty for falling below lower transport tolerance",
+        "Sobredemanda calculation follows CUSD tiered formula (0-10%, 10-20%, >20% over QDC)",
+        "Calculation logic in gas.service.ts has unit tests with known input/output pairs",
+        "Results match manual Excel calculations for at least 3 test scenarios",
+        "Edge cases tested: zero consumption days, missing QDP, partial month data"
       ],
-      "priority": 1,
+      "priority": 2,
       "passes": true,
-      "dependsOn": [
-        "US-002",
-        "US-004"
-      ],
+      "dependsOn": [],
       "labels": [
-        "operator",
-        "scheduling"
+        "backend",
+        "testing"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-008",
-      "title": "Daily Scheduling Dashboard",
-      "description": "As a Contract Manager, I want to view all units on the dashboard, to see who has already scheduled for the day and who has not",
+      "title": "Reforçar funcionalidade de alertas",
+      "description": "As a gestor, I want the alerts system to be robust and reliable so that I never miss critical contract deadlines or deviations.",
       "acceptanceCriteria": [
-        "Current day view",
-        "List of all organization units",
-        "Status per unit: Scheduled | Pending | Late",
-        "Filters by contract, unit, status",
-        "Visual highlight for pending units"
+        "Review and fix contract alert delivery (contract-alert.service.ts, notification.service.ts)",
+        "Verify scheduled jobs in scheduled-jobs.service.ts are running correctly (cron timing)",
+        "Deviation alerts trigger when QDR exceeds tolerance bands",
+        "Contract expiration alerts fire at configured advance notice days (e.g., 30, 15, 7, 1 days)",
+        "Alert history (GasAlertSentLog) records all sent notifications",
+        "Failed alert deliveries are retried and logged",
+        "UI at /gas/contract-alerts shows alert status (sent/pending/failed)",
+        "UI at /gas/deviation-alerts shows real-time deviation status"
       ],
-      "priority": 1,
+      "priority": 3,
       "passes": true,
       "dependsOn": [
         "US-007"
       ],
       "labels": [
-        "manager",
-        "dashboard"
+        "backend",
+        "frontend"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-009",
-      "title": "Actual Consumption Recording",
-      "description": "As a Unit Operator, I want to record the actual measured consumption, to compare with the schedule and calculate accuracy",
+      "title": "Dashboard global de relatórios",
+      "description": "As a gestor, I want a consolidated reports dashboard with charts so that I have a single view of all key metrics.",
       "acceptanceCriteria": [
-        "Manual input of consumed volume (measurement)",
-        "Reading date and time",
-        "Automatic deviation calculation (scheduled vs actual)"
+        "New dashboard section on /gas/reports with consolidated charts",
+        "Chart: Consumo mensal Planejado vs Realizado por unidade (bar chart grouped by unit)",
+        "Chart: Penalidades acumuladas por contrato ao longo dos meses (line chart, month over month)",
+        "Chart: Taxa de assertividade histórica (line chart, trend over months)",
+        "Chart: Comparativo entre unidades (horizontal bar chart ranking units by accuracy)",
+        "Chart: Distribuição de consumo por tipo de equipamento (pie/donut chart)",
+        "Date range filter (monthly, quarterly, yearly)",
+        "Unit/contract filters",
+        "Export dashboard to PDF or Excel",
+        "Layout inspired by existing Excel reference model provided by user"
       ],
-      "priority": 2,
+      "priority": 4,
       "passes": true,
       "dependsOn": [
+        "US-005",
+        "US-006",
         "US-007"
       ],
       "labels": [
-        "operator",
-        "consumption"
+        "frontend",
+        "charts"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-010",
-      "title": "Scheduling Accuracy Rate",
-      "description": "As a Contract Manager, I want to view the accuracy rate per unit/period, to identify deviations and improve scheduling",
+      "title": "CRUD completo de equipamentos via admin",
+      "description": "As a admin, I want to manage equipment through the admin panel so that I can add, edit, deactivate, and link equipment to units and contracts.",
       "acceptanceCriteria": [
-        "Calculation: (1 - |Scheduled - Actual| / Scheduled) x 100%",
-        "Consider contract tolerances in analysis",
-        "Deviation history by period (daily, weekly, monthly)",
-        "Recordable cause analysis (weather, production, maintenance, etc.)",
-        "Trend charts"
+        "Admin page at /gas/admin or new section in /gas/consumer-units with equipment management",
+        "Create equipment: name, type (atomizer/line/dryer/other), order index",
+        "Edit equipment properties",
+        "Deactivate/reactivate equipment (soft delete)",
+        "Delete equipment (with validation — cannot delete if has associated daily entries)",
+        "Link/unlink equipment to consumer units (GasUnit)",
+        "Link/unlink equipment to contracts (GasContract)",
+        "Manage consumption constants (GasEquipmentConstant) with effective date ranges",
+        "Table view with filters by type, unit, status",
+        "Only users with admin profile can access"
       ],
-      "priority": 2,
+      "priority": 3,
       "passes": true,
-      "dependsOn": [
-        "US-009"
-      ],
+      "dependsOn": [],
       "labels": [
-        "manager",
-        "analytics"
+        "frontend",
+        "backend",
+        "admin"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-011",
-      "title": "Scheduling Deviation Alerts",
-      "description": "As a System, I want to alert when deviation exceeds the configured threshold, so that corrective actions can be taken quickly",
+      "title": "Extração automática de fórmulas de penalidade de contratos PDF",
+      "description": "As a admin, I want the system to automatically extract penalty formulas from uploaded contract PDFs so that I don't need to manually enter complex parameters.",
       "acceptanceCriteria": [
-        "Configurable threshold by Admin (e.g., deviation > 10%)",
-        "Automatic email alert when threshold exceeded",
-        "Visual indicator on dashboard",
-        "Does not include automatic action suggestions (alert only)"
+        "Extend existing /contract-extraction/extract endpoint to specifically extract penalty parameters",
+        "Extract CUSD penalty fields: CMC rates, PVEMA formula/thresholds, PVEME formula/thresholds, Sobredemanda tiers, TUSD tariffs",
+        "Extracted values populate the contract form fields with confidence scores",
+        "Admin can review and confirm/edit extracted values before saving",
+        "Handle multiple contract formats (not just CUSD template)",
+        "Extraction works for the provided generic CUSD contract PDF",
+        "Confidence score displayed per field (high/medium/low)",
+        "UI shows side-by-side: PDF preview + extracted fields"
       ],
-      "priority": 2,
+      "priority": 4,
       "passes": true,
       "dependsOn": [
-        "US-009",
-        "US-012"
+        "US-007"
       ],
       "labels": [
-        "system",
-        "alert"
+        "backend",
+        "frontend",
+        "ai"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-012",
-      "title": "Administrative Parameter Panel",
-      "description": "As an Admin, I want to configure system calculation parameters, to adjust business rules as needed",
+      "title": "Suporte a múltiplos contratos por cliente",
+      "description": "As a admin, I want to manage multiple active contracts per client/unit so that complex setups like Dexco (3 contracts in Revestimentos Cerâmicos) are supported.",
       "acceptanceCriteria": [
-        "Alert thresholds (deviation %, expiration advance notice)",
-        "Penalty calculation formulas (take-or-pay, fines)",
-        "Business rules by contract type",
-        "Contract templates with default fields",
-        "Customizable fields per organization",
-        "Only Admin profile has access"
+        "GasContract already has unitId — verify a single GasUnit can have multiple active contracts",
+        "UI at /gas/contracts shows all contracts grouped by unit",
+        "Contract selector available in scheduling, consumption, and reports pages when unit has multiple contracts",
+        "Penalty calculations use the correct contract for each unit/period",
+        "Dashboard and reports aggregate or filter by contract",
+        "No regression — units with single contracts continue to work seamlessly"
       ],
-      "priority": 2,
+      "priority": 3,
       "passes": true,
-      "dependsOn": [
-        "US-001"
-      ],
+      "dependsOn": [],
       "labels": [
-        "admin",
-        "settings"
+        "backend",
+        "frontend"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-013",
-      "title": "User Management by Organization",
-      "description": "As an Admin/Contract Manager, I want to manage users and their permissions, to control who accesses what in the system",
+      "title": "Histórico de auditoria abrangente",
+      "description": "As a admin, I want comprehensive audit logging including login/logout and all data changes so that every system action is traceable.",
       "acceptanceCriteria": [
-        "User invitation by email",
-        "Profile assignment (Admin, Manager, Operator, Viewer)",
-        "Operator can be linked to specific units",
-        "User deactivation (soft delete)"
+        "Login events recorded in GasAuditLog (user, timestamp, IP if available)",
+        "Logout events recorded",
+        "All CRUD operations on all Gas models logged (create, update, delete)",
+        "Field-level change tracking (old value → new value) for updates",
+        "Audit log records: who, what, when, which record, what changed",
+        "UI at /gas/audit-log displays all events with filters (date range, user, action type, entity type)",
+        "Export audit log to Excel",
+        "Existing GasAuditLog and GasContractAuditLog models consolidated or both utilized"
       ],
-      "priority": 1,
+      "priority": 4,
       "passes": true,
-      "dependsOn": [
-        "US-001"
-      ],
+      "dependsOn": [],
       "labels": [
-        "admin",
-        "manager",
-        "users"
+        "backend",
+        "frontend"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-014",
-      "title": "History and Audit Log",
-      "description": "As an Admin, I want to view change history, to track who did what in the system",
+      "title": "Simular auditoria com dados fictícios",
+      "description": "As a admin, I want to test the audit system with simulated data so that I can validate it works correctly before production use.",
       "acceptanceCriteria": [
-        "Log of all write operations (create, update, delete)",
-        "Record: user, date/time, entity, changed field, previous value, new value",
-        "Filters by entity, user, period",
-        "Log export"
+        "Seed script generates realistic fake audit data (50+ entries across different entities and action types)",
+        "Seed data covers: login/logout, contract changes, equipment changes, scheduling changes, consumption entries",
+        "Audit log UI correctly displays and filters all seeded data",
+        "Details dialog shows full change history for each entry",
+        "Export to Excel includes all seeded data correctly",
+        "Seed script is idempotent (can run multiple times without duplicating data)",
+        "Script located at apps/server/src/seed/ or similar"
       ],
-      "priority": 3,
+      "priority": 5,
       "passes": true,
       "dependsOn": [
-        "US-001"
+        "US-013"
       ],
       "labels": [
-        "admin",
-        "audit"
+        "backend",
+        "testing"
       ],
       "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-01-20T22:58:22.476Z"
+    "updatedAt": "2026-02-26T02:42:14.027Z"
   }
 }

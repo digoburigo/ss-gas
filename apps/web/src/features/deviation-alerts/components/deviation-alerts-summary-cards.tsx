@@ -39,7 +39,9 @@ export function DeviationAlertsSummaryCards({
       {/* Total Alerts Card */}
       <Card className="border-l-4 border-l-purple-500">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total de Alertas</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            Total de Alertas
+          </CardTitle>
           <Bell className="h-4 w-4 text-purple-500" />
         </CardHeader>
         <CardContent>
@@ -60,7 +62,9 @@ export function DeviationAlertsSummaryCards({
           <div className="text-2xl font-bold text-red-600 dark:text-red-400">
             {isLoading ? "..." : activeAlerts}
           </div>
-          <CardDescription>Desvio {">"} ±{thresholdPercent}%</CardDescription>
+          <CardDescription>
+            Desvio {">"} ±{thresholdPercent}%
+          </CardDescription>
         </CardContent>
       </Card>
 
@@ -95,7 +99,9 @@ export function DeviationAlertsSummaryCards({
       {/* Emails Sent Card */}
       <Card className="border-l-4 border-l-green-500">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">E-mails Enviados</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            E-mails Enviados
+          </CardTitle>
           <MailCheck className="h-4 w-4 text-green-500" />
         </CardHeader>
         <CardContent>

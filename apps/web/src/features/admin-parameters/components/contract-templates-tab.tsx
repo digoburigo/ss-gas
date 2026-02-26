@@ -60,7 +60,7 @@ const emptyTemplate: TemplateFormData = {
       priceCurrency: "BRL",
     },
     null,
-    2
+    2,
   ),
   isDefault: false,
 };
@@ -73,39 +73,49 @@ export function ContractTemplatesTab() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Fetch templates
-  const { data: templates = [], isLoading, refetch } = client.gasContractTemplate.useFindMany({
+  const {
+    data: templates = [],
+    isLoading,
+    refetch,
+  } = client.gasContractTemplate.useFindMany({
     where: { active: true },
     orderBy: [{ isDefault: "desc" }, { name: "asc" }],
   });
 
   // Create mutation
-  const { mutate: createTemplate, mutateAsync: createTemplateAsync, isPending: isCreating } =
-    client.gasContractTemplate.useCreate({
-      onSuccess: () => {
-        toast.success("Template criado com sucesso");
-        setIsDialogOpen(false);
-        setFormData(emptyTemplate);
-        refetch();
-      },
-      onError: (error: Error) => {
-        toast.error(`Erro ao criar template: ${error.message}`);
-      },
-    });
+  const {
+    mutate: createTemplate,
+    mutateAsync: createTemplateAsync,
+    isPending: isCreating,
+  } = client.gasContractTemplate.useCreate({
+    onSuccess: () => {
+      toast.success("Template criado com sucesso");
+      setIsDialogOpen(false);
+      setFormData(emptyTemplate);
+      refetch();
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao criar template: ${error.message}`);
+    },
+  });
 
   // Update mutation
-  const { mutate: updateTemplate, mutateAsync: updateTemplateAsync, isPending: isUpdating } =
-    client.gasContractTemplate.useUpdate({
-      onSuccess: () => {
-        toast.success("Template atualizado com sucesso");
-        setIsDialogOpen(false);
-        setEditingId(null);
-        setFormData(emptyTemplate);
-        refetch();
-      },
-      onError: (error: Error) => {
-        toast.error(`Erro ao atualizar template: ${error.message}`);
-      },
-    });
+  const {
+    mutate: updateTemplate,
+    mutateAsync: updateTemplateAsync,
+    isPending: isUpdating,
+  } = client.gasContractTemplate.useUpdate({
+    onSuccess: () => {
+      toast.success("Template atualizado com sucesso");
+      setIsDialogOpen(false);
+      setEditingId(null);
+      setFormData(emptyTemplate);
+      refetch();
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar template: ${error.message}`);
+    },
+  });
 
   // Delete mutation
   const { mutate: deleteTemplate, isPending: isDeleting } =
@@ -128,7 +138,7 @@ export function ContractTemplatesTab() {
   };
 
   // Handle edit
-  const handleEdit = (template: typeof templates[0]) => {
+  const handleEdit = (template: (typeof templates)[0]) => {
     setEditingId(template.id);
     setFormData({
       name: template.name,
@@ -141,7 +151,7 @@ export function ContractTemplatesTab() {
   };
 
   // Handle duplicate
-  const handleDuplicate = (template: typeof templates[0]) => {
+  const handleDuplicate = (template: (typeof templates)[0]) => {
     setEditingId(null);
     setFormData({
       name: `${template.name} (Cópia)`,
@@ -271,8 +281,9 @@ export function ContractTemplatesTab() {
                         )}
                         {template.contractType && (
                           <Badge variant="outline" className="text-xs">
-                            {contractTypes.find((t) => t.value === template.contractType)?.label ??
-                              template.contractType}
+                            {contractTypes.find(
+                              (t) => t.value === template.contractType,
+                            )?.label ?? template.contractType}
                           </Badge>
                         )}
                       </div>
@@ -283,7 +294,11 @@ export function ContractTemplatesTab() {
                       )}
                       <div className="bg-muted mt-3 rounded p-2">
                         <pre className="max-h-32 overflow-auto text-xs">
-                          {JSON.stringify(JSON.parse(template.templateValues), null, 2)}
+                          {JSON.stringify(
+                            JSON.parse(template.templateValues),
+                            null,
+                            2,
+                          )}
                         </pre>
                       </div>
                     </div>
@@ -415,10 +430,7 @@ export function ContractTemplatesTab() {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isCreating || isUpdating}
-            >
+            <Button onClick={handleSave} disabled={isCreating || isUpdating}>
               {(isCreating || isUpdating) && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
@@ -429,12 +441,16 @@ export function ContractTemplatesTab() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
+      <Dialog
+        open={!!deleteConfirmId}
+        onOpenChange={() => setDeleteConfirmId(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirmar Exclusão</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja excluir este template? Esta ação não pode ser desfeita.
+              Tem certeza que deseja excluir este template? Esta ação não pode
+              ser desfeita.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -446,9 +462,7 @@ export function ContractTemplatesTab() {
               onClick={() => deleteConfirmId && handleDelete(deleteConfirmId)}
               disabled={isDeleting}
             >
-              {isDeleting && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Excluir
             </Button>
           </DialogFooter>

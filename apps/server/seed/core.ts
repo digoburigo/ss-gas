@@ -4,6 +4,7 @@ import type { auth } from "../src/plugins/better-auth";
 export interface CoreContext {
 	org: { id: string; name: string; slug: string };
 	user: { id: string };
+	bUserMemberId: string;
 	// biome-ignore lint/suspicious/noExplicitAny: $setAuth returns any
 	userDb: any;
 }
@@ -48,31 +49,41 @@ export async function seedCore(
 			where: { id: bUser.user.id },
 			data: { role: "member", emailVerified: true },
 		}),
-		db.member.createMany({
-			data: [
-				{
-					userId: aUser.user.id,
-					organizationId: orgA?.id ?? "",
-					role: "admin",
-				},
-				{
-					userId: bUser.user.id,
-					organizationId: orgA?.id ?? "",
-					role: "member",
-				},
-				{
-					userId: aUser.user.id,
-					organizationId: orgB?.id ?? "",
-					role: "owner",
-				},
-				{
-					userId: bUser.user.id,
-					organizationId: orgB?.id ?? "",
-					role: "member",
-				},
-			],
-		}),
 	]);
+
+	// Create members and capture IDs (needed for GasUnitOperator assignments)
+	const members = await db.member.createManyAndReturn({
+		data: [
+			{
+				userId: aUser.user.id,
+				organizationId: orgA?.id ?? "",
+				role: "admin",
+				profile: "admin",
+			},
+			{
+				userId: bUser.user.id,
+				organizationId: orgA?.id ?? "",
+				role: "member",
+				profile: "operator",
+			},
+			{
+				userId: aUser.user.id,
+				organizationId: orgB?.id ?? "",
+				role: "owner",
+				profile: "manager",
+			},
+			{
+				userId: bUser.user.id,
+				organizationId: orgB?.id ?? "",
+				role: "member",
+				profile: "viewer",
+			},
+		],
+	});
+
+	const bUserMemberInOrgA = members.find(
+		(m) => m.userId === bUser.user.id && m.organizationId === (orgA?.id ?? ""),
+	);
 
 	const userDb = authDb.$setAuth({
 		userId: aUser.user.id,
@@ -93,6 +104,7 @@ export async function seedCore(
 	return {
 		org: orgA ?? { id: "", name: "Org A", slug: "org-a" },
 		user: { id: aUser.user.id },
+		bUserMemberId: bUserMemberInOrgA?.id ?? "",
 		userDb,
 	};
 }

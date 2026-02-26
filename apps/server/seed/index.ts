@@ -6,6 +6,7 @@ import { seedCore } from "./core";
 import { seedGasAudit } from "./gas-audit";
 import { seedGasContracts } from "./gas-contracts";
 import { seedGasDailyData } from "./gas-daily";
+import { seedGasParameters } from "./gas-parameters";
 import { seedGasUnits } from "./gas-units";
 
 async function main() {
@@ -15,9 +16,11 @@ async function main() {
 
 	const refs = await seedGasUnits(db, ctx.userDb, ctx);
 
-	await seedGasContracts(ctx.userDb, ctx);
+	await seedGasContracts(ctx.userDb, ctx, refs);
 
-	await seedGasDailyData(db, ctx.userDb, refs);
+	await seedGasDailyData(db, ctx.userDb, refs, ctx);
+
+	await seedGasParameters(ctx.userDb, ctx);
 
 	await seedGasAudit(db, ctx);
 

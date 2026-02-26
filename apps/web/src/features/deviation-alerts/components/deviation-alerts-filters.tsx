@@ -1,7 +1,8 @@
-import { CalendarIcon, X } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { CalendarIcon, X } from "lucide-react";
 
+import { cn } from "@acme/ui";
 import { Button } from "@acme/ui/button";
 import { Calendar } from "@acme/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
@@ -12,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@acme/ui/select";
-import { cn } from "@acme/ui";
 
 import { useDeviationAlerts } from "./deviation-alerts-provider";
 
@@ -97,11 +97,7 @@ export function DeviationAlertsFilters({ units }: DeviationAlertsFiltersProps) {
 
         {/* Quick range buttons */}
         <div className="hidden items-center gap-1 sm:flex">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => handleQuickRange(7)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => handleQuickRange(7)}>
             7D
           </Button>
           <Button
@@ -154,9 +150,11 @@ export function DeviationAlertsFilters({ units }: DeviationAlertsFiltersProps) {
       </Select>
 
       {/* Threshold indicator */}
-      <div className="ml-auto flex items-center gap-2 text-sm text-muted-foreground">
+      <div className="text-muted-foreground ml-auto flex items-center gap-2 text-sm">
         <span>Limiar configurado:</span>
-        <span className="font-medium text-foreground">±{thresholdPercent}%</span>
+        <span className="text-foreground font-medium">
+          ±{thresholdPercent}%
+        </span>
       </div>
 
       {/* Clear Filters */}

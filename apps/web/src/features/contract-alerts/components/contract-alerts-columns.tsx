@@ -224,9 +224,7 @@ export const contractAlertsColumns: ColumnDef<GasContractAlertWithRelations>[] =
                     </Badge>
                   </div>
                 </TooltipTrigger>
-                <TooltipContent>
-                  Nenhum email enviado ainda
-                </TooltipContent>
+                <TooltipContent>Nenhum email enviado ainda</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           );
@@ -254,11 +252,9 @@ export const contractAlertsColumns: ColumnDef<GasContractAlertWithRelations>[] =
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                {format(
-                  new Date(lastSent.sentAt),
-                  "dd/MM/yyyy 'às' HH:mm",
-                  { locale: ptBR },
-                )}
+                {format(new Date(lastSent.sentAt), "dd/MM/yyyy 'às' HH:mm", {
+                  locale: ptBR,
+                })}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

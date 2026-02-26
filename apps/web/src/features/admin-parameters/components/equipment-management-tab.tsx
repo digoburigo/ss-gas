@@ -296,7 +296,9 @@ function EquipmentForm({
                   id={field.name}
                   name={field.name}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value === "true")}
+                  onChange={(e) =>
+                    field.handleChange(e.target.value === "true")
+                  }
                   value={field.state.value ? "true" : "false"}
                 >
                   <NativeSelectOption value="true">Ativo</NativeSelectOption>
@@ -418,9 +420,7 @@ function ConstantsPanel({
     <Sheet open onOpenChange={(v) => !v && onClose()}>
       <SheetContent className="flex flex-col overflow-y-auto sm:max-w-lg">
         <SheetHeader className="text-start">
-          <SheetTitle>
-            Constantes de Consumo - {equipment.name}
-          </SheetTitle>
+          <SheetTitle>Constantes de Consumo - {equipment.name}</SheetTitle>
           <SheetDescription>
             Gerencie as constantes de consumo com faixas de vigência para este
             equipamento.
@@ -478,9 +478,7 @@ function ConstantsPanel({
                           <NativeSelect
                             id={field.name}
                             value={field.state.value}
-                            onChange={(e) =>
-                              field.handleChange(e.target.value)
-                            }
+                            onChange={(e) => field.handleChange(e.target.value)}
                           >
                             {consumptionUnitOptions.map((opt) => (
                               <NativeSelectOption
@@ -505,9 +503,7 @@ function ConstantsPanel({
                             id={field.name}
                             type="date"
                             value={field.state.value}
-                            onChange={(e) =>
-                              field.handleChange(e.target.value)
-                            }
+                            onChange={(e) => field.handleChange(e.target.value)}
                           />
                         </div>
                       )}
@@ -521,9 +517,7 @@ function ConstantsPanel({
                             id={field.name}
                             type="date"
                             value={field.state.value}
-                            onChange={(e) =>
-                              field.handleChange(e.target.value)
-                            }
+                            onChange={(e) => field.handleChange(e.target.value)}
                           />
                         </div>
                       )}
@@ -764,7 +758,12 @@ export function EquipmentManagementTab() {
         .equipment({ equipmentId: currentRow.id })
         ["can-delete"].get();
 
-      if (response.data && typeof response.data === "object" && "canDelete" in response.data && !response.data.canDelete) {
+      if (
+        response.data &&
+        typeof response.data === "object" &&
+        "canDelete" in response.data &&
+        !response.data.canDelete
+      ) {
         setDeleteError(
           (response.data as { reason?: string }).reason ??
             "Não é possível excluir este equipamento.",
@@ -813,9 +812,7 @@ export function EquipmentManagementTab() {
       cell: ({ row }) => {
         const type = row.getValue<string>("type");
         return (
-          <Badge variant="outline">
-            {equipmentTypeLabels[type] ?? type}
-          </Badge>
+          <Badge variant="outline">{equipmentTypeLabels[type] ?? type}</Badge>
         );
       },
     },
@@ -999,7 +996,7 @@ export function EquipmentManagementTab() {
         <CardContent className="space-y-4">
           {/* Filters */}
           <div className="flex flex-wrap gap-3">
-            <div className="relative flex-1 min-w-[200px]">
+            <div className="relative min-w-[200px] flex-1">
               <Search className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
               <Input
                 placeholder="Buscar por código ou nome..."
@@ -1025,7 +1022,9 @@ export function EquipmentManagementTab() {
               onChange={(e) => setUnitFilter(e.target.value)}
               className="w-52"
             >
-              <NativeSelectOption value="">Todas as unidades</NativeSelectOption>
+              <NativeSelectOption value="">
+                Todas as unidades
+              </NativeSelectOption>
               {(units as GasUnit[]).map((unit) => (
                 <NativeSelectOption key={unit.id} value={unit.id}>
                   {unit.code} - {unit.name}
@@ -1093,7 +1092,8 @@ export function EquipmentManagementTab() {
           {/* Pagination info */}
           <div className="text-muted-foreground text-sm">
             {filteredData.length} equipamento(s) encontrado(s)
-            {filteredData.length !== (equipment as EquipmentWithRelations[]).length &&
+            {filteredData.length !==
+              (equipment as EquipmentWithRelations[]).length &&
               ` de ${(equipment as EquipmentWithRelations[]).length} total`}
           </div>
         </CardContent>

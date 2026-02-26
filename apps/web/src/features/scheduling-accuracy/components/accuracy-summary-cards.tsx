@@ -94,9 +94,7 @@ export function AccuracySummaryCards({
           <div className="text-2xl font-bold">
             {isLoading ? "..." : totalRecords}
           </div>
-          <p className="text-muted-foreground text-xs">
-            Período selecionado
-          </p>
+          <p className="text-muted-foreground text-xs">Período selecionado</p>
         </CardContent>
       </Card>
 
@@ -130,9 +128,7 @@ export function AccuracySummaryCards({
           <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
             {isLoading ? "..." : outsideToleranceCount}
           </div>
-          <CardDescription>
-            Requer análise de causa
-          </CardDescription>
+          <CardDescription>Requer análise de causa</CardDescription>
         </CardContent>
       </Card>
     </div>

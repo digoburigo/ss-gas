@@ -144,17 +144,17 @@ function RouteComponent() {
           Ao continuar, você concorda com nossos{" "}
           <Button
             className="text-muted-foreground p-0"
+            nativeButton={false}
             render={<Link to="/">Termos de Serviço</Link>}
             size="xs"
-            type="button"
             variant="link"
           />{" "}
           e{" "}
           <Button
             className="text-muted-foreground p-0"
+            nativeButton={false}
             render={<Link to="/">Políticas de Privacidade</Link>}
             size="xs"
-            type="button"
             variant="link"
           />
           .

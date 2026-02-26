@@ -1,5 +1,5 @@
-import { AlertTriangle, Bell, CheckCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { AlertTriangle, Bell, CheckCircle } from "lucide-react";
 
 import { Badge } from "@acme/ui/badge";
 import { Button } from "@acme/ui/button";

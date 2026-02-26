@@ -112,7 +112,7 @@ export function CauseDistributionChart({
                   return (
                     <div
                       key={item.cause}
-                      className="flex items-center justify-between rounded-md p-2 hover:bg-muted/50"
+                      className="hover:bg-muted/50 flex items-center justify-between rounded-md p-2"
                     >
                       <div className="flex items-center gap-2">
                         <div

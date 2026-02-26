@@ -12,21 +12,26 @@ export const Route = createFileRoute("/_authenticated/gas/admin-parameters/")({
 });
 
 function AdminParametersPage() {
-  const { data: session, isPending: isSessionPending } = authClient.useSession();
+  const { data: session, isPending: isSessionPending } =
+    authClient.useSession();
   const client = useClientQueries(schema);
 
   // Fetch current user's member record to check profile
-  const { data: member, isLoading: isMemberLoading } = client.member.useFindFirst({
-    where: {
-      userId: session?.user?.id,
-    },
-    select: {
-      profile: true,
-      role: true,
-    },
-  }, {
-    enabled: !!session?.user?.id,
-  });
+  const { data: member, isLoading: isMemberLoading } =
+    client.member.useFindFirst(
+      {
+        where: {
+          userId: session?.user?.id,
+        },
+        select: {
+          profile: true,
+          role: true,
+        },
+      },
+      {
+        enabled: !!session?.user?.id,
+      },
+    );
 
   // Loading state
   if (isSessionPending || isMemberLoading) {
@@ -38,7 +43,10 @@ function AdminParametersPage() {
   }
 
   // Check if user has admin profile - Only Admin profile has access (per acceptance criteria)
-  const isAdmin = member?.profile === "admin" || member?.role === "admin" || member?.role === "owner";
+  const isAdmin =
+    member?.profile === "admin" ||
+    member?.role === "admin" ||
+    member?.role === "owner";
 
   // If not admin, show forbidden page
   if (!isAdmin) {

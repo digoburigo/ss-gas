@@ -55,9 +55,7 @@ export function ConsumerUnitsDialogs() {
     // First check if unit has pending schedules via API endpoint
     try {
       const response =
-        await api.gas["consumer-units"][currentRow.id][
-          "can-delete"
-        ].get();
+        await api.gas["consumer-units"][currentRow.id]["can-delete"].get();
 
       if (response.data && !response.data.canDelete) {
         setDeleteError(

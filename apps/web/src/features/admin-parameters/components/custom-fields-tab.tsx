@@ -73,7 +73,11 @@ export function CustomFieldsTab() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Fetch custom fields
-  const { data: fields = [], isLoading, refetch } = client.gasCustomField.useFindMany({
+  const {
+    data: fields = [],
+    isLoading,
+    refetch,
+  } = client.gasCustomField.useFindMany({
     where: { active: true, entityType: selectedEntity },
     orderBy: { orderIndex: "asc" },
   });
@@ -128,7 +132,7 @@ export function CustomFieldsTab() {
   };
 
   // Handle edit
-  const handleEdit = (field: typeof fields[0]) => {
+  const handleEdit = (field: (typeof fields)[0]) => {
     setEditingId(field.id);
     setFormData({
       fieldName: field.fieldName,
@@ -170,7 +174,8 @@ export function CustomFieldsTab() {
           displayName: formData.displayName,
           fieldType: formData.fieldType,
           required: formData.required,
-          options: formData.fieldType === "select" ? formData.options || null : null,
+          options:
+            formData.fieldType === "select" ? formData.options || null : null,
         },
       });
     } else {
@@ -180,7 +185,8 @@ export function CustomFieldsTab() {
           displayName: formData.displayName,
           fieldType: formData.fieldType,
           required: formData.required,
-          options: formData.fieldType === "select" ? formData.options || null : null,
+          options:
+            formData.fieldType === "select" ? formData.options || null : null,
           entityType: formData.entityType,
           orderIndex: fields.length,
         },
@@ -194,7 +200,7 @@ export function CustomFieldsTab() {
   };
 
   // Handle toggle required
-  const handleToggleRequired = (field: typeof fields[0]) => {
+  const handleToggleRequired = (field: (typeof fields)[0]) => {
     updateField({
       where: { id: field.id },
       data: { required: !field.required },
@@ -251,7 +257,8 @@ export function CustomFieldsTab() {
             <TabsContent value={selectedEntity} className="mt-4">
               {fields.length === 0 ? (
                 <div className="text-muted-foreground py-8 text-center">
-                  Nenhum campo personalizado cadastrado. Clique em "Novo Campo" para criar.
+                  Nenhum campo personalizado cadastrado. Clique em "Novo Campo"
+                  para criar.
                 </div>
               ) : (
                 <Table>
@@ -326,7 +333,10 @@ export function CustomFieldsTab() {
             </DialogTitle>
             <DialogDescription>
               Configure um campo adicional para{" "}
-              {entityTypes.find((e) => e.value === formData.entityType)?.label.toLowerCase()}.
+              {entityTypes
+                .find((e) => e.value === formData.entityType)
+                ?.label.toLowerCase()}
+              .
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -338,7 +348,9 @@ export function CustomFieldsTab() {
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    fieldName: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "_"),
+                    fieldName: e.target.value
+                      .toLowerCase()
+                      .replace(/[^a-z0-9_]/g, "_"),
                   })
                 }
                 placeholder="Ex: numero_processo"
@@ -408,10 +420,7 @@ export function CustomFieldsTab() {
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isCreating || isUpdating}
-            >
+            <Button onClick={handleSave} disabled={isCreating || isUpdating}>
               {(isCreating || isUpdating) && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
@@ -422,13 +431,16 @@ export function CustomFieldsTab() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
+      <Dialog
+        open={!!deleteConfirmId}
+        onOpenChange={() => setDeleteConfirmId(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirmar Exclusão</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja excluir este campo personalizado? Esta ação não pode ser
-              desfeita e pode afetar dados existentes.
+              Tem certeza que deseja excluir este campo personalizado? Esta ação
+              não pode ser desfeita e pode afetar dados existentes.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -440,9 +452,7 @@ export function CustomFieldsTab() {
               onClick={() => deleteConfirmId && handleDelete(deleteConfirmId)}
               disabled={isDeleting}
             >
-              {isDeleting && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Excluir
             </Button>
           </DialogFooter>

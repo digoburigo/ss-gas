@@ -1,6 +1,6 @@
 "use no memo";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -85,9 +85,7 @@ export function SchedulingDashboardEntryDrawer() {
     <Sheet open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <SheetContent className="flex flex-col overflow-y-auto sm:max-w-xl">
         <SheetHeader className="text-start">
-          <SheetTitle>
-            Programar {selectedUnit?.name ?? "Unidade"}
-          </SheetTitle>
+          <SheetTitle>Programar {selectedUnit?.name ?? "Unidade"}</SheetTitle>
           <SheetDescription>
             Configure equipamentos e registre a programação diária de gás para{" "}
             {format(selectedDate, "dd/MM/yyyy")}.

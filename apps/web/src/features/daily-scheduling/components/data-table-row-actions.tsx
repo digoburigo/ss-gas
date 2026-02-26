@@ -20,17 +20,15 @@ import { useDailyScheduling } from "./daily-scheduling-provider";
 
 type DailyPlanWithRelations = GasDailyPlan & {
   unit: GasUnit & {
-    contract:
-      | Pick<
-          GasContract,
-          | "id"
-          | "name"
-          | "qdcContracted"
-          | "transportToleranceUpperPercent"
-          | "transportToleranceLowerPercent"
-          | "volumeUnit"
-        >
-      | null;
+    contract: Pick<
+      GasContract,
+      | "id"
+      | "name"
+      | "qdcContracted"
+      | "transportToleranceUpperPercent"
+      | "transportToleranceLowerPercent"
+      | "volumeUnit"
+    > | null;
   };
   createdByUser: Pick<User, "id" | "name"> | null;
   submittedByUser: User | null;

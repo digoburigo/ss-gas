@@ -43,7 +43,8 @@ export const parameterCategories = [
   {
     value: "equipment",
     label: "Equipamentos",
-    description: "Gerencie equipamentos, vincule a unidades e configure constantes",
+    description:
+      "Gerencie equipamentos, vincule a unidades e configure constantes",
     icon: Cog,
   },
 ] as const;
