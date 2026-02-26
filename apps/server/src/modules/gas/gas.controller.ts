@@ -2767,4 +2767,740 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				tags: ["Gas Equipment"],
 			},
 		},
+	)
+
+	/**
+	 * GET /gas/reports/dashboard
+	 *
+	 * Returns consolidated dashboard data for the reports overview.
+	 * Supports date range filtering (monthly, quarterly, yearly).
+	 *
+	 * Returns:
+	 * - Monthly QDP vs QDR per unit (for bar chart)
+	 * - Monthly accumulated penalties per contract (for line chart)
+	 * - Monthly assertiveness rates (for trend line chart)
+	 * - Per-unit accuracy comparison (for horizontal bar chart)
+	 * - Consumption distribution by equipment type (for pie chart)
+	 */
+	.get(
+		"/reports/dashboard",
+		async ({ query, status, session }) => {
+			const { startMonth, endMonth, unitId, contractId } = query;
+
+			const monthRegex = /^\d{4}-\d{2}$/;
+			if (!monthRegex.test(startMonth) || !monthRegex.test(endMonth)) {
+				return status(400, {
+					error: "Invalid month format. Expected YYYY-MM",
+				});
+			}
+
+			const startParts = startMonth.split("-").map(Number);
+			const endParts = endMonth.split("-").map(Number);
+			const startDate = new Date(
+				startParts[0] ?? 0,
+				(startParts[1] ?? 1) - 1,
+				1,
+			);
+			const endDate = new Date(endParts[0] ?? 0, endParts[1] ?? 1, 0);
+
+			// Get active contract
+			const contract = contractId
+				? await db.gasContract.findFirst({
+						where: {
+							id: contractId,
+							organizationId: session.activeOrganizationId ?? undefined,
+						},
+					})
+				: await db.gasContract.findFirst({
+						where: {
+							organizationId: session.activeOrganizationId ?? undefined,
+							active: true,
+							effectiveFrom: { lte: endDate },
+							OR: [
+								{ effectiveTo: null },
+								{ effectiveTo: { gte: startDate } },
+							],
+						},
+						orderBy: { effectiveFrom: "desc" },
+					});
+
+			if (!contract) {
+				return status(404, { error: "No active contract found" });
+			}
+
+			// Get all contracts
+			const allContracts = await db.gasContract.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { name: "asc" },
+			});
+
+			// Get units
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+					...(unitId ? { id: unitId } : {}),
+				},
+				orderBy: { code: "asc" },
+			});
+
+			// Get all daily plans (QDP) for the range
+			const unitFilter = unitId
+				? { unitId }
+				: {
+						unit: {
+							organizationId: session.activeOrganizationId ?? undefined,
+						},
+					};
+
+			const plans = await db.gasDailyPlan.findMany({
+				where: {
+					...unitFilter,
+					date: { gte: startDate, lte: endDate },
+				},
+				include: { unit: true },
+				orderBy: { date: "asc" },
+			});
+
+			// Get all real consumption (QDR)
+			const realConsumptions = await db.gasRealConsumption.findMany({
+				where: {
+					...unitFilter,
+					date: { gte: startDate, lte: endDate },
+				},
+				include: { unit: true },
+				orderBy: { date: "asc" },
+			});
+
+			// Get daily entries for equipment type distribution
+			const entries = await db.gasDailyEntry.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+						...(unitId ? { id: unitId } : {}),
+					},
+					date: { gte: startDate, lte: endDate },
+				},
+				orderBy: { date: "asc" },
+			});
+
+			// === 1. Monthly QDP vs QDR per unit ===
+			const monthlyByUnit: Record<
+				string,
+				Record<string, { qdp: number; qdr: number }>
+			> = {};
+
+			for (const plan of plans) {
+				const monthKey = `${plan.date.getFullYear()}-${String(plan.date.getMonth() + 1).padStart(2, "0")}`;
+				const uid = plan.unitId;
+				if (!monthlyByUnit[monthKey]) monthlyByUnit[monthKey] = {};
+				if (!monthlyByUnit[monthKey][uid])
+					monthlyByUnit[monthKey][uid] = { qdp: 0, qdr: 0 };
+				const entry = monthlyByUnit[monthKey][uid];
+				if (entry) entry.qdp += plan.qdpValue;
+			}
+
+			for (const rc of realConsumptions) {
+				const monthKey = `${rc.date.getFullYear()}-${String(rc.date.getMonth() + 1).padStart(2, "0")}`;
+				const uid = rc.unitId;
+				if (!monthlyByUnit[monthKey]) monthlyByUnit[monthKey] = {};
+				if (!monthlyByUnit[monthKey][uid])
+					monthlyByUnit[monthKey][uid] = { qdp: 0, qdr: 0 };
+				const entry = monthlyByUnit[monthKey][uid];
+				if (entry) entry.qdr += rc.qdrValue;
+			}
+
+			const consumptionByUnit = Object.entries(monthlyByUnit)
+				.sort(([a], [b]) => a.localeCompare(b))
+				.map(([month, unitData]) => ({
+					month,
+					units: Object.entries(unitData).map(([uid, values]) => {
+						const unit = units.find((u) => u.id === uid);
+						return {
+							unitId: uid,
+							unitCode: unit?.code ?? "",
+							unitName: unit?.name ?? "",
+							qdp: Math.round(values.qdp * 100) / 100,
+							qdr: Math.round(values.qdr * 100) / 100,
+						};
+					}),
+				}));
+
+			// === 2. Monthly penalties ===
+			const penaltyParams = {
+				qdcContracted: contract.qdcContracted,
+				pvemaTolerancePercent:
+					contract.pvemaTolerancePercent ??
+					contract.transportToleranceUpperPercent,
+				pvemeTolerancePercent:
+					contract.pvemeTolerancePercent ??
+					contract.transportToleranceLowerPercent,
+				overdemandTier1MaxPercent:
+					contract.overdemandTier1MaxPercent ?? 110,
+				overdemandTier2MaxPercent:
+					contract.overdemandTier2MaxPercent ?? 115,
+				overdemandTier2Multiplier:
+					contract.overdemandTier2Multiplier ?? 1.0,
+				overdemandTier3Multiplier:
+					contract.overdemandTier3Multiplier ?? 1.5,
+				tusdTariffPerUnit: contract.tusdTariffPerUnit ?? 0,
+				basePricePerUnit: contract.basePricePerUnit ?? 0,
+			};
+
+			// Group QDR by month for penalty calc
+			const qdrByMonth: Record<string, number[]> = {};
+			for (const rc of realConsumptions) {
+				const monthKey = `${rc.date.getFullYear()}-${String(rc.date.getMonth() + 1).padStart(2, "0")}`;
+				if (!qdrByMonth[monthKey]) qdrByMonth[monthKey] = [];
+				qdrByMonth[monthKey].push(rc.qdrValue);
+			}
+
+			const penaltiesByMonth = Object.entries(qdrByMonth)
+				.sort(([a], [b]) => a.localeCompare(b))
+				.map(([month, dailyValues]) => {
+					const penalties =
+						GasCalculationService.calculateMonthlyPenalties(
+							dailyValues,
+							penaltyParams,
+						);
+					return {
+						month,
+						pvema: penalties.pvema,
+						pveme: penalties.pveme,
+						sobredemanda: penalties.sobredemanda,
+						total: penalties.total,
+					};
+				});
+
+			// === 3. Monthly assertiveness trend ===
+			const monthlyDays: Record<
+				string,
+				Map<string, { qdp: number; qdr: number }>
+			> = {};
+
+			for (const plan of plans) {
+				const monthKey = `${plan.date.getFullYear()}-${String(plan.date.getMonth() + 1).padStart(2, "0")}`;
+				const dateKey = plan.date.toISOString().split("T")[0] ?? "";
+				if (!monthlyDays[monthKey])
+					monthlyDays[monthKey] = new Map();
+				const existing = monthlyDays[monthKey].get(dateKey) ?? {
+					qdp: 0,
+					qdr: 0,
+				};
+				existing.qdp += plan.qdpValue;
+				monthlyDays[monthKey].set(dateKey, existing);
+			}
+
+			for (const rc of realConsumptions) {
+				const monthKey = `${rc.date.getFullYear()}-${String(rc.date.getMonth() + 1).padStart(2, "0")}`;
+				const dateKey = rc.date.toISOString().split("T")[0] ?? "";
+				if (!monthlyDays[monthKey])
+					monthlyDays[monthKey] = new Map();
+				const existing = monthlyDays[monthKey].get(dateKey) ?? {
+					qdp: 0,
+					qdr: 0,
+				};
+				existing.qdr += rc.qdrValue;
+				monthlyDays[monthKey].set(dateKey, existing);
+			}
+
+			const assertivenessTrend = Object.entries(monthlyDays)
+				.sort(([a], [b]) => a.localeCompare(b))
+				.map(([month, dayMap]) => {
+					const days = Array.from(dayMap.values());
+					const accuracy =
+						GasCalculationService.calculateMonthlyAccuracy(
+							days,
+							contract.transportToleranceUpperPercent,
+							contract.transportToleranceLowerPercent,
+						);
+					return {
+						month,
+						assertivenessRate: accuracy.assertivenessRate,
+						averageAccuracyRate: accuracy.averageAccuracyRate,
+						daysWithData: accuracy.daysWithData,
+						daysWithinTolerance: accuracy.daysWithinTolerance,
+					};
+				});
+
+			// === 4. Per-unit accuracy comparison ===
+			const unitDayMaps: Record<
+				string,
+				Map<string, { qdp: number; qdr: number }>
+			> = {};
+
+			for (const plan of plans) {
+				if (!unitDayMaps[plan.unitId])
+					unitDayMaps[plan.unitId] = new Map();
+				const dayMap = unitDayMaps[plan.unitId]!;
+				const dateKey = plan.date.toISOString().split("T")[0] ?? "";
+				const existing = dayMap.get(dateKey) ?? {
+					qdp: 0,
+					qdr: 0,
+				};
+				existing.qdp += plan.qdpValue;
+				dayMap.set(dateKey, existing);
+			}
+
+			for (const rc of realConsumptions) {
+				if (!unitDayMaps[rc.unitId])
+					unitDayMaps[rc.unitId] = new Map();
+				const dayMap = unitDayMaps[rc.unitId]!;
+				const dateKey = rc.date.toISOString().split("T")[0] ?? "";
+				const existing = dayMap.get(dateKey) ?? {
+					qdp: 0,
+					qdr: 0,
+				};
+				existing.qdr += rc.qdrValue;
+				dayMap.set(dateKey, existing);
+			}
+
+			const unitComparison = Object.entries(unitDayMaps)
+				.map(([uid, dayMap]) => {
+					const unit = units.find((u) => u.id === uid);
+					const days = Array.from(dayMap.values());
+					const accuracy =
+						GasCalculationService.calculateMonthlyAccuracy(
+							days,
+							contract.transportToleranceUpperPercent,
+							contract.transportToleranceLowerPercent,
+						);
+					return {
+						unitId: uid,
+						unitCode: unit?.code ?? "",
+						unitName: unit?.name ?? "",
+						assertivenessRate: accuracy.assertivenessRate,
+						averageAccuracyRate: accuracy.averageAccuracyRate,
+						daysWithData: accuracy.daysWithData,
+					};
+				})
+				.sort((a, b) => b.assertivenessRate - a.assertivenessRate);
+
+			// === 5. Consumption by equipment type ===
+			const consumptionByType: Record<string, number> = {};
+
+			for (const entry of entries) {
+				if (entry.qdcAtomizer > 0) {
+					consumptionByType.atomizer =
+						(consumptionByType.atomizer ?? 0) + entry.qdcAtomizer;
+				}
+				if (entry.qdcLines > 0) {
+					consumptionByType.line =
+						(consumptionByType.line ?? 0) + entry.qdcLines;
+				}
+			}
+
+			const equipmentTypeDistribution = Object.entries(
+				consumptionByType,
+			).map(([type, totalConsumption]) => ({
+				type,
+				totalConsumption: Math.round(totalConsumption * 100) / 100,
+			}));
+
+			return {
+				startMonth,
+				endMonth,
+				contract: {
+					id: contract.id,
+					name: contract.name,
+					qdcContracted: contract.qdcContracted,
+					transportToleranceUpperPercent:
+						contract.transportToleranceUpperPercent,
+					transportToleranceLowerPercent:
+						contract.transportToleranceLowerPercent,
+				},
+				contracts: allContracts.map((c) => ({
+					id: c.id,
+					name: c.name,
+					qdcContracted: c.qdcContracted,
+				})),
+				units: units.map((u) => ({
+					id: u.id,
+					code: u.code,
+					name: u.name,
+				})),
+				consumptionByUnit,
+				penaltiesByMonth,
+				assertivenessTrend,
+				unitComparison,
+				equipmentTypeDistribution,
+			};
+		},
+		{
+			auth: true,
+			query: t.Object({
+				startMonth: t.String(),
+				endMonth: t.String(),
+				unitId: t.Optional(t.String()),
+				contractId: t.Optional(t.String()),
+			}),
+		},
+	)
+
+	/**
+	 * GET /gas/reports/dashboard/download
+	 *
+	 * Export the dashboard data as an Excel file.
+	 */
+	.get(
+		"/reports/dashboard/download",
+		async ({ query, status, session }) => {
+			const { startMonth, endMonth, contractId } = query;
+
+			const monthRegex = /^\d{4}-\d{2}$/;
+			if (!monthRegex.test(startMonth) || !monthRegex.test(endMonth)) {
+				return status(400, {
+					error: "Invalid month format. Expected YYYY-MM",
+				});
+			}
+
+			const startParts = startMonth.split("-").map(Number);
+			const endParts = endMonth.split("-").map(Number);
+			const startDate = new Date(
+				startParts[0] ?? 0,
+				(startParts[1] ?? 1) - 1,
+				1,
+			);
+			const endDate = new Date(endParts[0] ?? 0, endParts[1] ?? 1, 0);
+
+			const contract = contractId
+				? await db.gasContract.findFirst({
+						where: {
+							id: contractId,
+							organizationId: session.activeOrganizationId ?? undefined,
+						},
+					})
+				: await db.gasContract.findFirst({
+						where: {
+							organizationId: session.activeOrganizationId ?? undefined,
+							active: true,
+							effectiveFrom: { lte: endDate },
+							OR: [
+								{ effectiveTo: null },
+								{ effectiveTo: { gte: startDate } },
+							],
+						},
+						orderBy: { effectiveFrom: "desc" },
+					});
+
+			if (!contract) {
+				return status(404, { error: "No active contract found" });
+			}
+
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { code: "asc" },
+			});
+
+			const plans = await db.gasDailyPlan.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: { gte: startDate, lte: endDate },
+				},
+				include: { unit: true },
+				orderBy: { date: "asc" },
+			});
+
+			const realConsumptions = await db.gasRealConsumption.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: { gte: startDate, lte: endDate },
+				},
+				include: { unit: true },
+				orderBy: { date: "asc" },
+			});
+
+			const entries = await db.gasDailyEntry.findMany({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+					date: { gte: startDate, lte: endDate },
+				},
+				orderBy: { date: "asc" },
+			});
+
+			// Build workbook
+			const workbook = new ExcelJS.Workbook();
+
+			// Sheet 1: Consumo por Unidade
+			const consumoSheet = workbook.addWorksheet(
+				"Consumo por Unidade",
+			);
+			consumoSheet.columns = [
+				{ header: "Mês", key: "month", width: 15 },
+				{ header: "Unidade", key: "unit", width: 20 },
+				{ header: "QDP (m³)", key: "qdp", width: 15 },
+				{ header: "QDR (m³)", key: "qdr", width: 15 },
+				{ header: "Desvio (%)", key: "deviation", width: 15 },
+			];
+
+			// Group plans and consumptions by month+unit
+			const monthlyByUnit: Record<
+				string,
+				Record<string, { qdp: number; qdr: number }>
+			> = {};
+
+			for (const plan of plans) {
+				const mk = `${plan.date.getFullYear()}-${String(plan.date.getMonth() + 1).padStart(2, "0")}`;
+				if (!monthlyByUnit[mk]) monthlyByUnit[mk] = {};
+				if (!monthlyByUnit[mk][plan.unitId])
+					monthlyByUnit[mk][plan.unitId] = { qdp: 0, qdr: 0 };
+				const e = monthlyByUnit[mk][plan.unitId];
+				if (e) e.qdp += plan.qdpValue;
+			}
+
+			for (const rc of realConsumptions) {
+				const mk = `${rc.date.getFullYear()}-${String(rc.date.getMonth() + 1).padStart(2, "0")}`;
+				if (!monthlyByUnit[mk]) monthlyByUnit[mk] = {};
+				if (!monthlyByUnit[mk][rc.unitId])
+					monthlyByUnit[mk][rc.unitId] = { qdp: 0, qdr: 0 };
+				const e = monthlyByUnit[mk][rc.unitId];
+				if (e) e.qdr += rc.qdrValue;
+			}
+
+			for (const [month, unitData] of Object.entries(
+				monthlyByUnit,
+			).sort(([a], [b]) => a.localeCompare(b))) {
+				for (const [uid, values] of Object.entries(unitData)) {
+					const unit = units.find((u) => u.id === uid);
+					const deviation =
+						values.qdp > 0
+							? ((values.qdr - values.qdp) / values.qdp) * 100
+							: 0;
+					consumoSheet.addRow({
+						month,
+						unit: unit
+							? `${unit.code} - ${unit.name}`
+							: uid,
+						qdp: Math.round(values.qdp * 100) / 100,
+						qdr: Math.round(values.qdr * 100) / 100,
+						deviation: Math.round(deviation * 100) / 100,
+					});
+				}
+			}
+
+			// Sheet 2: Penalidades
+			const penaltyParams = {
+				qdcContracted: contract.qdcContracted,
+				pvemaTolerancePercent:
+					contract.pvemaTolerancePercent ??
+					contract.transportToleranceUpperPercent,
+				pvemeTolerancePercent:
+					contract.pvemeTolerancePercent ??
+					contract.transportToleranceLowerPercent,
+				overdemandTier1MaxPercent:
+					contract.overdemandTier1MaxPercent ?? 110,
+				overdemandTier2MaxPercent:
+					contract.overdemandTier2MaxPercent ?? 115,
+				overdemandTier2Multiplier:
+					contract.overdemandTier2Multiplier ?? 1.0,
+				overdemandTier3Multiplier:
+					contract.overdemandTier3Multiplier ?? 1.5,
+				tusdTariffPerUnit: contract.tusdTariffPerUnit ?? 0,
+				basePricePerUnit: contract.basePricePerUnit ?? 0,
+			};
+
+			const penaltySheet = workbook.addWorksheet("Penalidades");
+			penaltySheet.columns = [
+				{ header: "Mês", key: "month", width: 15 },
+				{ header: "PVEMA (R$)", key: "pvema", width: 15 },
+				{ header: "PVEME (R$)", key: "pveme", width: 15 },
+				{
+					header: "Sobredemanda (R$)",
+					key: "sobredemanda",
+					width: 18,
+				},
+				{ header: "Total (R$)", key: "total", width: 15 },
+			];
+
+			const qdrByMonth: Record<string, number[]> = {};
+			for (const rc of realConsumptions) {
+				const mk = `${rc.date.getFullYear()}-${String(rc.date.getMonth() + 1).padStart(2, "0")}`;
+				if (!qdrByMonth[mk]) qdrByMonth[mk] = [];
+				qdrByMonth[mk].push(rc.qdrValue);
+			}
+
+			for (const [month, dailyValues] of Object.entries(
+				qdrByMonth,
+			).sort(([a], [b]) => a.localeCompare(b))) {
+				const penalties =
+					GasCalculationService.calculateMonthlyPenalties(
+						dailyValues,
+						penaltyParams,
+					);
+				penaltySheet.addRow({
+					month,
+					pvema: penalties.pvema,
+					pveme: penalties.pveme,
+					sobredemanda: penalties.sobredemanda,
+					total: penalties.total,
+				});
+			}
+
+			// Sheet 3: Assertividade
+			const accuracySheet = workbook.addWorksheet("Assertividade");
+			accuracySheet.columns = [
+				{ header: "Mês", key: "month", width: 15 },
+				{
+					header: "Taxa Assertividade (%)",
+					key: "assertiveness",
+					width: 22,
+				},
+				{
+					header: "Taxa Acurácia (%)",
+					key: "accuracy",
+					width: 20,
+				},
+				{
+					header: "Dias com Dados",
+					key: "daysWithData",
+					width: 18,
+				},
+				{
+					header: "Dias Dentro Tolerância",
+					key: "daysWithinTolerance",
+					width: 24,
+				},
+			];
+
+			// Calculate assertiveness per month
+			const monthlyDays: Record<
+				string,
+				Map<string, { qdp: number; qdr: number }>
+			> = {};
+			for (const plan of plans) {
+				const mk = `${plan.date.getFullYear()}-${String(plan.date.getMonth() + 1).padStart(2, "0")}`;
+				const dk = plan.date.toISOString().split("T")[0] ?? "";
+				if (!monthlyDays[mk]) monthlyDays[mk] = new Map();
+				const existing = monthlyDays[mk].get(dk) ?? {
+					qdp: 0,
+					qdr: 0,
+				};
+				existing.qdp += plan.qdpValue;
+				monthlyDays[mk].set(dk, existing);
+			}
+			for (const rc of realConsumptions) {
+				const mk = `${rc.date.getFullYear()}-${String(rc.date.getMonth() + 1).padStart(2, "0")}`;
+				const dk = rc.date.toISOString().split("T")[0] ?? "";
+				if (!monthlyDays[mk]) monthlyDays[mk] = new Map();
+				const existing = monthlyDays[mk].get(dk) ?? {
+					qdp: 0,
+					qdr: 0,
+				};
+				existing.qdr += rc.qdrValue;
+				monthlyDays[mk].set(dk, existing);
+			}
+
+			for (const [month, dayMap] of Object.entries(
+				monthlyDays,
+			).sort(([a], [b]) => a.localeCompare(b))) {
+				const days = Array.from(dayMap.values());
+				const accuracy =
+					GasCalculationService.calculateMonthlyAccuracy(
+						days,
+						contract.transportToleranceUpperPercent,
+						contract.transportToleranceLowerPercent,
+					);
+				accuracySheet.addRow({
+					month,
+					assertiveness: accuracy.assertivenessRate,
+					accuracy: accuracy.averageAccuracyRate,
+					daysWithData: accuracy.daysWithData,
+					daysWithinTolerance: accuracy.daysWithinTolerance,
+				});
+			}
+
+			// Sheet 4: Consumo por Tipo
+			const typeSheet = workbook.addWorksheet(
+				"Consumo por Tipo",
+			);
+			typeSheet.columns = [
+				{
+					header: "Tipo de Equipamento",
+					key: "type",
+					width: 25,
+				},
+				{
+					header: "Consumo Total (m³)",
+					key: "consumption",
+					width: 20,
+				},
+			];
+
+			const typeLabels: Record<string, string> = {
+				atomizer: "Atomizador",
+				line: "Linha de Produção",
+				dryer: "Secador",
+			};
+
+			const consumptionByType: Record<string, number> = {};
+			for (const entry of entries) {
+				if (entry.qdcAtomizer > 0) {
+					consumptionByType.atomizer =
+						(consumptionByType.atomizer ?? 0) +
+						entry.qdcAtomizer;
+				}
+				if (entry.qdcLines > 0) {
+					consumptionByType.line =
+						(consumptionByType.line ?? 0) + entry.qdcLines;
+				}
+			}
+
+			for (const [type, totalConsumption] of Object.entries(
+				consumptionByType,
+			)) {
+				typeSheet.addRow({
+					type: typeLabels[type] ?? type,
+					consumption:
+						Math.round(totalConsumption * 100) / 100,
+				});
+			}
+
+			// Style headers
+			for (const sheet of [
+				consumoSheet,
+				penaltySheet,
+				accuracySheet,
+				typeSheet,
+			]) {
+				const headerRow = sheet.getRow(1);
+				headerRow.font = { bold: true };
+				headerRow.fill = {
+					type: "pattern",
+					pattern: "solid",
+					fgColor: { argb: "FFE2E8F0" },
+				};
+			}
+
+			// Generate buffer and return
+			const buffer = await workbook.xlsx.writeBuffer();
+			const filename = `Dashboard_${startMonth}_${endMonth}.xlsx`;
+
+			return new Response(buffer as ArrayBuffer, {
+				headers: {
+					"Content-Type":
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					"Content-Disposition": `attachment; filename="${filename}"`,
+				},
+			});
+		},
+		{
+			auth: true,
+			query: t.Object({
+				startMonth: t.String(),
+				endMonth: t.String(),
+				contractId: t.Optional(t.String()),
+			}),
+		},
 	);

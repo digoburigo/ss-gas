@@ -17,6 +17,9 @@ after each iteration and it's included in prompts for context.
 - **Read-only feature pattern**: To make a feature read-only, remove the provider/context (dialog state), form, drawer, row actions, and checkbox columns. Add `useNavigate()` with `onClick` on `<TableRow>` for drill-through navigation.
 - **Elysia Treaty nested path params**: For deeply nested routes like `/gas/daily-plans/:planId/submit`, use `api.gas["daily-plans"]({ planId }).submit.post({})` — bracket notation for hyphenated path segments, function call for params.
 - **Dashboard drawer pattern**: Reuse existing form components (e.g., `DailyEntryForm`) inside a `Sheet` drawer opened from table row actions. Provider holds `drawerOpen` state + `selectedUnitId`.
+- **Many-to-many with join model**: For GasUnit ↔ GasContract, use `GasUnitContract` join model with `@@unique([unitId, contractId])`. Keep legacy FK (`contractId`) on GasUnit for backward compat. Query join table with `include: { unitContracts: { include: { contract: true } } }`.
+- **Contract selector pattern**: Use `ContractSelector` component (`components/gas/contract-selector.tsx`) — auto-hides when only 1 contract exists, shows dropdown when multiple. Pass `contracts` array from API response.
+- **Server multi-contract pattern**: Add optional `contractId` query param to endpoints. When provided, fetch that specific contract; otherwise, fall back to org-wide active contract query. Return `contracts` array alongside `contract` for frontend selector.
 
 ---
 
@@ -237,5 +240,78 @@ after each iteration and it's included in prompts for context.
   - Equipment links to units via `unitId` (not to contracts directly); the unit→contract link provides indirect contract association
   - `@tanstack/react-form` zod validators: form default values must match zod types exactly — `z.string().optional()` doesn't work when default is `""` (a string, not undefined); use `z.string()` instead
   - The `can-delete` endpoint pattern (check-before-delete) works well for equipment: count `GasLineStatus` records where `equipmentId` matches
+---
+
+## 2026-02-25 - US-012
+- Implemented multiple contracts per unit support (many-to-many relationship)
+- **Schema changes:**
+  - Added `GasUnitContract` join model with `unitId`, `contractId`, `isPrimary`, and `@@unique([unitId, contractId])`
+  - Added `unitContracts GasUnitContract[]` reverse relations on both `GasUnit` and `GasContract`
+  - Kept existing `GasUnit.contractId` FK for backward compatibility (legacy single-contract)
+- **Server changes:**
+  - Updated `GET /gas/consolidated` to accept optional `contractId` query param and return `contracts` array for selector
+  - Updated `GET /gas/monthly-scorecard` to accept optional `contractId` query param and return `contracts` array
+  - Updated `GET /gas/reports/petrobras` and `GET /gas/reports/petrobras/download` to accept optional `contractId`
+  - All endpoints fall back to org-wide active contract when `contractId` not provided (backward compat)
+- **Frontend changes:**
+  - Created reusable `ContractSelector` component (`components/gas/contract-selector.tsx`) — auto-hides when ≤1 contract
+  - Updated consumer unit form to support multi-contract selection with primary contract indicator
+  - Updated consumer unit mutate drawer to sync `GasUnitContract` join table (create/delete/update isPrimary)
+  - Updated contracts table to show units from both legacy FK and join table, with primary badge
+  - Added contract selector to gas dashboard, reports page, and monthly scorecard (only visible when >1 contract)
+  - Updated scheduling dashboard table to include `unitContracts` relation and show multiple contract names per unit
+  - Updated `UnitSchedulingStatus` interface with `contractNames: string[]`
+  - Removed stale `@ts-expect-error` in scheduling dashboard table
+- Files changed:
+  - `packages/zen-v3/schema.zmodel` — added GasUnitContract model and relations
+  - `packages/zen-v3/src/zenstack/{input,models,schema}.ts` — regenerated
+  - `apps/server/src/modules/gas/gas.controller.ts` — contractId param on 4 endpoints, contracts array in responses
+  - `apps/web/src/components/gas/contract-selector.tsx` — new shared component
+  - `apps/web/src/features/consumer-units/components/consumer-unit-form.tsx` — multi-contract selection UI
+  - `apps/web/src/features/consumer-units/components/consumer-units-mutate-drawer.tsx` — GasUnitContract sync logic
+  - `apps/web/src/features/contracts/components/contracts-columns.tsx` — merged unit display from join table
+  - `apps/web/src/features/contracts/components/contracts-table.tsx` — added unitContracts include
+  - `apps/web/src/features/gas/index.tsx` — contract selector + contractId in query
+  - `apps/web/src/features/scheduling-accuracy/components/monthly-scorecard.tsx` — contract selector
+  - `apps/web/src/features/scheduling-dashboard/components/scheduling-dashboard-columns.tsx` — multi-contract display
+  - `apps/web/src/features/scheduling-dashboard/components/scheduling-dashboard-table.tsx` — unitContracts include, contractNames
+  - `apps/web/src/routes/_authenticated/gas/reports.tsx` — contract selector + contractId in queries
+- **Learnings:**
+  - ZenStack's `useFindMany` doesn't support `enabled` option like TanStack Query — use an empty-string-ID where clause as a workaround
+  - Keep legacy FK (`contractId`) on GasUnit for backward compat — the join table adds multi-contract on top
+  - `ContractSelector` component pattern: auto-hide when ≤1 contract ensures no visual change for single-contract orgs
+  - The `contracts` array in API responses enables the frontend to populate the selector without a separate API call
+  - Type-safe access to included relations from ZenStack requires casting to `Record<string, unknown>` when the base model type doesn't include the relation
+  - Pre-existing ESLint config broken (`@repo/eslint-config` not found), pre-existing TS errors in packages/ui (editor) and seed files — unrelated
+---
+
+## 2026-02-25 - US-009
+- Implemented consolidated reports dashboard with 5 charts on `/gas/reports` page
+- **Server-side changes:**
+  - Added `GET /gas/reports/dashboard` endpoint — accepts `startMonth`, `endMonth`, optional `unitId` and `contractId` query params
+    - Returns: `consumptionByUnit` (monthly QDP vs QDR per unit), `penaltiesByMonth` (PVEMA/PVEME/Sobredemanda per month), `assertivenessTrend` (monthly assertiveness/accuracy rates), `unitComparison` (per-unit accuracy ranking), `equipmentTypeDistribution` (consumption by equipment type)
+    - Reuses `GasCalculationService.calculateMonthlyPenalties()` and `.calculateMonthlyAccuracy()` from US-007
+  - Added `GET /gas/reports/dashboard/download` endpoint — generates Excel (XLSX) with 4 sheets: Consumo por Unidade, Penalidades, Assertividade, Consumo por Tipo
+- **Frontend changes:**
+  - Restructured `/gas/reports` page into Tabs: "Dashboard" (new, default) and "Relatório Petrobras" (existing)
+  - Dashboard tab contains:
+    1. **Consumo Mensal Planejado vs Realizado por Unidade** — grouped bar chart (QDP purple, QDR green) per unit per month
+    2. **Penalidades Acumuladas** — line chart showing PVEMA, PVEME, Sobredemanda, and Total over months
+    3. **Taxa de Assertividade Histórica** — line chart showing assertiveness rate and accuracy rate trend
+    4. **Comparativo entre Unidades** — horizontal bar chart ranking units by assertiveness rate (green/yellow/red color-coded)
+    5. **Consumo por Tipo de Equipamento** — donut chart (Atomizador, Linha de Produção)
+  - Filters: Date range preset (Mensal/Trimestral/Anual), Unit filter, Contract selector
+  - Export: "Exportar Excel" button downloads the dashboard data as XLSX
+  - All existing Petrobras report functionality preserved in second tab
+- Files changed:
+  - `apps/server/src/modules/gas/gas.controller.ts` — added dashboard and dashboard/download endpoints (~450 lines)
+  - `apps/web/src/routes/_authenticated/gas/reports.tsx` — restructured with Tabs, added DashboardTab component with 5 charts
+- **Learnings:**
+  - Using `Map` instead of `Record` with `Object.defineProperty` for date-keyed aggregation is cleaner and avoids TS strictness issues
+  - ExcelJS `workbook.xlsx.writeBuffer()` returns `ArrayBuffer` that can be wrapped in `new Response()` for Elysia file downloads
+  - Recharts `BarChart` with `layout="vertical"` creates horizontal bar charts; requires swapping XAxis type="number" and YAxis type="category"
+  - `Cell` component inside `<Bar>` enables per-bar conditional coloring — used for green/yellow/red thresholds on the unit comparison chart
+  - Pre-existing `ChartTooltipContent` TS errors continue (known recharts types issue) — not introduced by this change
+  - Tabs pattern from `@acme/ui/tabs` works well for organizing related report views under one route
 ---
 
