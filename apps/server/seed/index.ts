@@ -3,6 +3,7 @@ import { authDb, db } from "@acme/zen-v3";
 import { auth } from "../src/plugins/better-auth";
 import { clearDatabase } from "./clear";
 import { seedCore } from "./core";
+import { seedGasAudit } from "./gas-audit";
 import { seedGasContracts } from "./gas-contracts";
 import { seedGasDailyData } from "./gas-daily";
 import { seedGasUnits } from "./gas-units";
@@ -17,6 +18,8 @@ async function main() {
 	await seedGasContracts(ctx.userDb, ctx);
 
 	await seedGasDailyData(db, ctx.userDb, refs);
+
+	await seedGasAudit(db, ctx);
 
 	console.log("🎉 Database seeded successfully!");
 

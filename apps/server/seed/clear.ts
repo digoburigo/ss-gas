@@ -3,6 +3,9 @@ import type { db as Db } from "@acme/zen-v3";
 export async function clearDatabase(db: typeof Db): Promise<void> {
 	console.log("🔥 Clearing database...");
 
+	// Audit log (no FK deps)
+	await db.gasAuditLog.deleteMany();
+
 	// Gas child tables first (FK order)
 	await db.gasEquipmentConstant.deleteMany();
 	await db.gasLineStatus.deleteMany();

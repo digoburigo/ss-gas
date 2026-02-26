@@ -315,3 +315,86 @@ after each iteration and it's included in prompts for context.
   - Tabs pattern from `@acme/ui/tabs` works well for organizing related report views under one route
 ---
 
+## 2026-02-25 - US-011
+- Verified that all acceptance criteria were already fully implemented in previous iterations
+- **Existing implementation covers:**
+  - Server: `contract-extraction.controller.ts` — POST `/contract-extraction/extract` endpoint using Anthropic Claude API with detailed SYSTEM_PROMPT covering all CUSD penalty formula extraction (CMC, PVEMA, PVEME, Sobredemanda tiers, TUSD tariffs)
+  - Server: `ExtractedContractSchema` includes all penalty fields with confidence scores and source references
+  - Frontend: `ContractUploadDrawer` — side-by-side UI (PDF preview via react-pdf on left, extraction form on right)
+  - Frontend: `ContractExtractionForm` — editable form pre-filled with extracted values, `ConfidenceIndicator` component showing high/medium/low confidence per field (green/yellow color-coded with percentage and tooltip)
+  - Handles multiple contract formats (CUSD and non-CUSD, returns null with confidence 0 for non-applicable fields)
+  - Admin review workflow: extracted values are editable before saving, low-confidence fields highlighted in yellow
+- Files involved (no changes needed):
+  - `apps/server/src/modules/contract-extraction/contract-extraction.controller.ts`
+  - `apps/web/src/features/contracts/components/contract-upload-drawer.tsx`
+  - `apps/web/src/features/contracts/components/contract-extraction-form.tsx`
+- **Learnings:**
+  - The contract extraction pipeline was built comprehensively from the start — CUSD penalty fields were included in the initial implementation
+  - `ConfidenceIndicator` pattern: small colored badge with percentage + tooltip showing source text, using LOW_CONFIDENCE_THRESHOLD (0.7) to distinguish high/low confidence
+  - Anthropic's document type content block handles PDFs natively — no need for separate PDF-to-text conversion
+  - Pre-existing TS errors in seed files and unrelated components do not affect the contract extraction feature
+---
+
+## 2026-02-25 - US-013
+- Implemented comprehensive audit logging covering login/logout events, CRUD operations, and all Gas models
+- **Schema changes:**
+  - Added `login` and `logout` to `AuditAction` enum
+  - Added `metadata` field to `GasAuditLog` (JSON for IP, user agent, etc.)
+  - Changed `@@allow('create', auth() != null)` to `@@allow('create', true)` so login events can be created without auth context
+- **Server-side changes:**
+  - Created `AuditService` (`services/audit.service.ts`) — fire-and-forget audit logging with `log()`, `logCreate()`, `logUpdate()`, `logDelete()`, `logLogin()`, `logLogout()` methods
+  - Field-level change tracking via `computeChanges()` — compares old/new objects and returns `Record<field, {old, new}>`
+  - Added `databaseHooks` option to `initAuth()` in `packages/auth/src/index.ts` — passes through to `betterAuth()` config
+  - Login events logged via better-auth `databaseHooks.session.create.after` — fires when a new session is created
+  - Logout events logged via Elysia `onBeforeHandle` intercepting POST to `/sign-out` path — captures session before it's destroyed
+  - Added audit logging to gas controller: entry create/update, equipment constant update, plan submit, plan approve/reject
+  - Added ZenStack CRUD audit interceptor via `onAfterHandle` in zenstack controller — automatically logs create/update/delete for all tracked Gas models (contracts, units, plans, consumption, equipment, templates, custom fields, alerts)
+  - Added `GET /gas/audit-log/export` endpoint for Excel (XLSX) export with filters
+- **Frontend changes:**
+  - Added "session" entity type with Monitor icon for login/logout events
+  - Added "login" and "logout" action types with LogIn/LogOut icons and emerald/amber color schemes
+  - Updated action icon mapping from ternary to object-based lookup
+  - Login/logout display in table values column, details dialog, and summary cards
+  - Added 6th summary card "Logins" (emerald) — grid changed from 5-col to 6-col
+  - Added Excel (XLSX) export format option — calls server endpoint with current filters
+  - Export dialog updated with format descriptions and async handling for XLSX
+- Files changed:
+  - `packages/zen-v3/schema.zmodel` — AuditAction enum + GasAuditLog metadata field
+  - `packages/zen-v3/src/zenstack/{input,models,schema}.ts` — regenerated
+  - `packages/auth/src/index.ts` — databaseHooks passthrough option
+  - `apps/server/src/plugins/better-auth.ts` — login/logout audit hooks
+  - `apps/server/src/services/audit.service.ts` — new audit logging service
+  - `apps/server/src/services/index.ts` — export AuditService
+  - `apps/server/src/modules/gas/gas.controller.ts` — audit logging on 4 endpoints + Excel export endpoint
+  - `apps/server/src/modules/zenstack/index.ts` — ZenStack CRUD audit interceptor
+  - `apps/web/src/features/audit-log/data/data.tsx` — session entity, login/logout actions, color classes, Excel format
+  - `apps/web/src/features/audit-log/components/audit-log-table.tsx` — login/logout icons and display
+  - `apps/web/src/features/audit-log/components/audit-log-summary-cards.tsx` — loginCount card
+  - `apps/web/src/features/audit-log/components/details-dialog.tsx` — login/logout sections
+  - `apps/web/src/features/audit-log/components/export-dialog.tsx` — XLSX export via server API
+  - `apps/web/src/features/audit-log/index.tsx` — loginCount stat, action type cast update
+- **Learnings:**
+  - Better-auth `databaseHooks.session.create.after` fires after session creation — ideal for login audit logging
+  - For logout logging, intercept at the Elysia level with `onBeforeHandle` on the sign-out path since there's no `session.delete` hook
+  - `GasDailyPlan` doesn't have `organizationId` — need to traverse via unit relation for audit context
+  - ZenStack v3's `RPCApiHandler` doesn't have built-in mutation hooks — Elysia `onAfterHandle` on the `/model` group intercepts mutations by parsing URL path (`/api/model/{modelName}/{operation}`)
+  - Fire-and-forget pattern for audit logging (catch errors, log but don't block) prevents audit failures from breaking business operations
+  - `@@allow('create', true)` is needed on GasAuditLog so that login events (which happen before auth context is established) can be written
+---
+
+## 2026-02-25 - US-014
+- Created idempotent seed script generating 58 realistic audit log entries across all entity types and action types
+- Seed data covers: login/logout (10), contract changes (8), unit changes (6), equipment/parameter changes (8), scheduling/plan changes (10), consumption entries (8), alert changes (4), template changes (2), custom field changes (2)
+- Script is idempotent: deletes existing audit logs for the org before re-creating
+- Added `gasAuditLog.deleteMany()` to `clearDatabase` in `clear.ts`
+- Files changed:
+  - `apps/server/seed/gas-audit.ts` — new seed script with `seedGasAudit()` function
+  - `apps/server/seed/index.ts` — imported and wired `seedGasAudit` after daily data seeding
+  - `apps/server/seed/clear.ts` — added `gasAuditLog` deletion to clear function
+- **Learnings:**
+  - Seed files use `db` (plain Prisma) not `userDb` (auth-enhanced) since `GasAuditLog` has `@@allow('create', true)` — no auth context needed
+  - `createMany` is ideal for bulk audit log seeding — much faster than individual `create` calls
+  - TS strict array indexing (`arr[idx]` returns `T | undefined`) requires fallback values or `as T` assertion
+  - Existing seed infrastructure (`clearDatabase`, `CoreContext`, `utils.ts`) provides good patterns to follow
+---
+
