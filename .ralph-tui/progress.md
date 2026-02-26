@@ -127,3 +127,24 @@ after each iteration and it's included in prompts for context.
   - Contract model already has all needed fields (`pvemaTolerancePercent`, `pvemeTolerancePercent`, `overdemandTier*`, `tusdTariffPerUnit`, `basePricePerUnit`)
 ---
 
+## 2026-02-25 - US-005
+- Implemented QDP vs QDR comparison chart on the `/gas/reports` page
+- No new server endpoint needed — reused existing `/gas/consolidated` endpoint which already returns per-unit QDP/QDR daily data and contract tolerance percentages
+- Added a dedicated "Planejado vs Realizado" card with:
+  - Month selector (reuses `generateMonthOptions()` pattern from existing Petrobras report)
+  - Unit filter (all units aggregated or single unit) populated from consolidated endpoint's `units` array
+  - ComposedChart with grouped bars for QDP (purple) and QDR (green/red)
+  - Tolerance band shaded region using `ReferenceArea` from recharts
+  - QDR bars colored red when exceeding tolerance (±10%/−20% from contract), green when within
+  - Custom tooltip component showing exact QDP, QDR values, deviation %, tolerance info, and "Fora da tolerância" badge
+  - Legend explanation for tolerance highlighting
+- Files changed:
+  - `apps/web/src/routes/_authenticated/gas/reports.tsx` — added comparison chart section, ComparisonTooltip component, consolidated data query, unit filter state, tolerance computation
+- **Learnings:**
+  - The `/gas/consolidated` endpoint already returns per-unit breakdown in `dailySummaries[].units[]` with `qdp` and `qdr` fields — no need for a new endpoint
+  - CUSD tolerance bands (±10% / −20%) map to the contract's `transportToleranceUpperPercent` / `transportToleranceLowerPercent` fields already returned by consolidated
+  - Recharts `Cell` component allows per-bar coloring — use it inside `<Bar>` to conditionally color bars based on data (e.g., tolerance exceeded)
+  - `ReferenceArea` with `y1`/`y2` creates a horizontal tolerance band; use `Math.min`/`Math.max` across all data points to compute band boundaries
+  - Pre-existing typecheck errors in `ChartTooltipContent` are a known issue with recharts types — not caused by new code
+---
+

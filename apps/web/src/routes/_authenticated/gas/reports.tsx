@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Download, FileSpreadsheet, Loader2 } from "lucide-react";
+import { BarChart3, Download, FileSpreadsheet, Loader2 } from "lucide-react";
 import {
   Bar,
   CartesianGrid,
@@ -10,11 +10,13 @@ import {
   Line,
   Pie,
   PieChart,
+  ReferenceArea,
   ReferenceLine,
   XAxis,
   YAxis,
 } from "recharts";
 
+import type { ChartConfig } from "@acme/ui/chart";
 import { Badge } from "@acme/ui/badge";
 import {
   Breadcrumb,
@@ -25,8 +27,13 @@ import {
   BreadcrumbSeparator,
 } from "@acme/ui/breadcrumb";
 import { Button } from "@acme/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@acme/ui/card";
-import type { ChartConfig } from "@acme/ui/chart";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@acme/ui/card";
 import {
   ChartContainer,
   ChartLegend,
@@ -161,10 +168,120 @@ const statusChartConfig = {
   },
 } satisfies ChartConfig;
 
+/**
+ * Chart configuration for QDP vs QDR comparison
+ */
+const comparisonChartConfig = {
+  qdp: {
+    label: "QDP (Programado)",
+    color: "hsl(271, 81%, 56%)",
+  },
+  qdr: {
+    label: "QDR (Realizado)",
+    color: "hsl(142, 71%, 45%)",
+  },
+} satisfies ChartConfig;
+
+const UNIT_ALL = "__all__";
+
+function ComparisonTooltip({
+  active,
+  payload,
+  label,
+  toleranceUpper,
+  toleranceLower,
+}: {
+  active?: boolean;
+  payload?: Array<{
+    name: string;
+    value: number;
+    color: string;
+    dataKey: string;
+    payload: {
+      qdp: number;
+      qdr: number;
+      fullDate: string;
+      deviationPercent: number;
+      exceedsTolerance: boolean;
+      upperLimit: number;
+      lowerLimit: number;
+    };
+  }>;
+  label?: string;
+  toleranceUpper: number;
+  toleranceLower: number;
+}) {
+  if (!active || !payload || payload.length === 0) return null;
+
+  const entry = payload[0]?.payload;
+  if (!entry) return null;
+
+  return (
+    <div className="bg-background rounded-lg border px-3 py-2 shadow-md">
+      <p className="mb-1 text-sm font-medium">{entry.fullDate}</p>
+      <div className="space-y-1 text-xs">
+        <div className="flex items-center justify-between gap-4">
+          <span style={{ color: "hsl(271, 81%, 56%)" }}>QDP (Programado)</span>
+          <span className="font-medium">
+            {formatValue(entry.qdp)} m³
+          </span>
+        </div>
+        <div className="flex items-center justify-between gap-4">
+          <span
+            style={{
+              color: entry.exceedsTolerance
+                ? "hsl(0, 84%, 60%)"
+                : "hsl(142, 71%, 45%)",
+            }}
+          >
+            QDR (Realizado)
+          </span>
+          <span className="font-medium">
+            {formatValue(entry.qdr)} m³
+          </span>
+        </div>
+        {entry.qdp > 0 && (
+          <>
+            <hr className="border-border my-1" />
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-muted-foreground">Desvio</span>
+              <span
+                className={`font-medium ${
+                  entry.exceedsTolerance
+                    ? "text-red-600 dark:text-red-400"
+                    : "text-green-600 dark:text-green-400"
+                }`}
+              >
+                {entry.deviationPercent >= 0 ? "+" : ""}
+                {entry.deviationPercent.toFixed(1)}%
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-muted-foreground">Tolerância</span>
+              <span className="text-muted-foreground">
+                +{toleranceUpper}% / −{toleranceLower}%
+              </span>
+            </div>
+            {entry.exceedsTolerance && (
+              <div className="mt-1 rounded bg-red-100 px-1.5 py-0.5 text-center text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                Fora da tolerância
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function GasReportsPage() {
   const monthOptions = useMemo(() => generateMonthOptions(), []);
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [isDownloading, setIsDownloading] = useState(false);
+
+  // State for the QDP vs QDR comparison chart
+  const [comparisonMonth, setComparisonMonth] = useState(getCurrentMonth());
+  const [selectedUnit, setSelectedUnit] = useState(UNIT_ALL);
 
   // Fetch preview data
   const { data, isLoading, error } = useQuery({
@@ -182,6 +299,85 @@ function GasReportsPage() {
       return response.data;
     },
   });
+
+  // Fetch consolidated data for QDP vs QDR comparison chart
+  const {
+    data: consolidatedData,
+    isLoading: isLoadingComparison,
+  } = useQuery({
+    queryKey: ["gas", "consolidated", comparisonMonth],
+    queryFn: async () => {
+      const response = await api.gas.consolidated.get({
+        query: { month: comparisonMonth },
+      });
+      if (response.error) {
+        const errorObj = response.error as { error?: string };
+        throw new Error(
+          errorObj.error ?? "Falha ao carregar dados consolidados",
+        );
+      }
+      return response.data;
+    },
+  });
+
+  // Unit options for the comparison chart filter
+  const unitOptions = useMemo(() => {
+    if (!consolidatedData?.units) return [];
+    return consolidatedData.units;
+  }, [consolidatedData]);
+
+  // Compute tolerance band values from contract
+  const toleranceBands = useMemo(() => {
+    if (!consolidatedData?.contract) return null;
+    const { transportToleranceUpperPercent, transportToleranceLowerPercent } =
+      consolidatedData.contract;
+    return {
+      upperPercent: transportToleranceUpperPercent,
+      lowerPercent: transportToleranceLowerPercent,
+    };
+  }, [consolidatedData]);
+
+  // Transform consolidated data for QDP vs QDR comparison chart
+  const comparisonChartData = useMemo(() => {
+    if (!consolidatedData?.dailySummaries) return [];
+
+    return consolidatedData.dailySummaries.map((day) => {
+      let qdp: number;
+      let qdr: number;
+
+      if (selectedUnit === UNIT_ALL) {
+        qdp = day.qdpTotal;
+        qdr = day.qdrTotal;
+      } else {
+        const unitData = day.units.find((u) => u.unitId === selectedUnit);
+        qdp = unitData?.qdp ?? 0;
+        qdr = unitData?.qdr ?? 0;
+      }
+
+      // Calculate tolerance limits based on QDP
+      const upperLimit = qdp > 0 ? qdp * (1 + (toleranceBands?.upperPercent ?? 10) / 100) : 0;
+      const lowerLimit = qdp > 0 ? qdp * (1 - (toleranceBands?.lowerPercent ?? 20) / 100) : 0;
+      const exceedsTolerance = qdp > 0 && (qdr > upperLimit || qdr < lowerLimit);
+
+      return {
+        date: new Date(day.date).toLocaleDateString("pt-BR", {
+          day: "2-digit",
+          month: "2-digit",
+        }),
+        fullDate: new Date(day.date).toLocaleDateString("pt-BR", {
+          weekday: "short",
+          day: "2-digit",
+          month: "2-digit",
+        }),
+        qdp,
+        qdr,
+        upperLimit,
+        lowerLimit,
+        exceedsTolerance,
+        deviationPercent: qdp > 0 ? ((qdr - qdp) / qdp) * 100 : 0,
+      };
+    });
+  }, [consolidatedData, selectedUnit, toleranceBands]);
 
   // Transform data for charts
   const chartData = useMemo(() => {
@@ -284,6 +480,187 @@ function GasReportsPage() {
             </p>
           </div>
         </div>
+
+        {/* QDP vs QDR Comparison Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Planejado vs Realizado
+            </CardTitle>
+            <CardDescription>
+              Comparativo diário de QDP (Programado) e QDR (Realizado) com
+              faixas de tolerância CUSD
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* Filters */}
+            <div className="mb-6 flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground text-sm">Mês:</span>
+                <Select
+                  value={comparisonMonth}
+                  onValueChange={setComparisonMonth}
+                >
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Selecione o mês" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {monthOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground text-sm">Unidade:</span>
+                <Select value={selectedUnit} onValueChange={setSelectedUnit}>
+                  <SelectTrigger className="w-52">
+                    <SelectValue placeholder="Selecione a unidade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={UNIT_ALL}>
+                      Todas as Unidades
+                    </SelectItem>
+                    {unitOptions.map((unit) => (
+                      <SelectItem key={unit.id} value={unit.id}>
+                        {unit.code} - {unit.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {toleranceBands && (
+                <div className="text-muted-foreground ml-auto text-xs">
+                  Tolerância: +{toleranceBands.upperPercent}% / −
+                  {toleranceBands.lowerPercent}%
+                </div>
+              )}
+            </div>
+
+            {/* Chart */}
+            {isLoadingComparison ? (
+              <div className="flex h-[400px] items-center justify-center">
+                <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
+              </div>
+            ) : comparisonChartData.length > 0 ? (
+              <ChartContainer
+                config={comparisonChartConfig}
+                className="h-[400px] w-full"
+              >
+                <ComposedChart
+                  data={comparisonChartData}
+                  margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    minTickGap={32}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) =>
+                      `${(value / 1000).toLocaleString("pt-BR")}k`
+                    }
+                  />
+                  {/* Tolerance band as shaded region (green = within) */}
+                  {comparisonChartData.some((d) => d.qdp > 0) && (
+                    <ReferenceArea
+                      y1={Math.min(
+                        ...comparisonChartData
+                          .filter((d) => d.lowerLimit > 0)
+                          .map((d) => d.lowerLimit),
+                      )}
+                      y2={Math.max(
+                        ...comparisonChartData
+                          .filter((d) => d.upperLimit > 0)
+                          .map((d) => d.upperLimit),
+                      )}
+                      fill="hsl(142, 71%, 45%)"
+                      fillOpacity={0.08}
+                      stroke="hsl(142, 71%, 45%)"
+                      strokeOpacity={0.2}
+                      strokeDasharray="4 4"
+                    />
+                  )}
+                  <ChartTooltip
+                    cursor={{ strokeDasharray: "3 3" }}
+                    content={
+                      <ComparisonTooltip
+                        toleranceUpper={toleranceBands?.upperPercent ?? 10}
+                        toleranceLower={toleranceBands?.lowerPercent ?? 20}
+                      />
+                    }
+                  />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  {/* QDP bars */}
+                  <Bar
+                    dataKey="qdp"
+                    fill="var(--color-qdp)"
+                    opacity={0.7}
+                    radius={[4, 4, 0, 0]}
+                  />
+                  {/* QDR bars — colored by tolerance */}
+                  <Bar dataKey="qdr" radius={[4, 4, 0, 0]}>
+                    {comparisonChartData.map((entry) => (
+                      <Cell
+                        key={`qdr-${entry.date}`}
+                        fill={
+                          entry.exceedsTolerance
+                            ? "hsl(0, 84%, 60%)"
+                            : "hsl(142, 71%, 45%)"
+                        }
+                        opacity={entry.exceedsTolerance ? 0.9 : 0.8}
+                      />
+                    ))}
+                  </Bar>
+                </ComposedChart>
+              </ChartContainer>
+            ) : (
+              <div className="flex h-[400px] items-center justify-center">
+                <p className="text-muted-foreground text-sm">
+                  Nenhum dado disponível para o período selecionado.
+                </p>
+              </div>
+            )}
+
+            {/* Legend explanation */}
+            {comparisonChartData.some((d) => d.exceedsTolerance) && (
+              <div className="mt-4 flex items-center gap-4 text-xs">
+                <div className="flex items-center gap-1.5">
+                  <div className="h-3 w-3 rounded-sm bg-red-500 opacity-90" />
+                  <span className="text-muted-foreground">
+                    QDR fora da tolerância
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className="h-3 w-3 rounded-sm opacity-80"
+                    style={{ backgroundColor: "hsl(142, 71%, 45%)" }}
+                  />
+                  <span className="text-muted-foreground">
+                    QDR dentro da tolerância
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div className="h-3 w-6 rounded-sm border border-dashed border-green-500/40 bg-green-500/10" />
+                  <span className="text-muted-foreground">
+                    Faixa de tolerância
+                  </span>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Controls */}
         <Card>
@@ -510,7 +887,7 @@ function GasReportsPage() {
                       return (
                         <div
                           key={item.name}
-                          className="flex items-center justify-between rounded-md p-2 hover:bg-muted/50"
+                          className="hover:bg-muted/50 flex items-center justify-between rounded-md p-2"
                         >
                           <div className="flex items-center gap-2">
                             <div
