@@ -541,6 +541,11 @@ export function DailyEntryForm({
             ? values.qdsManualValue
             : qdsCalculated;
 
+          // QDP (Programação Diária) = auto-derived from equipment statuses
+          const qdpValue = values.qdsManualOverride
+            ? values.qdsManualValue
+            : qdsCalculated;
+
           return (
             <Card className="border-primary/20 bg-primary/5">
               <CardHeader>
@@ -550,7 +555,7 @@ export function DailyEntryForm({
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <div className="text-center">
                     <p className="text-muted-foreground text-sm">
                       Atomizador(es)
@@ -588,6 +593,17 @@ export function DailyEntryForm({
                       {formatNumber(qdsFinal)}
                     </p>
                     <p className="text-muted-foreground text-xs">m³/dia</p>
+                  </div>
+                  <div className="rounded-lg border-2 border-emerald-500/50 bg-emerald-500/10 p-3 text-center">
+                    <p className="text-muted-foreground text-sm">
+                      QDP (Programação)
+                    </p>
+                    <p className="text-3xl font-bold text-emerald-600">
+                      {formatNumber(qdpValue)}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      m³/dia — derivado automaticamente
+                    </p>
                   </div>
                 </div>
 

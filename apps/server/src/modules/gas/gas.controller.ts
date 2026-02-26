@@ -414,7 +414,65 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				lineStatusRecords.push(lineStatusRecord);
 			}
 
-			// Return entry with line statuses
+			// Auto-derive QDP from equipment statuses and persist in GasDailyPlan
+			const qdpEquipment = equipment.map((eq) => {
+				const constant = eq.constants[0];
+				const eqType = eq.type as EquipmentType;
+				let eqStatus: "on" | "off" = "off";
+				let plannedHours = 0;
+
+				if (eqType === "atomizer") {
+					// Primary atomizer
+					if (eq.id === primaryAtomizer?.id) {
+						eqStatus = (body.atomizerScheduled ?? true) ? "on" : "off";
+						plannedHours = body.atomizerHours ?? 0;
+					}
+					// Secondary atomizer
+					else if (eq.id === secondaryAtomizer?.id) {
+						eqStatus = (body.secondaryAtomizerScheduled ?? false) ? "on" : "off";
+						plannedHours = body.secondaryAtomizerHours ?? 0;
+					}
+				} else if (eqType === "line") {
+					eqStatus = lineStatusMap.get(eq.id) ?? "off";
+					plannedHours = 24; // Lines run 24h when ON
+				} else {
+					// dryer/other: include in QDP if they have a line status entry
+					eqStatus = lineStatusMap.get(eq.id) ?? "off";
+					plannedHours = 24;
+				}
+
+				return {
+					status: eqStatus,
+					consumptionRate: constant?.consumptionRate ?? 0,
+					consumptionUnit:
+						(constant?.consumptionUnit as ConsumptionUnit) ?? "m3_per_hour",
+					plannedHours,
+				};
+			});
+
+			const qdpValue = body.qdsManual ?? GasCalculationService.calculateQdp(qdpEquipment);
+
+			// Upsert GasDailyPlan to persist QDP without manual input
+			const existingPlan = await db.gasDailyPlan.findFirst({
+				where: { unitId, date: entryDate },
+			});
+
+			if (existingPlan) {
+				await db.gasDailyPlan.update({
+					where: { id: existingPlan.id },
+					data: { qdpValue },
+				});
+			} else {
+				await userDb.gasDailyPlan.create({
+					data: {
+						unitId,
+						date: entryDate,
+						qdpValue,
+					},
+				});
+			}
+
+			// Return entry with line statuses and derived QDP
 			return {
 				...entry,
 				lineStatuses: lineStatusRecords,

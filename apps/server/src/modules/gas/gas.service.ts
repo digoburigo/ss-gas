@@ -62,6 +62,18 @@ interface DeviationResult {
 }
 
 /**
+ * Equipment input for QDP (daily planned quantity) calculation.
+ * Each entry represents one piece of equipment with its ON/OFF status,
+ * consumption rate, and planned operating hours for the day.
+ */
+interface QdpEquipmentInput {
+	status: "on" | "off";
+	consumptionRate: number;
+	consumptionUnit: "m3_per_hour" | "m3_per_day";
+	plannedHours: number;
+}
+
+/**
  * Daily entry consumption data for deviation calculation
  */
 interface DailyConsumptionData {
@@ -156,6 +168,31 @@ export const GasCalculationService = {
 	},
 
 	/**
+	 * Calculate QDP (Quantidade Diária Programada) from equipment statuses.
+	 *
+	 * Derives the daily planned gas consumption automatically from equipment
+	 * ON/OFF status and consumption constants.
+	 *
+	 * Formula: sum of (consumptionRate_m3h × plannedHours) for each ON equipment.
+	 *
+	 * @param equipment - Array of equipment with status, rate, and planned hours
+	 * @returns QDP value in m³/day, rounded to 2 decimal places
+	 */
+	calculateQdp(equipment: QdpEquipmentInput[]): number {
+		const total = equipment
+			.filter((e) => e.status === "on")
+			.reduce((sum, e) => {
+				const rate = normalizeToHourlyRate(
+					e.consumptionRate,
+					e.consumptionUnit,
+				);
+				return sum + rate * e.plannedHours;
+			}, 0);
+
+		return Math.round(total * 100) / 100;
+	},
+
+	/**
 	 * Calculate contract deviations
 	 *
 	 * Computes transport and molecule tolerance deviations based on contract terms.
@@ -247,4 +284,5 @@ export type {
 	DeviationResult,
 	EquipmentConstant,
 	LineWithStatus,
+	QdpEquipmentInput,
 };
