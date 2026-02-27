@@ -3,6 +3,8 @@ import { initAuth } from "@acme/auth";
 import { db } from "@acme/zen-v3";
 import { Elysia } from "elysia";
 
+import { log } from "./logger";
+
 if (!process.env.AUTH_SECRET) {
 	throw new Error("AUTH_SECRET is not set");
 }
@@ -15,7 +17,7 @@ if (process.env.BASE_URL) {
 } else if (process.env.VERCEL_ENV === "preview") {
 	baseUrl = `https://${process.env.VERCEL_URL}`;
 }
-console.log(`🚀 -> baseUrl:`, baseUrl);
+log.info({ baseUrl }, "Auth baseUrl configured");
 
 let productionUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "turbo.t3.gg"}`;
 if (process.env.BASE_URL) {
@@ -63,7 +65,7 @@ export const auth = initAuth({
 							},
 						});
 					} catch (error) {
-						console.error("[AuditHook] Failed to log login event:", error);
+						log.error({ err: error }, "[AuditHook] Failed to log login event");
 					}
 				},
 			},
@@ -96,7 +98,7 @@ export const betterAuth = new Elysia({ name: "better-auth" })
 					});
 				}
 			} catch (error) {
-				console.error("[AuditHook] Failed to log logout event:", error);
+				log.error({ err: error }, "[AuditHook] Failed to log logout event");
 			}
 		}
 	})
@@ -107,8 +109,6 @@ export const betterAuth = new Elysia({ name: "better-auth" })
 				const session = await auth.api.getSession({
 					headers,
 				});
-				console.log(`🚀 -> session:`, session);
-
 				if (!session) {
 					return status(401);
 				}

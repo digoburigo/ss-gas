@@ -110,7 +110,7 @@ importers:
     dependencies:
       '@better-auth/expo':
         specifier: 'catalog:'
-        version: 1.4.19(@better-auth/core@1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.10)(nanostores@1.0.1))(better-auth@1.4.19(da71f910d42a553f3de2629b45c6278c))(expo-constants@18.0.13)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.33)(react@19.1.4))(expo-web-browser@15.0.10(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4)))
+        version: 1.4.19(@better-auth/core@1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.11)(nanostores@1.0.1))(better-auth@1.4.19(8c39979c3bbb2980749d1d16c5674717))(expo-constants@18.0.13)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.33)(react@19.1.4))(expo-web-browser@15.0.10(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4)))
       '@legendapp/list':
         specifier: ^2.0.19
         version: 2.0.19(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)
@@ -146,7 +146,7 @@ importers:
         version: 11.10.0(@tanstack/react-query@5.90.21(react@19.1.4))(@trpc/client@11.10.0(@trpc/server@11.10.0(typescript@5.9.3))(typescript@5.9.3))(@trpc/server@11.10.0(typescript@5.9.3))(react@19.1.4)(typescript@5.9.3)
       better-auth:
         specifier: 'catalog:'
-        version: 1.4.19(da71f910d42a553f3de2629b45c6278c)
+        version: 1.4.19(8c39979c3bbb2980749d1d16c5674717)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -283,12 +283,18 @@ importers:
       '@acme/zen-v3':
         specifier: workspace:*
         version: link:../../packages/zen-v3
+      '@ai-sdk/gateway':
+        specifier: ^3.0.57
+        version: 3.0.57(zod@4.3.6)
       '@anthropic-ai/sdk':
         specifier: ^0.78.0
         version: 0.78.0(zod@4.3.6)
       '@better-upload/server':
         specifier: ^3.0.14
         version: 3.0.14
+      '@bogeychan/elysia-logger':
+        specifier: ^0.1.10
+        version: 0.1.10(elysia@1.4.26(@sinclair/typebox@0.34.48)(@types/bun@1.3.2(@types/react@19.2.14))(exact-mirror@0.2.3(@sinclair/typebox@0.34.48))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(pino@10.3.1)
       '@elysiajs/cors':
         specifier: ^1.4.1
         version: 1.4.1(elysia@1.4.26(@sinclair/typebox@0.34.48)(@types/bun@1.3.2(@types/react@19.2.14))(exact-mirror@0.2.3(@sinclair/typebox@0.34.48))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))
@@ -307,6 +313,9 @@ importers:
       '@zenstackhq/server':
         specifier: ^3.3.3
         version: 3.3.3(better-sqlite3@12.6.2)(elysia@1.4.26(@sinclair/typebox@0.34.48)(@types/bun@1.3.2(@types/react@19.2.14))(exact-mirror@0.2.3(@sinclair/typebox@0.34.48))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(express@5.2.1)(hono@4.11.4)(mysql2@3.16.3)(next@16.1.6(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(sass@1.51.0))(pg@8.19.0)(zod@4.3.6)
+      ai:
+        specifier: ^6.0.103
+        version: 6.0.103(zod@4.3.6)
       elysia:
         specifier: ^1.4.26
         version: 1.4.26(@sinclair/typebox@0.34.48)(@types/bun@1.3.2(@types/react@19.2.14))(exact-mirror@0.2.3(@sinclair/typebox@0.34.48))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
@@ -319,6 +328,9 @@ importers:
       superjson:
         specifier: 2.2.6
         version: 2.2.6
+      unpdf:
+        specifier: ^1.4.0
+        version: 1.4.0(@napi-rs/canvas@0.1.88)
       zod:
         specifier: 'catalog:'
         version: 4.3.6
@@ -335,6 +347,9 @@ importers:
       eslint:
         specifier: 'catalog:'
         version: 9.39.2(jiti@2.6.1)
+      pino-pretty:
+        specifier: ^13.1.3
+        version: 13.1.3
       tsdown:
         specifier: ^0.20.3
         version: 0.20.3(typescript@5.9.3)
@@ -658,7 +673,7 @@ importers:
         version: 1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/router-core@1.163.2)(csstype@3.2.3)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@tanstack/router-plugin':
         specifier: 1.163.2
-        version: 1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
+        version: 1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.13
@@ -2286,6 +2301,12 @@ packages:
 
   '@better-upload/server@3.0.14':
     resolution: {integrity: sha512-RkUuiruxJiA5pO4bSK9xNW+lKsT5REcZ0etAmTSy4Azbmo8WhqOXoCwOU0CofT2XPYLFiSvnSObrZtyyF/Kqgg==}
+
+  '@bogeychan/elysia-logger@0.1.10':
+    resolution: {integrity: sha512-wFp3KUCNIkCV4zcbo70gifHH99ch7e4LNrP5Xa5e2MRO2MDyPgM92SWQmrzkng6PsSZk13+UKJskGNQ+ZuDZkQ==}
+    peerDependencies:
+      elysia: '>= 1.2.10'
+      pino: '>= 9.6.0'
 
   '@borewit/text-codec@0.1.1':
     resolution: {integrity: sha512-5L/uBxmjaCIX5h8Z+uu+kA9BQLkc/Wl06UGR5ajNRxu+/XjonB5i8JpgFMrPj3LXTCPA0pv8yxUvbUi+QthGGA==}
@@ -4431,6 +4452,9 @@ packages:
 
   '@pdf-lib/upng@1.0.1':
     resolution: {integrity: sha512-dQK2FUMQtowVP00mtIksrlZhdFXQZPC+taih1q4CvPZ5vqdxR/LKBaFg0oAfzd1GlHZXXSPdQfzQnt+ViGvEIQ==}
+
+  '@pinojs/redact@0.4.0':
+    resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
 
   '@platejs/ai@52.3.1':
     resolution: {integrity: sha512-qAbQx+kWboNbqIGspUVARYgdSptzuRzMeAdryw7ZnBcbKhTnCPuqbCtR/qNb3EnfyqNSaJPeZd8g7mgjYN4N/A==}
@@ -8106,6 +8130,10 @@ packages:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
     engines: {node: '>= 4.0.0'}
 
+  atomic-sleep@1.0.0:
+    resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
+    engines: {node: '>=8.0.0'}
+
   atomically@2.1.0:
     resolution: {integrity: sha512-+gDffFXRW6sl/HCwbta7zK4uNqbPjv4YJEAdz7Vu+FLQHe77eZ4bvbJGi4hE0QPeJlMYMA3piXEr1UL3dAwx7Q==}
 
@@ -9082,6 +9110,9 @@ packages:
 
   date-fns@4.1.0:
     resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
+
+  dateformat@4.6.3:
+    resolution: {integrity: sha512-2P0p0pFGzHS5EMnhdxQi7aJN+iMheud0UhG4dlE1DLAlvL8JHjJJTX/CSm4JXwV0Ka5nGk3zC5mcb5bUQUxxMA==}
 
   dayjs@1.11.19:
     resolution: {integrity: sha512-t5EcLVS6QPBNqM2z8fakk/NKel+Xzshgt8FFKAn+qwlD1pzZWxh0nVCrvFK7ZDb6XucZeF9z8C7CBWTRIVApAw==}
@@ -10171,6 +10202,9 @@ packages:
     resolution: {integrity: sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A==}
     engines: {node: '>=8.0.0'}
 
+  fast-copy@4.0.2:
+    resolution: {integrity: sha512-ybA6PDXIXOXivLJK/z9e+Otk7ve13I4ckBvGO5I2RRmBU1gMHLVDJYEuJYhGwez7YNlYji2M2DvVU+a9mSFDlw==}
+
   fast-csv@4.3.6:
     resolution: {integrity: sha512-2RNSpuwwsJGP0frGsOmTb9oUF+VkFSM4SyLTDgwf2ciHWTarN0lQTC+F2f/t5J9QjW+c65VFIAAu85GsvMIusw==}
     engines: {node: '>=10.0.0'}
@@ -10198,6 +10232,9 @@ packages:
 
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
+
+  fast-safe-stringify@2.1.1:
+    resolution: {integrity: sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==}
 
   fast-sha256@1.3.0:
     resolution: {integrity: sha512-n11RGP/lrWEFI/bWdygLxhI+pVeo1ZYIVwvvPkW7azl/rOy+F3HYRZ2K5zeE9mmkhQppyv9sQFx0JM9UabnpPQ==}
@@ -10572,6 +10609,9 @@ packages:
 
   header-case@1.0.1:
     resolution: {integrity: sha512-i0q9mkOeSuhXw6bGgiQCCBgY/jlZuV/7dZXyZ9c6LcBrqwvT8eT719E9uxE5LiZftdl+z81Ugbg/VvXV4OJOeQ==}
+
+  help-me@5.0.0:
+    resolution: {integrity: sha512-7xgomUX6ADmcYzFik0HzAxh/73YlKR9bmFzf51CZwR+b6YtzU2m0u49hQCqV6SvlqIqsaxovfwdvbnsw3b/zpg==}
 
   hermes-estree@0.25.1:
     resolution: {integrity: sha512-0wUoCcLp+5Ev5pDW2OriHC2MJCbwLwuRx+gAqMTOkGKJJiBCLjtrvy4PWUGn6MIVefecRpzoOZ/UV6iGdOr+Cw==}
@@ -11144,6 +11184,10 @@ packages:
         optional: true
       react:
         optional: true
+
+  joycon@3.1.1:
+    resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
+    engines: {node: '>=10'}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -12310,6 +12354,10 @@ packages:
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
 
+  on-exit-leak-free@2.1.2:
+    resolution: {integrity: sha512-0eJJY6hXLGf1udHwfNftBqH+g73EU4B504nZeKpz1sYRKafAghwxEJunB2O7rDZkL4PGfsMVnTXZ2EjibbqcsA==}
+    engines: {node: '>=14.0.0'}
+
   on-finished@2.3.0:
     resolution: {integrity: sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww==}
     engines: {node: '>= 0.8'}
@@ -12608,6 +12656,20 @@ packages:
     resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
 
+  pino-abstract-transport@3.0.0:
+    resolution: {integrity: sha512-wlfUczU+n7Hy/Ha5j9a/gZNy7We5+cXp8YL+X+PG8S0KXxw7n/JXA3c46Y0zQznIJ83URJiwy7Lh56WLokNuxg==}
+
+  pino-pretty@13.1.3:
+    resolution: {integrity: sha512-ttXRkkOz6WWC95KeY9+xxWL6AtImwbyMHrL1mSwqwW9u+vLp/WIElvHvCSDg0xO/Dzrggz1zv3rN5ovTRVowKg==}
+    hasBin: true
+
+  pino-std-serializers@7.1.0:
+    resolution: {integrity: sha512-BndPH67/JxGExRgiX1dX0w1FvZck5Wa4aal9198SrRhZjH3GxKQUKIBnYJTdj2HDN3UQAS06HlfcSbQj2OHmaw==}
+
+  pino@10.3.1:
+    resolution: {integrity: sha512-r34yH/GlQpKZbU1BvFFqOjhISRo1MNx1tWYsYvmj6KIRHSPMT2+yHOEb1SG6NMvRoHRF0a07kCOox/9yakl1vg==}
+    hasBin: true
+
   pirates@4.0.7:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
@@ -12878,6 +12940,9 @@ packages:
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
 
+  process-warning@5.0.0:
+    resolution: {integrity: sha512-a39t9ApHNx2L4+HBnQKqxxHNs1r7KF+Intd8Q/g1bUh6q0WIp9voPXJ/x0j+ZL45KF1pJd9+q2jLIRMfvEshkA==}
+
   progress@2.0.3:
     resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
     engines: {node: '>=0.4.0'}
@@ -13000,6 +13065,9 @@ packages:
 
   queue@6.0.2:
     resolution: {integrity: sha512-iHZWu+q3IdFZFX36ro/lKBkSvfkztY5Y7HMiPlOUjhupPcG2JMfst2KKEpu5XndviX/3UhFbRngUPNKtgvtZiA==}
+
+  quick-format-unescaped@4.0.4:
+    resolution: {integrity: sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg==}
 
   radix-ui@1.4.3:
     resolution: {integrity: sha512-aWizCQiyeAenIdUbqEpXgRA1ya65P13NKn/W8rWkcN0OPkRDxdBVLWnIEDsS2RpwCK2nobI7oMUSmexzTDyAmA==}
@@ -13335,6 +13403,10 @@ packages:
     resolution: {integrity: sha512-9u/XQ1pvrQtYyMpZe7DXKv2p5CNvyVwzUB6uhLAnQwHMSgKMBR62lc7AHljaeteeHXn11XTAaLLUVZYVZyuRBQ==}
     engines: {node: '>= 20.19.0'}
 
+  real-require@0.2.0:
+    resolution: {integrity: sha512-57frrGM/OCTLqLOAh0mhVA9VBMHd+9U7Zb2THMGdBUoZVOtGbJzjxsYGDJ3A9AYYCP4hn6y1TVbaOfzWtm5GFg==}
+    engines: {node: '>= 12.13.0'}
+
   recast@0.23.11:
     resolution: {integrity: sha512-YTUo+Flmw4ZXiWfQKGcwwc11KnoRAYgzAE2E7mXKCjSviTKShtxBsN6YUUBB2gtaBzKzeKunxhUwNHQuRryhWA==}
     engines: {node: '>= 4'}
@@ -13596,6 +13668,10 @@ packages:
     resolution: {integrity: sha512-x/+Cz4YrimQxQccJf5mKEbIa1NzeCRNI5Ecl/ekmlYaampdNLPalVyIcCZNNH3MvmqBugV5TMYZXv0ljslUlaw==}
     engines: {node: '>= 0.4'}
 
+  safe-stable-stringify@2.5.0:
+    resolution: {integrity: sha512-b3rppTKm9T+PsVCBEOUR46GWI7fdOs00VKZ1+9c1EWDaDMvjQc6tUwuFyIprgGgTcWoVHSKrU8H31ZHA2e0RHA==}
+    engines: {node: '>=10'}
+
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
@@ -13630,6 +13706,9 @@ packages:
 
   scroll-into-view-if-needed@3.1.0:
     resolution: {integrity: sha512-49oNpRjWRvnU8NyGVmUaYG4jtTkNonFZI86MmGRDqBphEK2EXT9gdEUoQPZhuBM8yWHxCWbobltqYO5M4XrUvQ==}
+
+  secure-json-parse@4.1.0:
+    resolution: {integrity: sha512-l4KnYfEyqYJxDwlNVyRfO2E4NTHfMKAWdUuA8J0yve2Dz/E/PdBepY03RvyJpssIpRFwJoCD55wA+mEDs6ByWA==}
 
   selderee@0.11.0:
     resolution: {integrity: sha512-5TF+l7p4+OsnP8BCCvSyZiSPc4x4//p5uPwK8TCnVPJYRmU2aYKMpOXvw8zM5a5JvuuCGN1jmsMwuU2W02ukfA==}
@@ -13883,6 +13962,9 @@ packages:
   solid-js@1.9.10:
     resolution: {integrity: sha512-Coz956cos/EPDlhs6+jsdTxKuJDPT7B5SVIWgABwROyxjY7Xbr8wkzD68Et+NxnV7DLJ3nJdAC2r9InuV/4Jew==}
 
+  sonic-boom@4.2.1:
+    resolution: {integrity: sha512-w6AxtubXa2wTXAUsZMMWERrsIRAdrK0Sc+FUytWvYAhBJLyuI4llrMIC1DtlNSdI99EI86KZum2MMq3EAZlF9Q==}
+
   sonner@2.0.7:
     resolution: {integrity: sha512-W6ZN4p58k8aDKA4XPcx2hpIQXBRAgyiWVkYhT7CvK6D3iAu7xjvVyhQHg2/iaKJZ1XVJ4r7XuwGL+WGEK37i9w==}
     peerDependencies:
@@ -14085,6 +14167,10 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
+  strip-json-comments@5.0.3:
+    resolution: {integrity: sha512-1tB5mhVo7U+ETBKNf92xT4hrQa3pm0MZ0PQvuDnWgAAGHDsfp4lPSpiS6psrSiet87wyGPh9ft6wmhOMQ0hDiw==}
+    engines: {node: '>=14.16'}
+
   strnum@2.1.1:
     resolution: {integrity: sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==}
 
@@ -14266,6 +14352,10 @@ packages:
 
   thenify@3.3.1:
     resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
+
+  thread-stream@4.0.0:
+    resolution: {integrity: sha512-4iMVL6HAINXWf1ZKZjIPcz5wYaOdPhtO8ATvZ+Xqp3BTdaqtAwQkNmKORqcIo5YkQqGXq5cwfswDwMqqQNrpJA==}
+    engines: {node: '>=20'}
 
   throat@5.0.0:
     resolution: {integrity: sha512-fcwX4mndzpLQKBS1DVYhGAcYaYt7vsHNIvQV+WXMvnow5cgjPphq5CaayLaGsjRdSCKZFNGt7/GYAuXaNOiYCA==}
@@ -14635,6 +14725,14 @@ packages:
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
+
+  unpdf@1.4.0:
+    resolution: {integrity: sha512-TahIk0xdH/4jh/MxfclzU79g40OyxtP00VnEUZdEkJoYtXAHWLiir6t3FC6z3vDqQTzc2ZHcla6uEiVTNjejuA==}
+    peerDependencies:
+      '@napi-rs/canvas': ^0.1.69
+    peerDependenciesMeta:
+      '@napi-rs/canvas':
+        optional: true
 
   unpipe@1.0.0:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
@@ -16741,19 +16839,6 @@ snapshots:
       nanostores: 1.0.1
       zod: 4.3.6
 
-  '@better-auth/expo@1.4.19(@better-auth/core@1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.10)(nanostores@1.0.1))(better-auth@1.4.19(da71f910d42a553f3de2629b45c6278c))(expo-constants@18.0.13)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.33)(react@19.1.4))(expo-web-browser@15.0.10(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4)))':
-    dependencies:
-      '@better-auth/core': 1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.10)(nanostores@1.0.1)
-      '@better-fetch/fetch': 1.1.21
-      better-auth: 1.4.19(da71f910d42a553f3de2629b45c6278c)
-      better-call: 1.1.8(zod@4.3.6)
-      zod: 4.3.6
-    optionalDependencies:
-      expo-constants: 18.0.13(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))
-      expo-linking: 8.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)
-      expo-network: 8.0.8(expo@54.0.33)(react@19.1.4)
-      expo-web-browser: 15.0.10(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))
-
   '@better-auth/expo@1.4.19(@better-auth/core@1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.11)(nanostores@1.0.1))(better-auth@1.4.19(061f2707d6812e8873d9c0776c9edac0))(expo-constants@18.0.13)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.33)(react@19.2.4))(expo-web-browser@15.0.10(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4)))':
     dependencies:
       '@better-auth/core': 1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.11)(nanostores@1.0.1)
@@ -16766,6 +16851,19 @@ snapshots:
       expo-linking: 8.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4))(react@19.2.4)
       expo-network: 8.0.8(expo@54.0.33)(react@19.2.4)
       expo-web-browser: 15.0.10(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4))
+
+  '@better-auth/expo@1.4.19(@better-auth/core@1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.11)(nanostores@1.0.1))(better-auth@1.4.19(8c39979c3bbb2980749d1d16c5674717))(expo-constants@18.0.13)(expo-linking@8.0.11)(expo-network@8.0.8(expo@54.0.33)(react@19.1.4))(expo-web-browser@15.0.10(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4)))':
+    dependencies:
+      '@better-auth/core': 1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.11)(nanostores@1.0.1)
+      '@better-fetch/fetch': 1.1.21
+      better-auth: 1.4.19(8c39979c3bbb2980749d1d16c5674717)
+      better-call: 1.1.8(zod@4.3.6)
+      zod: 4.3.6
+    optionalDependencies:
+      expo-constants: 18.0.13(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))
+      expo-linking: 8.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)
+      expo-network: 8.0.8(expo@54.0.33)(react@19.1.4)
+      expo-web-browser: 15.0.10(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))
 
   '@better-auth/telemetry@1.4.19(@better-auth/core@1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.10)(nanostores@1.0.1))':
     dependencies:
@@ -16792,6 +16890,11 @@ snapshots:
       aws4fetch: 1.0.20
       fast-xml-parser: 5.3.4
       zod: 4.3.6
+
+  '@bogeychan/elysia-logger@0.1.10(elysia@1.4.26(@sinclair/typebox@0.34.48)(@types/bun@1.3.2(@types/react@19.2.14))(exact-mirror@0.2.3(@sinclair/typebox@0.34.48))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3))(pino@10.3.1)':
+    dependencies:
+      elysia: 1.4.26(@sinclair/typebox@0.34.48)(@types/bun@1.3.2(@types/react@19.2.14))(exact-mirror@0.2.3(@sinclair/typebox@0.34.48))(file-type@21.0.0)(openapi-types@12.1.3)(typescript@5.9.3)
+      pino: 10.3.1
 
   '@borewit/text-codec@0.1.1': {}
 
@@ -17591,7 +17694,6 @@ snapshots:
       - graphql
       - supports-color
       - utf-8-validate
-    optional: true
 
   '@expo/code-signing-certificates@0.0.6':
     dependencies:
@@ -17695,7 +17797,6 @@ snapshots:
     optionalDependencies:
       react: 19.2.4
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4)
-    optional: true
 
   '@expo/env@2.0.8':
     dependencies:
@@ -17770,7 +17871,7 @@ snapshots:
       postcss: 8.4.49
       resolve-from: 5.0.0
     optionalDependencies:
-      expo: 54.0.33(@babel/core@7.29.0)(@expo/metro-runtime@6.1.2)(bufferutil@4.0.9)(expo-router@6.0.23)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.33(@babel/core@7.29.0)(@expo/metro-runtime@6.1.2)(bufferutil@4.0.9)(expo-router@6.0.23)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4))(react@19.2.4)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -17851,7 +17952,7 @@ snapshots:
       '@expo/json-file': 10.0.8
       '@react-native/normalize-colors': 0.81.5
       debug: 4.4.3
-      expo: 54.0.33(@babel/core@7.29.0)(@expo/metro-runtime@6.1.2)(bufferutil@4.0.9)(expo-router@6.0.23)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.33(@babel/core@7.29.0)(@expo/metro-runtime@6.1.2)(bufferutil@4.0.9)(expo-router@6.0.23)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4))(react@19.2.4)
       resolve-from: 5.0.0
       semver: 7.7.3
       xml2js: 0.6.0
@@ -17879,7 +17980,6 @@ snapshots:
       expo-font: 14.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4))(react@19.2.4)
       react: 19.2.4
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4)
-    optional: true
 
   '@expo/ws-tunnel@1.0.6': {}
 
@@ -18733,6 +18833,8 @@ snapshots:
   '@pdf-lib/upng@1.0.1':
     dependencies:
       pako: 1.0.11
+
+  '@pinojs/redact@0.4.0': {}
 
   '@platejs/ai@52.3.1(platejs@52.3.2(@types/react@19.1.17)(immer@10.2.0)(react-dom@19.2.4(react@19.1.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)(scheduler@0.27.0)(use-sync-external-store@1.6.0(react@19.1.4)))(react-dom@19.2.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)':
     dependencies:
@@ -21121,7 +21223,6 @@ snapshots:
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4)
     optionalDependencies:
       '@types/react': 19.2.14
-    optional: true
 
   '@react-navigation/bottom-tabs@7.8.4(@react-navigation/native@7.1.19(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4))(react-native-safe-area-context@5.6.2(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4))(react-native-screens@4.16.0(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4))(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)':
     dependencies:
@@ -22403,7 +22504,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@tanstack/router-plugin@1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)':
+  '@tanstack/router-plugin@1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)':
     dependencies:
       '@babel/core': 7.29.0
       '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.29.0)
@@ -22421,7 +22522,7 @@ snapshots:
     optionalDependencies:
       '@tanstack/react-router': 1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       vite: 7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1)
-      webpack: 5.105.0
+      webpack: 5.105.0(esbuild@0.25.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -22443,7 +22544,7 @@ snapshots:
     optionalDependencies:
       '@tanstack/react-router': 1.163.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       vite: 7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1)
-      webpack: 5.105.0
+      webpack: 5.105.0(esbuild@0.25.0)
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -22486,7 +22587,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.40
       '@tanstack/router-core': 1.163.2
       '@tanstack/router-generator': 1.163.2
-      '@tanstack/router-plugin': 1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
+      '@tanstack/router-plugin': 1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
       '@tanstack/router-utils': 1.161.4
       '@tanstack/start-client-core': 1.163.2
       '@tanstack/start-server-core': 1.163.2(crossws@0.4.1(srvx@0.11.7))
@@ -22519,7 +22620,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.40
       '@tanstack/router-core': 1.163.2
       '@tanstack/router-generator': 1.163.2
-      '@tanstack/router-plugin': 1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
+      '@tanstack/router-plugin': 1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
       '@tanstack/router-utils': 1.161.4
       '@tanstack/start-client-core': 1.163.2
       '@tanstack/start-server-core': 1.163.2(crossws@0.4.1(srvx@0.11.7))
@@ -22552,7 +22653,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.40
       '@tanstack/router-core': 1.163.2
       '@tanstack/router-generator': 1.163.2
-      '@tanstack/router-plugin': 1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
+      '@tanstack/router-plugin': 1.163.2(@tanstack/react-router@1.163.2(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.51.0)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
       '@tanstack/router-utils': 1.161.4
       '@tanstack/start-client-core': 1.163.2
       '@tanstack/start-server-core': 1.163.2(crossws@0.4.1(srvx@0.9.6))
@@ -23863,6 +23964,8 @@ snapshots:
 
   at-least-node@1.0.0: {}
 
+  atomic-sleep@1.0.0: {}
+
   atomically@2.1.0:
     dependencies:
       stubborn-fs: 2.0.0
@@ -24011,7 +24114,7 @@ snapshots:
       resolve-from: 5.0.0
     optionalDependencies:
       '@babel/runtime': 7.28.4
-      expo: 54.0.33(@babel/core@7.29.0)(@expo/metro-runtime@6.1.2)(bufferutil@4.0.9)(expo-router@6.0.23)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4)
+      expo: 54.0.33(@babel/core@7.29.0)(@expo/metro-runtime@6.1.2)(bufferutil@4.0.9)(expo-router@6.0.23)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4))(react@19.2.4)
     transitivePeerDependencies:
       - '@babel/core'
       - supports-color
@@ -24107,6 +24210,34 @@ snapshots:
       react-dom: 19.1.4(react@19.1.4)
       solid-js: 1.9.10
 
+  better-auth@1.4.19(8c39979c3bbb2980749d1d16c5674717):
+    dependencies:
+      '@better-auth/core': 1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.10)(nanostores@1.0.1)
+      '@better-auth/telemetry': 1.4.19(@better-auth/core@1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.11)(nanostores@1.0.1))
+      '@better-auth/utils': 0.3.0
+      '@better-fetch/fetch': 1.1.21
+      '@noble/ciphers': 2.0.1
+      '@noble/hashes': 2.0.1
+      better-call: 1.1.8(zod@4.3.6)
+      defu: 6.1.4
+      jose: 6.1.0
+      kysely: 0.28.10
+      nanostores: 1.0.1
+      zod: 4.3.6
+    optionalDependencies:
+      '@prisma/client': 5.22.0(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3))
+      '@tanstack/react-start': 1.163.2(crossws@0.4.1(srvx@0.11.7))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
+      better-sqlite3: 12.6.2
+      drizzle-kit: 0.31.9
+      drizzle-orm: 0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@5.22.0(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)))(@types/pg@8.16.0)(@vercel/postgres@0.10.0)(better-sqlite3@12.6.2)(bun-types@1.3.2(@types/react@19.1.17))(kysely@0.28.11)(mysql2@3.16.3)(pg@8.19.0)(postgres@3.4.8)(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3))
+      mysql2: 3.16.3
+      next: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0)
+      pg: 8.19.0
+      prisma: 7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
+      react: 19.1.4
+      react-dom: 19.1.4(react@19.1.4)
+      solid-js: 1.9.10
+
   better-auth@1.4.19(a547c7cb62de0a280de8a3d39e45fae3):
     dependencies:
       '@better-auth/core': 1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.10)(nanostores@1.0.1)
@@ -24127,34 +24258,6 @@ snapshots:
       better-sqlite3: 12.6.2
       drizzle-kit: 0.31.9
       drizzle-orm: 0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@5.22.0(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)))(@types/pg@8.16.0)(@vercel/postgres@0.10.0)(better-sqlite3@12.6.2)(bun-types@1.3.2(@types/react@19.1.17))(kysely@0.28.11)(mysql2@3.16.3)(pg@8.19.0)(postgres@3.4.8)(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3))
-      mysql2: 3.16.3
-      next: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0)
-      pg: 8.19.0
-      prisma: 7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
-      react: 19.1.4
-      react-dom: 19.1.4(react@19.1.4)
-      solid-js: 1.9.10
-
-  better-auth@1.4.19(da71f910d42a553f3de2629b45c6278c):
-    dependencies:
-      '@better-auth/core': 1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.10)(nanostores@1.0.1)
-      '@better-auth/telemetry': 1.4.19(@better-auth/core@1.4.19(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.0)(kysely@0.28.10)(nanostores@1.0.1))
-      '@better-auth/utils': 0.3.0
-      '@better-fetch/fetch': 1.1.21
-      '@noble/ciphers': 2.0.1
-      '@noble/hashes': 2.0.1
-      better-call: 1.1.8(zod@4.3.6)
-      defu: 6.1.4
-      jose: 6.1.0
-      kysely: 0.28.10
-      nanostores: 1.0.1
-      zod: 4.3.6
-    optionalDependencies:
-      '@prisma/client': 5.22.0(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3))
-      '@tanstack/react-start': 1.163.2(crossws@0.4.1(srvx@0.11.7))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.44.1)(tsx@4.21.0)(yaml@2.8.1))(webpack@5.105.0)
-      better-sqlite3: 12.6.2
-      drizzle-kit: 0.31.9
-      drizzle-orm: 0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@5.22.0(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)))(@types/pg@8.16.0)(@vercel/postgres@0.10.0)(better-sqlite3@12.6.2)(bun-types@1.3.2(@types/react@19.1.17))(kysely@0.28.10)(mysql2@3.16.3)(pg@8.19.0)(postgres@3.4.8)(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3))
       mysql2: 3.16.3
       next: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(sass@1.51.0)
       pg: 8.19.0
@@ -25073,6 +25176,8 @@ snapshots:
 
   date-fns@4.1.0: {}
 
+  dateformat@4.6.3: {}
+
   dayjs@1.11.19: {}
 
   db0@0.3.4(@electric-sql/pglite@0.3.15)(better-sqlite3@12.6.2)(drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@5.22.0(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)))(@types/pg@8.16.0)(@vercel/postgres@0.10.0)(better-sqlite3@12.6.2)(bun-types@1.3.2(@types/react@19.1.17))(kysely@0.28.11)(mysql2@3.16.3)(pg@8.19.0)(postgres@3.4.8)(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)))(mysql2@3.16.3):
@@ -25324,22 +25429,6 @@ snapshots:
       pg: 8.19.0
       postgres: 3.4.8
       prisma: 7.4.1(@types/react@19.2.14)(better-sqlite3@12.6.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
-
-  drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@5.22.0(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)))(@types/pg@8.16.0)(@vercel/postgres@0.10.0)(better-sqlite3@12.6.2)(bun-types@1.3.2(@types/react@19.1.17))(kysely@0.28.10)(mysql2@3.16.3)(pg@8.19.0)(postgres@3.4.8)(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)):
-    optionalDependencies:
-      '@electric-sql/pglite': 0.3.15
-      '@opentelemetry/api': 1.9.0
-      '@prisma/client': 5.22.0(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3))
-      '@types/pg': 8.16.0
-      '@vercel/postgres': 0.10.0
-      better-sqlite3: 12.6.2
-      bun-types: 1.3.2(@types/react@19.1.17)
-      kysely: 0.28.10
-      mysql2: 3.16.3
-      pg: 8.19.0
-      postgres: 3.4.8
-      prisma: 7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)
-    optional: true
 
   drizzle-orm@0.45.1(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@5.22.0(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)))(@types/pg@8.16.0)(@vercel/postgres@0.10.0)(better-sqlite3@12.6.2)(bun-types@1.3.2(@types/react@19.1.17))(kysely@0.28.11)(mysql2@3.16.3)(pg@8.19.0)(postgres@3.4.8)(prisma@7.4.1(@types/react@19.1.17)(better-sqlite3@12.6.2)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(typescript@5.9.3)):
     optionalDependencies:
@@ -26065,7 +26154,6 @@ snapshots:
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4)
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   expo-constants@18.0.13(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4)):
     dependencies:
@@ -26084,7 +26172,6 @@ snapshots:
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4)
     transitivePeerDependencies:
       - supports-color
-    optional: true
 
   expo-dev-client@6.0.20(expo@54.0.33):
     dependencies:
@@ -26124,7 +26211,6 @@ snapshots:
     dependencies:
       expo: 54.0.33(@babel/core@7.29.0)(@expo/metro-runtime@6.1.2)(bufferutil@4.0.9)(expo-router@6.0.23)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4))(react@19.2.4)
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4)
-    optional: true
 
   expo-font@14.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4):
     dependencies:
@@ -26139,7 +26225,6 @@ snapshots:
       fontfaceobserver: 2.3.0
       react: 19.2.4
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4)
-    optional: true
 
   expo-json-utils@0.15.0: {}
 
@@ -26152,7 +26237,6 @@ snapshots:
     dependencies:
       expo: 54.0.33(@babel/core@7.29.0)(@expo/metro-runtime@6.1.2)(bufferutil@4.0.9)(expo-router@6.0.23)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4))(react@19.2.4)
       react: 19.2.4
-    optional: true
 
   expo-linking@8.0.11(expo@54.0.33)(react-native@0.81.5(@babel/core@7.29.0)(@types/react@19.1.17)(bufferutil@4.0.9)(react@19.1.4))(react@19.1.4):
     dependencies:
@@ -26202,7 +26286,6 @@ snapshots:
       invariant: 2.2.4
       react: 19.2.4
       react-native: 0.81.5(@babel/core@7.29.0)(@types/react@19.2.14)(bufferutil@4.0.9)(react@19.2.4)
-    optional: true
 
   expo-network@8.0.8(expo@54.0.33)(react@19.1.4):
     dependencies:
@@ -26412,7 +26495,6 @@ snapshots:
       - graphql
       - supports-color
       - utf-8-validate
-    optional: true
 
   exponential-backoff@3.1.3: {}
 
@@ -26473,6 +26555,8 @@ snapshots:
     dependencies:
       pure-rand: 6.1.0
 
+  fast-copy@4.0.2: {}
+
   fast-csv@4.3.6:
     dependencies:
       '@fast-csv/format': 4.3.5
@@ -26503,6 +26587,8 @@ snapshots:
   fast-json-stable-stringify@2.1.0: {}
 
   fast-levenshtein@2.0.6: {}
+
+  fast-safe-stringify@2.1.1: {}
 
   fast-sha256@1.3.0: {}
 
@@ -26889,6 +26975,8 @@ snapshots:
     dependencies:
       no-case: 2.3.2
       upper-case: 1.1.3
+
+  help-me@5.0.0: {}
 
   hermes-estree@0.25.1: {}
 
@@ -27456,6 +27544,8 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.1.17
       react: 19.1.4
+
+  joycon@3.1.1: {}
 
   js-tokens@4.0.0: {}
 
@@ -29205,6 +29295,8 @@ snapshots:
 
   ohash@2.0.11: {}
 
+  on-exit-leak-free@2.1.2: {}
+
   on-finished@2.3.0:
     dependencies:
       ee-first: 1.1.1
@@ -29552,6 +29644,42 @@ snapshots:
 
   picomatch@4.0.3: {}
 
+  pino-abstract-transport@3.0.0:
+    dependencies:
+      split2: 4.2.0
+
+  pino-pretty@13.1.3:
+    dependencies:
+      colorette: 2.0.20
+      dateformat: 4.6.3
+      fast-copy: 4.0.2
+      fast-safe-stringify: 2.1.1
+      help-me: 5.0.0
+      joycon: 3.1.1
+      minimist: 1.2.8
+      on-exit-leak-free: 2.1.2
+      pino-abstract-transport: 3.0.0
+      pump: 3.0.3
+      secure-json-parse: 4.1.0
+      sonic-boom: 4.2.1
+      strip-json-comments: 5.0.3
+
+  pino-std-serializers@7.1.0: {}
+
+  pino@10.3.1:
+    dependencies:
+      '@pinojs/redact': 0.4.0
+      atomic-sleep: 1.0.0
+      on-exit-leak-free: 2.1.2
+      pino-abstract-transport: 3.0.0
+      pino-std-serializers: 7.1.0
+      process-warning: 5.0.0
+      quick-format-unescaped: 4.0.4
+      real-require: 0.2.0
+      safe-stable-stringify: 2.5.0
+      sonic-boom: 4.2.1
+      thread-stream: 4.0.0
+
   pirates@4.0.7: {}
 
   pkg-types@1.3.1:
@@ -29793,6 +29921,8 @@ snapshots:
 
   process-nextick-args@2.0.1: {}
 
+  process-warning@5.0.0: {}
+
   progress@2.0.3: {}
 
   promise@8.3.0:
@@ -29961,6 +30091,8 @@ snapshots:
   queue@6.0.2:
     dependencies:
       inherits: 2.0.4
+
+  quick-format-unescaped@4.0.4: {}
 
   radix-ui@1.4.3(@types/react-dom@19.2.3(@types/react@19.1.17))(@types/react@19.1.17)(react-dom@19.2.4(react@19.1.4))(react@19.1.4):
     dependencies:
@@ -30400,7 +30532,6 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
-    optional: true
 
   react-pdf@10.4.1(@types/react@19.1.17)(react-dom@19.1.4(react@19.1.4))(react@19.1.4):
     dependencies:
@@ -30598,6 +30729,8 @@ snapshots:
   readdirp@4.1.2: {}
 
   readdirp@5.0.0: {}
+
+  real-require@0.2.0: {}
 
   recast@0.23.11:
     dependencies:
@@ -30963,6 +31096,8 @@ snapshots:
       es-errors: 1.3.0
       is-regex: 1.2.1
 
+  safe-stable-stringify@2.5.0: {}
+
   safer-buffer@2.1.2: {}
 
   sass@1.51.0:
@@ -30999,6 +31134,8 @@ snapshots:
   scroll-into-view-if-needed@3.1.0:
     dependencies:
       compute-scroll-into-view: 3.1.1
+
+  secure-json-parse@4.1.0: {}
 
   selderee@0.11.0:
     dependencies:
@@ -31375,6 +31512,10 @@ snapshots:
       seroval: 1.3.2
       seroval-plugins: 1.3.3(seroval@1.3.2)
 
+  sonic-boom@4.2.1:
+    dependencies:
+      atomic-sleep: 1.0.0
+
   sonner@2.0.7(react-dom@19.1.4(react@19.1.4))(react@19.1.4):
     dependencies:
       react: 19.1.4
@@ -31569,6 +31710,8 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
+  strip-json-comments@5.0.3: {}
+
   strnum@2.1.1: {}
 
   strtok3@10.3.4:
@@ -31731,16 +31874,6 @@ snapshots:
     optionalDependencies:
       esbuild: 0.25.0
 
-  terser-webpack-plugin@5.3.16(webpack@5.105.0):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      jest-worker: 27.5.1
-      schema-utils: 4.3.3
-      serialize-javascript: 6.0.2
-      terser: 5.44.1
-      webpack: 5.105.0
-    optional: true
-
   terser@5.44.1:
     dependencies:
       '@jridgewell/source-map': 0.3.11
@@ -31765,6 +31898,10 @@ snapshots:
   thenify@3.3.1:
     dependencies:
       any-promise: 1.3.0
+
+  thread-stream@4.0.0:
+    dependencies:
+      real-require: 0.2.0
 
   throat@5.0.0: {}
 
@@ -32122,6 +32259,10 @@ snapshots:
       unist-util-visit-parents: 6.0.2
 
   universalify@2.0.1: {}
+
+  unpdf@1.4.0(@napi-rs/canvas@0.1.88):
+    optionalDependencies:
+      '@napi-rs/canvas': 0.1.88
 
   unpipe@1.0.0: {}
 
@@ -32520,39 +32661,6 @@ snapshots:
   webpack-sources@3.3.3: {}
 
   webpack-virtual-modules@0.6.2: {}
-
-  webpack@5.105.0:
-    dependencies:
-      '@types/eslint-scope': 3.7.7
-      '@types/estree': 1.0.8
-      '@types/json-schema': 7.0.15
-      '@webassemblyjs/ast': 1.14.1
-      '@webassemblyjs/wasm-edit': 1.14.1
-      '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.15.0
-      acorn-import-phases: 1.0.4(acorn@8.15.0)
-      browserslist: 4.28.1
-      chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.19.0
-      es-module-lexer: 2.0.0
-      eslint-scope: 5.1.1
-      events: 3.3.0
-      glob-to-regexp: 0.4.1
-      graceful-fs: 4.2.11
-      json-parse-even-better-errors: 2.3.1
-      loader-runner: 4.3.1
-      mime-types: 2.1.35
-      neo-async: 2.6.2
-      schema-utils: 4.3.3
-      tapable: 2.3.0
-      terser-webpack-plugin: 5.3.16(webpack@5.105.0)
-      watchpack: 2.5.1
-      webpack-sources: 3.3.3
-    transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
-    optional: true
 
   webpack@5.105.0(esbuild@0.25.0):
     dependencies:

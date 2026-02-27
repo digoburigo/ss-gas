@@ -1,11 +1,21 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { createGateway } from "@ai-sdk/gateway";
 import { Elysia, t } from "elysia";
+import { generateText } from "ai";
+import { extractText, getDocumentProxy } from "unpdf";
 
 import { betterAuth } from "../../plugins/better-auth";
 
-const anthropic = new Anthropic({
-	apiKey: process.env.ANTHROPIC_API_KEY,
+const gateway = createGateway({
+	apiKey: process.env.AI_GATEWAY_API_KEY,
 });
+
+async function extractPdfText(base64Data: string): Promise<{ text: string; totalPages: number }> {
+	const buffer = Buffer.from(base64Data, "base64");
+	const pdf = await getDocumentProxy(new Uint8Array(buffer));
+	const { totalPages, text } = await extractText(pdf, { mergePages: true });
+	await pdf.destroy();
+	return { text: `[PDF com ${totalPages} páginas]\n\n${text}`, totalPages };
+}
 
 /**
  * Schema for extracted contract field with confidence
@@ -80,6 +90,23 @@ const ExtractedContractSchema = t.Object({
 	renewalNoticeDays: ExtractedFieldSchema,
 	dailySchedulingDeadline: ExtractedFieldSchema,
 	monthlyDeclarationDeadline: ExtractedFieldSchema,
+
+	// Distribution Points
+	distributionPoints: t.Object({
+		value: t.Union([
+			t.Array(t.Object({
+				code: t.Union([t.String(), t.Null()]),
+				name: t.Union([t.String(), t.Null()]),
+				address: t.Optional(t.Union([t.String(), t.Null()])),
+				city: t.Optional(t.Union([t.String(), t.Null()])),
+				state: t.Optional(t.Union([t.String(), t.Null()])),
+				qdcContracted: t.Optional(t.Union([t.Number(), t.Null()])),
+			})),
+			t.Null(),
+		]),
+		confidence: t.Number({ minimum: 0, maximum: 1 }),
+		source: t.Optional(t.String()),
+	}),
 
 	// General
 	notes: ExtractedFieldSchema,
@@ -184,10 +211,33 @@ DATAS IMPORTANTES:
 - dailySchedulingDeadline: Horário limite para programação diária (HH:mm)
 - monthlyDeclarationDeadline: Dia do mês para declaração mensal (1-31)
 
+PONTOS DE DISTRIBUIÇÃO/ENTREGA:
+- distributionPoints: Lista dos pontos de entrega/distribuição mencionados no contrato.
+  Para cada ponto, extraia:
+  - code: Código do medidor ou ponto de entrega
+  - name: Nome ou identificação do ponto
+  - address: Endereço do ponto (se disponível)
+  - city: Cidade (se disponível)
+  - state: Estado (UF) (se disponível)
+  - qdcContracted: QDC específica deste ponto em m³/dia (se disponível)
+  Se nenhum ponto for encontrado, retorne null.
+
 GERAL:
 - notes: Observações relevantes encontradas no contrato
 
 Retorne APENAS um objeto JSON válido com a estrutura especificada, sem nenhum texto adicional.`;
+
+type ContentBlock = {
+	type: "text";
+	text: string;
+} | {
+	type: "image";
+	source: {
+		type: "base64";
+		media_type: "image/jpeg" | "image/png" | "image/gif" | "image/webp";
+		data: string;
+	};
+};
 
 export const contractExtractionController = new Elysia({
 	prefix: "/contract-extraction",
@@ -202,7 +252,7 @@ export const contractExtractionController = new Elysia({
 	 */
 	.post(
 		"/extract",
-		async ({ body, status }) => {
+		async ({ body, status, log }) => {
 			const { fileUrl, fileBase64, fileType, fileName } = body;
 
 			if (!fileUrl && !fileBase64) {
@@ -211,8 +261,13 @@ export const contractExtractionController = new Elysia({
 				});
 			}
 
+			log.info(
+				{ fileName, fileType, source: fileBase64 ? "base64" : "url" },
+				"Contract extraction request received",
+			);
+
 			try {
-				let content: Anthropic.Messages.ContentBlockParam[];
+				let content: ContentBlock[];
 
 				if (fileBase64) {
 					// Handle base64 encoded file
@@ -225,20 +280,21 @@ export const contractExtractionController = new Elysia({
 						: "application/pdf";
 
 					if (mediaType === "application/pdf") {
-						// For PDFs, we need to use document type
+						const { text: pdfText, totalPages } = await extractPdfText(fileBase64);
+						log.info(
+							{ totalPages, textLength: pdfText.length },
+							"PDF text extraction completed",
+						);
 						content = [
-							{
-								type: "document",
-								source: {
-									type: "base64",
-									media_type: "application/pdf",
-									data: fileBase64,
-								},
-							},
 							{
 								type: "text",
 								text: `Analise este contrato de gás natural e extraia todos os campos especificados.
 Nome do arquivo: ${fileName}
+
+Texto extraído do PDF:
+---
+${pdfText}
+---
 
 Retorne apenas o JSON com os campos extraídos e seus níveis de confiança.`,
 							},
@@ -280,19 +336,21 @@ Retorne apenas o JSON com os campos extraídos e seus níveis de confiança.`,
 						: "application/pdf";
 
 					if (mediaType === "application/pdf") {
+						const { text: pdfText, totalPages } = await extractPdfText(base64);
+						log.info(
+							{ totalPages, textLength: pdfText.length },
+							"PDF text extraction completed",
+						);
 						content = [
-							{
-								type: "document",
-								source: {
-									type: "base64",
-									media_type: "application/pdf",
-									data: base64,
-								},
-							},
 							{
 								type: "text",
 								text: `Analise este contrato de gás natural e extraia todos os campos especificados.
 URL do arquivo: ${fileUrl}
+
+Texto extraído do PDF:
+---
+${pdfText}
+---
 
 Retorne apenas o JSON com os campos extraídos e seus níveis de confiança.`,
 							},
@@ -320,21 +378,20 @@ Retorne apenas o JSON com os campos extraídos e seus níveis de confiança.`,
 					return status(400, { error: "No file provided" });
 				}
 
-				const message = await anthropic.messages.create({
-					model: "claude-sonnet-4-20250514",
-					max_tokens: 8192,
+				const model = "anthropic/claude-sonnet-4.6";
+				log.info({ model, contentBlocks: content.length }, "Sending request to AI");
+
+				const { text: responseText, usage } = await generateText({
+					model: gateway(model),
+					maxTokens: 8192,
 					system: SYSTEM_PROMPT,
-					messages: [
-						{
-							role: "user",
-							content,
-						},
-					],
+					messages: [{ role: "user", content }],
 				});
 
-				// Extract JSON from response
-				const responseText =
-					message.content[0]?.type === "text" ? message.content[0].text : "";
+				log.info(
+					{ inputTokens: usage.promptTokens ?? 0, outputTokens: usage.completionTokens ?? 0 },
+					"AI response received",
+				);
 
 				// Try to parse JSON from response
 				let extractedData: Record<string, unknown>;
@@ -343,8 +400,9 @@ Retorne apenas o JSON com os campos extraídos e seus níveis de confiança.`,
 					const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
 					const jsonString = jsonMatch ? jsonMatch[1] : responseText;
 					extractedData = JSON.parse(jsonString?.trim() || "{}");
+					log.info("JSON parse successful");
 				} catch {
-					console.error("Failed to parse AI response:", responseText);
+					log.error({ rawResponse: responseText }, "Failed to parse AI response as JSON");
 					return status(500, {
 						error: "Failed to parse AI extraction response",
 						rawResponse: responseText,
@@ -355,12 +413,12 @@ Retorne apenas o JSON com os campos extraídos e seus níveis de confiança.`,
 					success: true,
 					extractedData,
 					usage: {
-						inputTokens: message.usage.input_tokens,
-						outputTokens: message.usage.output_tokens,
+						inputTokens: usage.promptTokens ?? 0,
+						outputTokens: usage.completionTokens ?? 0,
 					},
 				};
 			} catch (error) {
-				console.error("Contract extraction error:", error);
+				log.error({ err: error }, "Contract extraction error");
 				return status(500, {
 					error:
 						error instanceof Error ? error.message : "Unknown error occurred",

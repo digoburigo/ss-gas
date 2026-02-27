@@ -2,6 +2,8 @@ import { cron, Patterns } from "@elysiajs/cron";
 import { Elysia } from "elysia";
 import { ContractAlertService, ScheduledJobsService } from "../services";
 
+import { log } from "./logger";
+
 /**
  * Scheduled jobs plugin for Elysia.
  * Sets up cron jobs for:
@@ -17,16 +19,11 @@ export const scheduledJobs = new Elysia({ name: "scheduledJobs" })
 			pattern: Patterns.everyDayAt("18:00"),
 			timezone: "America/Sao_Paulo",
 			async run() {
-				console.log(
-					`[${new Date().toISOString()}] Running scheduled job: checkMissingEntries`
-				);
+				log.info({ job: "checkMissingEntries" }, "Running scheduled job");
 				try {
 					await ScheduledJobsService.checkMissingEntriesAndAlert();
 				} catch (error) {
-					console.error(
-						`[${new Date().toISOString()}] Error in checkMissingEntries job:`,
-						error
-					);
+					log.error({ job: "checkMissingEntries", err: error }, "Error in scheduled job");
 				}
 			},
 		})
@@ -37,16 +34,11 @@ export const scheduledJobs = new Elysia({ name: "scheduledJobs" })
 			pattern: Patterns.everyDayAt("20:00"),
 			timezone: "America/Sao_Paulo",
 			async run() {
-				console.log(
-					`[${new Date().toISOString()}] Running scheduled job: escalateMissingEntries`
-				);
+				log.info({ job: "escalateMissingEntries" }, "Running scheduled job");
 				try {
 					await ScheduledJobsService.escalateMissingEntries();
 				} catch (error) {
-					console.error(
-						`[${new Date().toISOString()}] Error in escalateMissingEntries job:`,
-						error
-					);
+					log.error({ job: "escalateMissingEntries", err: error }, "Error in scheduled job");
 				}
 			},
 		})
@@ -57,20 +49,20 @@ export const scheduledJobs = new Elysia({ name: "scheduledJobs" })
 			pattern: Patterns.everyDayAt("09:00"),
 			timezone: "America/Sao_Paulo",
 			async run() {
-				console.log(
-					`[${new Date().toISOString()}] Running scheduled job: processContractAlerts`
-				);
+				log.info({ job: "processContractAlerts" }, "Running scheduled job");
 				try {
-					const result =
-						await ContractAlertService.processAndDispatchAlerts();
-					console.log(
-						`[${new Date().toISOString()}] Contract alerts processed: ${result.totalAlerts} alerts, ${result.sentEmails}/${result.totalEmails} emails sent`
+					const result = await ContractAlertService.processAndDispatchAlerts();
+					log.info(
+						{
+							job: "processContractAlerts",
+							totalAlerts: result.totalAlerts,
+							sentEmails: result.sentEmails,
+							totalEmails: result.totalEmails,
+						},
+						"Contract alerts processed",
 					);
 				} catch (error) {
-					console.error(
-						`[${new Date().toISOString()}] Error in processContractAlerts job:`,
-						error
-					);
+					log.error({ job: "processContractAlerts", err: error }, "Error in scheduled job");
 				}
 			},
 		})
@@ -81,20 +73,20 @@ export const scheduledJobs = new Elysia({ name: "scheduledJobs" })
 			pattern: Patterns.everyDayAt("10:00"),
 			timezone: "America/Sao_Paulo",
 			async run() {
-				console.log(
-					`[${new Date().toISOString()}] Running scheduled job: retryFailedAlerts`
-				);
+				log.info({ job: "retryFailedAlerts" }, "Running scheduled job");
 				try {
-					const result =
-						await ContractAlertService.retryFailedAlerts();
-					console.log(
-						`[${new Date().toISOString()}] Failed alerts retried: ${result.totalRetried} total, ${result.succeeded} succeeded, ${result.stillFailing} still failing`
+					const result = await ContractAlertService.retryFailedAlerts();
+					log.info(
+						{
+							job: "retryFailedAlerts",
+							totalRetried: result.totalRetried,
+							succeeded: result.succeeded,
+							stillFailing: result.stillFailing,
+						},
+						"Failed alerts retried",
 					);
 				} catch (error) {
-					console.error(
-						`[${new Date().toISOString()}] Error in retryFailedAlerts job:`,
-						error
-					);
+					log.error({ job: "retryFailedAlerts", err: error }, "Error in scheduled job");
 				}
 			},
 		})

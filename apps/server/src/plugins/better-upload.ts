@@ -57,8 +57,6 @@ export const betterUpload = new Elysia({ name: "better-upload" })
 	.post(
 		"/upload",
 		({ request, user, status }) => {
-			console.log(`🚀 -> user:`, user);
-			console.log(`🚀 -> request:`, request);
 			if (!user) {
 				return status(401, { message: "Unauthorized" });
 			}

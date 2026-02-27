@@ -1,6 +1,8 @@
 import { db } from "@acme/zen-v3";
 import { NotificationService } from "./notification.service";
 
+import { log } from "../plugins/logger";
+
 const APP_URL = process.env.PUBLIC_WEB_URL ?? "http://localhost:3001";
 
 interface JobExecutionLog {
@@ -14,11 +16,12 @@ interface JobExecutionLog {
 // In-memory log for job executions (could be persisted to DB if needed)
 const jobExecutionLogs: JobExecutionLog[] = [];
 
-function logJobExecution(log: JobExecutionLog) {
-	jobExecutionLogs.push(log);
-	console.log(
-		`[${log.executedAt.toISOString()}] [${log.jobName}] [${log.status}] ${log.message}`,
-		log.details ? JSON.stringify(log.details) : ""
+function logJobExecution(entry: JobExecutionLog) {
+	jobExecutionLogs.push(entry);
+	const logFn = entry.status === "error" ? log.error.bind(log) : log.info.bind(log);
+	logFn(
+		{ job: entry.jobName, status: entry.status, details: entry.details },
+		entry.message,
 	);
 }
 
@@ -193,10 +196,7 @@ export const ScheduledJobsService = {
 						alertsSent++;
 						notifiedUsers.push(user.userEmail);
 					} catch (emailError) {
-						console.error(
-							`Failed to send alert to ${user.userEmail}:`,
-							emailError
-						);
+						log.error({ err: emailError, email: user.userEmail }, "Failed to send missing entry alert");
 					}
 				}
 
@@ -298,10 +298,7 @@ export const ScheduledJobsService = {
 						alertsSent++;
 						notifiedSupervisors.push(supervisor.userEmail);
 					} catch (emailError) {
-						console.error(
-							`Failed to send escalation alert to ${supervisor.userEmail}:`,
-							emailError
-						);
+						log.error({ err: emailError, email: supervisor.userEmail }, "Failed to send escalation alert");
 					}
 				}
 

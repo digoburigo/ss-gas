@@ -7,6 +7,7 @@ import { createElysiaHandler } from "@zenstackhq/server/elysia";
 import { Elysia } from "elysia";
 
 import { auth, betterAuth } from "../../plugins/better-auth";
+import { log } from "../../plugins/logger";
 import { AuditService } from "../../services";
 
 // Map ZenStack model names to audit entity types
@@ -117,7 +118,7 @@ export const zenstackController = new Elysia()
 				organizationId: sessionUser?.organizationId ?? undefined,
 			});
 		} catch (error) {
-			console.error("[ZenStack Audit] Failed to log operation:", error);
+			log.error({ err: error }, "[ZenStack Audit] Failed to log operation");
 		}
 	})
 	.group("/model", (app) =>

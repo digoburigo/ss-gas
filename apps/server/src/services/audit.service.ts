@@ -1,5 +1,7 @@
 import { db } from "@acme/zen-v3";
 
+import { log } from "../plugins/logger";
+
 type AuditAction = "create" | "update" | "delete" | "login" | "logout";
 
 interface AuditLogParams {
@@ -101,7 +103,7 @@ export const AuditService = {
 				},
 			});
 		} catch (error) {
-			console.error("[AuditService] Failed to write audit log:", error);
+			log.error({ err: error }, "[AuditService] Failed to write audit log");
 		}
 	},
 

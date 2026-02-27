@@ -10,6 +10,7 @@ import { userController } from "./modules/user";
 import { zenstackController } from "./modules/zenstack";
 import { betterAuth } from "./plugins/better-auth";
 import { betterUpload } from "./plugins/better-upload";
+import { log, loggerPlugin } from "./plugins/logger";
 import { scheduledJobs } from "./plugins/scheduled-jobs";
 
 const trustedOrigins = [
@@ -24,15 +25,10 @@ export const app = new Elysia({
 			references: fromTypes(),
 		}),
 	)
-	// .onError(({ error, code }) => {
-	//   console.log(`🚀 -> code:`, code)
-	//   console.log(`🚀 -> error:`, error)
-	//   if (code === 'VALIDATION') {
-	//     return error.detail(error.message);
-	//   }
-
-	//   return error
-	// })
+	.use(loggerPlugin)
+	.onError(({ error, code, log: ctxLog }) => {
+		ctxLog.error({ code, err: error }, "Unhandled error");
+	})
 	.use(
 		cors({
 			origin: trustedOrigins,
@@ -101,7 +97,7 @@ export default app;
 
 if (!process.env.VERCEL) {
 	app.listen({ hostname: "0.0.0.0", port: 3000 }, ({ hostname, port }) => {
-		console.log(`🦊 Elysia is running at ${hostname}:${port}`);
+		log.info(`Elysia is running at ${hostname}:${port}`);
 	});
 }
 
