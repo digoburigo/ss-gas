@@ -23,16 +23,16 @@
 		"nodemailer": "^8.0.1",
 		"react": "catalog:react19",
 		"react-dom": "catalog:react19",
-		"resend": "^6.9.2"
+		"resend": "^6.9.3"
 	},
 	"devDependencies": {
 		"@acme/tsconfig": "workspace:*",
-		"@react-email/preview-server": "5.2.8",
+		"@react-email/preview-server": "5.2.9",
 		"@types/node": "catalog:",
 		"@types/nodemailer": "^7.0.11",
 		"@types/react": "catalog:react19",
 		"@types/react-dom": "catalog:react19",
-		"react-email": "^5.2.8",
+		"react-email": "^5.2.9",
 		"typescript": "catalog:"
 	}
 }

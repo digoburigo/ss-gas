@@ -19,7 +19,7 @@
     "@acme/zen-v3": "workspace:*",
     "@better-auth/expo": "catalog:",
     "@t3-oss/env-core": "^0.13.10",
-    "@zenstackhq/better-auth": "3.3.3",
+    "@zenstackhq/better-auth": "3.4.1",
     "better-auth": "catalog:",
     "pg": "^8.19.0",
     "uuid": "^13.0.0",
@@ -30,7 +30,7 @@
     "@acme/prettier-config": "workspace:*",
     "@acme/tsconfig": "workspace:*",
     "@better-auth/cli": "catalog:",
-    "@types/pg": "^8.16.0",
+    "@types/pg": "^8.18.0",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
