@@ -560,14 +560,14 @@ export function DailyEntryForm({
                     <p className="text-muted-foreground text-sm">
                       Atomizador(es)
                     </p>
-                    <p className="text-2xl font-bold">
+                    <p className="text-lg font-bold font-mono truncate">
                       {formatNumber(qdcAtomizer)}
                     </p>
                     <p className="text-muted-foreground text-xs">m³/dia</p>
                   </div>
                   <div className="text-center">
                     <p className="text-muted-foreground text-sm">Linhas</p>
-                    <p className="text-2xl font-bold">
+                    <p className="text-lg font-bold font-mono truncate">
                       {formatNumber(qdcLines)}
                     </p>
                     <p className="text-muted-foreground text-xs">m³/dia</p>
@@ -584,7 +584,7 @@ export function DailyEntryForm({
                       {values.qdsManualOverride && " (Manual)"}
                     </p>
                     <p
-                      className={`text-3xl font-bold ${
+                      className={`text-xl font-bold font-mono truncate ${
                         values.qdsManualOverride
                           ? "text-amber-600"
                           : "text-primary"
@@ -598,7 +598,7 @@ export function DailyEntryForm({
                     <p className="text-muted-foreground text-sm">
                       QDP (Programação)
                     </p>
-                    <p className="text-3xl font-bold text-emerald-600">
+                    <p className="text-xl font-bold font-mono truncate text-emerald-600">
                       {formatNumber(qdpValue)}
                     </p>
                     <p className="text-muted-foreground text-xs">
