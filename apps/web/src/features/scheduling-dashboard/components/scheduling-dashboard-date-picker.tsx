@@ -1,17 +1,37 @@
 "use no memo";
 
-import { format } from "date-fns";
+import { format, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
+import { schema } from "@acme/zen-v3/zenstack/schema";
 import { Button } from "@acme/ui/button";
 import { Calendar } from "@acme/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 
+import { authClient } from "~/clients/auth-client";
 import { useSchedulingDashboard } from "./scheduling-dashboard-provider";
 
 export function SchedulingDashboardDatePicker() {
   const { selectedDate, setSelectedDate } = useSchedulingDashboard();
+  const { data: session } = authClient.useSession();
+  const client = useClientQueries(schema);
+
+  const { data: member } = client.member.useFindFirst(
+    {
+      where: { userId: session?.user?.id },
+      select: { profile: true, role: true },
+    },
+    { enabled: !!session?.user?.id },
+  );
+
+  const isAdmin =
+    member?.profile === "admin" ||
+    member?.role === "admin" ||
+    member?.role === "owner";
+
+  const today = startOfDay(new Date());
 
   const goToToday = () => {
     setSelectedDate(new Date());
@@ -20,6 +40,9 @@ export function SchedulingDashboardDatePicker() {
   const goToPreviousDay = () => {
     const prev = new Date(selectedDate);
     prev.setDate(prev.getDate() - 1);
+    if (!isAdmin && startOfDay(prev) < today) {
+      return;
+    }
     setSelectedDate(prev);
   };
 
@@ -32,12 +55,16 @@ export function SchedulingDashboardDatePicker() {
   const isToday =
     format(selectedDate, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
 
+  const isPreviousDisabled =
+    !isAdmin && startOfDay(selectedDate) <= today;
+
   return (
     <div className="flex items-center gap-2">
       <Button
         variant="outline"
         size="icon"
         onClick={goToPreviousDay}
+        disabled={isPreviousDisabled}
         title="Dia anterior"
       >
         <ChevronLeft className="h-4 w-4" />
@@ -57,6 +84,10 @@ export function SchedulingDashboardDatePicker() {
             onSelect={(date) => date && setSelectedDate(date)}
             initialFocus
             locale={ptBR}
+            {...(!isAdmin && {
+              disabled: { before: today },
+              startMonth: today,
+            })}
           />
         </PopoverContent>
       </Popover>
