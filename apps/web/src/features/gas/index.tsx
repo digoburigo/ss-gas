@@ -465,9 +465,16 @@ export function GasDashboard() {
               <FileText className="h-4 w-4 text-blue-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {isLoading ? "Carregando..." : formatValue(monthlyTotals.qdc)}
-              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="text-lg font-bold font-mono truncate cursor-help">
+                    {isLoading ? "Carregando..." : formatValue(monthlyTotals.qdc)}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isLoading ? "Carregando..." : formatValue(monthlyTotals.qdc)}</p>
+                </TooltipContent>
+              </Tooltip>
               <p className="text-muted-foreground text-xs">
                 Quantidade Diária Contratada
               </p>
@@ -483,9 +490,16 @@ export function GasDashboard() {
               <Calculator className="h-4 w-4 text-amber-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {isLoading ? "Carregando..." : formatValue(monthlyTotals.qds)}
-              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="text-lg font-bold font-mono truncate cursor-help">
+                    {isLoading ? "Carregando..." : formatValue(monthlyTotals.qds)}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isLoading ? "Carregando..." : formatValue(monthlyTotals.qds)}</p>
+                </TooltipContent>
+              </Tooltip>
               <p className="text-muted-foreground text-xs">
                 Consumo Calculado/Previsto
               </p>
@@ -501,9 +515,16 @@ export function GasDashboard() {
               <Gauge className="h-4 w-4 text-purple-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {isLoading ? "Carregando..." : formatValue(monthlyTotals.qdp)}
-              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="text-lg font-bold font-mono truncate cursor-help">
+                    {isLoading ? "Carregando..." : formatValue(monthlyTotals.qdp)}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isLoading ? "Carregando..." : formatValue(monthlyTotals.qdp)}</p>
+                </TooltipContent>
+              </Tooltip>
               <p className="text-muted-foreground text-xs">
                 Quantidade Diária Programada
               </p>
@@ -517,9 +538,16 @@ export function GasDashboard() {
               <Activity className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {isLoading ? "Carregando..." : formatValue(monthlyTotals.qdr)}
-              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="text-lg font-bold font-mono truncate cursor-help">
+                    {isLoading ? "Carregando..." : formatValue(monthlyTotals.qdr)}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{isLoading ? "Carregando..." : formatValue(monthlyTotals.qdr)}</p>
+                </TooltipContent>
+              </Tooltip>
               <p className="text-muted-foreground text-xs">
                 Consumo Real dos Medidores
               </p>
@@ -567,7 +595,7 @@ export function GasDashboard() {
                       </div>
                       <div>
                         <div
-                          className={`text-2xl font-bold ${toleranceSummary.transport.classes.text}`}
+                          className={`text-lg font-bold font-mono truncate ${toleranceSummary.transport.classes.text}`}
                         >
                           {formatPercent(
                             toleranceSummary.transport.deviationPercent,
@@ -647,7 +675,7 @@ export function GasDashboard() {
                       </div>
                       <div>
                         <div
-                          className={`text-2xl font-bold ${toleranceSummary.molecule.classes.text}`}
+                          className={`text-lg font-bold font-mono truncate ${toleranceSummary.molecule.classes.text}`}
                         >
                           {formatPercent(
                             toleranceSummary.molecule.deviationPercent,
