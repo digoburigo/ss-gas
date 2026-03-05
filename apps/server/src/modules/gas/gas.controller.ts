@@ -4119,4 +4119,442 @@ Se um volume for invalido ou negativo, adicione um erro.`;
 				}),
 			}),
 		},
+	)
+
+	/**
+	 * GET /gas/actual-consumption/template
+	 *
+	 * Downloads an Excel template for actual consumption bulk import.
+	 * Template has columns: Data, Unidade, Consumo Real (m3), Fonte, Leitura Medidor, Leitura Anterior, Observacoes
+	 */
+	.get(
+		"/actual-consumption/template",
+		async () => {
+			const workbook = new ExcelJS.Workbook();
+			const sheet = workbook.addWorksheet("Consumo Real");
+
+			sheet.columns = [
+				{ header: "Data", key: "date", width: 16 },
+				{ header: "Unidade", key: "unit", width: 30 },
+				{ header: "Consumo Real (m3)", key: "qdrValue", width: 22 },
+				{ header: "Fonte", key: "source", width: 16 },
+				{ header: "Leitura Medidor", key: "meterReading", width: 20 },
+				{ header: "Leitura Anterior", key: "previousMeterReading", width: 20 },
+				{ header: "Observacoes", key: "notes", width: 40 },
+			];
+
+			const headerRow = sheet.getRow(1);
+			headerRow.font = { bold: true };
+			headerRow.fill = {
+				type: "pattern",
+				pattern: "solid",
+				fgColor: { argb: "FFE2E8F0" },
+			};
+
+			// Add example rows
+			sheet.addRow({
+				date: "01/03/2026",
+				unit: "Nome da Unidade",
+				qdrValue: 950,
+				source: "medidor",
+				meterReading: 12500,
+				previousMeterReading: 11550,
+				notes: "",
+			});
+			sheet.addRow({
+				date: "02/03/2026",
+				unit: "Nome da Unidade",
+				qdrValue: 1100,
+				source: "manual",
+				meterReading: "",
+				previousMeterReading: "",
+				notes: "Leitura estimada",
+			});
+
+			const buffer = await workbook.xlsx.writeBuffer();
+
+			return new Response(buffer as ArrayBuffer, {
+				headers: {
+					"Content-Type":
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					"Content-Disposition":
+						'attachment; filename="template-consumo-real.xlsx"',
+				},
+			});
+		},
+		{
+			auth: true,
+		},
+	)
+
+	/**
+	 * POST /gas/actual-consumption/upload
+	 *
+	 * Uploads an Excel file with actual consumption data.
+	 * Uses AI to interpret column mappings and unit matching.
+	 */
+	.post(
+		"/actual-consumption/upload",
+		async ({ body, session, status }) => {
+			const { fileBase64 } = body;
+
+			const orgId = session.activeOrganizationId;
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			// Parse Excel file
+			const excelBuffer = Buffer.from(fileBase64, "base64");
+			const workbook = new ExcelJS.Workbook();
+			try {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				await workbook.xlsx.load(excelBuffer as any);
+			} catch {
+				return status(400, {
+					error: "Arquivo Excel invalido. Verifique o formato do arquivo.",
+				});
+			}
+
+			const sheet = workbook.worksheets[0];
+			if (!sheet || sheet.rowCount < 2) {
+				return status(400, {
+					error:
+						"Planilha vazia ou sem dados. A primeira linha deve conter cabecalhos.",
+				});
+			}
+
+			// Extract header row and data rows as text
+			const headers: string[] = [];
+			const headerRow = sheet.getRow(1);
+			headerRow.eachCell((cell, colNumber) => {
+				headers[colNumber - 1] = String(cell.value ?? "").trim();
+			});
+
+			const rawRows: Record<string, string>[] = [];
+			for (let i = 2; i <= sheet.rowCount; i++) {
+				const row = sheet.getRow(i);
+				const rowData: Record<string, string> = {};
+				let hasValue = false;
+				row.eachCell((cell, colNumber) => {
+					const header = headers[colNumber - 1];
+					if (header) {
+						let cellValue: string;
+						if (cell.value instanceof Date) {
+							cellValue = `${cell.value.getDate().toString().padStart(2, "0")}/${(cell.value.getMonth() + 1).toString().padStart(2, "0")}/${cell.value.getFullYear()}`;
+						} else {
+							cellValue = String(cell.value ?? "").trim();
+						}
+						rowData[header] = cellValue;
+						if (cellValue) hasValue = true;
+					}
+				});
+				if (hasValue) {
+					rawRows.push(rowData);
+				}
+			}
+
+			if (rawRows.length === 0) {
+				return status(400, {
+					error: "Nenhuma linha de dados encontrada na planilha.",
+				});
+			}
+
+			// Fetch org units for AI context
+			const units = await db.gasUnit.findMany({
+				where: { organizationId: orgId, active: true },
+				select: { id: true, name: true, code: true },
+			});
+
+			if (units.length === 0) {
+				return status(400, {
+					error:
+						"Nenhuma unidade consumidora encontrada. Cadastre unidades antes de importar.",
+				});
+			}
+
+			// Use AI to interpret the spreadsheet
+			const aiPrompt = `Voce e um especialista em interpretacao de planilhas de consumo real de gas natural.
+
+Sua tarefa: interpretar os dados brutos de uma planilha de consumo real e mapear para o formato padrao.
+
+UNIDADES CADASTRADAS NA ORGANIZACAO:
+${units.map((u) => `- ID: "${u.id}" | Nome: "${u.name}" | Codigo: "${u.code}"`).join("\n")}
+
+CABECALHOS DA PLANILHA: ${JSON.stringify(headers)}
+
+DADOS BRUTOS (JSON):
+${JSON.stringify(rawRows, null, 2)}
+
+REGRAS DE MAPEAMENTO:
+1. Identifique qual coluna corresponde a DATA (pode ser "Data", "DATE", "Dia", etc.)
+2. Identifique qual coluna corresponde a UNIDADE (pode ser "Unidade", "Unit", "Ponto", "UC", nome direto, etc.)
+3. Identifique qual coluna corresponde a CONSUMO/QDR (pode ser "Consumo", "Consumo Real", "QDR", "Volume", "m3", etc.)
+4. Identifique qual coluna corresponde a FONTE (pode ser "Fonte", "Source", "Tipo Leitura" — valores: "meter"/"medidor", "manual", "calculated"/"calculado")
+5. Identifique qual coluna corresponde a LEITURA DO MEDIDOR (pode ser "Leitura", "Medidor", "Meter Reading", etc.)
+6. Identifique qual coluna corresponde a LEITURA ANTERIOR (pode ser "Leitura Anterior", "Previous Reading", etc.)
+7. Identifique qual coluna corresponde a OBSERVACOES (pode ser "Obs", "Notas", "Observacoes", etc.)
+8. Para cada linha, faca o matching do nome da unidade com as unidades cadastradas (matching flexivel: ignorar acentos, case, abreviacoes)
+9. Para datas, aceite formatos: DD/MM/YYYY, DD-MM-YYYY, YYYY-MM-DD, DD/MM/YY
+10. Consumo/QDR deve ser numero positivo. Aceite formatos com ponto ou virgula como separador decimal.
+11. Fonte deve ser mapeada para: "meter" (se medidor/medicao), "manual" (se manual), "calculated" (se calculado). Default: "manual".
+12. Leituras de medidor sao opcionais (podem ser null).
+
+RETORNE APENAS um JSON valido com esta estrutura:
+{
+  "columnMapping": {
+    "date": "nome_da_coluna_original",
+    "unit": "nome_da_coluna_original",
+    "qdrValue": "nome_da_coluna_original",
+    "source": "nome_da_coluna_original_ou_null",
+    "meterReading": "nome_da_coluna_original_ou_null",
+    "previousMeterReading": "nome_da_coluna_original_ou_null",
+    "notes": "nome_da_coluna_original_ou_null"
+  },
+  "rows": [
+    {
+      "rowNumber": 2,
+      "date": "YYYY-MM-DD",
+      "unitId": "id_da_unidade_ou_null",
+      "unitName": "nome_original_na_planilha",
+      "matchedUnitName": "nome_da_unidade_cadastrada_ou_null",
+      "qdrValue": 950.0,
+      "source": "meter",
+      "meterReading": 12500.0,
+      "previousMeterReading": 11550.0,
+      "notes": "observacao_ou_null",
+      "errors": ["lista de erros para esta linha, vazio se OK"]
+    }
+  ]
+}
+
+Se uma unidade nao puder ser identificada, defina unitId como null e adicione um erro.
+Se uma data for invalida, adicione um erro.
+Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
+
+			try {
+				const model = "anthropic/claude-sonnet-4-5-20250514";
+
+				const { text: responseText } = await generateText({
+					model: aiGateway(model),
+					maxOutputTokens: 8192,
+					messages: [{ role: "user", content: aiPrompt }],
+				});
+
+				// Parse AI response
+				let interpreted: {
+					columnMapping: Record<string, string | null>;
+					rows: Array<{
+						rowNumber: number;
+						date: string;
+						unitId: string | null;
+						unitName: string;
+						matchedUnitName: string | null;
+						qdrValue: number;
+						source: string;
+						meterReading: number | null;
+						previousMeterReading: number | null;
+						notes: string | null;
+						errors: string[];
+					}>;
+				};
+
+				try {
+					const jsonMatch = responseText.match(
+						/```json\s*([\s\S]*?)\s*```/,
+					);
+					const jsonString = jsonMatch ? jsonMatch[1] : responseText;
+					interpreted = JSON.parse(jsonString?.trim() || "{}");
+				} catch {
+					return status(500, {
+						error: "Falha ao interpretar a planilha. Tente novamente.",
+					});
+				}
+
+				// Additional server-side validation
+				const validSources = ["meter", "manual", "calculated"];
+				for (const row of interpreted.rows) {
+					// Validate date
+					if (row.date) {
+						const dateObj = new Date(row.date);
+						if (Number.isNaN(dateObj.getTime())) {
+							row.errors.push(
+								`Data invalida: "${row.date}"`,
+							);
+						}
+					} else {
+						row.errors.push("Data nao informada");
+					}
+
+					// Validate unitId exists in our units list
+					if (row.unitId) {
+						const unitExists = units.some(
+							(u) => u.id === row.unitId,
+						);
+						if (!unitExists) {
+							row.unitId = null;
+							row.errors.push(
+								`Unidade "${row.unitName}" nao encontrada no cadastro`,
+							);
+						}
+					}
+
+					// Validate qdrValue
+					if (
+						row.qdrValue === null ||
+						row.qdrValue === undefined ||
+						Number.isNaN(row.qdrValue) ||
+						row.qdrValue < 0
+					) {
+						row.errors.push(
+							`Consumo invalido: "${row.qdrValue}"`,
+						);
+					}
+
+					// Validate and normalize source
+					if (!row.source || !validSources.includes(row.source)) {
+						row.source = "manual";
+					}
+				}
+
+				const hasErrors = interpreted.rows.some(
+					(r) => r.errors.length > 0,
+				);
+				const errorCount = interpreted.rows.filter(
+					(r) => r.errors.length > 0,
+				).length;
+				const validCount = interpreted.rows.filter(
+					(r) => r.errors.length === 0,
+				).length;
+
+				return {
+					success: true,
+					columnMapping: interpreted.columnMapping,
+					rows: interpreted.rows,
+					summary: {
+						totalRows: interpreted.rows.length,
+						validRows: validCount,
+						errorRows: errorCount,
+						hasErrors,
+					},
+				};
+			} catch (error) {
+				return status(500, {
+					error:
+						error instanceof Error
+							? error.message
+							: "Erro desconhecido ao processar planilha",
+				});
+			}
+		},
+		{
+			auth: true,
+			body: t.Object({
+				fileBase64: t.String(),
+			}),
+		},
+	)
+
+	/**
+	 * POST /gas/actual-consumption/confirm
+	 *
+	 * Confirms and saves the interpreted actual consumption data.
+	 * Creates/upserts GasRealConsumption records for each valid row.
+	 */
+	.post(
+		"/actual-consumption/confirm",
+		async ({ body, session, status }) => {
+			const { rows, importLog } = body;
+			const orgId = session.activeOrganizationId;
+			const userId = session.userId;
+
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			const created: string[] = [];
+			const errors: Array<{ rowNumber: number; error: string }> = [];
+
+			for (const row of rows) {
+				if (!row.unitId || !row.date || row.qdrValue == null) {
+					errors.push({
+						rowNumber: row.rowNumber,
+						error: "Dados incompletos: unidade, data ou consumo ausente",
+					});
+					continue;
+				}
+
+				try {
+					await db.gasRealConsumption.upsert({
+						where: {
+							unitId_date: {
+								unitId: row.unitId,
+								date: new Date(row.date),
+							},
+						},
+						create: {
+							unitId: row.unitId,
+							date: new Date(row.date),
+							qdrValue: row.qdrValue,
+							source: row.source as "meter" | "manual" | "calculated",
+							meterReading: row.meterReading ?? null,
+							previousMeterReading: row.previousMeterReading ?? null,
+							notes: row.notes ?? null,
+							createdById: userId,
+						},
+						update: {
+							qdrValue: row.qdrValue,
+							source: row.source as "meter" | "manual" | "calculated",
+							meterReading: row.meterReading ?? null,
+							previousMeterReading: row.previousMeterReading ?? null,
+							notes: row.notes ?? null,
+						},
+					});
+					created.push(
+						`Linha ${row.rowNumber}: ${row.date} - ${row.unitName}`,
+					);
+				} catch (err) {
+					errors.push({
+						rowNumber: row.rowNumber,
+						error:
+							err instanceof Error
+								? err.message
+								: "Erro ao salvar registro",
+					});
+				}
+			}
+
+			return {
+				success: errors.length === 0,
+				created: created.length,
+				errors,
+				importLog: {
+					totalRows: importLog.totalRows,
+					imported: created.length,
+					errors: errors.length,
+					skipped: importLog.skipped,
+				},
+			};
+		},
+		{
+			auth: true,
+			body: t.Object({
+				rows: t.Array(
+					t.Object({
+						rowNumber: t.Number(),
+						date: t.String(),
+						unitId: t.Nullable(t.String()),
+						unitName: t.String(),
+						qdrValue: t.Nullable(t.Number()),
+						source: t.String(),
+						meterReading: t.Nullable(t.Number()),
+						previousMeterReading: t.Nullable(t.Number()),
+						notes: t.Nullable(t.String()),
+					}),
+				),
+				importLog: t.Object({
+					totalRows: t.Number(),
+					skipped: t.Number(),
+				}),
+			}),
+		},
 	);
