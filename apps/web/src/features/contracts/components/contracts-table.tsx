@@ -15,8 +15,11 @@ import {
 } from "@tanstack/react-table";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 
+import { FileUp, Sparkles, Upload } from "lucide-react";
+
 import type { GasContract } from "@acme/zen-v3/zenstack/models";
 import { cn } from "@acme/ui";
+import { Button } from "@acme/ui/button";
 import {
   Table,
   TableBody,
@@ -28,6 +31,7 @@ import {
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import { DataTablePagination, DataTableToolbar } from "~/components/data-table";
+import { useContracts } from "./contracts-provider";
 import { useTableUrlState } from "~/hooks/use-table-url-state";
 import { statusOptions } from "../data/data";
 import { contractsColumns as columns } from "./contracts-columns";
@@ -35,6 +39,7 @@ import { contractsColumns as columns } from "./contracts-columns";
 const route = getRouteApi("/_authenticated/gas/contracts/");
 
 export function ContractsTable() {
+  const { setOpen } = useContracts();
   const client = useClientQueries(schema);
   const { data: contracts = [], isFetching } = client.gasContract.useFindMany({
     take: 99,
@@ -202,7 +207,32 @@ export function ContractsTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Nenhum contrato encontrado.
+                  {contracts.length === 0 ? (
+                    <div className="flex flex-col items-center gap-4 py-8">
+                      <div className="rounded-full bg-muted p-4">
+                        <FileUp className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-semibold text-lg">
+                          Nenhum contrato cadastrado
+                        </p>
+                        <p className="text-muted-foreground text-sm max-w-md mx-auto">
+                          Faça upload de um contrato em PDF e nossa IA extrairá
+                          automaticamente as informações como fornecedor,
+                          vigência, volumes e cláusulas.
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button onClick={() => setOpen("upload")}>
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload com IA
+                          <Sparkles className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    "Nenhum contrato encontrado."
+                  )}
                 </TableCell>
               </TableRow>
             )}
