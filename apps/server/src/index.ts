@@ -6,6 +6,7 @@ import { sql } from "kysely";
 
 import { contractExtractionController } from "./modules/contract-extraction";
 import { gasController } from "./modules/gas";
+import { gasChatController } from "./modules/gas-chat";
 import { userController } from "./modules/user";
 import { zenstackController } from "./modules/zenstack";
 import { betterAuth } from "./plugins/better-auth";
@@ -44,6 +45,7 @@ export const app = new Elysia({
 	.use(gasController)
 	.use(userController)
 	.use(contractExtractionController)
+	.use(gasChatController)
 	.get("/", () => ({ message: "Hello Elysia!" }))
 	.get("/healthcheck", () => ({ qualquercoisa: "OK 1" }), {
 		response: {
