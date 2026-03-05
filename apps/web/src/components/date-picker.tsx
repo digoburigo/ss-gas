@@ -1,3 +1,4 @@
+import type { Matcher } from "react-day-picker";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
@@ -9,12 +10,14 @@ type DatePickerProps = {
   selected: Date | undefined;
   onSelect: (date: Date | undefined) => void;
   placeholder?: string;
+  disabled?: Matcher | Matcher[];
 };
 
 export function DatePicker({
   selected,
   onSelect,
   placeholder = "Pick a date",
+  disabled,
 }: DatePickerProps) {
   return (
     <Popover>
@@ -38,9 +41,7 @@ export function DatePicker({
           captionLayout="dropdown"
           selected={selected}
           onSelect={onSelect}
-          disabled={(date: Date) =>
-            date > new Date() || date < new Date("1900-01-01")
-          }
+          {...(disabled !== undefined && { disabled })}
         />
       </PopoverContent>
     </Popover>

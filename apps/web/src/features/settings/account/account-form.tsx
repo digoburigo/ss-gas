@@ -93,7 +93,13 @@ export function AccountForm() {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Date of birth</FormLabel>
-              <DatePicker selected={field.value} onSelect={field.onChange} />
+              <DatePicker
+                selected={field.value}
+                onSelect={field.onChange}
+                disabled={(date: Date) =>
+                  date > new Date() || date < new Date("1900-01-01")
+                }
+              />
               <FormDescription>
                 Your date of birth is used to calculate your age.
               </FormDescription>

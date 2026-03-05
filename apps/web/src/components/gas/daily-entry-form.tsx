@@ -250,6 +250,9 @@ export function DailyEntryForm({
                   selected={field.state.value}
                   onSelect={(date) => field.handleChange(date ?? new Date())}
                   placeholder="Selecione a data"
+                  disabled={(date: Date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
                 />
                 {field.state.meta.errors.map((error) => (
                   <p className="text-destructive text-sm" key={error?.message}>
