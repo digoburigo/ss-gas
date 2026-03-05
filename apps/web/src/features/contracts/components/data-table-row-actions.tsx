@@ -1,5 +1,13 @@
 import type { Row } from "@tanstack/react-table";
-import { History, MoreHorizontal, Pencil, Power, Trash2 } from "lucide-react";
+import {
+  GitBranch,
+  History,
+  MoreHorizontal,
+  Pencil,
+  Power,
+  Trash2,
+  Upload,
+} from "lucide-react";
 
 import type { GasContract } from "@acme/zen-v3/zenstack/models";
 import { Button } from "@acme/ui/button";
@@ -40,6 +48,24 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         >
           <Pencil className="mr-2 h-4 w-4" />
           Editar
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            setCurrentRow(row.original);
+            setOpen("re-upload");
+          }}
+        >
+          <Upload className="mr-2 h-4 w-4" />
+          Re-upload
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            setCurrentRow(row.original);
+            setOpen("view-versions");
+          }}
+        >
+          <GitBranch className="mr-2 h-4 w-4" />
+          Versões
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {

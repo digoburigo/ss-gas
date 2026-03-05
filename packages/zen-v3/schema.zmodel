@@ -80,6 +80,7 @@ model User {
   approvedGasDailyPlans GasDailyPlan[] @relation("approvedGasDailyPlans")
   createdGasRealConsumptions GasRealConsumption[] @relation("createdGasRealConsumptions")
   createdGasContracts GasContract[] @relation("createdGasContracts")
+  uploadedGasContractVersions GasContractVersion[] @relation("uploadedGasContractVersions")
   createdGasTariffHistory GasTariffHistory[] @relation("createdGasTariffHistory")
   approvedGasTariffHistory GasTariffHistory[] @relation("approvedGasTariffHistory")
 
@@ -196,6 +197,7 @@ model Organization {
   gasCustomFields GasCustomField[]
   gasAuditLogs GasAuditLog[]
   gasTariffHistory GasTariffHistory[]
+  gasContractVersions GasContractVersion[]
 
   @@unique([slug])
   @@unique([cnpj])
@@ -1258,10 +1260,48 @@ model GasContract {
     // Tariff history for this contract
     tariffHistory GasTariffHistory[]
 
+    // Contract versions (re-uploads)
+    versions GasContractVersion[]
+
     @@allow('create', auth() != null)
     @@allow('read,update,delete', auth().organizationId == organizationId)
 
     @@map("gas_contracts")
+}
+
+// CONTRACT VERSION - stores snapshots when contract is re-uploaded
+model GasContractVersion {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    contractId String
+    contract GasContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+    versionNumber Int                // Sequential version number (1, 2, 3...)
+    isActive Boolean @default(false) // Whether this is the currently active version
+
+    // Snapshot of contract data at this version
+    dataSnapshot String              // JSON snapshot of all contract fields
+    extractedDataSummary String?     // Brief summary of what was extracted
+
+    // Upload metadata
+    fileName String?                 // Original file name
+    fileType String?                 // File MIME type
+
+    // Audit
+    uploadedAt DateTime @default(now())
+    uploadedById String? @default(auth().userId)
+    uploadedByUser User? @relation("uploadedGasContractVersions", fields: [uploadedById], references: [id], onDelete: SetNull)
+
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@unique([contractId, versionNumber])
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+
+    @@index([contractId])
+    @@map("gas_contract_versions")
 }
 
 // Audit log for contract change history

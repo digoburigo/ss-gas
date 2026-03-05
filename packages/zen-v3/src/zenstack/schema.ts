@@ -319,6 +319,13 @@ export class SchemaType implements SchemaDef {
                     attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasContracts") }] }],
                     relation: { opposite: "createdByUser", name: "createdGasContracts" }
                 },
+                uploadedGasContractVersions: {
+                    name: "uploadedGasContractVersions",
+                    type: "GasContractVersion",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("uploadedGasContractVersions") }] }],
+                    relation: { opposite: "uploadedByUser", name: "uploadedGasContractVersions" }
+                },
                 createdGasTariffHistory: {
                     name: "createdGasTariffHistory",
                     type: "GasTariffHistory",
@@ -809,6 +816,12 @@ export class SchemaType implements SchemaDef {
                 gasTariffHistory: {
                     name: "gasTariffHistory",
                     type: "GasTariffHistory",
+                    array: true,
+                    relation: { opposite: "organization" }
+                },
+                gasContractVersions: {
+                    name: "gasContractVersions",
+                    type: "GasContractVersion",
                     array: true,
                     relation: { opposite: "organization" }
                 }
@@ -4245,6 +4258,12 @@ export class SchemaType implements SchemaDef {
                     type: "GasTariffHistory",
                     array: true,
                     relation: { opposite: "contract" }
+                },
+                versions: {
+                    name: "versions",
+                    type: "GasContractVersion",
+                    array: true,
+                    relation: { opposite: "contract" }
                 }
             },
             attributes: [
@@ -4255,6 +4274,112 @@ export class SchemaType implements SchemaDef {
             idFields: ["id"],
             uniqueFields: {
                 id: { type: "String" }
+            }
+        },
+        GasContractVersion: {
+            name: "GasContractVersion",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                contractId: {
+                    name: "contractId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "contract"
+                    ]
+                },
+                contract: {
+                    name: "contract",
+                    type: "GasContract",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("contractId")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "versions", fields: ["contractId"], references: ["id"], onDelete: "Cascade" }
+                },
+                versionNumber: {
+                    name: "versionNumber",
+                    type: "Int"
+                },
+                isActive: {
+                    name: "isActive",
+                    type: "Boolean",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal(false) }] }],
+                    default: false
+                },
+                dataSnapshot: {
+                    name: "dataSnapshot",
+                    type: "String"
+                },
+                extractedDataSummary: {
+                    name: "extractedDataSummary",
+                    type: "String",
+                    optional: true
+                },
+                fileName: {
+                    name: "fileName",
+                    type: "String",
+                    optional: true
+                },
+                fileType: {
+                    name: "fileType",
+                    type: "String",
+                    optional: true
+                },
+                uploadedAt: {
+                    name: "uploadedAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                uploadedById: {
+                    name: "uploadedById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "uploadedByUser"
+                    ]
+                },
+                uploadedByUser: {
+                    name: "uploadedByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("uploadedGasContractVersions") }, { name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("uploadedById")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "uploadedGasContractVersions", name: "uploadedGasContractVersions", fields: ["uploadedById"], references: ["id"], onDelete: "SetNull", hasDefault: true }
+                },
+                organizationId: {
+                    name: "organizationId",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]),
+                    foreignKeyFor: [
+                        "organization"
+                    ]
+                },
+                organization: {
+                    name: "organization",
+                    type: "Organization",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("organizationId")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "gasContractVersions", fields: ["organizationId"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                }
+            },
+            attributes: [
+                { name: "@@unique", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("contractId"), ExpressionUtils.field("versionNumber")]) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("contractId")]) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_contract_versions") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" },
+                contractId_versionNumber: { contractId: { type: "String" }, versionNumber: { type: "Int" } }
             }
         },
         GasContractAuditLog: {

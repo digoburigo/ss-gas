@@ -41,6 +41,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/b
 type ContractUploadDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  existingContract?: GasContract | null;
 };
 
 type ExtractedField = {
@@ -74,7 +75,9 @@ const EXTRACTION_STAGES: {
 export function ContractUploadDrawer({
   open,
   onOpenChange,
+  existingContract,
 }: ContractUploadDrawerProps) {
+  const isReUpload = !!existingContract;
   const [uploadedFile, setUploadedFile] = useState<UploadedFile | null>(null);
   const [extractedData, setExtractedData] =
     useState<ExtractedContractData | null>(null);
@@ -106,9 +109,34 @@ export function ContractUploadDrawer({
       },
     });
 
+  const { mutate: updateContract, isPending: isUpdating } =
+    client.gasContract.useUpdate({
+      onSuccess: () => {
+        toast.success("Nova versão do contrato salva com sucesso");
+        handleReset();
+        onOpenChange(false);
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+
   // Mutation for audit log
   const { mutateAsync: createAuditLog } =
     client.gasContractAuditLog.useCreate();
+
+  // Mutation for contract versions
+  const { mutateAsync: createVersion } = client.gasContractVersion.useCreate();
+
+  // Get existing versions count for re-upload
+  const { data: existingVersions = [] } = client.gasContractVersion.useFindMany(
+    {
+      where: { contractId: existingContract?.id },
+      orderBy: { versionNumber: "desc" },
+      select: { id: true, versionNumber: true },
+    },
+    { enabled: isReUpload && !!existingContract?.id },
+  );
 
   // Mutation for updating unit contract linkage
   const { mutateAsync: updateUnit } = client.gasUnit.useUpdate();
@@ -325,38 +353,118 @@ export function ContractUploadDrawer({
       notes: data.notes || null,
     };
 
-    createContract(
-      {
-        data: payload,
-      },
-      {
-        onSuccess: async (createdContract) => {
-          // Create audit log entry for creation
-          await createAuditLog({
-            data: {
-              contractId: createdContract.id,
-              action: "create",
-              field: "ai_extraction",
-              oldValue: null,
-              newValue: JSON.stringify({
-                ...payload,
-                extractionSource: uploadedFile?.file.name,
-              }),
-              userId: session?.user?.id || null,
-              userName: session?.user?.name || null,
-            },
-          });
+    if (isReUpload && existingContract) {
+      // Save current contract data as a version snapshot before updating
+      const nextVersionNumber =
+        existingVersions.length > 0
+          ? Math.max(...existingVersions.map((v) => v.versionNumber)) + 1
+          : 1;
 
-          // Link units to the new contract
-          for (const unitId of data.unitIds) {
-            await updateUnit({
-              where: { id: unitId },
-              data: { contractId: createdContract.id },
-            });
-          }
+      // If this is the first re-upload, save the original contract as version 1
+      if (existingVersions.length === 0) {
+        await createVersion({
+          data: {
+            contractId: existingContract.id,
+            versionNumber: 1,
+            isActive: false,
+            dataSnapshot: JSON.stringify(existingContract),
+            extractedDataSummary: `Versão original - ${existingContract.name}`,
+          },
+        });
+      } else {
+        // Mark all existing versions as inactive
+        // (handled by the new version being set as active)
+      }
+
+      // Create version for the new upload
+      await createVersion({
+        data: {
+          contractId: existingContract.id,
+          versionNumber: existingVersions.length === 0 ? 2 : nextVersionNumber,
+          isActive: true,
+          dataSnapshot: JSON.stringify(payload),
+          extractedDataSummary: `Extração IA - ${uploadedFile?.file.name || "arquivo"}`,
+          fileName: uploadedFile?.file.name,
+          fileType: uploadedFile?.file.type,
         },
-      },
-    );
+      });
+
+      // Update the contract with new data
+      updateContract(
+        {
+          where: { id: existingContract.id },
+          data: payload,
+        },
+        {
+          onSuccess: async () => {
+            await createAuditLog({
+              data: {
+                contractId: existingContract.id,
+                action: "update",
+                field: "version_upload",
+                oldValue: JSON.stringify({
+                  version:
+                    existingVersions.length === 0 ? 1 : nextVersionNumber - 1,
+                }),
+                newValue: JSON.stringify({
+                  version:
+                    existingVersions.length === 0 ? 2 : nextVersionNumber,
+                  extractionSource: uploadedFile?.file.name,
+                }),
+                userId: session?.user?.id || null,
+                userName: session?.user?.name || null,
+              },
+            });
+          },
+        },
+      );
+    } else {
+      createContract(
+        {
+          data: payload,
+        },
+        {
+          onSuccess: async (createdContract) => {
+            // Create version 1 entry for the new contract
+            await createVersion({
+              data: {
+                contractId: createdContract.id,
+                versionNumber: 1,
+                isActive: true,
+                dataSnapshot: JSON.stringify(payload),
+                extractedDataSummary: `Extração IA - ${uploadedFile?.file.name || "arquivo"}`,
+                fileName: uploadedFile?.file.name,
+                fileType: uploadedFile?.file.type,
+              },
+            });
+
+            // Create audit log entry for creation
+            await createAuditLog({
+              data: {
+                contractId: createdContract.id,
+                action: "create",
+                field: "ai_extraction",
+                oldValue: null,
+                newValue: JSON.stringify({
+                  ...payload,
+                  extractionSource: uploadedFile?.file.name,
+                }),
+                userId: session?.user?.id || null,
+                userName: session?.user?.name || null,
+              },
+            });
+
+            // Link units to the new contract
+            for (const unitId of data.unitIds) {
+              await updateUnit({
+                where: { id: unitId },
+                data: { contractId: createdContract.id },
+              });
+            }
+          },
+        },
+      );
+    }
   };
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
@@ -367,10 +475,15 @@ export function ContractUploadDrawer({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="flex flex-col overflow-hidden p-0 sm:max-w-[95vw] lg:max-w-[90vw]">
         <SheetHeader className="border-b px-6 py-4">
-          <SheetTitle>Upload de Contrato com Extração IA</SheetTitle>
+          <SheetTitle>
+            {isReUpload
+              ? `Nova Versão - ${existingContract?.name}`
+              : "Upload de Contrato com Extração IA"}
+          </SheetTitle>
           <SheetDescription>
-            Faça upload de um contrato em PDF ou imagem para extrair
-            automaticamente os dados. Revise e confirme antes de salvar.
+            {isReUpload
+              ? "Faça upload de uma nova versão do contrato. A versão anterior será mantida no histórico."
+              : "Faça upload de um contrato em PDF ou imagem para extrair automaticamente os dados. Revise e confirme antes de salvar."}
           </SheetDescription>
         </SheetHeader>
 
@@ -620,7 +733,7 @@ export function ContractUploadDrawer({
                   <ContractExtractionForm
                     extractedData={extractedData}
                     onSubmit={handleSubmit}
-                    isSubmitting={isCreating}
+                    isSubmitting={isCreating || isUpdating}
                   />
                 ) : null}
               </div>

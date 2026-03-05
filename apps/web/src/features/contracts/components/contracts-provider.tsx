@@ -10,6 +10,8 @@ type ContractsDialogType =
   | "delete"
   | "toggle-active"
   | "view-history"
+  | "view-versions"
+  | "re-upload"
   | "upload";
 
 type ContractsContextType = {

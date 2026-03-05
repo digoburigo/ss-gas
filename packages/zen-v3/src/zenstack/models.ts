@@ -47,6 +47,7 @@ export type GasLineStatus = $ModelResult<$Schema, "GasLineStatus">;
 export type GasDailyPlan = $ModelResult<$Schema, "GasDailyPlan">;
 export type GasRealConsumption = $ModelResult<$Schema, "GasRealConsumption">;
 export type GasContract = $ModelResult<$Schema, "GasContract">;
+export type GasContractVersion = $ModelResult<$Schema, "GasContractVersion">;
 export type GasContractAuditLog = $ModelResult<$Schema, "GasContractAuditLog">;
 export type GasUnitOperator = $ModelResult<$Schema, "GasUnitOperator">;
 export type GasUnitContract = $ModelResult<$Schema, "GasUnitContract">;
