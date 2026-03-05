@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import {
-  AlertTriangle,
   Check,
   ClipboardList,
   Loader2,
+  Pencil,
   RefreshCcw,
-  Save,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -26,6 +26,7 @@ import { NativeSelect, NativeSelectOption } from "@acme/ui/native-select";
 import { Skeleton } from "@acme/ui/skeleton";
 import { Switch } from "@acme/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@acme/ui/tabs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@acme/ui/tooltip";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import {
@@ -338,14 +339,18 @@ export function BusinessRulesTab() {
                               disabled={isUpdating || isCreating}
                             />
                             {!isDefault && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleReset(defaultParam.key)}
-                                title="Restaurar padrão"
-                              >
-                                <RefreshCcw className="h-4 w-4" />
-                              </Button>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleReset(defaultParam.key)}
+                                  >
+                                    <RefreshCcw className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Restaurar padrão</TooltipContent>
+                              </Tooltip>
                             )}
                           </>
                         ) : isEditing ? (
@@ -384,25 +389,35 @@ export function BusinessRulesTab() {
                                 }
                               />
                             )}
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleSave(defaultParam.key)}
-                              disabled={isUpdating || isCreating}
-                            >
-                              {isUpdating || isCreating ? (
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                              ) : (
-                                <Check className="h-4 w-4 text-green-500" />
-                              )}
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setEditingKey(null)}
-                            >
-                              <AlertTriangle className="h-4 w-4 text-red-500" />
-                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleSave(defaultParam.key)}
+                                  disabled={isUpdating || isCreating}
+                                >
+                                  {isUpdating || isCreating ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <Check className="h-4 w-4 text-green-500" />
+                                  )}
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Salvar</TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setEditingKey(null)}
+                                >
+                                  <X className="h-4 w-4 text-red-500" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Cancelar</TooltipContent>
+                            </Tooltip>
                           </>
                         ) : (
                           <>
@@ -412,22 +427,31 @@ export function BusinessRulesTab() {
                                 defaultParam.valueType,
                               )}
                             </span>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleEdit(defaultParam.key)}
-                            >
-                              <Save className="h-4 w-4" />
-                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleEdit(defaultParam.key)}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>Editar</TooltipContent>
+                            </Tooltip>
                             {!isDefault && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleReset(defaultParam.key)}
-                                title="Restaurar padrão"
-                              >
-                                <RefreshCcw className="h-4 w-4" />
-                              </Button>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleReset(defaultParam.key)}
+                                  >
+                                    <RefreshCcw className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Restaurar padrão</TooltipContent>
+                              </Tooltip>
                             )}
                           </>
                         )}

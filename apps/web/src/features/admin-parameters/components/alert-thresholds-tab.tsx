@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import {
-  AlertTriangle,
   Bell,
   Check,
   Loader2,
+  Pencil,
   RefreshCcw,
-  Save,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -23,6 +23,7 @@ import {
 import { Input } from "@acme/ui/input";
 import { Label } from "@acme/ui/label";
 import { Skeleton } from "@acme/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@acme/ui/tooltip";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import { defaultAlertThresholds, formatParameterValue } from "../data/data";
@@ -252,25 +253,35 @@ export function AlertThresholdsTab() {
                         {defaultParam.valueType === "percentage" && (
                           <span className="text-muted-foreground">%</span>
                         )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleSave(defaultParam.key)}
-                          disabled={isUpdating || isCreating}
-                        >
-                          {isUpdating || isCreating ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Check className="h-4 w-4 text-green-500" />
-                          )}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setEditingKey(null)}
-                        >
-                          <AlertTriangle className="h-4 w-4 text-red-500" />
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleSave(defaultParam.key)}
+                              disabled={isUpdating || isCreating}
+                            >
+                              {isUpdating || isCreating ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Check className="h-4 w-4 text-green-500" />
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Salvar</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setEditingKey(null)}
+                            >
+                              <X className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Cancelar</TooltipContent>
+                        </Tooltip>
                       </>
                     ) : (
                       <>
@@ -280,22 +291,31 @@ export function AlertThresholdsTab() {
                             defaultParam.valueType,
                           )}
                         </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(defaultParam.key)}
-                        >
-                          <Save className="h-4 w-4" />
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(defaultParam.key)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Editar</TooltipContent>
+                        </Tooltip>
                         {!isDefault && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleReset(defaultParam.key)}
-                            title="Restaurar padrão"
-                          >
-                            <RefreshCcw className="h-4 w-4" />
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleReset(defaultParam.key)}
+                              >
+                                <RefreshCcw className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Restaurar padrão</TooltipContent>
+                          </Tooltip>
                         )}
                       </>
                     )}

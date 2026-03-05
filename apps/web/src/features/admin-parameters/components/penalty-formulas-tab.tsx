@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import {
-  AlertTriangle,
   Calculator,
   Check,
   Code,
   Loader2,
+  Pencil,
   RefreshCcw,
-  Save,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,6 +25,7 @@ import { Input } from "@acme/ui/input";
 import { Label } from "@acme/ui/label";
 import { Skeleton } from "@acme/ui/skeleton";
 import { Textarea } from "@acme/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@acme/ui/tooltip";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import { defaultPenaltyFormulas, formatParameterValue } from "../data/data";
@@ -246,22 +247,31 @@ export function PenaltyFormulasTab() {
                             defaultParam.valueType,
                           )}
                         </span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(defaultParam.key)}
-                        >
-                          <Save className="h-4 w-4" />
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(defaultParam.key)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Editar</TooltipContent>
+                        </Tooltip>
                         {!isDefault && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleReset(defaultParam.key)}
-                            title="Restaurar padrão"
-                          >
-                            <RefreshCcw className="h-4 w-4" />
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleReset(defaultParam.key)}
+                              >
+                                <RefreshCcw className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Restaurar padrão</TooltipContent>
+                          </Tooltip>
                         )}
                       </div>
                     )}
@@ -273,22 +283,31 @@ export function PenaltyFormulasTab() {
                         {currentValue}
                       </code>
                       <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(defaultParam.key)}
-                        >
-                          <Save className="h-4 w-4" />
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(defaultParam.key)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Editar</TooltipContent>
+                        </Tooltip>
                         {!isDefault && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleReset(defaultParam.key)}
-                            title="Restaurar padrão"
-                          >
-                            <RefreshCcw className="h-4 w-4" />
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleReset(defaultParam.key)}
+                              >
+                                <RefreshCcw className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Restaurar padrão</TooltipContent>
+                          </Tooltip>
                         )}
                       </div>
                     </div>
@@ -327,25 +346,35 @@ export function PenaltyFormulasTab() {
                           )}
                         </>
                       )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleSave(defaultParam.key)}
-                        disabled={isUpdating || isCreating}
-                      >
-                        {isUpdating || isCreating ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Check className="h-4 w-4 text-green-500" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setEditingKey(null)}
-                      >
-                        <AlertTriangle className="h-4 w-4 text-red-500" />
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleSave(defaultParam.key)}
+                            disabled={isUpdating || isCreating}
+                          >
+                            {isUpdating || isCreating ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Check className="h-4 w-4 text-green-500" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Salvar</TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setEditingKey(null)}
+                          >
+                            <X className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Cancelar</TooltipContent>
+                      </Tooltip>
                     </div>
                   )}
                 </div>
