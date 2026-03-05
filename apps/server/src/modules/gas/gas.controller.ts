@@ -4731,4 +4731,548 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 				}),
 			}),
 		},
+	)
+
+	/**
+	 * GET /gas/penalties
+	 *
+	 * Returns daily and monthly penalty breakdowns for a given month.
+	 * Includes per-unit daily penalties (PVEMA, PVEME, Sobredemanda),
+	 * monthly aggregated totals, and previous month comparison.
+	 */
+	.get(
+		"/penalties",
+		async ({ query, status, session }) => {
+			const { month } = query;
+
+			const monthRegex = /^\d{4}-\d{2}$/;
+			if (!monthRegex.test(month)) {
+				return status(400, {
+					error: "Invalid month format. Expected YYYY-MM",
+				});
+			}
+
+			const parts = month.split("-").map(Number);
+			const year = parts[0] ?? 0;
+			const monthNum = parts[1] ?? 1;
+			const startDate = new Date(year, monthNum - 1, 1);
+			const endDate = new Date(year, monthNum, 0);
+
+			// Previous month range
+			const prevStartDate = new Date(year, monthNum - 2, 1);
+			const prevEndDate = new Date(year, monthNum - 1, 0);
+			const prevMonth = `${prevStartDate.getFullYear()}-${String(prevStartDate.getMonth() + 1).padStart(2, "0")}`;
+
+			// Get active contract
+			const contract = query.contractId
+				? await db.gasContract.findFirst({
+						where: {
+							id: query.contractId,
+							organizationId: session.activeOrganizationId ?? undefined,
+						},
+					})
+				: await db.gasContract.findFirst({
+						where: {
+							organizationId: session.activeOrganizationId ?? undefined,
+							active: true,
+							effectiveFrom: { lte: endDate },
+							OR: [
+								{ effectiveTo: null },
+								{ effectiveTo: { gte: startDate } },
+							],
+						},
+						orderBy: { effectiveFrom: "desc" },
+					});
+
+			if (!contract) {
+				return status(404, { error: "No active contract found" });
+			}
+
+			// Get all contracts for selector
+			const allContracts = await db.gasContract.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { name: "asc" },
+			});
+
+			// Get units
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { code: "asc" },
+			});
+
+			const unitMap = new Map(units.map((u) => [u.id, u]));
+
+			// Build penalty params
+			const penaltyParams = {
+				qdcContracted: contract.qdcContracted,
+				pvemaTolerancePercent:
+					contract.pvemaTolerancePercent ??
+					contract.transportToleranceUpperPercent,
+				pvemeTolerancePercent:
+					contract.pvemeTolerancePercent ??
+					contract.transportToleranceLowerPercent,
+				overdemandTier1MaxPercent:
+					contract.overdemandTier1MaxPercent ?? 110,
+				overdemandTier2MaxPercent:
+					contract.overdemandTier2MaxPercent ?? 115,
+				overdemandTier2Multiplier:
+					contract.overdemandTier2Multiplier ?? 1.0,
+				overdemandTier3Multiplier:
+					contract.overdemandTier3Multiplier ?? 1.5,
+				tusdTariffPerUnit: contract.tusdTariffPerUnit ?? 0,
+				basePricePerUnit: contract.basePricePerUnit ?? 0,
+			};
+
+			// Get real consumption for current and previous months
+			const orgFilter = {
+				unit: {
+					organizationId: session.activeOrganizationId ?? undefined,
+				},
+			};
+
+			const [currentConsumptions, prevConsumptions] = await Promise.all([
+				db.gasRealConsumption.findMany({
+					where: {
+						...orgFilter,
+						date: { gte: startDate, lte: endDate },
+					},
+					include: { unit: true },
+					orderBy: [{ date: "asc" }, { unitId: "asc" }],
+				}),
+				db.gasRealConsumption.findMany({
+					where: {
+						...orgFilter,
+						date: { gte: prevStartDate, lte: prevEndDate },
+					},
+					orderBy: { date: "asc" },
+				}),
+			]);
+
+			// Build daily rows: one row per consumption record
+			const dailyRows = currentConsumptions.map((c) => {
+				const unit = unitMap.get(c.unitId);
+				const penalties = GasCalculationService.calculateDailyPenalties(
+					c.qdrValue,
+					penaltyParams,
+				);
+				const upperLimit =
+					penaltyParams.qdcContracted *
+					(1 + penaltyParams.pvemaTolerancePercent / 100);
+				const lowerLimit =
+					penaltyParams.qdcContracted *
+					(1 - penaltyParams.pvemeTolerancePercent / 100);
+
+				return {
+					date: c.date.toISOString().split("T")[0] ?? "",
+					unitId: c.unitId,
+					unitCode: unit?.code ?? "",
+					unitName: unit?.name ?? "",
+					qdrValue: c.qdrValue,
+					qdcContracted: penaltyParams.qdcContracted,
+					upperLimit: Math.round(upperLimit * 100) / 100,
+					lowerLimit: Math.round(lowerLimit * 100) / 100,
+					pvema: penalties.pvema,
+					pveme: penalties.pveme,
+					sobredemanda: penalties.sobredemanda,
+					total: penalties.total,
+				};
+			});
+
+			// Aggregate monthly totals per unit
+			const monthlyByUnit = new Map<
+				string,
+				{
+					unitId: string;
+					unitCode: string;
+					unitName: string;
+					pvema: number;
+					pveme: number;
+					sobredemanda: number;
+					total: number;
+					days: number;
+				}
+			>();
+
+			for (const row of dailyRows) {
+				const existing = monthlyByUnit.get(row.unitId) ?? {
+					unitId: row.unitId,
+					unitCode: row.unitCode,
+					unitName: row.unitName,
+					pvema: 0,
+					pveme: 0,
+					sobredemanda: 0,
+					total: 0,
+					days: 0,
+				};
+				existing.pvema += row.pvema;
+				existing.pveme += row.pveme;
+				existing.sobredemanda += row.sobredemanda;
+				existing.total += row.total;
+				existing.days += 1;
+				monthlyByUnit.set(row.unitId, existing);
+			}
+
+			const round2 = (v: number) => Math.round(v * 100) / 100;
+
+			const monthlyRows = Array.from(monthlyByUnit.values()).map(
+				(m) => ({
+					...m,
+					pvema: round2(m.pvema),
+					pveme: round2(m.pveme),
+					sobredemanda: round2(m.sobredemanda),
+					total: round2(m.total),
+				}),
+			);
+
+			// Grand totals for current month
+			const currentTotals = {
+				pvema: round2(monthlyRows.reduce((s, r) => s + r.pvema, 0)),
+				pveme: round2(monthlyRows.reduce((s, r) => s + r.pveme, 0)),
+				sobredemanda: round2(
+					monthlyRows.reduce((s, r) => s + r.sobredemanda, 0),
+				),
+				total: round2(monthlyRows.reduce((s, r) => s + r.total, 0)),
+			};
+
+			// Previous month totals for comparison
+			const prevDailyValues = prevConsumptions.map((c) => c.qdrValue);
+			const prevTotals =
+				prevDailyValues.length > 0
+					? GasCalculationService.calculateMonthlyPenalties(
+							prevDailyValues,
+							penaltyParams,
+						)
+					: { pvema: 0, pveme: 0, sobredemanda: 0, total: 0 };
+
+			return {
+				month,
+				prevMonth,
+				contract: {
+					id: contract.id,
+					name: contract.name,
+					qdcContracted: contract.qdcContracted,
+				},
+				contracts: allContracts.map((c) => ({
+					id: c.id,
+					name: c.name,
+					qdcContracted: c.qdcContracted,
+				})),
+				penaltyParams: {
+					pvemaTolerancePercent: penaltyParams.pvemaTolerancePercent,
+					pvemeTolerancePercent: penaltyParams.pvemeTolerancePercent,
+					basePricePerUnit: penaltyParams.basePricePerUnit,
+				},
+				dailyRows,
+				monthlyRows,
+				currentTotals,
+				prevTotals,
+			};
+		},
+		{
+			auth: true,
+			query: t.Object({
+				month: t.String(),
+				contractId: t.Optional(t.String()),
+			}),
+			response: {
+				200: t.Object({
+					month: t.String(),
+					prevMonth: t.String(),
+					contract: t.Object({
+						id: t.String(),
+						name: t.String(),
+						qdcContracted: t.Number(),
+					}),
+					contracts: t.Array(
+						t.Object({
+							id: t.String(),
+							name: t.String(),
+							qdcContracted: t.Number(),
+						}),
+					),
+					penaltyParams: t.Object({
+						pvemaTolerancePercent: t.Number(),
+						pvemeTolerancePercent: t.Number(),
+						basePricePerUnit: t.Number(),
+					}),
+					dailyRows: t.Array(
+						t.Object({
+							date: t.String(),
+							unitId: t.String(),
+							unitCode: t.String(),
+							unitName: t.String(),
+							qdrValue: t.Number(),
+							qdcContracted: t.Number(),
+							upperLimit: t.Number(),
+							lowerLimit: t.Number(),
+							pvema: t.Number(),
+							pveme: t.Number(),
+							sobredemanda: t.Number(),
+							total: t.Number(),
+						}),
+					),
+					monthlyRows: t.Array(
+						t.Object({
+							unitId: t.String(),
+							unitCode: t.String(),
+							unitName: t.String(),
+							pvema: t.Number(),
+							pveme: t.Number(),
+							sobredemanda: t.Number(),
+							total: t.Number(),
+							days: t.Number(),
+						}),
+					),
+					currentTotals: t.Object({
+						pvema: t.Number(),
+						pveme: t.Number(),
+						sobredemanda: t.Number(),
+						total: t.Number(),
+					}),
+					prevTotals: t.Object({
+						pvema: t.Number(),
+						pveme: t.Number(),
+						sobredemanda: t.Number(),
+						total: t.Number(),
+					}),
+				}),
+				400: t.Object({ error: t.String() }),
+				404: t.Object({ error: t.String() }),
+			},
+		},
+	)
+
+	/**
+	 * GET /gas/penalties/download
+	 *
+	 * Export penalty data as an Excel file with daily and monthly sheets.
+	 */
+	.get(
+		"/penalties/download",
+		async ({ query, status, session, set }) => {
+			const { month } = query;
+
+			const monthRegex = /^\d{4}-\d{2}$/;
+			if (!monthRegex.test(month)) {
+				return status(400, {
+					error: "Invalid month format. Expected YYYY-MM",
+				});
+			}
+
+			const parts = month.split("-").map(Number);
+			const year = parts[0] ?? 0;
+			const monthNum = parts[1] ?? 1;
+			const startDate = new Date(year, monthNum - 1, 1);
+			const endDate = new Date(year, monthNum, 0);
+
+			// Get contract
+			const contract = query.contractId
+				? await db.gasContract.findFirst({
+						where: {
+							id: query.contractId,
+							organizationId: session.activeOrganizationId ?? undefined,
+						},
+					})
+				: await db.gasContract.findFirst({
+						where: {
+							organizationId: session.activeOrganizationId ?? undefined,
+							active: true,
+							effectiveFrom: { lte: endDate },
+							OR: [
+								{ effectiveTo: null },
+								{ effectiveTo: { gte: startDate } },
+							],
+						},
+						orderBy: { effectiveFrom: "desc" },
+					});
+
+			if (!contract) {
+				return status(404, { error: "No active contract found" });
+			}
+
+			const units = await db.gasUnit.findMany({
+				where: {
+					organizationId: session.activeOrganizationId ?? undefined,
+					active: true,
+				},
+				orderBy: { code: "asc" },
+			});
+
+			const unitMap = new Map(units.map((u) => [u.id, u]));
+
+			const penaltyParams = {
+				qdcContracted: contract.qdcContracted,
+				pvemaTolerancePercent:
+					contract.pvemaTolerancePercent ??
+					contract.transportToleranceUpperPercent,
+				pvemeTolerancePercent:
+					contract.pvemeTolerancePercent ??
+					contract.transportToleranceLowerPercent,
+				overdemandTier1MaxPercent:
+					contract.overdemandTier1MaxPercent ?? 110,
+				overdemandTier2MaxPercent:
+					contract.overdemandTier2MaxPercent ?? 115,
+				overdemandTier2Multiplier:
+					contract.overdemandTier2Multiplier ?? 1.0,
+				overdemandTier3Multiplier:
+					contract.overdemandTier3Multiplier ?? 1.5,
+				tusdTariffPerUnit: contract.tusdTariffPerUnit ?? 0,
+				basePricePerUnit: contract.basePricePerUnit ?? 0,
+			};
+
+			const consumptions = await db.gasRealConsumption.findMany({
+				where: {
+					unit: {
+						organizationId:
+							session.activeOrganizationId ?? undefined,
+					},
+					date: { gte: startDate, lte: endDate },
+				},
+				orderBy: [{ date: "asc" }, { unitId: "asc" }],
+			});
+
+			const workbook = new ExcelJS.Workbook();
+
+			// Daily sheet
+			const dailySheet = workbook.addWorksheet("Penalidades Diárias");
+			dailySheet.columns = [
+				{ header: "Data", key: "date", width: 14 },
+				{ header: "Unidade", key: "unit", width: 20 },
+				{ header: "QDR (m³)", key: "qdr", width: 14 },
+				{ header: "QDC (m³)", key: "qdc", width: 14 },
+				{ header: "Limite Superior", key: "upper", width: 16 },
+				{ header: "Limite Inferior", key: "lower", width: 16 },
+				{ header: "PVEMA (R$)", key: "pvema", width: 14 },
+				{ header: "PVEME (R$)", key: "pveme", width: 14 },
+				{ header: "Sobredemanda (R$)", key: "sobredemanda", width: 18 },
+				{ header: "Total (R$)", key: "total", width: 14 },
+			];
+
+			const headerRow = dailySheet.getRow(1);
+			headerRow.font = { bold: true };
+			headerRow.fill = {
+				type: "pattern",
+				pattern: "solid",
+				fgColor: { argb: "FFE0E0E0" },
+			};
+
+			for (const c of consumptions) {
+				const unit = unitMap.get(c.unitId);
+				const penalties =
+					GasCalculationService.calculateDailyPenalties(
+						c.qdrValue,
+						penaltyParams,
+					);
+				const upperLimit =
+					penaltyParams.qdcContracted *
+					(1 + penaltyParams.pvemaTolerancePercent / 100);
+				const lowerLimit =
+					penaltyParams.qdcContracted *
+					(1 - penaltyParams.pvemeTolerancePercent / 100);
+
+				dailySheet.addRow({
+					date: c.date.toISOString().split("T")[0] ?? "",
+					unit: unit?.code ?? c.unitId,
+					qdr: c.qdrValue,
+					qdc: penaltyParams.qdcContracted,
+					upper: Math.round(upperLimit * 100) / 100,
+					lower: Math.round(lowerLimit * 100) / 100,
+					pvema: penalties.pvema,
+					pveme: penalties.pveme,
+					sobredemanda: penalties.sobredemanda,
+					total: penalties.total,
+				});
+			}
+
+			// Monthly sheet
+			const monthlySheet = workbook.addWorksheet(
+				"Penalidades Mensais",
+			);
+			monthlySheet.columns = [
+				{ header: "Unidade", key: "unit", width: 20 },
+				{ header: "Dias", key: "days", width: 8 },
+				{ header: "PVEMA (R$)", key: "pvema", width: 14 },
+				{ header: "PVEME (R$)", key: "pveme", width: 14 },
+				{ header: "Sobredemanda (R$)", key: "sobredemanda", width: 18 },
+				{ header: "Total (R$)", key: "total", width: 14 },
+			];
+
+			const monthlyHeaderRow = monthlySheet.getRow(1);
+			monthlyHeaderRow.font = { bold: true };
+			monthlyHeaderRow.fill = {
+				type: "pattern",
+				pattern: "solid",
+				fgColor: { argb: "FFE0E0E0" },
+			};
+
+			// Group by unit
+			const round2 = (v: number) => Math.round(v * 100) / 100;
+			const byUnit = new Map<
+				string,
+				{
+					code: string;
+					pvema: number;
+					pveme: number;
+					sobredemanda: number;
+					total: number;
+					days: number;
+				}
+			>();
+
+			for (const c of consumptions) {
+				const unit = unitMap.get(c.unitId);
+				const penalties =
+					GasCalculationService.calculateDailyPenalties(
+						c.qdrValue,
+						penaltyParams,
+					);
+				const existing = byUnit.get(c.unitId) ?? {
+					code: unit?.code ?? c.unitId,
+					pvema: 0,
+					pveme: 0,
+					sobredemanda: 0,
+					total: 0,
+					days: 0,
+				};
+				existing.pvema += penalties.pvema;
+				existing.pveme += penalties.pveme;
+				existing.sobredemanda += penalties.sobredemanda;
+				existing.total += penalties.total;
+				existing.days += 1;
+				byUnit.set(c.unitId, existing);
+			}
+
+			for (const entry of byUnit.values()) {
+				monthlySheet.addRow({
+					unit: entry.code,
+					days: entry.days,
+					pvema: round2(entry.pvema),
+					pveme: round2(entry.pveme),
+					sobredemanda: round2(entry.sobredemanda),
+					total: round2(entry.total),
+				});
+			}
+
+			const buffer = await workbook.xlsx.writeBuffer();
+
+			set.headers["content-type"] =
+				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+			set.headers["content-disposition"] =
+				`attachment; filename="penalidades-${month}.xlsx"`;
+
+			return new Response(buffer as ArrayBuffer);
+		},
+		{
+			auth: true,
+			query: t.Object({
+				month: t.String(),
+				contractId: t.Optional(t.String()),
+			}),
+		},
 	);
