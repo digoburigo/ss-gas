@@ -4355,6 +4355,7 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 						previousMeterReading: number | null;
 						notes: string | null;
 						errors: string[];
+						warnings: string[];
 					}>;
 				};
 
@@ -4373,6 +4374,9 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 				// Additional server-side validation
 				const validSources = ["meter", "manual", "calculated"];
 				for (const row of interpreted.rows) {
+					// Initialize warnings array
+					if (!row.warnings) row.warnings = [];
+
 					// Validate date
 					if (row.date) {
 						const dateObj = new Date(row.date);
@@ -4416,6 +4420,171 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 					}
 				}
 
+				// Detect duplicate dates per unit (error)
+				const dateUnitKeys = new Map<string, number[]>();
+				for (const row of interpreted.rows) {
+					if (row.date && row.unitId && row.errors.length === 0) {
+						const key = `${row.unitId}:${row.date}`;
+						const existing = dateUnitKeys.get(key);
+						if (existing) {
+							existing.push(row.rowNumber);
+						} else {
+							dateUnitKeys.set(key, [row.rowNumber]);
+						}
+					}
+				}
+				for (const [, rowNumbers] of dateUnitKeys) {
+					if (rowNumbers.length > 1) {
+						for (const rowNum of rowNumbers) {
+							const row = interpreted.rows.find(
+								(r) => r.rowNumber === rowNum,
+							);
+							if (row) {
+								row.errors.push(
+									`Data duplicada para esta unidade (linhas ${rowNumbers.join(", ")})`,
+								);
+							}
+						}
+					}
+				}
+
+				// Compute stats per unit for range warnings and gap detection
+				const unitRows = new Map<
+					string,
+					Array<{ rowNumber: number; qdrValue: number; date: string }>
+				>();
+				for (const row of interpreted.rows) {
+					if (
+						row.unitId &&
+						row.errors.length === 0 &&
+						row.qdrValue != null &&
+						!Number.isNaN(row.qdrValue)
+					) {
+						const existing = unitRows.get(row.unitId);
+						const entry = {
+							rowNumber: row.rowNumber,
+							qdrValue: row.qdrValue,
+							date: row.date,
+						};
+						if (existing) {
+							existing.push(entry);
+						} else {
+							unitRows.set(row.unitId, [entry]);
+						}
+					}
+				}
+
+				// Fetch existing consumption data for range comparison
+				const unitIds = [...unitRows.keys()];
+				const existingConsumption =
+					unitIds.length > 0
+						? await db.gasRealConsumption.findMany({
+								where: {
+									unitId: { in: unitIds },
+								},
+								select: {
+									unitId: true,
+									qdrValue: true,
+								},
+							})
+						: [];
+
+				// Build average/stddev per unit from existing data
+				const unitStats = new Map<
+					string,
+					{ avg: number; stdDev: number; count: number }
+				>();
+				const groupedExisting = new Map<string, number[]>();
+				for (const record of existingConsumption) {
+					const existing = groupedExisting.get(record.unitId);
+					if (existing) {
+						existing.push(record.qdrValue);
+					} else {
+						groupedExisting.set(record.unitId, [record.qdrValue]);
+					}
+				}
+				for (const [unitId, values] of groupedExisting) {
+					if (values.length >= 3) {
+						const avg =
+							values.reduce((sum, v) => sum + v, 0) /
+							values.length;
+						const variance =
+							values.reduce(
+								(sum, v) => sum + (v - avg) ** 2,
+								0,
+							) / values.length;
+						const stdDev = Math.sqrt(variance);
+						unitStats.set(unitId, {
+							avg,
+							stdDev,
+							count: values.length,
+						});
+					}
+				}
+
+				// Range warnings: flag values > 2 standard deviations from mean
+				for (const row of interpreted.rows) {
+					if (
+						row.unitId &&
+						row.errors.length === 0 &&
+						row.qdrValue != null
+					) {
+						const stats = unitStats.get(row.unitId);
+						if (stats && stats.stdDev > 0) {
+							const zScore = Math.abs(
+								(row.qdrValue - stats.avg) / stats.stdDev,
+							);
+							if (zScore > 2) {
+								const direction =
+									row.qdrValue > stats.avg
+										? "acima"
+										: "abaixo";
+								row.warnings.push(
+									`Valor significativamente ${direction} da media historica (${stats.avg.toLocaleString("pt-BR", { maximumFractionDigits: 1 })} m3)`,
+								);
+							}
+						}
+
+						// Zero value warning
+						if (row.qdrValue === 0) {
+							row.warnings.push("Consumo igual a zero");
+						}
+					}
+				}
+
+				// Gap detection per unit (warn about missing dates in sequence)
+				for (const [unitId, rows] of unitRows) {
+					if (rows.length < 2) continue;
+					const sorted = [...rows].sort(
+						(a, b) =>
+							new Date(a.date).getTime() -
+							new Date(b.date).getTime(),
+					);
+					for (let i = 1; i < sorted.length; i++) {
+						const prev = sorted[i - 1]!;
+						const curr = sorted[i]!;
+						const prevDate = new Date(prev.date);
+						const currDate = new Date(curr.date);
+						const diffDays = Math.round(
+							(currDate.getTime() - prevDate.getTime()) /
+								(1000 * 60 * 60 * 24),
+						);
+						if (diffDays > 1) {
+							const row = interpreted.rows.find(
+								(r) => r.rowNumber === curr.rowNumber,
+							);
+							if (row) {
+								const unit = units.find(
+									(u) => u.id === unitId,
+								);
+								row.warnings.push(
+									`Lacuna de ${diffDays - 1} dia(s) sem dados para ${unit?.name ?? "esta unidade"}`,
+								);
+							}
+						}
+					}
+				}
+
 				const hasErrors = interpreted.rows.some(
 					(r) => r.errors.length > 0,
 				);
@@ -4424,6 +4593,10 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 				).length;
 				const validCount = interpreted.rows.filter(
 					(r) => r.errors.length === 0,
+				).length;
+				const warningCount = interpreted.rows.filter(
+					(r) =>
+						r.errors.length === 0 && r.warnings.length > 0,
 				).length;
 
 				return {
@@ -4434,6 +4607,7 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 						totalRows: interpreted.rows.length,
 						validRows: validCount,
 						errorRows: errorCount,
+						warningRows: warningCount,
 						hasErrors,
 					},
 				};

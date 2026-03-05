@@ -61,6 +61,7 @@ type InterpretedRow = {
   previousMeterReading: number | null;
   notes: string | null;
   errors: string[];
+  warnings: string[];
 };
 
 type UploadResult = {
@@ -71,6 +72,7 @@ type UploadResult = {
     totalRows: number;
     validRows: number;
     errorRows: number;
+    warningRows: number;
     hasErrors: boolean;
   };
 };
@@ -149,6 +151,10 @@ export function ActualConsumptionImportDrawer({
       if (data.summary.hasErrors) {
         toast.warning(
           `${data.summary.validRows} linhas validas, ${data.summary.errorRows} com erros`,
+        );
+      } else if (data.summary.warningRows > 0) {
+        toast.warning(
+          `${data.summary.validRows} linhas validas, ${data.summary.warningRows} com avisos`,
         );
       } else {
         toast.success(
@@ -354,6 +360,10 @@ export function ActualConsumptionImportDrawer({
       (r) => r.errors.length === 0 && !excludedRows.has(r.rowNumber),
     ) ?? [];
   const errorRows = result?.rows.filter((r) => r.errors.length > 0) ?? [];
+  const warningRows =
+    result?.rows.filter(
+      (r) => r.errors.length === 0 && r.warnings?.length > 0,
+    ) ?? [];
   const excludedCount = excludedRows.size;
 
   return (
@@ -552,6 +562,15 @@ export function ActualConsumptionImportDrawer({
                       <CheckCircle2 className="h-3 w-3 text-green-600" />
                       {activeValidRows.length} validas
                     </Badge>
+                    {warningRows.length > 0 && (
+                      <Badge
+                        variant="outline"
+                        className="gap-1 border-amber-400 text-amber-600"
+                      >
+                        <AlertTriangle className="h-3 w-3" />
+                        {warningRows.length} com avisos
+                      </Badge>
+                    )}
                     {errorRows.length > 0 && (
                       <Badge variant="destructive" className="gap-1">
                         <XCircle className="h-3 w-3" />
@@ -628,6 +647,8 @@ export function ActualConsumptionImportDrawer({
                       <TableBody>
                         {result.rows.map((row) => {
                           const hasErrors = row.errors.length > 0;
+                          const hasWarnings =
+                            !hasErrors && (row.warnings?.length ?? 0) > 0;
                           const isExcluded = excludedRows.has(row.rowNumber);
                           const isEditing = editingRow === row.rowNumber;
                           const qdrValue = getRowQdrValue(row);
@@ -638,6 +659,8 @@ export function ActualConsumptionImportDrawer({
                               key={row.rowNumber}
                               className={cn(
                                 hasErrors && "bg-red-50 dark:bg-red-950/20",
+                                hasWarnings &&
+                                  "bg-amber-50 dark:bg-amber-950/20",
                                 isExcluded && "opacity-40",
                               )}
                             >
@@ -750,6 +773,19 @@ export function ActualConsumptionImportDrawer({
                                   >
                                     Excluida
                                   </Badge>
+                                ) : hasWarnings ? (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <AlertTriangle className="mx-auto h-4 w-4 text-amber-500" />
+                                    </TooltipTrigger>
+                                    <TooltipContent side="left">
+                                      <ul className="list-disc pl-4 text-xs">
+                                        {row.warnings.map((warn) => (
+                                          <li key={warn}>{warn}</li>
+                                        ))}
+                                      </ul>
+                                    </TooltipContent>
+                                  </Tooltip>
                                 ) : (
                                   <Check className="mx-auto h-4 w-4 text-green-600" />
                                 )}
@@ -789,6 +825,23 @@ export function ActualConsumptionImportDrawer({
                       </TableBody>
                     </Table>
                   </div>
+
+                  {/* Warning details */}
+                  {warningRows.length > 0 && (
+                    <div className="rounded-md border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-950/30">
+                      <p className="mb-2 text-sm font-medium text-amber-700 dark:text-amber-400">
+                        Avisos ({warningRows.length} linhas):
+                      </p>
+                      <ul className="space-y-1 text-xs text-amber-600 dark:text-amber-400">
+                        {warningRows.map((row) => (
+                          <li key={row.rowNumber}>
+                            <strong>Linha {row.rowNumber}:</strong>{" "}
+                            {row.warnings.join("; ")}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                   {/* Error details */}
                   {errorRows.length > 0 && (
