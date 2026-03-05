@@ -2,7 +2,14 @@ import { useCallback, useState } from "react";
 import { useUploadFiles } from "@better-upload/client";
 import { useMutation } from "@tanstack/react-query";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
-import { AlertTriangle, FileText, Loader2, Upload, X } from "lucide-react";
+import {
+  AlertTriangle,
+  Check,
+  FileText,
+  Loader2,
+  Upload,
+  X,
+} from "lucide-react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { toast } from "sonner";
 
@@ -52,6 +59,18 @@ type UploadedFile = {
   type: "pdf" | "image";
 };
 
+type ExtractionStage = "uploading" | "analyzing" | "extracting" | "done";
+
+const EXTRACTION_STAGES: {
+  key: ExtractionStage;
+  label: string;
+}[] = [
+  { key: "uploading", label: "Enviando arquivo" },
+  { key: "analyzing", label: "Analisando documento" },
+  { key: "extracting", label: "Extraindo cláusulas" },
+  { key: "done", label: "Concluído" },
+];
+
 export function ContractUploadDrawer({
   open,
   onOpenChange,
@@ -60,6 +79,8 @@ export function ContractUploadDrawer({
   const [extractedData, setExtractedData] =
     useState<ExtractedContractData | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [extractionStage, setExtractionStage] =
+    useState<ExtractionStage>("uploading");
   const [extractionError, setExtractionError] = useState<string | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -155,8 +176,13 @@ export function ContractUploadDrawer({
 
       // Start extraction automatically
       setIsExtracting(true);
+      setExtractionStage("uploading");
       try {
+        // Simulate stage transitions for better UX
+        setTimeout(() => setExtractionStage("analyzing"), 1500);
+        setTimeout(() => setExtractionStage("extracting"), 4000);
         const result = await extractContractData.mutateAsync(file);
+        setExtractionStage("done");
         setExtractedData(result.extractedData as ExtractedContractData);
       } catch (error) {
         setExtractionError(
@@ -491,11 +517,56 @@ export function ContractUploadDrawer({
                   </div>
                 ) : isExtracting ? (
                   <div className="flex h-64 flex-col items-center justify-center">
-                    <Loader2 className="mb-4 h-8 w-8 animate-spin" />
-                    <p className="text-muted-foreground">
-                      Extraindo dados do contrato com IA...
-                    </p>
-                    <p className="text-muted-foreground mt-1 text-sm">
+                    <div className="w-full max-w-xs space-y-4">
+                      {EXTRACTION_STAGES.map((stage, index) => {
+                        const stageIndex = EXTRACTION_STAGES.findIndex(
+                          (s) => s.key === extractionStage,
+                        );
+                        const isCompleted = index < stageIndex;
+                        const isCurrent = index === stageIndex;
+
+                        return (
+                          <div
+                            key={stage.key}
+                            className="flex items-center gap-3"
+                          >
+                            <div
+                              className={cn(
+                                "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                                isCompleted &&
+                                  "border-green-500 bg-green-500 text-white",
+                                isCurrent &&
+                                  "border-primary bg-primary/10 text-primary",
+                                !isCompleted &&
+                                  !isCurrent &&
+                                  "border-muted-foreground/30 text-muted-foreground/30",
+                              )}
+                            >
+                              {isCompleted ? (
+                                <Check className="h-4 w-4" />
+                              ) : isCurrent ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <span className="text-xs">{index + 1}</span>
+                              )}
+                            </div>
+                            <span
+                              className={cn(
+                                "text-sm transition-colors",
+                                isCompleted && "text-green-600",
+                                isCurrent && "font-medium",
+                                !isCompleted &&
+                                  !isCurrent &&
+                                  "text-muted-foreground/50",
+                              )}
+                            >
+                              {stage.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className="text-muted-foreground mt-6 text-sm">
                       Isso pode levar alguns segundos
                     </p>
                   </div>
@@ -511,11 +582,34 @@ export function ContractUploadDrawer({
                       className="mt-4"
                       onClick={() => {
                         if (uploadedFile?.file) {
-                          handleFileSelect(
-                            new DataTransfer().files.length > 0
-                              ? new DataTransfer().files
-                              : null,
+                          setExtractionError(null);
+                          setIsExtracting(true);
+                          setExtractionStage("uploading");
+                          setTimeout(
+                            () => setExtractionStage("analyzing"),
+                            1500,
                           );
+                          setTimeout(
+                            () => setExtractionStage("extracting"),
+                            4000,
+                          );
+                          extractContractData
+                            .mutateAsync(uploadedFile.file)
+                            .then((result) => {
+                              setExtractionStage("done");
+                              setExtractedData(
+                                result.extractedData as ExtractedContractData,
+                              );
+                            })
+                            .catch((err) => {
+                              setExtractionError(
+                                err instanceof Error
+                                  ? err.message
+                                  : "Erro ao extrair dados",
+                              );
+                              toast.error("Erro ao extrair dados do contrato");
+                            })
+                            .finally(() => setIsExtracting(false));
                         }
                       }}
                     >
