@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   BarChart3,
+  Database,
   Download,
   FileSpreadsheet,
   LayoutDashboard,
@@ -630,7 +631,10 @@ function DashboardTab() {
                   </BarChart>
                 </ChartContainer>
               ) : (
-                <EmptyChart />
+                <EmptyChart
+                  message="Sem dados de consumo para o período."
+                  hint="Verifique se existem lançamentos diários e programações cadastradas para as unidades no período selecionado."
+                />
               )}
             </CardContent>
           </Card>
@@ -720,7 +724,10 @@ function DashboardTab() {
                     </LineChart>
                   </ChartContainer>
                 ) : (
-                  <EmptyChart />
+                  <EmptyChart
+                    message="Sem dados de penalidades para o período."
+                    hint="As penalidades são calculadas quando há diferença entre o volume programado e o realizado. Cadastre lançamentos diários para gerar este relatório."
+                  />
                 )}
               </CardContent>
             </Card>
@@ -792,7 +799,10 @@ function DashboardTab() {
                     </LineChart>
                   </ChartContainer>
                 ) : (
-                  <EmptyChart />
+                  <EmptyChart
+                    message="Sem dados de assertividade para o período."
+                    hint="A taxa de assertividade é calculada com base na diferença entre volumes programados e realizados ao longo dos meses."
+                  />
                 )}
               </CardContent>
             </Card>
@@ -872,7 +882,10 @@ function DashboardTab() {
                     </BarChart>
                   </ChartContainer>
                 ) : (
-                  <EmptyChart />
+                  <EmptyChart
+                    message="Sem dados comparativos entre unidades."
+                    hint="Cadastre lançamentos diários para pelo menos uma unidade no período selecionado para visualizar o comparativo."
+                  />
                 )}
               </CardContent>
             </Card>
@@ -954,7 +967,11 @@ function DashboardTab() {
                     </div>
                   </div>
                 ) : (
-                  <EmptyChart height="h-[200px]" />
+                  <EmptyChart
+                    height="h-[200px]"
+                    message="Sem dados de consumo por equipamento."
+                    hint="Os dados de distribuição por equipamento aparecem quando há lançamentos diários com tipos de equipamento definidos."
+                  />
                 )}
               </CardContent>
             </Card>
@@ -965,12 +982,26 @@ function DashboardTab() {
   );
 }
 
-function EmptyChart({ height = "h-[300px]" }: { height?: string }) {
+function EmptyChart({
+  height = "h-[300px]",
+  message = "Nenhum dado disponível para o período selecionado.",
+  hint,
+}: {
+  height?: string;
+  message?: string;
+  hint?: string;
+}) {
   return (
-    <div className={`flex ${height} items-center justify-center`}>
-      <p className="text-muted-foreground text-sm">
-        Nenhum dado disponível para o período selecionado.
-      </p>
+    <div
+      className={`flex ${height} flex-col items-center justify-center gap-2`}
+    >
+      <Database className="text-muted-foreground/50 h-10 w-10" />
+      <p className="text-muted-foreground text-sm">{message}</p>
+      {hint && (
+        <p className="text-muted-foreground/70 max-w-sm text-center text-xs">
+          {hint}
+        </p>
+      )}
     </div>
   );
 }
@@ -1299,7 +1330,11 @@ function PetrobrasReportTab() {
               </ComposedChart>
             </ChartContainer>
           ) : (
-            <EmptyChart height="h-[400px]" />
+            <EmptyChart
+              height="h-[400px]"
+              message="Sem dados de planejado vs realizado."
+              hint="Selecione um contrato e um mês que possuam programações e lançamentos diários cadastrados."
+            />
           )}
 
           {comparisonChartData.some((d) => d.exceedsTolerance) && (
@@ -1489,7 +1524,10 @@ function PetrobrasReportTab() {
                 </ComposedChart>
               </ChartContainer>
             ) : (
-              <EmptyChart />
+              <EmptyChart
+                message="Sem dados de tendência de consumo."
+                hint="Selecione um mês com lançamentos diários para visualizar a tendência de consumo comparada."
+              />
             )}
           </CardContent>
         </Card>
@@ -1562,7 +1600,10 @@ function PetrobrasReportTab() {
                 </div>
               </div>
             ) : (
-              <EmptyChart />
+              <EmptyChart
+                message="Sem dados de status para o mês."
+                hint="O status do mês é calculado com base nos lançamentos diários registrados. Verifique se há dados para o mês selecionado."
+              />
             )}
           </CardContent>
         </Card>
@@ -1655,8 +1696,15 @@ function PetrobrasReportTab() {
               </TableBody>
             </Table>
           ) : (
-            <div className="text-muted-foreground py-4 text-center">
-              Nenhum dado encontrado para o mês selecionado.
+            <div className="flex flex-col items-center gap-2 py-8">
+              <Database className="text-muted-foreground/50 h-8 w-8" />
+              <p className="text-muted-foreground text-sm">
+                Nenhum dado encontrado para o mês selecionado.
+              </p>
+              <p className="text-muted-foreground/70 text-xs">
+                Selecione um mês diferente ou verifique se existem
+                lançamentos diários cadastrados.
+              </p>
             </div>
           )}
         </CardContent>
