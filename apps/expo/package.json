@@ -67,7 +67,7 @@
     "@tailwindcss/postcss": "catalog:",
     "@types/react": "catalog:react19",
     "eslint": "catalog:",
-    "postcss": "^8.5.6",
+    "postcss": "^8.5.8",
     "prettier": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
