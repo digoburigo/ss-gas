@@ -1,12 +1,18 @@
 import { sendEmail } from "@acme/email";
 import { DeviationAlertEmail } from "@acme/email/emails";
 import { authDb, db } from "@acme/zen-v3";
+import { createGateway } from "@ai-sdk/gateway";
 import { Elysia, t } from "elysia";
 import ExcelJS from "exceljs";
+import { generateText } from "ai";
 
 import { betterAuth } from "../../plugins/better-auth";
 import { AuditService, ContractAlertService } from "../../services";
 import { GasCalculationService } from "./gas.service";
+
+const aiGateway = createGateway({
+	apiKey: process.env.AI_GATEWAY_API_KEY,
+});
 
 const APP_URL = process.env.PUBLIC_WEB_URL ?? "http://localhost:3001";
 
@@ -3710,6 +3716,397 @@ export const gasController = new Elysia({ prefix: "/gas" })
 				entityType: t.Optional(t.String()),
 				action: t.Optional(t.String()),
 				userId: t.Optional(t.String()),
+			}),
+		},
+	)
+
+	/**
+	 * GET /gas/monthly-scheduling/template
+	 *
+	 * Downloads an official Excel template for monthly scheduling upload.
+	 * Template has columns: Data, Unidade, Volume Programado (m3), Observacoes
+	 */
+	.get(
+		"/monthly-scheduling/template",
+		async () => {
+			const workbook = new ExcelJS.Workbook();
+			const sheet = workbook.addWorksheet("Programacao Mensal");
+
+			sheet.columns = [
+				{ header: "Data", key: "date", width: 16 },
+				{ header: "Unidade", key: "unit", width: 30 },
+				{ header: "Volume Programado (m3)", key: "volume", width: 24 },
+				{ header: "Observacoes", key: "notes", width: 40 },
+			];
+
+			const headerRow = sheet.getRow(1);
+			headerRow.font = { bold: true };
+			headerRow.fill = {
+				type: "pattern",
+				pattern: "solid",
+				fgColor: { argb: "FFE2E8F0" },
+			};
+
+			// Add example rows
+			sheet.addRow({
+				date: "01/03/2026",
+				unit: "Nome da Unidade",
+				volume: 1000,
+				notes: "",
+			});
+			sheet.addRow({
+				date: "02/03/2026",
+				unit: "Nome da Unidade",
+				volume: 1200,
+				notes: "Exemplo de observacao",
+			});
+
+			const buffer = await workbook.xlsx.writeBuffer();
+
+			return new Response(buffer as ArrayBuffer, {
+				headers: {
+					"Content-Type":
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+					"Content-Disposition":
+						'attachment; filename="template-programacao-mensal.xlsx"',
+				},
+			});
+		},
+		{
+			auth: true,
+		},
+	)
+
+	/**
+	 * POST /gas/monthly-scheduling/upload
+	 *
+	 * Uploads an Excel file, parses it with ExcelJS, uses AI to interpret
+	 * column mappings and unit name matching, then validates each row.
+	 */
+	.post(
+		"/monthly-scheduling/upload",
+		async ({ body, session, status }) => {
+			const { fileBase64 } = body;
+
+			const orgId = session.activeOrganizationId;
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			// Parse Excel file
+			const excelBuffer = Buffer.from(fileBase64, "base64");
+			const workbook = new ExcelJS.Workbook();
+			try {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				await workbook.xlsx.load(excelBuffer as any);
+			} catch {
+				return status(400, {
+					error: "Arquivo Excel invalido. Verifique o formato do arquivo.",
+				});
+			}
+
+			const sheet = workbook.worksheets[0];
+			if (!sheet || sheet.rowCount < 2) {
+				return status(400, {
+					error:
+						"Planilha vazia ou sem dados. A primeira linha deve conter cabecalhos.",
+				});
+			}
+
+			// Extract header row and data rows as text
+			const headers: string[] = [];
+			const headerRow = sheet.getRow(1);
+			headerRow.eachCell((cell, colNumber) => {
+				headers[colNumber - 1] = String(cell.value ?? "").trim();
+			});
+
+			const rawRows: Record<string, string>[] = [];
+			for (let i = 2; i <= sheet.rowCount; i++) {
+				const row = sheet.getRow(i);
+				const rowData: Record<string, string> = {};
+				let hasValue = false;
+				row.eachCell((cell, colNumber) => {
+					const header = headers[colNumber - 1];
+					if (header) {
+						let cellValue: string;
+						if (cell.value instanceof Date) {
+							cellValue = `${cell.value.getDate().toString().padStart(2, "0")}/${(cell.value.getMonth() + 1).toString().padStart(2, "0")}/${cell.value.getFullYear()}`;
+						} else {
+							cellValue = String(cell.value ?? "").trim();
+						}
+						rowData[header] = cellValue;
+						if (cellValue) hasValue = true;
+					}
+				});
+				if (hasValue) {
+					rawRows.push(rowData);
+				}
+			}
+
+			if (rawRows.length === 0) {
+				return status(400, {
+					error: "Nenhuma linha de dados encontrada na planilha.",
+				});
+			}
+
+			// Fetch org units for AI context
+			const units = await db.gasUnit.findMany({
+				where: { organizationId: orgId, active: true },
+				select: { id: true, name: true, code: true },
+			});
+
+			if (units.length === 0) {
+				return status(400, {
+					error:
+						"Nenhuma unidade consumidora encontrada. Cadastre unidades antes de importar.",
+				});
+			}
+
+			// Use AI to interpret the spreadsheet
+			const aiPrompt = `Voce e um especialista em interpretacao de planilhas de programacao mensal de gas natural.
+
+Sua tarefa: interpretar os dados brutos de uma planilha e mapear para o formato padrao.
+
+UNIDADES CADASTRADAS NA ORGANIZACAO:
+${units.map((u) => `- ID: "${u.id}" | Nome: "${u.name}" | Codigo: "${u.code}"`).join("\n")}
+
+CABECALHOS DA PLANILHA: ${JSON.stringify(headers)}
+
+DADOS BRUTOS (JSON):
+${JSON.stringify(rawRows, null, 2)}
+
+REGRAS DE MAPEAMENTO:
+1. Identifique qual coluna corresponde a DATA (pode ser "Data", "DATE", "Dia", etc.)
+2. Identifique qual coluna corresponde a UNIDADE (pode ser "Unidade", "Unit", "Ponto", "UC", nome direto, etc.)
+3. Identifique qual coluna corresponde a VOLUME (pode ser "Volume", "m3", "Volume Programado", "QDP", etc.)
+4. Identifique qual coluna corresponde a OBSERVACOES (pode ser "Obs", "Notas", "Observacoes", etc.)
+5. Para cada linha, faca o matching do nome da unidade com as unidades cadastradas (matching flexivel: ignorar acentos, case, abreviacoes)
+6. Para datas, aceite formatos: DD/MM/YYYY, DD-MM-YYYY, YYYY-MM-DD, DD/MM/YY
+7. Volumes devem ser numeros positivos. Aceite formatos com ponto ou virgula como separador decimal.
+
+RETORNE APENAS um JSON valido com esta estrutura:
+{
+  "columnMapping": {
+    "date": "nome_da_coluna_original",
+    "unit": "nome_da_coluna_original",
+    "volume": "nome_da_coluna_original",
+    "notes": "nome_da_coluna_original_ou_null"
+  },
+  "rows": [
+    {
+      "rowNumber": 2,
+      "date": "YYYY-MM-DD",
+      "unitId": "id_da_unidade_ou_null",
+      "unitName": "nome_original_na_planilha",
+      "matchedUnitName": "nome_da_unidade_cadastrada_ou_null",
+      "volume": 1000.0,
+      "notes": "observacao_ou_null",
+      "errors": ["lista de erros para esta linha, vazio se OK"]
+    }
+  ]
+}
+
+Se uma unidade nao puder ser identificada, defina unitId como null e adicione um erro.
+Se uma data for invalida, adicione um erro.
+Se um volume for invalido ou negativo, adicione um erro.`;
+
+			try {
+				const model = "anthropic/claude-sonnet-4-5-20250514";
+
+				const { text: responseText } = await generateText({
+					model: aiGateway(model),
+					maxOutputTokens: 8192,
+					messages: [{ role: "user", content: aiPrompt }],
+				});
+
+				// Parse AI response
+				let interpreted: {
+					columnMapping: Record<string, string | null>;
+					rows: Array<{
+						rowNumber: number;
+						date: string;
+						unitId: string | null;
+						unitName: string;
+						matchedUnitName: string | null;
+						volume: number;
+						notes: string | null;
+						errors: string[];
+					}>;
+				};
+
+				try {
+					const jsonMatch = responseText.match(
+						/```json\s*([\s\S]*?)\s*```/,
+					);
+					const jsonString = jsonMatch ? jsonMatch[1] : responseText;
+					interpreted = JSON.parse(jsonString?.trim() || "{}");
+				} catch {
+					return status(500, {
+						error: "Falha ao interpretar a planilha. Tente novamente.",
+					});
+				}
+
+				// Additional server-side validation
+				for (const row of interpreted.rows) {
+					// Validate date
+					if (row.date) {
+						const dateObj = new Date(row.date);
+						if (Number.isNaN(dateObj.getTime())) {
+							row.errors.push(
+								`Data invalida: "${row.date}"`,
+							);
+						}
+					} else {
+						row.errors.push("Data nao informada");
+					}
+
+					// Validate unitId exists in our units list
+					if (row.unitId) {
+						const unitExists = units.some(
+							(u) => u.id === row.unitId,
+						);
+						if (!unitExists) {
+							row.unitId = null;
+							row.errors.push(
+								`Unidade "${row.unitName}" nao encontrada no cadastro`,
+							);
+						}
+					}
+
+					// Validate volume
+					if (
+						row.volume === null ||
+						row.volume === undefined ||
+						Number.isNaN(row.volume) ||
+						row.volume < 0
+					) {
+						row.errors.push(
+							`Volume invalido: "${row.volume}"`,
+						);
+					}
+				}
+
+				const hasErrors = interpreted.rows.some(
+					(r) => r.errors.length > 0,
+				);
+				const errorCount = interpreted.rows.filter(
+					(r) => r.errors.length > 0,
+				).length;
+				const validCount = interpreted.rows.filter(
+					(r) => r.errors.length === 0,
+				).length;
+
+				return {
+					success: true,
+					columnMapping: interpreted.columnMapping,
+					rows: interpreted.rows,
+					summary: {
+						totalRows: interpreted.rows.length,
+						validRows: validCount,
+						errorRows: errorCount,
+						hasErrors,
+					},
+				};
+			} catch (error) {
+				return status(500, {
+					error:
+						error instanceof Error
+							? error.message
+							: "Erro desconhecido ao processar planilha",
+				});
+			}
+		},
+		{
+			auth: true,
+			body: t.Object({
+				fileBase64: t.String(),
+			}),
+		},
+	)
+
+	/**
+	 * POST /gas/monthly-scheduling/confirm
+	 *
+	 * Confirms and saves the interpreted monthly scheduling data.
+	 * Creates GasDailyPlan records for each valid row.
+	 */
+	.post(
+		"/monthly-scheduling/confirm",
+		async ({ body, session, status }) => {
+			const { rows } = body;
+			const orgId = session.activeOrganizationId;
+			const userId = session.userId;
+
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			const created: string[] = [];
+			const errors: Array<{ rowNumber: number; error: string }> = [];
+
+			for (const row of rows) {
+				if (!row.unitId || !row.date || row.volume == null) {
+					errors.push({
+						rowNumber: row.rowNumber,
+						error: "Dados incompletos: unidade, data ou volume ausente",
+					});
+					continue;
+				}
+
+				try {
+					// Upsert: update if exists, create if not
+					await db.gasDailyPlan.upsert({
+						where: {
+							unitId_date: {
+								unitId: row.unitId,
+								date: new Date(row.date),
+							},
+						},
+						create: {
+							unitId: row.unitId,
+							date: new Date(row.date),
+							qdpValue: row.volume,
+							notes: row.notes ?? null,
+							createdById: userId,
+						},
+						update: {
+							qdpValue: row.volume,
+							notes: row.notes ?? null,
+						},
+					});
+					created.push(
+						`Linha ${row.rowNumber}: ${row.date} - ${row.unitName}`,
+					);
+				} catch (err) {
+					errors.push({
+						rowNumber: row.rowNumber,
+						error:
+							err instanceof Error
+								? err.message
+								: "Erro ao salvar registro",
+					});
+				}
+			}
+
+			return {
+				success: errors.length === 0,
+				created: created.length,
+				errors,
+			};
+		},
+		{
+			auth: true,
+			body: t.Object({
+				rows: t.Array(
+					t.Object({
+						rowNumber: t.Number(),
+						date: t.String(),
+						unitId: t.Nullable(t.String()),
+						unitName: t.String(),
+						volume: t.Nullable(t.Number()),
+						notes: t.Nullable(t.String()),
+					}),
+				),
 			}),
 		},
 	);
