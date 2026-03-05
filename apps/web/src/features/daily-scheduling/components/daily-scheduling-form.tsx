@@ -13,6 +13,8 @@ import { NativeSelect, NativeSelectOption } from "@acme/ui/native-select";
 import { Textarea } from "@acme/ui/textarea";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
+import { authClient } from "~/clients/auth-client";
+
 interface DailySchedulingFormData {
   unitId: string;
   date: string;
@@ -45,6 +47,22 @@ export function DailySchedulingForm({
   isSubmitting = false,
 }: DailySchedulingFormProps) {
   const client = useClientQueries(schema);
+  const { data: session } = authClient.useSession();
+
+  const { data: member } = client.member.useFindFirst(
+    {
+      where: { userId: session?.user?.id },
+      select: { profile: true, role: true },
+    },
+    { enabled: !!session?.user?.id },
+  );
+
+  const isAdmin =
+    member?.profile === "admin" ||
+    member?.role === "admin" ||
+    member?.role === "owner";
+
+  const today = new Date().toISOString().split("T")[0] ?? "";
 
   // Fetch active units with their contracts
   const { data: units = [] } = client.gasUnit.useFindMany({
@@ -155,7 +173,17 @@ export function DailySchedulingForm({
           )}
         </form.Field>
 
-        <form.Field name="date">
+        <form.Field
+          name="date"
+          validators={{
+            onChange: ({ value }) => {
+              if (!isAdmin && value < today) {
+                return "Não é permitido selecionar datas passadas.";
+              }
+              return undefined;
+            },
+          }}
+        >
           {(field) => (
             <div className="space-y-2">
               <Label htmlFor={field.name}>Data *</Label>
@@ -166,6 +194,7 @@ export function DailySchedulingForm({
                 onChange={(e) => field.handleChange(e.target.value)}
                 type="date"
                 value={field.state.value}
+                {...(!isAdmin && { min: today })}
               />
               {field.state.meta.errors.map((error) => (
                 <p className="text-destructive text-sm" key={String(error)}>
