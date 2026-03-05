@@ -7,6 +7,7 @@ import {
   Bug,
   Building2,
   Calendar,
+  CalendarRange,
   ClipboardList,
   Command,
   Construction,
@@ -99,6 +100,11 @@ export const sidebarData: SidebarData = {
               title: "Painel de Programação",
               url: "/gas/scheduling-dashboard",
               icon: ClipboardList,
+            },
+            {
+              title: "Programação Mensal",
+              url: "/gas/monthly-scheduling",
+              icon: CalendarRange,
             },
             {
               title: "Consumo Real",
