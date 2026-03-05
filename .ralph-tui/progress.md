@@ -41,6 +41,16 @@ after each iteration and it's included in prompts for context.
   - Pre-existing TS errors in contracts-table.tsx: `className`/`thClassName`/`tdClassName` on ColumnMeta type
 ---
 
+## 2026-03-05 - US-024
+- Created feasibility study document for direct SCGas scheduling integration
+- Files changed:
+  - `docs/feasibility-scgas-integration.md` - New document covering: SCGas API availability, authentication requirements, data format requirements, regulatory considerations (ANP, LGPD), technical architecture proposal, risk assessment with mitigation strategies, and go/no-go recommendation
+- **Learnings:**
+  - Documentation-only stories don't require typecheck/lint since no code changed
+  - Project had no `docs/` directory - created it for this and future documentation
+  - SCGas integration is blocked by external dependency (API availability from distributor)
+---
+
 ## 2026-03-05 - US-023
 - Implemented Chatbot Q&A - contract and dashboard assistant
 - Files changed:
