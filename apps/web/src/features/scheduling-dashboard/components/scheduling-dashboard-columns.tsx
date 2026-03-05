@@ -133,9 +133,12 @@ export function createColumns(
           return <span className="text-muted-foreground">—</span>;
         }
         return (
-          <span className="font-mono">{volume.toLocaleString("pt-BR")} m³</span>
+          <span className="truncate font-mono text-sm">
+            {volume.toLocaleString("pt-BR")} m³
+          </span>
         );
       },
+      minSize: 130,
       enableSorting: true,
     },
     {
