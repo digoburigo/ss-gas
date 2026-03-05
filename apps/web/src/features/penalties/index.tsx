@@ -49,6 +49,7 @@ import { Main } from "~/components/layout/main";
 import { ProfileDropdown } from "~/components/profile-dropdown";
 import { Search } from "~/components/search";
 import { ThemeSwitch } from "~/components/theme-switch";
+import { TariffManagementTab } from "./components/tariff-management-tab";
 
 const MONTH_NAMES = [
   "Janeiro",
@@ -322,6 +323,7 @@ export function Penalties() {
               <TabsList>
                 <TabsTrigger value="daily">Visão Diária</TabsTrigger>
                 <TabsTrigger value="monthly">Visão Mensal</TabsTrigger>
+                <TabsTrigger value="tariffs">Tarifas</TabsTrigger>
               </TabsList>
 
               <TabsContent value="daily">
@@ -657,6 +659,13 @@ export function Penalties() {
                     ) : null}
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              <TabsContent value="tariffs">
+                <TariffManagementTab
+                  contractId={selectedContractId || data.contract.id}
+                  contracts={data.contracts ?? [data.contract]}
+                />
               </TabsContent>
             </Tabs>
           </>

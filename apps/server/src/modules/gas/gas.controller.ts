@@ -5304,6 +5304,7 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 				include: {
 					contract: { select: { id: true, name: true, contractNumber: true } },
 					createdByUser: { select: { id: true, name: true } },
+					approvedByUser: { select: { id: true, name: true } },
 				},
 				orderBy: { effectiveFrom: "desc" },
 			});
@@ -5381,25 +5382,6 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 
 			const effectiveFrom = new Date(body.effectiveFrom);
 
-			// Close the previous active tariff (set effectiveTo to the day before the new one starts)
-			const activeTariff = await db.gasTariffHistory.findFirst({
-				where: {
-					contractId: body.contractId,
-					organizationId: orgId,
-					effectiveTo: null,
-				},
-				orderBy: { effectiveFrom: "desc" },
-			});
-
-			if (activeTariff) {
-				const closingDate = new Date(effectiveFrom);
-				closingDate.setDate(closingDate.getDate() - 1);
-				await db.gasTariffHistory.update({
-					where: { id: activeTariff.id },
-					data: { effectiveTo: closingDate },
-				});
-			}
-
 			const tariff = await userDb.gasTariffHistory.create({
 				data: {
 					contractId: body.contractId,
@@ -5410,6 +5392,7 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 					tusdTariff: body.tusdTariff,
 					transportCost: body.transportCost,
 					notes: body.notes,
+					status: "pending" as const,
 				},
 			});
 
@@ -5529,6 +5512,7 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 				where: {
 					contractId: params.contractId,
 					organizationId: orgId,
+					status: "active",
 					effectiveFrom: { lte: now },
 					OR: [
 						{ effectiveTo: null },
@@ -5538,6 +5522,72 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 				orderBy: { effectiveFrom: "desc" },
 				include: {
 					contract: { select: { id: true, name: true } },
+				},
+			});
+
+			return { tariff };
+		},
+		{
+			auth: true,
+		},
+	)
+
+	/**
+	 * POST /gas/tariff-history/:id/approve
+	 *
+	 * Approves a pending tariff. If the validity period has started, sets status to 'active'
+	 * and closes the previous active tariff for the same contract.
+	 */
+	.post(
+		"/tariff-history/:id/approve",
+		async ({ params, user, session, status }) => {
+			const orgId = session.activeOrganizationId;
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			const existing = await db.gasTariffHistory.findFirst({
+				where: { id: params.id, organizationId: orgId },
+			});
+			if (!existing) {
+				return status(404, { error: "Tarifa nao encontrada" });
+			}
+			if (existing.status !== "pending") {
+				return status(400, { error: "Apenas tarifas pendentes podem ser aprovadas" });
+			}
+
+			const now = new Date();
+			const effectiveFrom = new Date(existing.effectiveFrom);
+			const newStatus = effectiveFrom <= now ? "active" : "approved";
+
+			// If activating immediately, close previous active tariff
+			if (newStatus === "active") {
+				const previousActive = await db.gasTariffHistory.findFirst({
+					where: {
+						contractId: existing.contractId,
+						organizationId: orgId,
+						status: "active",
+						id: { not: params.id },
+					},
+					orderBy: { effectiveFrom: "desc" },
+				});
+
+				if (previousActive) {
+					const closingDate = new Date(effectiveFrom);
+					closingDate.setDate(closingDate.getDate() - 1);
+					await db.gasTariffHistory.update({
+						where: { id: previousActive.id },
+						data: { effectiveTo: closingDate, status: "approved" },
+					});
+				}
+			}
+
+			const tariff = await db.gasTariffHistory.update({
+				where: { id: params.id },
+				data: {
+					status: newStatus,
+					approvedAt: now,
+					approvedById: user.id,
 				},
 			});
 

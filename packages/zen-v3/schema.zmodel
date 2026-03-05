@@ -81,6 +81,7 @@ model User {
   createdGasRealConsumptions GasRealConsumption[] @relation("createdGasRealConsumptions")
   createdGasContracts GasContract[] @relation("createdGasContracts")
   createdGasTariffHistory GasTariffHistory[] @relation("createdGasTariffHistory")
+  approvedGasTariffHistory GasTariffHistory[] @relation("approvedGasTariffHistory")
 
   notificationPreferences UserNotificationPreferences?
 
@@ -1592,6 +1593,13 @@ enum AuditAction {
   logout
 }
 
+enum TariffStatus {
+  pending
+  approved
+  active
+  rejected
+}
+
 model GasAuditLog {
     id String @id @default(dbgenerated("uuidv7()"))
 
@@ -1686,6 +1694,12 @@ model GasTariffHistory {
 
     // Metadata
     notes String?                    // Notes about this tariff change (e.g., adjustment index, reason)
+
+    // Approval workflow
+    status TariffStatus @default(pending) // pending → approved → active
+    approvedAt DateTime?
+    approvedById String?
+    approvedByUser User? @relation("approvedGasTariffHistory", fields: [approvedById], references: [id], onDelete: SetNull)
 
     // Audit fields
     createdAt DateTime @default(now())

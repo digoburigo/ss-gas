@@ -269,3 +269,44 @@ after each iteration and it's included in prompts for context.
   - Elysia treaty API response needs explicit error type narrowing for toast messages
 ---
 
+## 2026-03-05 - US-018
+- Created GasTariffHistory model in schema.zmodel with fields: tariffPerUnit, currency, effectiveFrom, effectiveTo, tusdTariff, transportCost, notes
+- Added relation from GasContract (tariffHistory) and User (createdGasTariffHistory) and Organization (gasTariffHistory)
+- Added 6 CRUD endpoints to gas.controller.ts: list, get, create, update, delete, get-active
+- Create endpoint auto-closes previous active tariff (sets effectiveTo to day before new tariff starts)
+- Get-active endpoint finds the tariff where effectiveFrom <= now AND (effectiveTo is null OR effectiveTo >= now)
+- db:generate succeeded; db:push failed (DB not running locally — expected)
+- Files changed:
+  - `packages/zen-v3/schema.zmodel` (new model + relations on GasContract, User, Organization)
+  - `packages/zen-v3/src/zenstack/` (auto-generated files)
+  - `apps/server/src/modules/gas/gas.controller.ts` (6 new endpoints)
+- **Learnings:**
+  - ZenStack v3 generate command: `pnpm -F @acme/zen-v3 run db:generate` (not root-level `pnpm run db:generate`)
+  - db:push needs `pnpm -F @acme/zen-v3 run db:push` from package dir (turbo wrapper has TUI issues)
+  - Pre-existing typecheck errors on all `userDb.*.create()` calls are ZenStack v3 `CreateWithFKInput` type mismatches — not related to new code
+  - The `authDb.$setAuth()` pattern is used for create operations to set organizationId/createdById via auth context
+  - For read/update/delete, plain `db.*` is used with manual org filtering via `where: { organizationId }`
+---
+
+## 2026-03-05 - US-019
+- Added `TariffStatus` enum (pending/approved/active/rejected) and approval fields (`status`, `approvedAt`, `approvedById`, `approvedByUser`) to GasTariffHistory model
+- Added `approvedGasTariffHistory` relation on User model
+- Updated create endpoint to set `status: "pending"` by default (removed auto-close of previous active tariff on create)
+- Added `POST /gas/tariff-history/:id/approve` endpoint: validates pending status, sets approved/active based on validity period, auto-closes previous active tariff when activating
+- Updated `GET /gas/tariff-history/active/:contractId` to filter by `status: "active"`
+- Updated list endpoint to include `approvedByUser` in response
+- Created `TariffManagementTab` component with: active tariff card, history table with status badges, create tariff drawer (Sheet), approve action button
+- Added "Tarifas" tab to Penalties page alongside "Visao Diaria" and "Visao Mensal"
+- Files changed:
+  - `packages/zen-v3/schema.zmodel` (TariffStatus enum + approval fields + User relation)
+  - `packages/zen-v3/src/zenstack/` (auto-generated)
+  - `apps/server/src/modules/gas/gas.controller.ts` (approve endpoint, create update, list update, active filter)
+  - `apps/web/src/features/penalties/index.tsx` (added Tarifas tab + import)
+  - `apps/web/src/features/penalties/components/tariff-management-tab.tsx` (new file)
+- **Learnings:**
+  - Elysia treaty parameterized routes use `api.gas["tariff-history"]({ id: value }).approve.post()` syntax (function call, not bracket access)
+  - ZenStack enum fields need `as const` assertion in create data to satisfy TypeScript
+  - Approval workflow: pending → approved (future start date) or pending → active (past/current start date), with auto-close of previous active tariff
+  - `unknown` intermediate cast needed for API response → custom type when Date fields are involved (Date vs string mismatch)
+---
+

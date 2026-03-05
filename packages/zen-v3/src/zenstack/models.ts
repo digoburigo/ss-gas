@@ -95,3 +95,5 @@ export const GasParameterCategory = $schema.enums.GasParameterCategory.values;
 export type GasParameterCategory = (typeof GasParameterCategory)[keyof typeof GasParameterCategory];
 export const AuditAction = $schema.enums.AuditAction.values;
 export type AuditAction = (typeof AuditAction)[keyof typeof AuditAction];
+export const TariffStatus = $schema.enums.TariffStatus.values;
+export type TariffStatus = (typeof TariffStatus)[keyof typeof TariffStatus];

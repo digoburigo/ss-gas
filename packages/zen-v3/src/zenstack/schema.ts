@@ -326,6 +326,13 @@ export class SchemaType implements SchemaDef {
                     attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasTariffHistory") }] }],
                     relation: { opposite: "createdByUser", name: "createdGasTariffHistory" }
                 },
+                approvedGasTariffHistory: {
+                    name: "approvedGasTariffHistory",
+                    type: "GasTariffHistory",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("approvedGasTariffHistory") }] }],
+                    relation: { opposite: "approvedByUser", name: "approvedGasTariffHistory" }
+                },
                 notificationPreferences: {
                     name: "notificationPreferences",
                     type: "UserNotificationPreferences",
@@ -5219,6 +5226,32 @@ export class SchemaType implements SchemaDef {
                     type: "String",
                     optional: true
                 },
+                status: {
+                    name: "status",
+                    type: "TariffStatus",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("pending") }] }],
+                    default: "pending"
+                },
+                approvedAt: {
+                    name: "approvedAt",
+                    type: "DateTime",
+                    optional: true
+                },
+                approvedById: {
+                    name: "approvedById",
+                    type: "String",
+                    optional: true,
+                    foreignKeyFor: [
+                        "approvedByUser"
+                    ]
+                },
+                approvedByUser: {
+                    name: "approvedByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("approvedGasTariffHistory") }, { name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("approvedById")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "approvedGasTariffHistory", name: "approvedGasTariffHistory", fields: ["approvedById"], references: ["id"], onDelete: "SetNull" }
+                },
                 createdAt: {
                     name: "createdAt",
                     type: "DateTime",
@@ -5447,6 +5480,15 @@ export class SchemaType implements SchemaDef {
                 delete: "delete",
                 login: "login",
                 logout: "logout"
+            }
+        },
+        TariffStatus: {
+            name: "TariffStatus",
+            values: {
+                pending: "pending",
+                approved: "approved",
+                active: "active",
+                rejected: "rejected"
             }
         }
     } as const;
