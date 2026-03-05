@@ -80,6 +80,7 @@ model User {
   approvedGasDailyPlans GasDailyPlan[] @relation("approvedGasDailyPlans")
   createdGasRealConsumptions GasRealConsumption[] @relation("createdGasRealConsumptions")
   createdGasContracts GasContract[] @relation("createdGasContracts")
+  createdGasTariffHistory GasTariffHistory[] @relation("createdGasTariffHistory")
 
   notificationPreferences UserNotificationPreferences?
 
@@ -193,6 +194,7 @@ model Organization {
   gasContractTemplates GasContractTemplate[]
   gasCustomFields GasCustomField[]
   gasAuditLogs GasAuditLog[]
+  gasTariffHistory GasTariffHistory[]
 
   @@unique([slug])
   @@unique([cnpj])
@@ -1252,6 +1254,9 @@ model GasContract {
     // Alert configurations for this contract
     alerts GasContractAlert[]
 
+    // Tariff history for this contract
+    tariffHistory GasTariffHistory[]
+
     @@allow('create', auth() != null)
     @@allow('read,update,delete', auth().organizationId == organizationId)
 
@@ -1659,4 +1664,43 @@ model UserNotificationPreferences {
     @@allow('read,update,delete', auth().userId == userId)
 
     @@map("user_notification_preferences")
+}
+
+model GasTariffHistory {
+    id String @id @default(dbgenerated("uuidv7()"))
+
+    contractId String
+    contract GasContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+    // Tariff value
+    tariffPerUnit Float              // Price per volume unit (R$/m3 or R$/MMBtu)
+    currency String @default("BRL")  // Currency: BRL, USD
+
+    // Validity period
+    effectiveFrom DateTime           // Start of validity
+    effectiveTo DateTime?            // End of validity (null = currently active)
+
+    // Additional tariff components
+    tusdTariff Float?                // TUSD tariff (R$/m3) for penalty calculations
+    transportCost Float?             // Transport cost per unit
+
+    // Metadata
+    notes String?                    // Notes about this tariff change (e.g., adjustment index, reason)
+
+    // Audit fields
+    createdAt DateTime @default(now())
+    createdById String? @default(auth().userId)
+    createdByUser User? @relation("createdGasTariffHistory", fields: [createdById], references: [id], onDelete: SetNull)
+
+    updatedAt DateTime @updatedAt
+
+    organizationId String? @default(auth().organizationId)
+    organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+    @@allow('create', auth() != null)
+    @@allow('read,update,delete', auth().organizationId == organizationId)
+
+    @@index([contractId, effectiveFrom])
+    @@index([organizationId])
+    @@map("gas_tariff_history")
 }

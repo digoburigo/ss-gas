@@ -6,7 +6,7 @@
 /* eslint-disable */
 
 import { schema as $schema, type SchemaType as $Schema } from "./schema";
-import { type ModelResult as $ModelResult, type TypeDefResult as $TypeDefResult } from "@zenstackhq/orm";
+import type { ModelResult as $ModelResult, TypeDefResult as $TypeDefResult } from "@zenstackhq/orm";
 export type User = $ModelResult<$Schema, "User">;
 export type Session = $ModelResult<$Schema, "Session">;
 export type Account = $ModelResult<$Schema, "Account">;
@@ -58,6 +58,7 @@ export type GasContractTemplate = $ModelResult<$Schema, "GasContractTemplate">;
 export type GasCustomField = $ModelResult<$Schema, "GasCustomField">;
 export type GasAuditLog = $ModelResult<$Schema, "GasAuditLog">;
 export type UserNotificationPreferences = $ModelResult<$Schema, "UserNotificationPreferences">;
+export type GasTariffHistory = $ModelResult<$Schema, "GasTariffHistory">;
 /**
  * Shape of the `auth()` function
  */

@@ -5275,4 +5275,275 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 				contractId: t.Optional(t.String()),
 			}),
 		},
+	)
+
+	// ============================================================
+	// Tariff History CRUD
+	// ============================================================
+
+	/**
+	 * GET /gas/tariff-history
+	 *
+	 * Lists tariff history entries for a contract.
+	 */
+	.get(
+		"/tariff-history",
+		async ({ query, session, status }) => {
+			const orgId = session.activeOrganizationId;
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			const where: Record<string, unknown> = { organizationId: orgId };
+			if (query.contractId) {
+				where.contractId = query.contractId;
+			}
+
+			const tariffs = await db.gasTariffHistory.findMany({
+				where,
+				include: {
+					contract: { select: { id: true, name: true, contractNumber: true } },
+					createdByUser: { select: { id: true, name: true } },
+				},
+				orderBy: { effectiveFrom: "desc" },
+			});
+
+			return { tariffs };
+		},
+		{
+			auth: true,
+			query: t.Object({
+				contractId: t.Optional(t.String()),
+			}),
+		},
+	)
+
+	/**
+	 * GET /gas/tariff-history/:id
+	 *
+	 * Gets a single tariff history entry.
+	 */
+	.get(
+		"/tariff-history/:id",
+		async ({ params, session, status }) => {
+			const orgId = session.activeOrganizationId;
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			const tariff = await db.gasTariffHistory.findFirst({
+				where: { id: params.id, organizationId: orgId },
+				include: {
+					contract: { select: { id: true, name: true, contractNumber: true } },
+					createdByUser: { select: { id: true, name: true } },
+				},
+			});
+
+			if (!tariff) {
+				return status(404, { error: "Tarifa nao encontrada" });
+			}
+
+			return { tariff };
+		},
+		{
+			auth: true,
+		},
+	)
+
+	/**
+	 * POST /gas/tariff-history
+	 *
+	 * Creates a new tariff history entry.
+	 * Automatically closes the previous active tariff for the same contract.
+	 */
+	.post(
+		"/tariff-history",
+		async ({ body, user, session, status }) => {
+			const orgId = session.activeOrganizationId;
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			const userDb = authDb.$setAuth({
+				userId: user.id,
+				organizationId: orgId,
+				organizationRole: "member",
+				role: "user",
+			});
+
+			// Verify contract exists and belongs to the org
+			const contract = await db.gasContract.findFirst({
+				where: { id: body.contractId, organizationId: orgId },
+			});
+			if (!contract) {
+				return status(404, { error: "Contrato nao encontrado" });
+			}
+
+			const effectiveFrom = new Date(body.effectiveFrom);
+
+			// Close the previous active tariff (set effectiveTo to the day before the new one starts)
+			const activeTariff = await db.gasTariffHistory.findFirst({
+				where: {
+					contractId: body.contractId,
+					organizationId: orgId,
+					effectiveTo: null,
+				},
+				orderBy: { effectiveFrom: "desc" },
+			});
+
+			if (activeTariff) {
+				const closingDate = new Date(effectiveFrom);
+				closingDate.setDate(closingDate.getDate() - 1);
+				await db.gasTariffHistory.update({
+					where: { id: activeTariff.id },
+					data: { effectiveTo: closingDate },
+				});
+			}
+
+			const tariff = await userDb.gasTariffHistory.create({
+				data: {
+					contractId: body.contractId,
+					tariffPerUnit: body.tariffPerUnit,
+					currency: body.currency ?? "BRL",
+					effectiveFrom,
+					effectiveTo: body.effectiveTo ? new Date(body.effectiveTo) : null,
+					tusdTariff: body.tusdTariff,
+					transportCost: body.transportCost,
+					notes: body.notes,
+				},
+			});
+
+			return { tariff };
+		},
+		{
+			auth: true,
+			body: t.Object({
+				contractId: t.String(),
+				tariffPerUnit: t.Number(),
+				currency: t.Optional(t.String()),
+				effectiveFrom: t.String(),
+				effectiveTo: t.Optional(t.String()),
+				tusdTariff: t.Optional(t.Number()),
+				transportCost: t.Optional(t.Number()),
+				notes: t.Optional(t.String()),
+			}),
+		},
+	)
+
+	/**
+	 * PUT /gas/tariff-history/:id
+	 *
+	 * Updates an existing tariff history entry.
+	 */
+	.put(
+		"/tariff-history/:id",
+		async ({ params, body, session, status }) => {
+			const orgId = session.activeOrganizationId;
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			const existing = await db.gasTariffHistory.findFirst({
+				where: { id: params.id, organizationId: orgId },
+			});
+			if (!existing) {
+				return status(404, { error: "Tarifa nao encontrada" });
+			}
+
+			const data: Record<string, unknown> = {};
+			if (body.tariffPerUnit !== undefined) data.tariffPerUnit = body.tariffPerUnit;
+			if (body.currency !== undefined) data.currency = body.currency;
+			if (body.effectiveFrom !== undefined) data.effectiveFrom = new Date(body.effectiveFrom);
+			if (body.effectiveTo !== undefined) data.effectiveTo = body.effectiveTo ? new Date(body.effectiveTo) : null;
+			if (body.tusdTariff !== undefined) data.tusdTariff = body.tusdTariff;
+			if (body.transportCost !== undefined) data.transportCost = body.transportCost;
+			if (body.notes !== undefined) data.notes = body.notes;
+
+			const tariff = await db.gasTariffHistory.update({
+				where: { id: params.id },
+				data,
+			});
+
+			return { tariff };
+		},
+		{
+			auth: true,
+			body: t.Object({
+				tariffPerUnit: t.Optional(t.Number()),
+				currency: t.Optional(t.String()),
+				effectiveFrom: t.Optional(t.String()),
+				effectiveTo: t.Optional(t.Nullable(t.String())),
+				tusdTariff: t.Optional(t.Nullable(t.Number())),
+				transportCost: t.Optional(t.Nullable(t.Number())),
+				notes: t.Optional(t.Nullable(t.String())),
+			}),
+		},
+	)
+
+	/**
+	 * DELETE /gas/tariff-history/:id
+	 *
+	 * Deletes a tariff history entry.
+	 */
+	.delete(
+		"/tariff-history/:id",
+		async ({ params, session, status }) => {
+			const orgId = session.activeOrganizationId;
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			const existing = await db.gasTariffHistory.findFirst({
+				where: { id: params.id, organizationId: orgId },
+			});
+			if (!existing) {
+				return status(404, { error: "Tarifa nao encontrada" });
+			}
+
+			await db.gasTariffHistory.delete({
+				where: { id: params.id },
+			});
+
+			return { success: true };
+		},
+		{
+			auth: true,
+		},
+	)
+
+	/**
+	 * GET /gas/tariff-history/active/:contractId
+	 *
+	 * Gets the currently active tariff for a contract.
+	 */
+	.get(
+		"/tariff-history/active/:contractId",
+		async ({ params, session, status }) => {
+			const orgId = session.activeOrganizationId;
+			if (!orgId) {
+				return status(400, { error: "Organizacao ativa nao encontrada" });
+			}
+
+			const now = new Date();
+			const tariff = await db.gasTariffHistory.findFirst({
+				where: {
+					contractId: params.contractId,
+					organizationId: orgId,
+					effectiveFrom: { lte: now },
+					OR: [
+						{ effectiveTo: null },
+						{ effectiveTo: { gte: now } },
+					],
+				},
+				orderBy: { effectiveFrom: "desc" },
+				include: {
+					contract: { select: { id: true, name: true } },
+				},
+			});
+
+			return { tariff };
+		},
+		{
+			auth: true,
+		},
 	);

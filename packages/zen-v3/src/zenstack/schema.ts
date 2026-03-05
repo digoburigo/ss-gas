@@ -5,7 +5,7 @@
 
 /* eslint-disable */
 
-import { type SchemaDef, ExpressionUtils } from "@zenstackhq/orm/schema";
+import { type SchemaDef, ExpressionUtils } from "@zenstackhq/schema";
 export class SchemaType implements SchemaDef {
     provider = {
         type: "postgresql"
@@ -318,6 +318,13 @@ export class SchemaType implements SchemaDef {
                     array: true,
                     attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasContracts") }] }],
                     relation: { opposite: "createdByUser", name: "createdGasContracts" }
+                },
+                createdGasTariffHistory: {
+                    name: "createdGasTariffHistory",
+                    type: "GasTariffHistory",
+                    array: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasTariffHistory") }] }],
+                    relation: { opposite: "createdByUser", name: "createdGasTariffHistory" }
                 },
                 notificationPreferences: {
                     name: "notificationPreferences",
@@ -789,6 +796,12 @@ export class SchemaType implements SchemaDef {
                 gasAuditLogs: {
                     name: "gasAuditLogs",
                     type: "GasAuditLog",
+                    array: true,
+                    relation: { opposite: "organization" }
+                },
+                gasTariffHistory: {
+                    name: "gasTariffHistory",
+                    type: "GasTariffHistory",
                     array: true,
                     relation: { opposite: "organization" }
                 }
@@ -4219,6 +4232,12 @@ export class SchemaType implements SchemaDef {
                     type: "GasContractAlert",
                     array: true,
                     relation: { opposite: "contract" }
+                },
+                tariffHistory: {
+                    name: "tariffHistory",
+                    type: "GasTariffHistory",
+                    array: true,
+                    relation: { opposite: "contract" }
                 }
             },
             attributes: [
@@ -5141,6 +5160,122 @@ export class SchemaType implements SchemaDef {
             uniqueFields: {
                 id: { type: "String" },
                 userId: { type: "String" }
+            }
+        },
+        GasTariffHistory: {
+            name: "GasTariffHistory",
+            fields: {
+                id: {
+                    name: "id",
+                    type: "String",
+                    id: true,
+                    attributes: [{ name: "@id" }, { name: "@default", args: [{ name: "value", value: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")]) }] }],
+                    default: ExpressionUtils.call("dbgenerated", [ExpressionUtils.literal("uuidv7()")])
+                },
+                contractId: {
+                    name: "contractId",
+                    type: "String",
+                    foreignKeyFor: [
+                        "contract"
+                    ]
+                },
+                contract: {
+                    name: "contract",
+                    type: "GasContract",
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("contractId")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "tariffHistory", fields: ["contractId"], references: ["id"], onDelete: "Cascade" }
+                },
+                tariffPerUnit: {
+                    name: "tariffPerUnit",
+                    type: "Float"
+                },
+                currency: {
+                    name: "currency",
+                    type: "String",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.literal("BRL") }] }],
+                    default: "BRL"
+                },
+                effectiveFrom: {
+                    name: "effectiveFrom",
+                    type: "DateTime"
+                },
+                effectiveTo: {
+                    name: "effectiveTo",
+                    type: "DateTime",
+                    optional: true
+                },
+                tusdTariff: {
+                    name: "tusdTariff",
+                    type: "Float",
+                    optional: true
+                },
+                transportCost: {
+                    name: "transportCost",
+                    type: "Float",
+                    optional: true
+                },
+                notes: {
+                    name: "notes",
+                    type: "String",
+                    optional: true
+                },
+                createdAt: {
+                    name: "createdAt",
+                    type: "DateTime",
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.call("now") }] }],
+                    default: ExpressionUtils.call("now")
+                },
+                createdById: {
+                    name: "createdById",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["userId"]),
+                    foreignKeyFor: [
+                        "createdByUser"
+                    ]
+                },
+                createdByUser: {
+                    name: "createdByUser",
+                    type: "User",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "name", value: ExpressionUtils.literal("createdGasTariffHistory") }, { name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("createdById")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("SetNull") }] }],
+                    relation: { opposite: "createdGasTariffHistory", name: "createdGasTariffHistory", fields: ["createdById"], references: ["id"], onDelete: "SetNull", hasDefault: true }
+                },
+                updatedAt: {
+                    name: "updatedAt",
+                    type: "DateTime",
+                    updatedAt: true,
+                    attributes: [{ name: "@updatedAt" }]
+                },
+                organizationId: {
+                    name: "organizationId",
+                    type: "String",
+                    optional: true,
+                    attributes: [{ name: "@default", args: [{ name: "value", value: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]) }] }],
+                    default: ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]),
+                    foreignKeyFor: [
+                        "organization"
+                    ]
+                },
+                organization: {
+                    name: "organization",
+                    type: "Organization",
+                    optional: true,
+                    attributes: [{ name: "@relation", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("organizationId")]) }, { name: "references", value: ExpressionUtils.array("String", [ExpressionUtils.field("id")]) }, { name: "onDelete", value: ExpressionUtils.literal("Cascade") }] }],
+                    relation: { opposite: "gasTariffHistory", fields: ["organizationId"], references: ["id"], onDelete: "Cascade", hasDefault: true }
+                }
+            },
+            attributes: [
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("create") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.call("auth"), "!=", ExpressionUtils._null()) }] },
+                { name: "@@allow", args: [{ name: "operation", value: ExpressionUtils.literal("read,update,delete") }, { name: "condition", value: ExpressionUtils.binary(ExpressionUtils.member(ExpressionUtils.call("auth"), ["organizationId"]), "==", ExpressionUtils.field("organizationId")) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("contractId"), ExpressionUtils.field("effectiveFrom")]) }] },
+                { name: "@@index", args: [{ name: "fields", value: ExpressionUtils.array("String", [ExpressionUtils.field("organizationId")]) }] },
+                { name: "@@map", args: [{ name: "name", value: ExpressionUtils.literal("gas_tariff_history") }] }
+            ],
+            idFields: ["id"],
+            uniqueFields: {
+                id: { type: "String" }
             }
         }
     } as const;
