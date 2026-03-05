@@ -2,6 +2,7 @@ import {
   Activity,
   AlertTriangle,
   AudioWaveform,
+  Ban,
   Bell,
   BellRing,
   Bug,
@@ -120,6 +121,11 @@ export const sidebarData: SidebarData = {
               title: "Alertas de Desvio",
               url: "/gas/deviation-alerts",
               icon: AlertTriangle,
+            },
+            {
+              title: "Penalidades",
+              url: "/gas/penalties",
+              icon: Ban,
             },
             {
               title: "Relatórios",
