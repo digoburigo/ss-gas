@@ -131,12 +131,6 @@ function getCurrentMonth(): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 }
 
-function getMonthNAgo(n: number): string {
-  const now = new Date();
-  const date = new Date(now.getFullYear(), now.getMonth() - n, 1);
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-}
-
 function formatValue(value: number | null | undefined): string {
   if (value === null || value === undefined) return "-";
   return value.toLocaleString("pt-BR");
@@ -215,6 +209,24 @@ const assertivenessChartConfig = {
 const UNIT_ALL = "__all__";
 
 type DateRangePreset = "monthly" | "quarterly" | "yearly";
+
+function useLatestMonth() {
+  return useQuery({
+    queryKey: ["gas", "reports", "latest-month"],
+    queryFn: async () => {
+      const response = await api.gas.reports["latest-month"].get();
+      if (response.error) return null;
+      return response.data?.month ?? null;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+function getMonthNAgoFrom(reference: string, n: number): string {
+  const parts = reference.split("-").map(Number);
+  const date = new Date(parts[0] ?? 0, (parts[1] ?? 1) - 1 - n, 1);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
 
 function ComparisonTooltip({
   active,
@@ -309,23 +321,24 @@ function DashboardTab() {
   const [selectedContractId, setSelectedContractId] = useState("");
   const [selectedUnit, setSelectedUnit] = useState(UNIT_ALL);
   const [isDownloading, setIsDownloading] = useState(false);
+  const { data: latestMonth } = useLatestMonth();
 
   const { startMonth, endMonth } = useMemo(() => {
-    const end = getCurrentMonth();
+    const end = latestMonth ?? getCurrentMonth();
     let start: string;
     switch (dateRange) {
       case "monthly":
         start = end;
         break;
       case "quarterly":
-        start = getMonthNAgo(2);
+        start = getMonthNAgoFrom(end, 2);
         break;
       case "yearly":
-        start = getMonthNAgo(11);
+        start = getMonthNAgoFrom(end, 11);
         break;
     }
     return { startMonth: start, endMonth: end };
-  }, [dateRange]);
+  }, [dateRange, latestMonth]);
 
   const { data, isLoading } = useQuery({
     queryKey: [
@@ -966,24 +979,29 @@ function EmptyChart({ height = "h-[300px]" }: { height?: string }) {
 
 function PetrobrasReportTab() {
   const monthOptions = useMemo(() => generateMonthOptions(), []);
-  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
+  const { data: latestMonth } = useLatestMonth();
+  const defaultMonth = latestMonth ?? getCurrentMonth();
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [selectedContractId, setSelectedContractId] = useState("");
-  const [comparisonMonth, setComparisonMonth] = useState(getCurrentMonth());
+  const [comparisonMonth, setComparisonMonth] = useState<string | null>(null);
   const [selectedUnit, setSelectedUnit] = useState(UNIT_ALL);
+
+  const effectiveMonth = selectedMonth ?? defaultMonth;
+  const effectiveComparisonMonth = comparisonMonth ?? defaultMonth;
 
   const { data, isLoading, error } = useQuery({
     queryKey: [
       "gas",
       "reports",
       "petrobras",
-      selectedMonth,
+      effectiveMonth,
       selectedContractId,
     ],
     queryFn: async () => {
       const response = await api.gas.reports.petrobras.get({
         query: {
-          month: selectedMonth,
+          month: effectiveMonth,
           ...(selectedContractId ? { contractId: selectedContractId } : {}),
         },
       });
@@ -998,11 +1016,11 @@ function PetrobrasReportTab() {
   });
 
   const { data: consolidatedData, isLoading: isLoadingComparison } = useQuery({
-    queryKey: ["gas", "consolidated", comparisonMonth, selectedContractId],
+    queryKey: ["gas", "consolidated", effectiveComparisonMonth, selectedContractId],
     queryFn: async () => {
       const response = await api.gas.consolidated.get({
         query: {
-          month: comparisonMonth,
+          month: effectiveComparisonMonth,
           ...(selectedContractId ? { contractId: selectedContractId } : {}),
         },
       });
@@ -1106,7 +1124,7 @@ function PetrobrasReportTab() {
     setIsDownloading(true);
     try {
       const response = await api.gas.reports.petrobras.download.get({
-        query: { month: selectedMonth },
+        query: { month: effectiveMonth },
       });
       if (response.error) {
         throw new Error("Falha ao gerar arquivo");
@@ -1116,7 +1134,7 @@ function PetrobrasReportTab() {
       const a = document.createElement("a");
       a.href = url;
       a.download =
-        data?.suggestedFilename ?? `RC_${selectedMonth}_Petrobras.xlsx`;
+        data?.suggestedFilename ?? `RC_${effectiveMonth}_Petrobras.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -1160,7 +1178,7 @@ function PetrobrasReportTab() {
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground text-sm">Mês:</span>
               <Select
-                value={comparisonMonth}
+                value={effectiveComparisonMonth}
                 onValueChange={setComparisonMonth}
               >
                 <SelectTrigger className="w-48">
@@ -1324,7 +1342,7 @@ function PetrobrasReportTab() {
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground text-sm">Mês:</span>
-              <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+              <Select value={effectiveMonth} onValueChange={setSelectedMonth}>
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Selecione o mês" />
                 </SelectTrigger>

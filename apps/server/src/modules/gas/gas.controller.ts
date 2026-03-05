@@ -1057,6 +1057,38 @@ export const gasController = new Elysia({ prefix: "/gas" })
 	)
 
 	/**
+	 * GET /gas/reports/latest-month
+	 *
+	 * Returns the most recent month that has gas daily entry data.
+	 * Used to set smart default filters on the reports page.
+	 */
+	.get(
+		"/reports/latest-month",
+		async ({ session }) => {
+			const latestEntry = await db.gasDailyEntry.findFirst({
+				where: {
+					unit: {
+						organizationId: session.activeOrganizationId ?? undefined,
+					},
+				},
+				orderBy: { date: "desc" },
+				select: { date: true },
+			});
+
+			if (!latestEntry) {
+				return { month: null };
+			}
+
+			const d = latestEntry.date;
+			const month = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+			return { month };
+		},
+		{
+			auth: true,
+		},
+	)
+
+	/**
 	 * GET /gas/reports/petrobras
 	 *
 	 * Returns preview data for Petrobras report export.
