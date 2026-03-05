@@ -50,10 +50,6 @@ const gasMenuItems = [
     url: "/gas",
   },
   {
-    title: "Lançamento Diário",
-    url: "/gas/entry",
-  },
-  {
     title: "Relatórios",
     url: "/gas/reports",
   },

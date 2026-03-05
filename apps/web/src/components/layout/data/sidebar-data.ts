@@ -116,10 +116,6 @@ export const sidebarData: SidebarData = {
               icon: AlertTriangle,
             },
             {
-              title: "Lançamento Diário",
-              url: "/gas/entry",
-            },
-            {
               title: "Relatórios",
               url: "/gas/reports",
             },
