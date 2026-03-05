@@ -4033,7 +4033,7 @@ Se um volume for invalido ou negativo, adicione um erro.`;
 	.post(
 		"/monthly-scheduling/confirm",
 		async ({ body, session, status }) => {
-			const { rows } = body;
+			const { rows, importLog } = body;
 			const orgId = session.activeOrganizationId;
 			const userId = session.userId;
 
@@ -4092,6 +4092,12 @@ Se um volume for invalido ou negativo, adicione um erro.`;
 				success: errors.length === 0,
 				created: created.length,
 				errors,
+				importLog: {
+					totalRows: importLog.totalRows,
+					imported: created.length,
+					errors: errors.length,
+					skipped: importLog.skipped,
+				},
 			};
 		},
 		{
@@ -4107,6 +4113,10 @@ Se um volume for invalido ou negativo, adicione um erro.`;
 						notes: t.Nullable(t.String()),
 					}),
 				),
+				importLog: t.Object({
+					totalRows: t.Number(),
+					skipped: t.Number(),
+				}),
 			}),
 		},
 	);
