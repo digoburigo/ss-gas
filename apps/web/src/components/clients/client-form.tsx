@@ -145,7 +145,7 @@ export function ClientForm({
         </form.Field>
       </div>
 
-      <form.Subscribe>
+      <form.Subscribe selector={(state) => state}>
         {(state) => (
           <div className="flex justify-end gap-2">
             <Button

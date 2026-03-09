@@ -1,0 +1,59 @@
+# Iteration 6 Log
+
+## Metadata
+
+- **Task ID**: US-006
+- **Task Title**: Add date validation to Daily Scheduling form
+- **Description**: As a gas operator, I want the daily scheduling form date input to prevent selecting past dates so that invalid schedules cannot be submitted.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-03-05T05:09:42.216Z
+- **Ended At**: 2026-03-05T05:11:17.748Z
+- **Duration**: 1m 35s
+- **Input Tokens**: 42
+- **Output Tokens**: 3262
+- **Total Tokens**: 3304
+- **Agent**: claude
+- **Model**: claude-opus-4-6
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[ToolSearch][0m query: [93mselect:Read,Glob,Grep,Edit,Bash,Write,TodoWrite,Agent[0m
+Let me read the progress file and the daily scheduling form file in parallel.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[Glob][0m pattern: [96m**/daily-scheduling-form*[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-form.tsx[0m
+Now I need to check how the auth client provides the userId. Let me look at the pattern used in US-004.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/scheduling-dashboard/components/scheduling-dashboard-date-picker.tsx[0m
+Got the pattern. Now let me implement US-006.
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-form.tsx[0m edit: "import { useState } from "react";
+import { useForm..." → "import { useState } from "react";
+import { useForm..."
+Now add the admin check and today's date inside the component, and modify the date field.
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-form.tsx[0m edit: "  const client = useClientQueries(schema);
+
+  // F..." → "  const client = useClientQueries(schema);
+  const..."
+Now add the `min` attribute and form validation to the date field:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/daily-scheduling/components/daily-scheduling-form.tsx[0m edit: "        <form.Field name="date">
+          {(field..." → "        <form.Field
+          name="date"
+        ..."
+Now let me run the typecheck to verify:
+[94m[Bash][0m Typecheck the web app $ npx tsc --noEmit -p apps/web/tsconfig.json 2>&1 | head -30
+These are all pre-existing errors, none related to my changes. Let me verify no new errors in the daily-scheduling-form file:
+[94m[Bash][0m Check for errors in the changed file $ npx tsc --noEmit -p apps/web/tsconfig.json 2>&1 | grep "daily-scheduling-form"
+No errors in the changed file. Now let me commit and update progress.
+[94m[Bash][0m Commit the changes $ git add apps/web/src/features/daily-scheduling/components/daily-scheduling-form.tsx && git commit -m...
+Now update the progress file:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "  - Using conditional spread `{...(disabled !== un..." → "  - Using conditional spread `{...(disabled !== un..."
+Done. Here's what was implemented:
+
+- **`min` attribute** on the date input set to today for non-admin users (native browser restriction)
+- **Form validation** via TanStack Form's `onChange` validator that rejects past dates with "Não é permitido selecionar datas passadas."
+- **Admin bypass** using the same `member` query pattern from US-004 (`profile === "admin"`, `role === "admin"`, or `role === "owner"`)
+
+File changed: `apps/web/src/features/daily-scheduling/components/daily-scheduling-form.tsx`
+
+<promise>COMPLETE</promise>

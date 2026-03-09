@@ -136,7 +136,7 @@ export function DetailsDialog({ log }: DetailsDialogProps) {
           {log.action === "login" && (
             <div className="text-sm">
               <p className="text-foreground mb-2 font-medium">Evento</p>
-              <p className="italic text-emerald-600 dark:text-emerald-400">
+              <p className="text-emerald-600 italic dark:text-emerald-400">
                 Usuário entrou no sistema.
               </p>
             </div>
@@ -145,7 +145,7 @@ export function DetailsDialog({ log }: DetailsDialogProps) {
           {log.action === "logout" && (
             <div className="text-sm">
               <p className="text-foreground mb-2 font-medium">Evento</p>
-              <p className="italic text-amber-600 dark:text-amber-400">
+              <p className="text-amber-600 italic dark:text-amber-400">
                 Usuário saiu do sistema.
               </p>
             </div>

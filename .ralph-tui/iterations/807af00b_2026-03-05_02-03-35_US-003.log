@@ -1,0 +1,71 @@
+# Iteration 3 Log
+
+## Metadata
+
+- **Task ID**: US-003
+- **Task Title**: Fix disproportionate numbers in Gas Dashboard summary cards
+- **Description**: As a gas operator, I want summary card numbers in the gas dashboard to be readable regardless of value magnitude.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-03-05T05:03:35.655Z
+- **Ended At**: 2026-03-05T05:05:22.559Z
+- **Duration**: 1m 46s
+- **Input Tokens**: 42
+- **Output Tokens**: 4603
+- **Total Tokens**: 4645
+- **Agent**: claude
+- **Model**: claude-opus-4-6
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[ToolSearch][0m query: [93mselect:Read,Glob,Grep[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/gas/index.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[ToolSearch][0m query: [93mselect:Edit[0m
+I need to fix 6 instances of `text-2xl font-bold` in the summary and tolerance cards. I'll change them to `text-lg font-bold font-mono truncate` following the established pattern, and wrap the summary card values with tooltips for full value display on hover.
+
+Let me update the 4 summary cards and 2 tolerance cards:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/gas/index.tsx[0m edit: "            <CardContent>
+              <div class..." → "            <CardContent>
+              <Tooltip>
+..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/gas/index.tsx[0m edit: "            <CardContent>
+              <div class..." → "            <CardContent>
+              <Tooltip>
+..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/gas/index.tsx[0m edit: "            <CardContent>
+              <div class..." → "            <CardContent>
+              <Tooltip>
+..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/gas/index.tsx[0m edit: "            <CardContent>
+              <div class..." → "            <CardContent>
+              <Tooltip>
+..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/gas/index.tsx[0m edit: "                        <div
+                     ..." → "                        <div
+                     ..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/gas/index.tsx[0m edit: "                        <div
+                     ..." → "                        <div
+                     ..."
+Now let me run the typecheck to verify the changes compile correctly.
+[94m[ToolSearch][0m query: [93mselect:Bash[0m
+[94m[Bash][0m Run typecheck across the monorepo $ pnpm run typecheck 2>&1 | tail -30
+The typecheck errors are pre-existing (eslint config issues noted in the US-001 learnings), not related to my changes. Let me verify the web app specifically compiles fine.
+[94m[Bash][0m Check for typecheck errors in the gas index file $ cd /Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web && npx tsc --noEmit 2>&1 | gre...
+No errors related to my changes — that's a pre-existing error on the chart tooltip. Now let me commit.
+[94m[Bash][0m Commit the Gas Dashboard summary card fixes $ cd /Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas && git add apps/web/src/features/gas/in...
+Now let me update the progress file.
+[94m[ToolSearch][0m query: [93mselect:Edit[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "- For prominent display numbers (QDS/QDP), use `te..." → "- For prominent display numbers (QDS/QDP), use `te..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "  - Same `font-mono truncate` pattern from US-001 ..." → "  - Same `font-mono truncate` pattern from US-001 ..."
+Done. Here's what was implemented:
+
+**Changes in `apps/web/src/features/gas/index.tsx`:**
+
+- **4 summary cards** (QDC, QDS, QDP, QDR): Changed from `text-2xl font-bold` to `text-lg font-bold font-mono truncate` and wrapped values in `Tooltip` components so hovering shows the full precise value
+- **2 tolerance cards** (Transport, Molecule): Changed from `text-2xl font-bold` to `text-lg font-bold font-mono truncate`
+
+This follows the same pattern established in US-001 and US-002 for handling large numbers consistently across the application.
+
+<promise>COMPLETE</promise>

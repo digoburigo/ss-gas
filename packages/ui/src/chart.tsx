@@ -1,4 +1,5 @@
 "use client";
+"use no memo";
 
 import { cn } from "@acme/ui";
 import * as React from "react";

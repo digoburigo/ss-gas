@@ -1,0 +1,61 @@
+# Iteration 2 Log
+
+## Metadata
+
+- **Task ID**: US-022
+- **Task Title**: Improve contracts listing empty state
+- **Description**: As a user, I want a helpful empty state on the contracts page so that I know how to get started.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-03-05T12:31:03.648Z
+- **Ended At**: 2026-03-05T12:33:03.244Z
+- **Duration**: 1m 59s
+- **Input Tokens**: 47
+- **Output Tokens**: 3539
+- **Total Tokens**: 3586
+- **Agent**: claude
+- **Model**: claude-opus-4-6
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[ToolSearch][0m query: [93mselect:Read,Grep,Glob,Edit,Write,Bash,TodoWrite[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/index.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+Now let me look at the contracts table to understand how the empty state is currently handled.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contracts-table.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contracts-primary-buttons.tsx[0m
+I can see the current empty state is just a plain text message in the table. I need to create a proper empty state with a CTA, upload button, and AI extraction explanation. Let me check if there's a pattern for empty states elsewhere in the codebase.
+[94m[Grep][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src[0m pattern: [96mempty.*state|EmptyState|no.*encontrad[0m
+[94m[Grep][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src[0m pattern: [96mNenhum.*encontrad[0m
+No existing empty state pattern - they all use simple text. I'll create an improved empty state for the contracts table. The key is to differentiate between "no contracts at all" and "no results from filtering."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contracts-table.tsx[0m edit: "import type { GasContract } from "@acme/zen-v3/zen..." → "import { FileUp, Sparkles, Upload } from "lucide-r..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contracts-table.tsx[0m edit: "export function ContractsTable() {
+  const client ..." → "export function ContractsTable() {
+  const { setOp..."
+Now replace the empty state in the table body:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contracts-table.tsx[0m edit: "            ) : (
+              <TableRow>
+       ..." → "            ) : (
+              <TableRow>
+       ..."
+Now let me run the typecheck:
+[94m[Bash][0m Run TypeScript type check on web app $ pnpm --filter web exec tsc --noEmit --pretty 2>&1 | head -30
+The errors are all pre-existing (server-side), not from my changes. Let me verify no errors in my file specifically:
+[94m[Bash][0m Check for TS errors in contracts-table specifically $ pnpm --filter web exec tsc --noEmit --pretty 2>&1 | grep "contracts-table" | head -5
+These are all pre-existing errors (className/thClassName/tdClassName on ColumnMeta), not from my changes. Now let me run biome check:
+[94m[Bash][0m Run biome check on the modified file $ npx biome check apps/web/src/features/contracts/components/contracts-table.tsx 2>&1 | tail -10
+Clean. Now let me commit and update progress.
+[94m[Bash][0m Commit the empty state improvement $ git add apps/web/src/features/contracts/components/contracts-table.tsx && git commit -m "$(cat <<'EO...
+Now update progress.md:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "  - Version snapshots stored as JSON strings in `d..." → "  - Version snapshots stored as JSON strings in `d..."
+Done. Here's what was implemented:
+
+**US-022 - Improve contracts listing empty state**
+
+- Added a rich empty state in `contracts-table.tsx` that shows when there are no contracts at all (vs. "no results from filter" which keeps the simple message)
+- Includes a `FileUp` icon in a circular muted background
+- "Nenhum contrato cadastrado" heading with a description explaining AI extraction from PDFs (supplier, dates, volumes, clauses)
+- Prominent "Upload com IA" button with `Sparkles` icon that triggers the upload drawer
+
+<promise>COMPLETE</promise>

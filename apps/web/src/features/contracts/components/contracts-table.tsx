@@ -14,7 +14,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
-
 import { FileUp, Sparkles, Upload } from "lucide-react";
 
 import type { GasContract } from "@acme/zen-v3/zenstack/models";
@@ -31,10 +30,10 @@ import {
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import { DataTablePagination, DataTableToolbar } from "~/components/data-table";
-import { useContracts } from "./contracts-provider";
 import { useTableUrlState } from "~/hooks/use-table-url-state";
 import { statusOptions } from "../data/data";
 import { contractsColumns as columns } from "./contracts-columns";
+import { useContracts } from "./contracts-provider";
 
 const route = getRouteApi("/_authenticated/gas/contracts/");
 
@@ -209,14 +208,14 @@ export function ContractsTable() {
                 >
                   {contracts.length === 0 ? (
                     <div className="flex flex-col items-center gap-4 py-8">
-                      <div className="rounded-full bg-muted p-4">
-                        <FileUp className="h-8 w-8 text-muted-foreground" />
+                      <div className="bg-muted rounded-full p-4">
+                        <FileUp className="text-muted-foreground h-8 w-8" />
                       </div>
                       <div className="space-y-1">
-                        <p className="font-semibold text-lg">
+                        <p className="text-lg font-semibold">
                           Nenhum contrato cadastrado
                         </p>
-                        <p className="text-muted-foreground text-sm max-w-md mx-auto">
+                        <p className="text-muted-foreground mx-auto max-w-md text-sm">
                           Faça upload de um contrato em PDF e nossa IA extrairá
                           automaticamente as informações como fornecedor,
                           vigência, volumes e cláusulas.

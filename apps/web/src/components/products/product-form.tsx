@@ -285,7 +285,7 @@ export function ProductForm({
         )}
       </form.Field>
 
-      <form.Subscribe>
+      <form.Subscribe selector={(state) => state}>
         {(state) => (
           <div className="flex justify-end gap-2">
             <Button

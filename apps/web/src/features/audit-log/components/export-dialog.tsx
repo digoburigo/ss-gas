@@ -29,8 +29,14 @@ type ExportDialogProps = {
 };
 
 export function ExportDialog({ logs }: ExportDialogProps) {
-  const { open, setOpen, dateRange, selectedEntityType, selectedAction, selectedUserId } =
-    useAuditLog();
+  const {
+    open,
+    setOpen,
+    dateRange,
+    selectedEntityType,
+    selectedAction,
+    selectedUserId,
+  } = useAuditLog();
   const [format, setFormat] = useState<"xlsx" | "csv" | "json">("xlsx");
   const [isExporting, setIsExporting] = useState(false);
 

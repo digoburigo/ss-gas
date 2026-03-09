@@ -1,3 +1,5 @@
+"use no memo";
+
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -467,12 +469,18 @@ export function GasDashboard() {
             <CardContent>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="text-lg font-bold font-mono truncate cursor-help">
-                    {isLoading ? "Carregando..." : formatValue(monthlyTotals.qdc)}
+                  <div className="cursor-help truncate font-mono text-lg font-bold">
+                    {isLoading
+                      ? "Carregando..."
+                      : formatValue(monthlyTotals.qdc)}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{isLoading ? "Carregando..." : formatValue(monthlyTotals.qdc)}</p>
+                  <p>
+                    {isLoading
+                      ? "Carregando..."
+                      : formatValue(monthlyTotals.qdc)}
+                  </p>
                 </TooltipContent>
               </Tooltip>
               <p className="text-muted-foreground text-xs">
@@ -492,12 +500,18 @@ export function GasDashboard() {
             <CardContent>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="text-lg font-bold font-mono truncate cursor-help">
-                    {isLoading ? "Carregando..." : formatValue(monthlyTotals.qds)}
+                  <div className="cursor-help truncate font-mono text-lg font-bold">
+                    {isLoading
+                      ? "Carregando..."
+                      : formatValue(monthlyTotals.qds)}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{isLoading ? "Carregando..." : formatValue(monthlyTotals.qds)}</p>
+                  <p>
+                    {isLoading
+                      ? "Carregando..."
+                      : formatValue(monthlyTotals.qds)}
+                  </p>
                 </TooltipContent>
               </Tooltip>
               <p className="text-muted-foreground text-xs">
@@ -517,12 +531,18 @@ export function GasDashboard() {
             <CardContent>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="text-lg font-bold font-mono truncate cursor-help">
-                    {isLoading ? "Carregando..." : formatValue(monthlyTotals.qdp)}
+                  <div className="cursor-help truncate font-mono text-lg font-bold">
+                    {isLoading
+                      ? "Carregando..."
+                      : formatValue(monthlyTotals.qdp)}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{isLoading ? "Carregando..." : formatValue(monthlyTotals.qdp)}</p>
+                  <p>
+                    {isLoading
+                      ? "Carregando..."
+                      : formatValue(monthlyTotals.qdp)}
+                  </p>
                 </TooltipContent>
               </Tooltip>
               <p className="text-muted-foreground text-xs">
@@ -540,12 +560,18 @@ export function GasDashboard() {
             <CardContent>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className="text-lg font-bold font-mono truncate cursor-help">
-                    {isLoading ? "Carregando..." : formatValue(monthlyTotals.qdr)}
+                  <div className="cursor-help truncate font-mono text-lg font-bold">
+                    {isLoading
+                      ? "Carregando..."
+                      : formatValue(monthlyTotals.qdr)}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{isLoading ? "Carregando..." : formatValue(monthlyTotals.qdr)}</p>
+                  <p>
+                    {isLoading
+                      ? "Carregando..."
+                      : formatValue(monthlyTotals.qdr)}
+                  </p>
                 </TooltipContent>
               </Tooltip>
               <p className="text-muted-foreground text-xs">
@@ -595,7 +621,7 @@ export function GasDashboard() {
                       </div>
                       <div>
                         <div
-                          className={`text-lg font-bold font-mono truncate ${toleranceSummary.transport.classes.text}`}
+                          className={`truncate font-mono text-lg font-bold ${toleranceSummary.transport.classes.text}`}
                         >
                           {formatPercent(
                             toleranceSummary.transport.deviationPercent,
@@ -675,7 +701,7 @@ export function GasDashboard() {
                       </div>
                       <div>
                         <div
-                          className={`text-lg font-bold font-mono truncate ${toleranceSummary.molecule.classes.text}`}
+                          className={`truncate font-mono text-lg font-bold ${toleranceSummary.molecule.classes.text}`}
                         >
                           {formatPercent(
                             toleranceSummary.molecule.deviationPercent,

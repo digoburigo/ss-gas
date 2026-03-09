@@ -1,0 +1,71 @@
+# Iteration 20 Log
+
+## Metadata
+
+- **Task ID**: US-020
+- **Task Title**: Improve contract upload UX - progress indicator
+- **Description**: As a user, I want to see clear progress during AI contract extraction so that I know the system is working and how long to wait.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-03-05T06:15:32.380Z
+- **Ended At**: 2026-03-05T06:17:44.819Z
+- **Duration**: 2m 12s
+- **Input Tokens**: 55
+- **Output Tokens**: 4979
+- **Total Tokens**: 5034
+- **Agent**: claude
+- **Model**: claude-opus-4-6
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[ToolSearch][0m query: [93mselect:Read,Glob,Grep,Agent[0m
+Let me start by reading the relevant files to understand the current implementation.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[Glob][0m pattern: [96m**/contract-upload-drawer*[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contract-upload-drawer.tsx[0m
+Now I understand the current code. The extraction loading state (lines 492-501) just shows a spinner. I need to add a stepper with stages and fix the broken retry button. Let me implement this.
+[94m[ToolSearch][0m query: [93mselect:Edit[0m
+First, I'll add the extraction stage state and stepper UI. Let me make the edits:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contract-upload-drawer.tsx[0m edit: "import { AlertTriangle, FileText, Loader2, Upload,..." → "import {
+  AlertTriangle,
+  Check,
+  FileText,
+  L..."
+Now add the extraction stage type and stepper stages:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contract-upload-drawer.tsx[0m edit: "type UploadedFile = {
+  file: File;
+  preview: str..." → "type UploadedFile = {
+  file: File;
+  preview: str..."
+Now add the extraction stage state:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contract-upload-drawer.tsx[0m edit: "  const [isExtracting, setIsExtracting] = useState..." → "  const [isExtracting, setIsExtracting] = useState..."
+Now update the extraction flow to set stages:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contract-upload-drawer.tsx[0m edit: "      // Start extraction automatically
+      setI..." → "      // Start extraction automatically
+      setI..."
+Now replace the simple loading UI with the stepper, and fix the broken retry button:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contract-upload-drawer.tsx[0m edit: "                ) : isExtracting ? (
+             ..." → "                ) : isExtracting ? (
+             ..."
+Now let me run the typecheck to verify.
+[94m[ToolSearch][0m query: [93mselect:Bash[0m
+[94m[Bash][0m Typecheck contract-upload-drawer.tsx $ npx tsc --noEmit --project apps/web/tsconfig.json 2>&1 | grep -i "contract-upload-drawer" | head -20
+These are pre-existing type errors (ZenStack v3 `CreateWithFKInput` mismatches noted in progress.md). No new errors from my changes.
+
+Let me also run the linter:
+[94m[Bash][0m Lint contract-upload-drawer.tsx $ npx biome check apps/web/src/features/contracts/components/contract-upload-drawer.tsx 2>&1 | tail -1...
+No lint errors. Let me verify the final file looks correct around the key changes:
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/contracts/components/contract-upload-drawer.tsx[0m
+Now let me commit and update progress.
+[94m[Bash][0m Commit US-020 changes $ git add apps/web/src/features/contracts/components/contract-upload-drawer.tsx && git commit -m "$(ca...
+Now update progress.md:
+[94m[ToolSearch][0m query: [93mselect:Write[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "  - `unknown` intermediate cast needed for API res..." → "  - `unknown` intermediate cast needed for API res..."
+All acceptance criteria met:
+- **Stepper/progress indicator** added during AI extraction
+- **4 stages shown**: Enviando arquivo → Analisando documento → Extraindo cláusulas → Concluído
+- **Visual indicators**: Spinner on current step, green checkmark on completed, numbered circle for pending
+- **Error with retry**: Clear error display with working retry button (fixed the broken one)
+
+<promise>COMPLETE</promise>

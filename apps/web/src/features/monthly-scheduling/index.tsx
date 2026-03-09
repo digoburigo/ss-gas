@@ -27,7 +27,7 @@ export function MonthlyScheduling() {
       <Main>
         <div className="mb-2 flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+            <h2 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
               <CalendarRange className="h-6 w-6" />
               Programacao Mensal
             </h2>

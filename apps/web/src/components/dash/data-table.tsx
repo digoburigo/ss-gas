@@ -1,4 +1,5 @@
 "use client";
+"use no memo";
 
 import type { DragEndEvent, UniqueIdentifier } from "@dnd-kit/core";
 import type {

@@ -36,11 +36,7 @@ import {
   TableHeader,
   TableRow,
 } from "@acme/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@acme/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@acme/ui/tooltip";
 
 import { api } from "~/clients/api-client";
 
@@ -172,9 +168,7 @@ export function ActualConsumptionImportDrawer({
       const validRows = rows
         .filter(
           (r) =>
-            r.errors.length === 0 &&
-            r.unitId &&
-            !excludedRows.has(r.rowNumber),
+            r.errors.length === 0 && r.unitId && !excludedRows.has(r.rowNumber),
         )
         .map((r) => {
           const edits = rowEdits.get(r.rowNumber);
@@ -426,7 +420,7 @@ export function ActualConsumptionImportDrawer({
                   <div className="bg-muted/50 rounded-md p-4">
                     <p className="mb-3 font-medium">Resumo da Importacao:</p>
                     <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div className="flex items-center justify-between rounded-md border bg-background p-2">
+                      <div className="bg-background flex items-center justify-between rounded-md border p-2">
                         <span className="text-muted-foreground">
                           Total de linhas
                         </span>
@@ -434,7 +428,7 @@ export function ActualConsumptionImportDrawer({
                           {importSummary.importLog.totalRows}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded-md border bg-background p-2">
+                      <div className="bg-background flex items-center justify-between rounded-md border p-2">
                         <span className="text-muted-foreground">
                           Importados
                         </span>
@@ -442,7 +436,7 @@ export function ActualConsumptionImportDrawer({
                           {importSummary.importLog.imported}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded-md border bg-background p-2">
+                      <div className="bg-background flex items-center justify-between rounded-md border p-2">
                         <span className="text-muted-foreground">Erros</span>
                         <span
                           className={cn(
@@ -454,10 +448,8 @@ export function ActualConsumptionImportDrawer({
                           {importSummary.importLog.errors}
                         </span>
                       </div>
-                      <div className="flex items-center justify-between rounded-md border bg-background p-2">
-                        <span className="text-muted-foreground">
-                          Ignorados
-                        </span>
+                      <div className="bg-background flex items-center justify-between rounded-md border p-2">
+                        <span className="text-muted-foreground">Ignorados</span>
                         <span className="text-muted-foreground font-mono font-medium">
                           {importSummary.importLog.skipped}
                         </span>
@@ -678,7 +670,7 @@ export function ActualConsumptionImportDrawer({
                               <TableCell className="text-muted-foreground text-xs">
                                 {row.rowNumber}
                               </TableCell>
-                              <TableCell className="text-sm font-mono">
+                              <TableCell className="font-mono text-sm">
                                 {row.date
                                   ? new Date(row.date).toLocaleDateString(
                                       "pt-BR",
@@ -686,9 +678,7 @@ export function ActualConsumptionImportDrawer({
                                   : "-"}
                               </TableCell>
                               <TableCell className="text-sm">
-                                <div>
-                                  {row.matchedUnitName ?? row.unitName}
-                                </div>
+                                <div>{row.matchedUnitName ?? row.unitName}</div>
                                 {row.matchedUnitName &&
                                   row.matchedUnitName !== row.unitName && (
                                     <div className="text-muted-foreground text-xs">
@@ -696,7 +686,7 @@ export function ActualConsumptionImportDrawer({
                                     </div>
                                   )}
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono">
+                              <TableCell className="text-right font-mono text-sm">
                                 {isEditing ? (
                                   <Input
                                     type="text"

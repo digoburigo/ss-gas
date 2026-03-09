@@ -1,14 +1,14 @@
 "use no memo";
 
+import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import { format, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
-import { schema } from "@acme/zen-v3/zenstack/schema";
 import { Button } from "@acme/ui/button";
 import { Calendar } from "@acme/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@acme/ui/popover";
-import { useClientQueries } from "@zenstackhq/tanstack-query/react";
+import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import { authClient } from "~/clients/auth-client";
 import { useSchedulingDashboard } from "./scheduling-dashboard-provider";
@@ -55,8 +55,7 @@ export function SchedulingDashboardDatePicker() {
   const isToday =
     format(selectedDate, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
 
-  const isPreviousDisabled =
-    !isAdmin && startOfDay(selectedDate) <= today;
+  const isPreviousDisabled = !isAdmin && startOfDay(selectedDate) <= today;
 
   return (
     <div className="flex items-center gap-2">

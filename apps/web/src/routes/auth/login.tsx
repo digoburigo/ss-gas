@@ -126,6 +126,7 @@ function RouteComponent() {
             </CardContent>
             <CardFooter>
               <form.Subscribe
+                selector={(state) => state}
                 children={({ isSubmitting }) => (
                   <Button
                     className="mt-8 w-full"

@@ -129,7 +129,7 @@ export function TodoItem({
             )}
           </form.Field>
 
-          <form.Subscribe>
+          <form.Subscribe selector={(state) => state}>
             {(state) => (
               <Button
                 disabled={!state.canSubmit || state.isSubmitting}

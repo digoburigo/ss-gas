@@ -1,341 +1,509 @@
 {
-  "name": "MVP programa.ai — Ajustes e Melhorias",
-  "branchName": "feature/mvp-programaai-ajustes-melhorias",
+  "name": "Programagas.ai MVP Technical Evaluation Fixes",
+  "branchName": "feat/changes",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Derivação automática da programação diária a partir dos equipamentos",
-      "description": "As a operador, I want the daily schedule (QDP) to be automatically calculated from equipment ON/OFF status and consumption constants so that I don't need to enter values manually.",
+      "title": "Fix disproportionate numbers in Scheduling Dashboard columns",
+      "description": "As a gas operator, I want volume numbers in the scheduling table to display at a consistent, readable size so that I can quickly scan values without visual noise.",
       "acceptanceCriteria": [
-        "When equipment status changes (ON/OFF) in the equipment screen, QDP is recalculated automatically",
-        "Calculation uses formula: sum of (m³/h × horas previstas) for each ON equipment from GasEquipmentConstant",
-        "QDP value is persisted in GasDailyPlan without manual input",
-        "Equipment status toggle triggers real-time QDP recalculation on the frontend",
-        "Existing endpoint POST /gas/units/:unitId/entries updated to accept equipment status array and auto-calculate QDP",
-        "Unit tests validate calculation logic in gas.service.ts"
+        "In scheduling-dashboard-columns.tsx, volume cells use a capped font size (e.g., text-sm or text-base instead of unconstrained sizing)",
+        "Numbers with 6+ digits do not overflow their column containers",
+        "toLocaleString('pt-BR') formatting is preserved",
+        "Column minimum widths accommodate formatted PT-BR numbers (e.g., '54.000,0')"
       ],
       "priority": 1,
+      "labels": [
+        "bugfix",
+        "ui"
+      ],
       "passes": true,
       "dependsOn": [],
-      "labels": [
-        "backend",
-        "frontend",
-        "core"
-      ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-002",
-      "title": "Aba Programação Diária como resumo read-only",
-      "description": "As a gestor, I want the 'Programação Diária' tab to show a read-only summary of schedules so that I have a quick overview without editing capabilities.",
+      "title": "Fix disproportionate numbers in Daily Entry Form",
+      "description": "As a gas operator, I want QDS/QDP values in the daily entry form to scale appropriately so that large numbers don't break the layout.",
       "acceptanceCriteria": [
-        "Route /gas/scheduling displays a summary table (date, unit, QDP value, status) — no edit controls",
-        "All data entry and editing is only possible via the Painel de Programação (/gas/scheduling-dashboard)",
-        "Summary table shows submitted/approved/pending status per day per unit",
-        "Clicking a row navigates to the Painel de Programação filtered to that date/unit",
-        "Components in apps/web/src/features/daily-scheduling/ updated to remove edit forms",
-        "Clear visual indication that the view is read-only"
+        "In daily-entry-form.tsx, replace fixed text-3xl font-bold for QDS/QDP with responsive sizing",
+        "Numbers with 6+ digits remain fully visible without overflow",
+        "Visual hierarchy is maintained (values are still prominent, just not oversized)"
       ],
-      "priority": 2,
-      "passes": true,
-      "dependsOn": [
-        "US-001"
-      ],
+      "priority": 1,
       "labels": [
-        "frontend"
+        "bugfix",
+        "ui"
       ],
+      "passes": true,
+      "dependsOn": [],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-003",
-      "title": "Painel de Programação como ponto único de entrada",
-      "description": "As a operador, I want the Scheduling Dashboard to be the single place where I create and manage daily schedules so that the workflow is centralized.",
+      "title": "Fix disproportionate numbers in Gas Dashboard summary cards",
+      "description": "As a gas operator, I want summary card numbers in the gas dashboard to be readable regardless of value magnitude.",
       "acceptanceCriteria": [
-        "/gas/scheduling-dashboard supports creating new daily plans directly",
-        "Equipment ON/OFF toggle integrated into the dashboard with auto QDP calculation (from US-001)",
-        "Submit/approve workflow works from within the dashboard",
-        "Date picker allows navigating to any day",
-        "Shows all units with their QDP values for the selected date",
-        "Components in apps/web/src/features/scheduling-dashboard/ updated with entry capabilities"
+        "In apps/web/src/features/gas/index.tsx, summary cards use appropriate text sizing for large numbers",
+        "Consider abbreviation for values above a threshold or use text-lg instead of text-2xl for large values",
+        "Cards do not overflow or truncate unexpectedly",
+        "Tooltip or hover shows the full precise value if abbreviation is used"
       ],
-      "priority": 2,
-      "passes": true,
-      "dependsOn": [
-        "US-001"
-      ],
+      "priority": 1,
       "labels": [
-        "frontend"
+        "bugfix",
+        "ui"
       ],
+      "passes": true,
+      "dependsOn": [],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-004",
-      "title": "Investigar e corrigir bug de salvamento do lançamento diário",
-      "description": "As a developer, I want to investigate and fix the daily entry persistence bug so that programações are saved correctly.",
+      "title": "Block past dates in Scheduling Dashboard date picker",
+      "description": "As a gas operator, I want the scheduling calendar to only allow selecting today or future dates so that I cannot accidentally create schedules for past dates.",
       "acceptanceCriteria": [
-        "Investigate the save flow in POST /gas/units/:unitId/entries endpoint (gas.controller.ts)",
-        "Identify root cause of data not persisting (check GasDailyEntry, GasDailyPlan, GasLineStatus writes)",
-        "Fix the persistence issue",
-        "Verify data survives page reload after save",
-        "Verify editing an existing entry updates correctly (no duplicate records)",
-        "Test with multiple units and dates",
-        "Add error handling with user-visible feedback on save failure"
+        "In scheduling-dashboard-date-picker.tsx, the Calendar component receives disabled prop for past dates",
+        "Navigation to past months is restricted via fromDate={new Date()}",
+        "A validation message is shown if a past date is somehow selected",
+        "Admin users bypass the past-date restriction"
       ],
       "priority": 1,
+      "labels": [
+        "bugfix",
+        "validation"
+      ],
       "passes": true,
       "dependsOn": [],
-      "labels": [
-        "backend",
-        "bugfix"
-      ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-005",
-      "title": "Gráfico comparativo Planejado x Realizado",
-      "description": "As a gestor, I want a chart comparing planned (QDP) vs actual (QDR) consumption so that I can visualize deviations at a glance.",
+      "title": "Fix generic DatePicker to not block future dates",
+      "description": "As a developer, I want the generic DatePicker component to have configurable date restrictions so that each usage context can define its own rules.",
       "acceptanceCriteria": [
-        "Bar or line chart on /gas/actual-consumption or /gas/reports showing QDP vs QDR per day",
-        "Date range selector (default: current month)",
-        "Unit filter (select one or all units)",
-        "Visual highlight when QDR exceeds tolerance bands (±10% / −20% per CUSD contract)",
-        "Tooltip shows exact values on hover",
-        "Chart is responsive and works on mobile",
-        "Data fetched from existing GasDailyPlan (QDP) and GasRealConsumption (QDR) models"
+        "In apps/web/src/components/date-picker.tsx, remove the hardcoded disabled or make it a configurable prop",
+        "The DatePicker accepts an optional disabled prop for date filtering",
+        "Existing usages of DatePicker are reviewed and updated to pass appropriate restrictions",
+        "Default behavior (no prop) does not restrict any dates"
       ],
-      "priority": 3,
-      "passes": true,
-      "dependsOn": [
-        "US-004"
-      ],
+      "priority": 1,
       "labels": [
-        "frontend",
-        "charts"
+        "bugfix",
+        "component"
       ],
+      "passes": true,
+      "dependsOn": [],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-006",
-      "title": "Placar mensal de consumo real",
-      "description": "As a gestor, I want a monthly scorecard showing assertiveness rate, accumulated penalties, and average accuracy so that I can track performance at a glance.",
+      "title": "Add date validation to Daily Scheduling form",
+      "description": "As a gas operator, I want the daily scheduling form date input to prevent selecting past dates so that invalid schedules cannot be submitted.",
       "acceptanceCriteria": [
-        "Scorecard component displayed on /gas/actual-consumption or /gas/scheduling-accuracy",
-        "Taxa de assertividade (%): percentage of days where QDR is within tolerance of QDP (±10% upper / −20% lower per CUSD)",
-        "Penalidade acumulada (R$): sum of PVEMA + PVEME + Sobredemanda for the month using contract formulas",
-        "Taxa de acurácia média (%): mean of (QDR/QDP × 100) across all days in the month",
-        "Month/year selector",
-        "Unit and contract filter",
-        "Values validated against manual Excel calculations",
-        "Card-style layout with color coding (green/yellow/red thresholds)"
+        "In daily-scheduling-form.tsx, the date input has min attribute for today",
+        "Form validation rejects past dates with a clear error message",
+        "Admin users bypass the restriction"
       ],
-      "priority": 3,
+      "priority": 1,
+      "labels": [
+        "bugfix",
+        "validation"
+      ],
       "passes": true,
       "dependsOn": [
-        "US-007"
-      ],
-      "labels": [
-        "frontend",
-        "backend"
+        "US-005"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-007",
-      "title": "Validar cálculos de penalidade e assertividade",
-      "description": "As a gestor, I want penalty and accuracy calculations to be verified so that I can trust the system's numbers.",
+      "title": "Unify navigation - remove Lancamento Diario",
+      "description": "As a gas operator, I want a single clear entry point for daily data entry so that I'm not confused by overlapping screens.",
       "acceptanceCriteria": [
-        "PVEMA calculation follows CUSD formula: penalty for exceeding upper transport tolerance",
-        "PVEME calculation follows CUSD formula: penalty for falling below lower transport tolerance",
-        "Sobredemanda calculation follows CUSD tiered formula (0-10%, 10-20%, >20% over QDC)",
-        "Calculation logic in gas.service.ts has unit tests with known input/output pairs",
-        "Results match manual Excel calculations for at least 3 test scenarios",
-        "Edge cases tested: zero consumption days, missing QDP, partial month data"
+        "Remove 'Lancamento Diario' (/gas/entry) from the sidebar in sidebar-data.ts",
+        "The route /gas/entry redirects to /gas/scheduling-dashboard or is removed entirely",
+        "All daily data entry is consolidated in the Scheduling Dashboard",
+        "No dead links or broken navigation references remain"
       ],
       "priority": 2,
+      "labels": [
+        "ux",
+        "navigation"
+      ],
       "passes": true,
       "dependsOn": [],
-      "labels": [
-        "backend",
-        "testing"
-      ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-008",
-      "title": "Reforçar funcionalidade de alertas",
-      "description": "As a gestor, I want the alerts system to be robust and reliable so that I never miss critical contract deadlines or deviations.",
+      "title": "Investigate and fix Reports empty results",
+      "description": "As a manager, I want the reports page to show data when relevant records exist so that I can make informed decisions.",
       "acceptanceCriteria": [
-        "Review and fix contract alert delivery (contract-alert.service.ts, notification.service.ts)",
-        "Verify scheduled jobs in scheduled-jobs.service.ts are running correctly (cron timing)",
-        "Deviation alerts trigger when QDR exceeds tolerance bands",
-        "Contract expiration alerts fire at configured advance notice days (e.g., 30, 15, 7, 1 days)",
-        "Alert history (GasAlertSentLog) records all sent notifications",
-        "Failed alert deliveries are retried and logged",
-        "UI at /gas/contract-alerts shows alert status (sent/pending/failed)",
-        "UI at /gas/deviation-alerts shows real-time deviation status"
+        "Investigate GET /gas/reports/dashboard and GET /gas/reports/petrobras endpoints with valid test data",
+        "Identify and fix filter defaults that cause empty results",
+        "Add smart default filters: auto-select the most recent period with available data",
+        "Verify both Dashboard and Petrobras tabs return and render data correctly"
       ],
-      "priority": 3,
-      "passes": true,
-      "dependsOn": [
-        "US-007"
-      ],
+      "priority": 2,
       "labels": [
-        "backend",
-        "frontend"
+        "bugfix",
+        "reports"
       ],
+      "passes": true,
+      "dependsOn": [],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-009",
-      "title": "Dashboard global de relatórios",
-      "description": "As a gestor, I want a consolidated reports dashboard with charts so that I have a single view of all key metrics.",
+      "title": "Improve Reports empty states",
+      "description": "As a manager, I want clear guidance when reports have no data so that I know what to do next.",
       "acceptanceCriteria": [
-        "New dashboard section on /gas/reports with consolidated charts",
-        "Chart: Consumo mensal Planejado vs Realizado por unidade (bar chart grouped by unit)",
-        "Chart: Penalidades acumuladas por contrato ao longo dos meses (line chart, month over month)",
-        "Chart: Taxa de assertividade histórica (line chart, trend over months)",
-        "Chart: Comparativo entre unidades (horizontal bar chart ranking units by accuracy)",
-        "Chart: Distribuição de consumo por tipo de equipamento (pie/donut chart)",
-        "Date range filter (monthly, quarterly, yearly)",
-        "Unit/contract filters",
-        "Export dashboard to PDF or Excel",
-        "Layout inspired by existing Excel reference model provided by user"
+        "EmptyChart component shows an informative message about no data found",
+        "Empty states suggest actionable next steps",
+        "Each report tab has contextual empty state messaging"
       ],
-      "priority": 4,
+      "priority": 3,
+      "labels": [
+        "ux",
+        "reports"
+      ],
       "passes": true,
       "dependsOn": [
-        "US-005",
-        "US-006",
-        "US-007"
-      ],
-      "labels": [
-        "frontend",
-        "charts"
+        "US-008"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-010",
-      "title": "CRUD completo de equipamentos via admin",
-      "description": "As a admin, I want to manage equipment through the admin panel so that I can add, edit, deactivate, and link equipment to units and contracts.",
+      "title": "Fix admin parameter icons - Edit button",
+      "description": "As an admin user, I want intuitive icons on parameter editing buttons so that I can confidently perform actions without guessing.",
       "acceptanceCriteria": [
-        "Admin page at /gas/admin or new section in /gas/consumer-units with equipment management",
-        "Create equipment: name, type (atomizer/line/dryer/other), order index",
-        "Edit equipment properties",
-        "Deactivate/reactivate equipment (soft delete)",
-        "Delete equipment (with validation — cannot delete if has associated daily entries)",
-        "Link/unlink equipment to consumer units (GasUnit)",
-        "Link/unlink equipment to contracts (GasContract)",
-        "Manage consumption constants (GasEquipmentConstant) with effective date ranges",
-        "Table view with filters by type, unit, status",
-        "Only users with admin profile can access"
+        "In alert-thresholds-tab.tsx, penalty-formulas-tab.tsx, and business-rules-tab.tsx: replace Save icon with Pencil for edit button",
+        "Replace AlertTriangle icon with X for cancel",
+        "Keep Check icon for confirm/save action",
+        "Add Tooltip to all action buttons with labels: Editar, Salvar, Cancelar, Restaurar padrao"
       ],
-      "priority": 3,
-      "passes": true,
-      "dependsOn": [],
+      "priority": 2,
       "labels": [
-        "frontend",
-        "backend",
+        "ux",
         "admin"
       ],
+      "passes": true,
+      "dependsOn": [],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-011",
-      "title": "Extração automática de fórmulas de penalidade de contratos PDF",
-      "description": "As a admin, I want the system to automatically extract penalty formulas from uploaded contract PDFs so that I don't need to manually enter complex parameters.",
+      "title": "Create Monthly Scheduling route and page shell",
+      "description": "As a gas operator, I want a dedicated 'Programacao Mensal' page so that I can manage bulk monthly schedules.",
       "acceptanceCriteria": [
-        "Extend existing /contract-extraction/extract endpoint to specifically extract penalty parameters",
-        "Extract CUSD penalty fields: CMC rates, PVEMA formula/thresholds, PVEME formula/thresholds, Sobredemanda tiers, TUSD tariffs",
-        "Extracted values populate the contract form fields with confidence scores",
-        "Admin can review and confirm/edit extracted values before saving",
-        "Handle multiple contract formats (not just CUSD template)",
-        "Extraction works for the provided generic CUSD contract PDF",
-        "Confidence score displayed per field (high/medium/low)",
-        "UI shows side-by-side: PDF preview + extracted fields"
+        "New route at /gas/monthly-scheduling with authenticated layout",
+        "Page component created at apps/web/src/routes/_authenticated/gas/monthly-scheduling/index.tsx",
+        "Feature folder created at apps/web/src/features/monthly-scheduling/",
+        "'Programacao Mensal' added to sidebar in sidebar-data.ts under the Gas group",
+        "Page renders with title and placeholder content"
       ],
-      "priority": 4,
-      "passes": true,
-      "dependsOn": [
-        "US-007"
-      ],
+      "priority": 2,
       "labels": [
-        "backend",
-        "frontend",
-        "ai"
+        "feature",
+        "scheduling"
       ],
+      "passes": true,
+      "dependsOn": [],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-012",
-      "title": "Suporte a múltiplos contratos por cliente",
-      "description": "As a admin, I want to manage multiple active contracts per client/unit so that complex setups like Dexco (3 contracts in Revestimentos Cerâmicos) are supported.",
+      "title": "Monthly Scheduling Excel upload with AI interpretation",
+      "description": "As a gas operator, I want to upload an Excel spreadsheet so that the AI can interpret it and create monthly schedules automatically.",
       "acceptanceCriteria": [
-        "GasContract already has unitId — verify a single GasUnit can have multiple active contracts",
-        "UI at /gas/contracts shows all contracts grouped by unit",
-        "Contract selector available in scheduling, consumption, and reports pages when unit has multiple contracts",
-        "Penalty calculations use the correct contract for each unit/period",
-        "Dashboard and reports aggregate or filter by contract",
-        "No regression — units with single contracts continue to work seamlessly"
+        "Drag-and-drop upload component (reuse pattern from contract-upload-drawer.tsx)",
+        "Accepts .xlsx and .xls files",
+        "Official template available for download",
+        "AI interprets the uploaded file (handles column name variations, date format variations, unit name matching)",
+        "Server endpoint parses Excel using exceljs",
+        "Validation errors are reported per row"
       ],
-      "priority": 3,
-      "passes": true,
-      "dependsOn": [],
+      "priority": 2,
       "labels": [
-        "backend",
-        "frontend"
+        "feature",
+        "scheduling",
+        "ai"
+      ],
+      "passes": true,
+      "dependsOn": [
+        "US-011"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-013",
-      "title": "Histórico de auditoria abrangente",
-      "description": "As a admin, I want comprehensive audit logging including login/logout and all data changes so that every system action is traceable.",
+      "title": "Monthly Scheduling preview and confirmation",
+      "description": "As a gas operator, I want to preview imported data before confirming so that I can catch errors before they're saved.",
       "acceptanceCriteria": [
-        "Login events recorded in GasAuditLog (user, timestamp, IP if available)",
-        "Logout events recorded",
-        "All CRUD operations on all Gas models logged (create, update, delete)",
-        "Field-level change tracking (old value → new value) for updates",
-        "Audit log records: who, what, when, which record, what changed",
-        "UI at /gas/audit-log displays all events with filters (date range, user, action type, entity type)",
-        "Export audit log to Excel",
-        "Existing GasAuditLog and GasContractAuditLog models consolidated or both utilized"
+        "Preview table shows all parsed rows with status (valid/error/warning)",
+        "Error rows are highlighted with specific error messages",
+        "User can exclude/edit individual rows before confirming",
+        "Confirmation creates all valid GasDailyPlan records",
+        "Import log is recorded (total rows, imported, errors, skipped)",
+        "Success message shows summary of imported records"
       ],
-      "priority": 4,
-      "passes": true,
-      "dependsOn": [],
+      "priority": 2,
       "labels": [
-        "backend",
-        "frontend"
+        "feature",
+        "scheduling"
+      ],
+      "passes": true,
+      "dependsOn": [
+        "US-012"
       ],
       "completionNotes": "Completed by agent"
     },
     {
       "id": "US-014",
-      "title": "Simular auditoria com dados fictícios",
-      "description": "As a admin, I want to test the audit system with simulated data so that I can validate it works correctly before production use.",
+      "title": "Actual Consumption bulk import - upload drawer",
+      "description": "As a gas operator, I want to import consumption records in bulk via Excel so that I can backfill data for periods of absence.",
       "acceptanceCriteria": [
-        "Seed script generates realistic fake audit data (50+ entries across different entities and action types)",
-        "Seed data covers: login/logout, contract changes, equipment changes, scheduling changes, consumption entries",
-        "Audit log UI correctly displays and filters all seeded data",
-        "Details dialog shows full change history for each entry",
-        "Export to Excel includes all seeded data correctly",
-        "Seed script is idempotent (can run multiple times without duplicating data)",
-        "Script located at apps/server/src/seed/ or similar"
+        "'Importar Consumos' button added next to 'Registrar Consumo' in actual-consumption-primary-buttons.tsx",
+        "Import drawer component created at actual-consumption-import-drawer.tsx",
+        "Drag-and-drop upload accepting .xlsx and .xls",
+        "Template with appropriate columns available for download",
+        "AI interprets the uploaded file",
+        "Server endpoint for Excel processing added to gas.controller.ts"
       ],
-      "priority": 5,
+      "priority": 3,
+      "labels": [
+        "feature",
+        "consumption",
+        "ai"
+      ],
       "passes": true,
       "dependsOn": [
-        "US-013"
+        "US-011"
       ],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-015",
+      "title": "Actual Consumption bulk import - preview and validation",
+      "description": "As a gas operator, I want to review and validate imported consumption data before saving so that I can ensure accuracy.",
+      "acceptanceCriteria": [
+        "Preview table with row-level status (valid/error/warning)",
+        "Validations: duplicate dates, gaps in data, values out of range",
+        "Warning for values significantly above/below expected range",
+        "User can exclude or edit rows before confirming",
+        "Import log with summary (imported, errors, skipped)",
+        "Past dates are allowed for consumption imports"
+      ],
+      "priority": 3,
       "labels": [
-        "backend",
-        "testing"
+        "feature",
+        "consumption"
       ],
+      "passes": true,
+      "dependsOn": [
+        "US-014"
+      ],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-016",
+      "title": "Create Penalties page shell and navigation",
+      "description": "As a manager, I want a dedicated Penalties page so that I can monitor daily and monthly penalty calculations.",
+      "acceptanceCriteria": [
+        "New route at /gas/penalties with authenticated layout",
+        "Page component at apps/web/src/routes/_authenticated/gas/penalties/index.tsx",
+        "Feature folder at apps/web/src/features/penalties/",
+        "'Penalidades' added to sidebar in sidebar-data.ts",
+        "Page renders with title, filter controls, and placeholder content"
+      ],
+      "priority": 3,
+      "labels": [
+        "feature",
+        "penalties"
+      ],
+      "passes": true,
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-017",
+      "title": "Penalties daily and monthly views",
+      "description": "As a manager, I want to see penalty breakdowns by type (PVEMA, PVEME, Sobredemanda) daily and monthly so that I can identify trends and take action.",
+      "acceptanceCriteria": [
+        "Daily view: table with date, unit, penalty type, calculated value, formula applied",
+        "Monthly view: aggregated totals per unit and penalty type",
+        "Breakdown by type with clear labels (PVEMA, PVEME, Sobredemanda)",
+        "Comparison with previous period (month-over-month)",
+        "Data sourced from existing GasCalculationService methods",
+        "Export to Excel for both views"
+      ],
+      "priority": 3,
+      "labels": [
+        "feature",
+        "penalties"
+      ],
+      "passes": true,
+      "dependsOn": [
+        "US-016"
+      ],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-018",
+      "title": "Create Tariff History model and CRUD",
+      "description": "As an admin, I want to manage gas tariff history with validity periods so that penalty calculations use the correct tariff for each period.",
+      "acceptanceCriteria": [
+        "New model GasTariffHistory in schema.zmodel with required fields",
+        "CRUD endpoints for tariff management",
+        "Tariff associated with contract",
+        "Only one active tariff per contract at any given time",
+        "db:generate and db:push run successfully"
+      ],
+      "priority": 3,
+      "labels": [
+        "feature",
+        "penalties",
+        "backend"
+      ],
+      "passes": true,
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-019",
+      "title": "Tariff management UI with approval workflow",
+      "description": "As an admin, I want to create, approve, and track tariff changes so that tariff modifications are controlled and auditable.",
+      "acceptanceCriteria": [
+        "Tariff management section within the Penalties page or as a sub-tab",
+        "Form to create new tariff with: value, validity period, associated contract",
+        "New tariffs start in 'pending' status",
+        "Approval action transitions tariff to 'approved' then 'active' when validity period starts",
+        "History view showing all tariff changes with who created/approved and when",
+        "Current active tariff is prominently displayed in the penalties dashboard"
+      ],
+      "priority": 3,
+      "labels": [
+        "feature",
+        "penalties",
+        "admin"
+      ],
+      "passes": true,
+      "dependsOn": [
+        "US-016",
+        "US-018"
+      ],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-020",
+      "title": "Improve contract upload UX - progress indicator",
+      "description": "As a user, I want to see clear progress during AI contract extraction so that I know the system is working and how long to wait.",
+      "acceptanceCriteria": [
+        "In contract-upload-drawer.tsx, add a stepper or progress indicator during AI extraction",
+        "Show stages: Enviando arquivo -> Analisando documento -> Extraindo clausulas -> Concluido",
+        "Each stage has a visual indicator (spinner, checkmark on completion)",
+        "If extraction fails, show clear error with retry option"
+      ],
+      "priority": 4,
+      "labels": [
+        "ux",
+        "contracts"
+      ],
+      "passes": true,
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-021",
+      "title": "Contract versioning",
+      "description": "As a user, I want to re-upload a contract and keep previous versions accessible so that I have a complete history of contract changes.",
+      "acceptanceCriteria": [
+        "When uploading a contract that already exists, the system prompts about creating a new version",
+        "Previous versions remain accessible in a version history list",
+        "Each version shows: upload date, extracted data summary, who uploaded",
+        "Active version is clearly marked",
+        "User can view and compare previous versions"
+      ],
+      "priority": 4,
+      "labels": [
+        "feature",
+        "contracts"
+      ],
+      "passes": true,
+      "dependsOn": [
+        "US-020"
+      ],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-022",
+      "title": "Improve contracts listing empty state",
+      "description": "As a user, I want a helpful empty state on the contracts page so that I know how to get started.",
+      "acceptanceCriteria": [
+        "In apps/web/src/features/contracts/index.tsx, improve the empty state with a clear CTA",
+        "Empty state message about no contracts and how to upload",
+        "Prominent upload button in the empty state",
+        "Brief explanation of the AI extraction capability"
+      ],
+      "priority": 4,
+      "labels": [
+        "ux",
+        "contracts"
+      ],
+      "passes": true,
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-023",
+      "title": "Chatbot Q&A - contract and dashboard assistant",
+      "description": "As a user, I want to ask natural language questions about my contracts and dashboard data so that I can get quick answers without navigating multiple screens.",
+      "acceptanceCriteria": [
+        "Floating chat button accessible from gas pages",
+        "Chat interface with message history within the session",
+        "AI context includes: active contracts, recent scheduling data, consumption data, penalty calculations",
+        "Can answer questions about penalties, contracts, and consumption comparisons",
+        "Uses existing Claude integration from the project",
+        "Responses include relevant data and can link to specific pages"
+      ],
+      "priority": 5,
+      "labels": [
+        "feature",
+        "ai",
+        "chatbot"
+      ],
+      "passes": true,
+      "dependsOn": [
+        "US-016",
+        "US-017"
+      ],
+      "completionNotes": "Completed by agent"
+    },
+    {
+      "id": "US-024",
+      "title": "Direct SCGas scheduling integration - feasibility study",
+      "description": "As a product owner, I want a documented feasibility analysis of direct SCGas scheduling integration so that we can plan the feature with technical and regulatory clarity.",
+      "acceptanceCriteria": [
+        "Document created outlining: SCGas API availability, authentication requirements, data format requirements",
+        "Regulatory considerations documented",
+        "Technical architecture proposal for integration",
+        "Risk assessment with mitigation strategies",
+        "Go/no-go recommendation with dependencies listed",
+        "Document saved in project docs folder"
+      ],
+      "priority": 5,
+      "labels": [
+        "research",
+        "integration"
+      ],
+      "passes": true,
+      "dependsOn": [],
       "completionNotes": "Completed by agent"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-02-26T02:42:14.027Z"
+    "updatedAt": "2026-03-05T12:42:50.799Z"
   }
 }

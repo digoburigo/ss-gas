@@ -1,0 +1,75 @@
+# Iteration 5 Log
+
+## Metadata
+
+- **Task ID**: US-005
+- **Task Title**: Fix generic DatePicker to not block future dates
+- **Description**: As a developer, I want the generic DatePicker component to have configurable date restrictions so that each usage context can define its own rules.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-03-05T05:07:59.482Z
+- **Ended At**: 2026-03-05T05:09:41.200Z
+- **Duration**: 1m 41s
+- **Input Tokens**: 48
+- **Output Tokens**: 4315
+- **Total Tokens**: 4363
+- **Agent**: claude
+- **Model**: claude-opus-4-6
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+[94m[ToolSearch][0m query: [93mselect:Read,Glob,Grep[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/date-picker.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[Grep][0m pattern: [96mdate-picker[0m
+I can see the issue. The `DatePicker` has a hardcoded `disabled` that blocks future dates (line 41-42). Let me check the usages to understand what each needs.
+[94m[Grep][0m pattern: [96mDatePicker|date-picker[0m
+Now I have a clear picture. Two usages of the generic `DatePicker`:
+
+1. **daily-entry-form.tsx** (line 249) — date entry, blocking future dates makes sense
+2. **account-form.tsx** (line 96) — date of birth, blocking future dates makes sense
+
+The scheduling dashboard has its own custom date picker, not using the generic one.
+
+The fix: make `disabled` a configurable prop with no default restriction.
+[94m[ToolSearch][0m query: [93mselect:Edit[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/date-picker.tsx[0m edit: "import { format } from "date-fns";
+import { Calend..." → "import type { Matcher } from "react-day-picker";
+i..."
+Now update the two existing usages to pass the old restriction explicitly where it makes sense.
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/gas/daily-entry-form.tsx[0m edit: "                <DatePicker
+                  sele..." → "                <DatePicker
+                  sele..."
+
+[91m[Error: <tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>][0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/settings/account/account-form.tsx[0m edit: "              <DatePicker selected={field.value} o..." → "              <DatePicker
+                selected..."
+
+[91m[Error: <tool_use_error>File has not been read yet. Read it first before writing to it.</tool_use_error>][0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/gas/daily-entry-form.tsx[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/settings/account/account-form.tsx[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/components/gas/daily-entry-form.tsx[0m edit: "                <DatePicker
+                  sele..." → "                <DatePicker
+                  sele..."
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/settings/account/account-form.tsx[0m edit: "              <DatePicker selected={field.value} o..." → "              <DatePicker
+                selected..."
+Now let me run the typecheck to verify.
+[94m[ToolSearch][0m query: [93mselect:Bash[0m
+[94m[Bash][0m Run typecheck across the monorepo $ pnpm run typecheck 2>&1 | tail -30
+The only typecheck error is the pre-existing `@acme/tailwind-config` issue (noted in progress.md from US-001). Let me verify the web app typechecks cleanly.
+[94m[Bash][0m Typecheck web app only $ cd /Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web && pnpm tsc --noEmit 2>&1 | ta...
+All pre-existing errors (csstype version mismatch, uploadthing). No new errors from my changes. Now let me commit and update progress.
+[94m[Bash][0m Commit US-005 changes $ cd /Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas && git add apps/web/src/components/date...
+Now update progress.md.
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "- Conditional spread `{...(!isAdmin && { disabled,..." → "- Conditional spread `{...(!isAdmin && { disabled,..."
+Done. Here's the summary:
+
+**US-005 - Fix generic DatePicker to not block future dates**
+
+- Removed the hardcoded `disabled` that blocked future dates from `date-picker.tsx`
+- Added an optional `disabled` prop (typed as `Matcher | Matcher[]` from react-day-picker) so each caller can define its own restrictions
+- Updated both existing usages (`daily-entry-form.tsx` and `account-form.tsx`) to explicitly pass the old restriction
+- Default behavior (no prop) now allows all dates
+
+<promise>COMPLETE</promise>

@@ -1,0 +1,139 @@
+# Iteration 15 Log
+
+## Metadata
+
+- **Task ID**: US-015
+- **Task Title**: Actual Consumption bulk import - preview and validation
+- **Description**: As a gas operator, I want to review and validate imported consumption data before saving so that I can ensure accuracy.
+- **Status**: completed
+- **Task Completed**: Yes
+- **Promise Detected**: Yes
+- **Started At**: 2026-03-05T05:49:31.300Z
+- **Ended At**: 2026-03-05T05:54:24.145Z
+- **Duration**: 4m 52s
+- **Input Tokens**: 101
+- **Output Tokens**: 13782
+- **Total Tokens**: 13883
+- **Agent**: claude
+- **Model**: claude-opus-4-6
+- **Sandbox Mode**: auto
+- **Sandbox Network**: Enabled
+--- RAW OUTPUT ---
+
+
+I'll start by studying the progress file and understanding the current state of US-014 (prerequisite) before implementing US-015.
+[94m[ToolSearch][0m query: [93mselect:Read,Glob,Grep,Agent[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[Glob][0m pattern: [96mapps/web/src/**/*consumo*[0m
+[94m[Glob][0m pattern: [96mapps/web/src/**/*consumption*[0m
+[94m[Glob][0m pattern: [96mapps/web/src/**/*consumpt*[0m
+Let me study the existing US-014 import drawer and server endpoints to understand what needs to be enhanced for US-015.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/actual-consumption/components/actual-consumption-import-drawer.tsx[0m
+[94m[Grep][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m pattern: [96mactual-consumption/(template|upload|confirm)[0m
+Let me read the server upload endpoint to understand current validations.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m
+[94m[ToolSearch][0m query: [93mselect:TodoWrite,Edit,Write,Bash[0m
+[94m[TodoWrite][0m
+Let me also check what GasRealConsumption data already exists to understand the range context.
+[94m[Grep][0m pattern: [96mmodel GasRealConsumption[0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m
+Now I have a clear picture. Let me implement the changes. I need to:
+
+1. **Server**: Add `warnings` field to rows, add duplicate date detection, gap detection, and range warnings
+2. **Client**: Update types, add warning status display with yellow/amber styling
+
+Let me start with the server-side changes.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m
+Now let me implement both server and client changes.
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m edit: "			// Parse AI response
+				let interpreted: {
+			..." → "			// Parse AI response
+				let interpreted: {
+			..."
+Now add `warnings` initialization and the enhanced validations after the existing validation block:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m edit: "			// Additional server-side validation
+				const ..." → "			// Additional server-side validation
+				const ..."
+[94m[TodoWrite][0m
+Now update the client-side import drawer to support warnings:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/actual-consumption/components/actual-consumption-import-drawer.tsx[0m edit: "type InterpretedRow = {
+  rowNumber: number;
+  dat..." → "type InterpretedRow = {
+  rowNumber: number;
+  dat..."
+Update the UploadResult summary type to include warningRows:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/actual-consumption/components/actual-consumption-import-drawer.tsx[0m edit: "  summary: {
+    totalRows: number;
+    validRows:..." → "  summary: {
+    totalRows: number;
+    validRows:..."
+Now update the summary badges area to show warnings, and update the table row styling and status column:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/actual-consumption/components/actual-consumption-import-drawer.tsx[0m edit: "  const activeValidRows =
+    result?.rows.filter(..." → "  const activeValidRows =
+    result?.rows.filter(..."
+Now update the summary badges to include warning count:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/actual-consumption/components/actual-consumption-import-drawer.tsx[0m edit: "                  {/* Summary */}
+                ..." → "                  {/* Summary */}
+                ..."
+Now update the table row styling to include warning background and the status column to show warnings:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/actual-consumption/components/actual-consumption-import-drawer.tsx[0m edit: "                        {result.rows.map((row) => ..." → "                        {result.rows.map((row) => ..."
+Now update the status column to show warning icon:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/actual-consumption/components/actual-consumption-import-drawer.tsx[0m edit: "                              <TableCell className..." → "                              <TableCell className..."
+Now update the error details section at the bottom to also show warnings:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/actual-consumption/components/actual-consumption-import-drawer.tsx[0m edit: "                  {/* Error details */}
+          ..." → "                  {/* Warning details */}
+        ..."
+Now update the upload success toast to include warning count:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/web/src/features/actual-consumption/components/actual-consumption-import-drawer.tsx[0m edit: "    onSuccess: (data) => {
+      setResult(data);
+..." → "    onSuccess: (data) => {
+      setResult(data);
+..."
+[94m[TodoWrite][0m
+[94m[Bash][0m Typecheck web app $ npx tsc --noEmit --project apps/web/tsconfig.json 2>&1 | head -40
+[94m[Bash][0m Typecheck server app $ npx tsc --noEmit --project apps/server/tsconfig.json 2>&1 | head -40
+I see 3 new errors in gas.controller.ts at lines 4564, 4565, 4572. Let me check and fix those.
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m
+The `sorted[i-1]` and `sorted[i]` could be undefined. Let me add non-null assertions since we're iterating within bounds:
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/apps/server/src/modules/gas/gas.controller.ts[0m edit: "				for (let i = 1; i < sorted.length; i++) {
+				..." → "				for (let i = 1; i < sorted.length; i++) {
+				..."
+[94m[Bash][0m Check gas.controller.ts typecheck errors $ npx tsc --noEmit --project apps/server/tsconfig.json 2>&1 | grep gas.controller
+No more errors in gas.controller.ts. Let me also run lint:
+[94m[Bash][0m Run lint check $ npx ultracite check 2>&1 | tail -20
+Ultracite isn't configured. The pre-existing errors are all in other files, not related to my changes. Let me verify my files specifically have no issues:
+[94m[Bash][0m Check import drawer typecheck $ npx tsc --noEmit --project apps/web/tsconfig.json 2>&1 | grep actual-consumption-import-drawer
+No errors in my changed files. All typecheck errors are pre-existing.
+[94m[TodoWrite][0m
+[94m[Bash][0m Commit US-015 changes $ git add apps/server/src/modules/gas/gas.controller.ts apps/web/src/features/actual-consumption/compo...
+[94m[TodoWrite][0m
+[94m[Read][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m
+[94m[Edit][0m [95m/Users/rodrigoburigo/Documents/Projects/JavaScript/ss-gas/.ralph-tui/progress.md[0m edit: "  - Reports page has 8 EmptyChart instances (5 in ..." → "  - Reports page has 8 EmptyChart instances (5 in ..."
+[94m[TodoWrite][0m
+US-015 is complete. Here's a summary of what was implemented:
+
+**Server-side** (`gas.controller.ts`):
+- Added `warnings: string[]` field to interpreted rows
+- **Duplicate dates**: Detects same date+unit combinations across rows (error)
+- **Range detection**: Queries existing consumption records, computes avg/stddev per unit, flags values >2 standard deviations from mean (warning)
+- **Zero value warning**: Flags consumption = 0
+- **Gap detection**: Warns when consecutive dates per unit have >1 day gaps
+- Past dates are allowed (no date restriction added)
+
+**Client-side** (`actual-consumption-import-drawer.tsx`):
+- Row-level status: valid (green check), warning (amber triangle), error (red X)
+- Warning badge in summary bar
+- Amber row highlighting for warning rows
+- Tooltips showing warning details
+- Warning detail section below the table
+- Toast notification differentiating warnings from clean uploads
+
+All acceptance criteria met:
+- Preview table with row-level status (valid/error/warning)
+- Validations: duplicate dates, gaps in data, values out of range
+- Warning for values significantly above/below expected range
+- User can exclude or edit rows before confirming (from US-014)
+- Import log with summary (from US-014)
+- Past dates are allowed for consumption imports
+
+<promise>COMPLETE</promise>

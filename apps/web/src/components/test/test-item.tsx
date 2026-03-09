@@ -115,7 +115,7 @@ export function TestItem({ test }: { test: Test }) {
             )}
           </form.Field>
 
-          <form.Subscribe>
+          <form.Subscribe selector={(state) => state}>
             {(state) => (
               <Button
                 disabled={!state.canSubmit || state.isSubmitting}

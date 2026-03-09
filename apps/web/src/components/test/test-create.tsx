@@ -93,7 +93,7 @@ export function TestCreate() {
         </form.Field>
       </div>
 
-      <form.Subscribe>
+      <form.Subscribe selector={(state) => state}>
         {(state) => (
           <Button
             className="w-full"

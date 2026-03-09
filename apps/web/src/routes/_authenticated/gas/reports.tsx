@@ -1,3 +1,5 @@
+"use no memo";
+
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -264,9 +266,7 @@ function ComparisonTooltip({
       <p className="mb-1 text-sm font-medium">{entry.fullDate}</p>
       <div className="space-y-1 text-xs">
         <div className="flex items-center justify-between gap-4">
-          <span style={{ color: "hsl(271, 81%, 56%)" }}>
-            QDP (Programado)
-          </span>
+          <span style={{ color: "hsl(271, 81%, 56%)" }}>QDP (Programado)</span>
           <span className="font-medium">{formatValue(entry.qdp)} m³</span>
         </div>
         <div className="flex items-center justify-between gap-4">
@@ -512,9 +512,7 @@ function DashboardTab() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={UNIT_ALL}>
-                      Todas as Unidades
-                    </SelectItem>
+                    <SelectItem value={UNIT_ALL}>Todas as Unidades</SelectItem>
                     {data.units.map((unit) => (
                       <SelectItem key={unit.id} value={unit.id}>
                         {unit.code} - {unit.name}
@@ -662,10 +660,7 @@ function DashboardTab() {
                       data={penaltyChartData}
                       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                     >
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        vertical={false}
-                      />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
                       <XAxis
                         dataKey="label"
                         tickLine={false}
@@ -753,10 +748,7 @@ function DashboardTab() {
                       data={assertivenessData}
                       margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
                     >
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        vertical={false}
-                      />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
                       <XAxis
                         dataKey="label"
                         tickLine={false}
@@ -777,7 +769,9 @@ function DashboardTab() {
                         content={
                           <ChartTooltipContent
                             labelFormatter={(value) => String(value)}
-                            formatter={(value) => `${(value as number).toFixed(1)}%`}
+                            formatter={(value) =>
+                              `${(value as number).toFixed(1)}%`
+                            }
                           />
                         }
                       />
@@ -832,10 +826,7 @@ function DashboardTab() {
                       layout="vertical"
                       margin={{ top: 10, right: 20, bottom: 10, left: 80 }}
                     >
-                      <CartesianGrid
-                        strokeDasharray="3 3"
-                        horizontal={false}
-                      />
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                       <XAxis
                         type="number"
                         domain={[0, 100]}
@@ -857,7 +848,9 @@ function DashboardTab() {
                         content={
                           <ChartTooltipContent
                             labelFormatter={(value) => String(value)}
-                            formatter={(value) => `${(value as number).toFixed(1)}%`}
+                            formatter={(value) =>
+                              `${(value as number).toFixed(1)}%`
+                            }
                           />
                         }
                       />
@@ -1047,7 +1040,12 @@ function PetrobrasReportTab() {
   });
 
   const { data: consolidatedData, isLoading: isLoadingComparison } = useQuery({
-    queryKey: ["gas", "consolidated", effectiveComparisonMonth, selectedContractId],
+    queryKey: [
+      "gas",
+      "consolidated",
+      effectiveComparisonMonth,
+      selectedContractId,
+    ],
     queryFn: async () => {
       const response = await api.gas.consolidated.get({
         query: {
@@ -1179,18 +1177,17 @@ function PetrobrasReportTab() {
 
   return (
     <div className="flex flex-col gap-4">
-      {consolidatedData?.contracts &&
-        consolidatedData.contracts.length > 1 && (
-          <div className="flex justify-end">
-            <ContractSelector
-              contracts={consolidatedData.contracts}
-              value={selectedContractId || consolidatedData.contract.id}
-              onChange={setSelectedContractId}
-              label="Contrato"
-              className="min-w-[200px]"
-            />
-          </div>
-        )}
+      {consolidatedData?.contracts && consolidatedData.contracts.length > 1 && (
+        <div className="flex justify-end">
+          <ContractSelector
+            contracts={consolidatedData.contracts}
+            value={selectedContractId || consolidatedData.contract.id}
+            onChange={setSelectedContractId}
+            label="Contrato"
+            className="min-w-[200px]"
+          />
+        </div>
+      )}
 
       {/* QDP vs QDR Comparison Chart */}
       <Card>
@@ -1573,10 +1570,7 @@ function PetrobrasReportTab() {
                 </ChartContainer>
                 <div className="mt-4 grid w-full gap-2">
                   {statusDistribution.map((item) => {
-                    const percent = (
-                      (item.value / totalDays) *
-                      100
-                    ).toFixed(1);
+                    const percent = ((item.value / totalDays) * 100).toFixed(1);
                     return (
                       <div
                         key={item.name}
@@ -1683,9 +1677,7 @@ function PetrobrasReportTab() {
                     <TableCell className="text-center">
                       <Badge
                         variant={
-                          row.overallStatus === "ok"
-                            ? "success"
-                            : "destructive"
+                          row.overallStatus === "ok" ? "success" : "destructive"
                         }
                       >
                         {row.overallStatus === "ok" ? "OK" : "NOK"}
@@ -1702,8 +1694,8 @@ function PetrobrasReportTab() {
                 Nenhum dado encontrado para o mês selecionado.
               </p>
               <p className="text-muted-foreground/70 text-xs">
-                Selecione um mês diferente ou verifique se existem
-                lançamentos diários cadastrados.
+                Selecione um mês diferente ou verifique se existem lançamentos
+                diários cadastrados.
               </p>
             </div>
           )}

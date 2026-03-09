@@ -314,7 +314,7 @@ export function Penalties() {
                 description="Penalidades acumuladas"
                 value={data.currentTotals.total}
                 prevValue={data.prevTotals.total}
-                icon={<Ban className="h-4 w-4 text-destructive" />}
+                icon={<Ban className="text-destructive h-4 w-4" />}
                 highlight
               />
             </div>
@@ -387,25 +387,25 @@ export function Penalties() {
                                       : ""
                                   }
                                 >
-                                  <TableCell className="text-sm font-mono truncate">
+                                  <TableCell className="truncate font-mono text-sm">
                                     {formatDate(row.date)}
                                   </TableCell>
-                                  <TableCell className="text-sm truncate">
+                                  <TableCell className="truncate text-sm">
                                     {row.unitCode}
                                   </TableCell>
-                                  <TableCell className="text-right text-sm font-mono truncate">
+                                  <TableCell className="truncate text-right font-mono text-sm">
                                     {formatNumber(row.qdrValue)}
                                   </TableCell>
-                                  <TableCell className="text-right text-sm font-mono truncate">
+                                  <TableCell className="truncate text-right font-mono text-sm">
                                     {formatNumber(row.qdcContracted)}
                                   </TableCell>
-                                  <TableCell className="text-right text-sm font-mono truncate">
+                                  <TableCell className="truncate text-right font-mono text-sm">
                                     {formatNumber(row.upperLimit)}
                                   </TableCell>
-                                  <TableCell className="text-right text-sm font-mono truncate">
+                                  <TableCell className="truncate text-right font-mono text-sm">
                                     {formatNumber(row.lowerLimit)}
                                   </TableCell>
-                                  <TableCell className="text-right text-sm font-mono truncate">
+                                  <TableCell className="truncate text-right font-mono text-sm">
                                     {row.pvema > 0 ? (
                                       <span className="text-red-600 dark:text-red-400">
                                         {formatCurrency(row.pvema)}
@@ -416,7 +416,7 @@ export function Penalties() {
                                       </span>
                                     )}
                                   </TableCell>
-                                  <TableCell className="text-right text-sm font-mono truncate">
+                                  <TableCell className="truncate text-right font-mono text-sm">
                                     {row.pveme > 0 ? (
                                       <span className="text-blue-600 dark:text-blue-400">
                                         {formatCurrency(row.pveme)}
@@ -427,7 +427,7 @@ export function Penalties() {
                                       </span>
                                     )}
                                   </TableCell>
-                                  <TableCell className="text-right text-sm font-mono truncate">
+                                  <TableCell className="truncate text-right font-mono text-sm">
                                     {row.sobredemanda > 0 ? (
                                       <span className="text-orange-600 dark:text-orange-400">
                                         {formatCurrency(row.sobredemanda)}
@@ -438,7 +438,7 @@ export function Penalties() {
                                       </span>
                                     )}
                                   </TableCell>
-                                  <TableCell className="text-right text-sm font-mono truncate font-semibold">
+                                  <TableCell className="truncate text-right font-mono text-sm font-semibold">
                                     {row.total > 0 ? (
                                       <span className="text-red-600 dark:text-red-400">
                                         {formatCurrency(row.total)}
@@ -455,24 +455,21 @@ export function Penalties() {
                           </TableBody>
                           <TableFooter>
                             <TableRow>
-                              <TableCell
-                                colSpan={6}
-                                className="font-semibold"
-                              >
+                              <TableCell colSpan={6} className="font-semibold">
                                 Total do Mês
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono font-semibold">
+                              <TableCell className="text-right font-mono text-sm font-semibold">
                                 {formatCurrency(data.currentTotals.pvema)}
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono font-semibold">
+                              <TableCell className="text-right font-mono text-sm font-semibold">
                                 {formatCurrency(data.currentTotals.pveme)}
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono font-semibold">
+                              <TableCell className="text-right font-mono text-sm font-semibold">
                                 {formatCurrency(
                                   data.currentTotals.sobredemanda,
                                 )}
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono font-semibold">
+                              <TableCell className="text-right font-mono text-sm font-semibold">
                                 {formatCurrency(data.currentTotals.total)}
                               </TableCell>
                             </TableRow>
@@ -506,9 +503,7 @@ export function Penalties() {
                           <TableHeader>
                             <TableRow>
                               <TableHead>Unidade</TableHead>
-                              <TableHead className="text-right">
-                                Dias
-                              </TableHead>
+                              <TableHead className="text-right">Dias</TableHead>
                               <TableHead className="text-right">
                                 PVEMA (R$)
                               </TableHead>
@@ -529,10 +524,10 @@ export function Penalties() {
                                 <TableCell className="font-medium">
                                   {row.unitCode} — {row.unitName}
                                 </TableCell>
-                                <TableCell className="text-right text-sm font-mono">
+                                <TableCell className="text-right font-mono text-sm">
                                   {row.days}
                                 </TableCell>
-                                <TableCell className="text-right text-sm font-mono truncate">
+                                <TableCell className="truncate text-right font-mono text-sm">
                                   {row.pvema > 0 ? (
                                     <span className="text-red-600 dark:text-red-400">
                                       {formatCurrency(row.pvema)}
@@ -543,7 +538,7 @@ export function Penalties() {
                                     </span>
                                   )}
                                 </TableCell>
-                                <TableCell className="text-right text-sm font-mono truncate">
+                                <TableCell className="truncate text-right font-mono text-sm">
                                   {row.pveme > 0 ? (
                                     <span className="text-blue-600 dark:text-blue-400">
                                       {formatCurrency(row.pveme)}
@@ -554,7 +549,7 @@ export function Penalties() {
                                     </span>
                                   )}
                                 </TableCell>
-                                <TableCell className="text-right text-sm font-mono truncate">
+                                <TableCell className="truncate text-right font-mono text-sm">
                                   {row.sobredemanda > 0 ? (
                                     <span className="text-orange-600 dark:text-orange-400">
                                       {formatCurrency(row.sobredemanda)}
@@ -565,7 +560,7 @@ export function Penalties() {
                                     </span>
                                   )}
                                 </TableCell>
-                                <TableCell className="text-right text-sm font-mono truncate font-semibold">
+                                <TableCell className="truncate text-right font-mono text-sm font-semibold">
                                   {row.total > 0 ? (
                                     <span className="text-red-600 dark:text-red-400">
                                       {formatCurrency(row.total)}
@@ -584,24 +579,24 @@ export function Penalties() {
                               <TableCell className="font-semibold">
                                 Total
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono font-semibold">
+                              <TableCell className="text-right font-mono text-sm font-semibold">
                                 {data.monthlyRows.reduce(
                                   (s, r) => s + r.days,
                                   0,
                                 )}
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono font-semibold">
+                              <TableCell className="text-right font-mono text-sm font-semibold">
                                 {formatCurrency(data.currentTotals.pvema)}
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono font-semibold">
+                              <TableCell className="text-right font-mono text-sm font-semibold">
                                 {formatCurrency(data.currentTotals.pveme)}
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono font-semibold">
+                              <TableCell className="text-right font-mono text-sm font-semibold">
                                 {formatCurrency(
                                   data.currentTotals.sobredemanda,
                                 )}
                               </TableCell>
-                              <TableCell className="text-right text-sm font-mono font-semibold">
+                              <TableCell className="text-right font-mono text-sm font-semibold">
                                 {formatCurrency(data.currentTotals.total)}
                               </TableCell>
                             </TableRow>
@@ -699,7 +694,7 @@ function SummaryCard({
       <CardContent>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="text-lg font-bold font-mono truncate">
+            <div className="truncate font-mono text-lg font-bold">
               {formatCurrency(value)}
             </div>
           </TooltipTrigger>

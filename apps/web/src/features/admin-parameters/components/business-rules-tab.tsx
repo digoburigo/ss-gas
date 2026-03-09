@@ -344,12 +344,16 @@ export function BusinessRulesTab() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => handleReset(defaultParam.key)}
+                                    onClick={() =>
+                                      handleReset(defaultParam.key)
+                                    }
                                   >
                                     <RefreshCcw className="h-4 w-4" />
                                   </Button>
                                 </TooltipTrigger>
-                                <TooltipContent>Restaurar padrão</TooltipContent>
+                                <TooltipContent>
+                                  Restaurar padrão
+                                </TooltipContent>
                               </Tooltip>
                             )}
                           </>
@@ -445,12 +449,16 @@ export function BusinessRulesTab() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => handleReset(defaultParam.key)}
+                                    onClick={() =>
+                                      handleReset(defaultParam.key)
+                                    }
                                   >
                                     <RefreshCcw className="h-4 w-4" />
                                   </Button>
                                 </TooltipTrigger>
-                                <TooltipContent>Restaurar padrão</TooltipContent>
+                                <TooltipContent>
+                                  Restaurar padrão
+                                </TooltipContent>
                               </Tooltip>
                             )}
                           </>

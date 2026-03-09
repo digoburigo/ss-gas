@@ -182,7 +182,7 @@ const columns: ColumnDef<AuditLogEntry>[] = [
 
       if (action === "login") {
         return (
-          <span className="text-sm italic text-emerald-600 dark:text-emerald-400">
+          <span className="text-sm text-emerald-600 italic dark:text-emerald-400">
             Usuário entrou no sistema
           </span>
         );
@@ -190,7 +190,7 @@ const columns: ColumnDef<AuditLogEntry>[] = [
 
       if (action === "logout") {
         return (
-          <span className="text-sm italic text-amber-600 dark:text-amber-400">
+          <span className="text-sm text-amber-600 italic dark:text-amber-400">
             Usuário saiu do sistema
           </span>
         );

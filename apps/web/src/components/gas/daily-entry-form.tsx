@@ -563,14 +563,14 @@ export function DailyEntryForm({
                     <p className="text-muted-foreground text-sm">
                       Atomizador(es)
                     </p>
-                    <p className="text-lg font-bold font-mono truncate">
+                    <p className="truncate font-mono text-lg font-bold">
                       {formatNumber(qdcAtomizer)}
                     </p>
                     <p className="text-muted-foreground text-xs">m³/dia</p>
                   </div>
                   <div className="text-center">
                     <p className="text-muted-foreground text-sm">Linhas</p>
-                    <p className="text-lg font-bold font-mono truncate">
+                    <p className="truncate font-mono text-lg font-bold">
                       {formatNumber(qdcLines)}
                     </p>
                     <p className="text-muted-foreground text-xs">m³/dia</p>
@@ -587,7 +587,7 @@ export function DailyEntryForm({
                       {values.qdsManualOverride && " (Manual)"}
                     </p>
                     <p
-                      className={`text-xl font-bold font-mono truncate ${
+                      className={`truncate font-mono text-xl font-bold ${
                         values.qdsManualOverride
                           ? "text-amber-600"
                           : "text-primary"
@@ -601,7 +601,7 @@ export function DailyEntryForm({
                     <p className="text-muted-foreground text-sm">
                       QDP (Programação)
                     </p>
-                    <p className="text-xl font-bold font-mono truncate text-emerald-600">
+                    <p className="truncate font-mono text-xl font-bold text-emerald-600">
                       {formatNumber(qdpValue)}
                     </p>
                     <p className="text-muted-foreground text-xs">
@@ -687,7 +687,7 @@ export function DailyEntryForm({
       </form.Subscribe>
 
       {/* Submit Button */}
-      <form.Subscribe>
+      <form.Subscribe selector={(state) => state}>
         {(state) => (
           <div className="flex justify-end gap-2">
             <Button

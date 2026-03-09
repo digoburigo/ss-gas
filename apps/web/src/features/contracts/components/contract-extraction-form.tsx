@@ -1738,7 +1738,7 @@ export function ContractExtractionForm({
         </form.Field>
       </div>
 
-      <form.Subscribe>
+      <form.Subscribe selector={(state) => state}>
         {(state) => (
           <div className="bg-background sticky bottom-0 flex justify-end gap-2 border-t pt-4">
             <Button

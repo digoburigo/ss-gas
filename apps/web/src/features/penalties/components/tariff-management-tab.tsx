@@ -155,9 +155,11 @@ export function TariffManagementTab({
   const { data: activeData } = useQuery({
     queryKey: ["tariff-active", effectiveContractId],
     queryFn: async () => {
-      const response = await api.gas["tariff-history"].active({
-        contractId: effectiveContractId,
-      }).get();
+      const response = await api.gas["tariff-history"]
+        .active({
+          contractId: effectiveContractId,
+        })
+        .get();
       if (response.error) return { tariff: null };
       return response.data;
     },
@@ -167,7 +169,9 @@ export function TariffManagementTab({
 
   const approveMutation = useMutation({
     mutationFn: async (tariffId: string) => {
-      const response = await api.gas["tariff-history"]({ id: tariffId }).approve.post();
+      const response = await api.gas["tariff-history"]({
+        id: tariffId,
+      }).approve.post();
       if (response.error) {
         throw new Error(
           typeof response.error === "object" && "error" in response.error
@@ -188,7 +192,10 @@ export function TariffManagementTab({
   });
 
   const tariffs = (data?.tariffs ?? []) as unknown as TariffEntry[];
-  const activeTariff = activeData?.tariff as unknown as TariffEntry | null | undefined;
+  const activeTariff = activeData?.tariff as unknown as
+    | TariffEntry
+    | null
+    | undefined;
 
   return (
     <div className="space-y-4">
@@ -212,7 +219,7 @@ export function TariffManagementTab({
         <CardContent>
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
             </div>
           ) : tariffs.length === 0 ? (
             <div className="flex items-center justify-center py-12">
@@ -226,9 +233,7 @@ export function TariffManagementTab({
                 <TableHeader>
                   <TableRow>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">
-                      Tarifa (R$/m3)
-                    </TableHead>
+                    <TableHead className="text-right">Tarifa (R$/m3)</TableHead>
                     <TableHead className="text-right">TUSD</TableHead>
                     <TableHead className="text-right">Transporte</TableHead>
                     <TableHead>Vigencia</TableHead>
@@ -253,15 +258,15 @@ export function TariffManagementTab({
                       <TableCell>
                         <StatusBadge status={tariff.status} />
                       </TableCell>
-                      <TableCell className="text-right text-sm font-mono truncate">
+                      <TableCell className="truncate text-right font-mono text-sm">
                         {formatCurrency(tariff.tariffPerUnit)}
                       </TableCell>
-                      <TableCell className="text-right text-sm font-mono truncate">
+                      <TableCell className="truncate text-right font-mono text-sm">
                         {tariff.tusdTariff != null
                           ? formatCurrency(tariff.tusdTariff)
                           : "—"}
                       </TableCell>
-                      <TableCell className="text-right text-sm font-mono truncate">
+                      <TableCell className="truncate text-right font-mono text-sm">
                         {tariff.transportCost != null
                           ? formatCurrency(tariff.transportCost)
                           : "—"}
@@ -303,7 +308,7 @@ export function TariffManagementTab({
                           <span className="text-muted-foreground">—</span>
                         )}
                       </TableCell>
-                      <TableCell className="text-sm max-w-[200px] truncate">
+                      <TableCell className="max-w-[200px] truncate text-sm">
                         {tariff.notes || "—"}
                       </TableCell>
                       <TableCell className="text-right">
@@ -314,7 +319,9 @@ export function TariffManagementTab({
                                 variant="outline"
                                 size="icon"
                                 className="h-7 w-7"
-                                onClick={() => approveMutation.mutate(tariff.id)}
+                                onClick={() =>
+                                  approveMutation.mutate(tariff.id)
+                                }
                                 disabled={approveMutation.isPending}
                               >
                                 {approveMutation.isPending ? (
@@ -359,7 +366,7 @@ function ActiveTariffCard({
     return (
       <Card className="border-green-500/30">
         <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
         </CardContent>
       </Card>
     );
@@ -390,13 +397,13 @@ function ActiveTariffCard({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <p className="text-muted-foreground text-xs">Valor por unidade</p>
-            <p className="text-xl font-bold font-mono truncate">
+            <p className="truncate font-mono text-xl font-bold">
               {formatCurrency(tariff.tariffPerUnit)}
             </p>
           </div>
           <div>
             <p className="text-muted-foreground text-xs">TUSD</p>
-            <p className="text-lg font-bold font-mono truncate">
+            <p className="truncate font-mono text-lg font-bold">
               {tariff.tusdTariff != null
                 ? formatCurrency(tariff.tusdTariff)
                 : "—"}
@@ -404,7 +411,7 @@ function ActiveTariffCard({
           </div>
           <div>
             <p className="text-muted-foreground text-xs">Custo de transporte</p>
-            <p className="text-lg font-bold font-mono truncate">
+            <p className="truncate font-mono text-lg font-bold">
               {tariff.transportCost != null
                 ? formatCurrency(tariff.transportCost)
                 : "—"}
@@ -501,7 +508,7 @@ function CreateTariffDrawer({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-md overflow-y-auto">
+      <SheetContent className="overflow-y-auto sm:max-w-md">
         <SheetHeader>
           <SheetTitle>Nova Tarifa</SheetTitle>
           <SheetDescription>
@@ -509,13 +516,13 @@ function CreateTariffDrawer({
             aprovada.
           </SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           {contracts.length > 1 && (
             <div className="space-y-2">
               <Label htmlFor="tariff-contract">Contrato</Label>
               <select
                 id="tariff-contract"
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
+                className="border-input flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
                 value={formData.contractId}
                 onChange={(e) =>
                   setFormData((prev) => ({
