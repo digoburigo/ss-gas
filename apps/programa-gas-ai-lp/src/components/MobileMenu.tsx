@@ -25,7 +25,7 @@ export default function MobileMenu({ navLinks }: MobileMenuProps) {
 
       {open && (
         <div
-          className="absolute top-full right-0 left-0 border-b backdrop-blur-xl"
+          className="fixed top-16 right-0 left-0 border-b backdrop-blur-xl"
           style={{ backgroundColor: "rgba(13, 27, 42, 0.98)", borderColor: "rgba(255,255,255,0.08)" }}
         >
           <div className="mx-auto max-w-7xl space-y-1 px-6 py-4">

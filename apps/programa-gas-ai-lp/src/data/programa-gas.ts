@@ -22,7 +22,7 @@ export const pgHero = {
 
 export const pgTrustStats = [
   { target: 73, suffix: "%", label: "menos tempo de programação" },
-  { value: brl(48000), label: "em multas evitáveis" },
+  { value: brl(2250000), label: "em multas evitáveis" },
   { target: 100, suffix: "%", label: "dos contratos monitorados" },
   { target: 24, suffix: "h", label: "para começar a operar" },
 ];
@@ -174,7 +174,7 @@ export const pgTestimonials = [
 
 export const pgStatsBanner = [
   { value: "73%", label: "redução no tempo de programação mensal" },
-  { value: brl(48000), label: "em multas nos primeiros 90 dias de uso" },
+  { value: brl(2250000), label: "em multas nos primeiros 90 dias de uso" },
   { value: "1 sem", label: "tempo médio de implementação" },
 ];
 
