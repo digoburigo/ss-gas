@@ -47,6 +47,10 @@
 			"cache": false,
 			"persistent": true
 		},
+		"@acme/programa-gas-ai-lp#dev": {
+			"cache": false,
+			"persistent": true
+		},
 		"format": {
 			"outputs": [".cache/.prettiercache"],
 			"outputLogs": "new-only"

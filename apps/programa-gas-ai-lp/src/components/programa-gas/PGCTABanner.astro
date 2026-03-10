@@ -1,0 +1,35 @@
+---
+import { pgCTA } from "~/data/programa-gas";
+---
+
+<section id="contato" class="py-28" style="background-color: #0D1B2A;">
+  <div class="mx-auto max-w-4xl px-6 text-center">
+    <!-- Glow -->
+    <div class="pointer-events-none absolute left-1/2 -translate-x-1/2 h-64 w-64 rounded-full opacity-20 blur-3xl" style="background: #1A56DB;" aria-hidden="true"></div>
+
+    <h2
+      class="relative text-4xl font-extrabold text-white lg:text-5xl"
+      style="font-family: 'Plus Jakarta Sans Variable', sans-serif;"
+    >
+      {pgCTA.headline}
+    </h2>
+
+    <p class="relative mx-auto mt-6 max-w-xl text-lg" style="color: rgba(255,255,255,0.6);">
+      {pgCTA.subtext}
+    </p>
+
+    <div class="relative mt-10">
+      <a
+        href={pgCTA.cta.href}
+        class="inline-block rounded-xl px-8 py-4 text-lg font-semibold text-white shadow-2xl transition-all hover:opacity-90 hover:shadow-blue-500/30"
+        style="background: #1A56DB;"
+      >
+        {pgCTA.cta.label}
+      </a>
+    </div>
+
+    <p class="relative mt-6 text-sm" style="color: rgba(255,255,255,0.35);">
+      {pgCTA.finePrint}
+    </p>
+  </div>
+</section>

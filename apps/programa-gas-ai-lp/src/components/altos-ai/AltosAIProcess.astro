@@ -1,0 +1,73 @@
+---
+import AnimatedServiceIcon from "~/components/ui/AnimatedServiceIcon";
+import { altosAIProcessSteps } from "~/data/altos-ai";
+---
+
+<section id="processo" class="bg-altos-surface py-24 lg:py-32" aria-label="Nosso Processo">
+  <div class="mx-auto max-w-7xl px-6 lg:px-20">
+    <!-- Header: label + heading left + description right -->
+    <div class="mb-20 flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between animate-on-scroll">
+      <div>
+        <div class="mb-4 flex items-center gap-3">
+          <div class="h-px w-8 bg-altos-teal"></div>
+          <span class="text-xs font-medium uppercase tracking-[0.12em] text-altos-teal">PROCESSO</span>
+        </div>
+        <h2
+          class="font-[var(--font-jakarta)] text-4xl font-extrabold tracking-tight text-altos-dark lg:text-5xl"
+          style="max-width: 440px;"
+        >
+          Do briefing ao deploy,
+          <span style="background: linear-gradient(120deg, #1e6fa0, #14456a 55%, #0a1e3c); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;"> sem surpresas.</span>
+        </h2>
+      </div>
+      <p class="text-base leading-relaxed text-altos-body lg:max-w-[260px] lg:pt-20 lg:text-right">
+        Um processo transparente, ágil e com custo fixo do início ao fim.
+      </p>
+    </div>
+
+    <!-- Timeline: horizontal on desktop, vertical on mobile -->
+    <div class="relative">
+      <!-- Connecting line (desktop only) -->
+      <div
+        class="absolute top-7 hidden h-px bg-altos-border lg:block"
+        style="left: calc(12.5% + 1.75rem); right: calc(12.5% + 1.75rem);"
+        aria-hidden="true"
+      ></div>
+
+      <!-- Steps -->
+      <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+        {
+          altosAIProcessSteps.map((step, i) => (
+            <div
+              class="relative flex flex-col items-center text-center animate-on-scroll"
+              style={`animation-delay: ${i * 120}ms;`}
+            >
+              <!-- Mobile: left border line (not shown on desktop) -->
+              {i !== altosAIProcessSteps.length - 1 && (
+                <div
+                  class="absolute top-14 left-7 h-[calc(100%+3rem)] w-px bg-altos-border lg:hidden"
+                  aria-hidden="true"
+                />
+              )}
+
+              <!-- Icon circle -->
+              <div class="relative z-10 mb-6 flex size-14 items-center justify-center rounded-full bg-altos-secondary text-white shadow-sm">
+                <AnimatedServiceIcon client:visible name={step.icon} size={24} />
+              </div>
+
+              <h3 class="font-[var(--font-jakarta)] mb-2 text-lg font-bold text-altos-dark">
+                {step.title}
+              </h3>
+              <p class="mb-4 max-w-[200px] text-sm leading-relaxed text-altos-body">
+                {step.description}
+              </p>
+              <span class="text-xs font-semibold uppercase tracking-[0.1em] text-altos-teal">
+                {step.duration}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,54 @@
+---
+import { pgSteps } from "~/data/programa-gas";
+
+const stepStyles: Record<string, { circle: string; text: string }> = {
+  dark: { circle: "background: #0D1B2A; border: 2px solid rgba(255,255,255,0.15);", text: "color: white;" },
+  blue: { circle: "background: #1A56DB;", text: "color: white;" },
+  teal: { circle: "background: #5BB8D4;", text: "color: #0D1B2A;" },
+};
+---
+
+<section id="como-funciona" class="py-24" style="background-color: #F4F7FA;">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="mb-16 text-center">
+      <span class="mb-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em]" style="color: #1A56DB;">
+        <span style="color: rgba(26,86,219,0.4);">──</span>
+        COMO FUNCIONA
+        <span style="color: rgba(26,86,219,0.4);">──</span>
+      </span>
+      <h2
+        class="mt-3 text-3xl font-extrabold lg:text-4xl"
+        style="color: #0D1B2A; font-family: 'Plus Jakarta Sans Variable', sans-serif;"
+      >
+        Três passos. Zero planilha.
+      </h2>
+    </div>
+
+    <div class="flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-0">
+      {pgSteps.map((step, idx) => (
+        <>
+          <div class="animate-on-scroll flex flex-1 flex-col items-center text-center">
+            <div
+              class="mb-6 flex size-20 items-center justify-center rounded-full text-2xl font-extrabold shadow-lg"
+              style={stepStyles[step.style]?.circle}
+            >
+              <span style={stepStyles[step.style]?.text}>{step.number}</span>
+            </div>
+            <h3 class="mb-3 text-xl font-bold" style="color: #0D1B2A; font-family: 'Plus Jakarta Sans Variable', sans-serif;">
+              {step.title}
+            </h3>
+            <p class="text-base leading-relaxed" style="color: #4A5568;">{step.description}</p>
+          </div>
+          {idx < pgSteps.length - 1 && (
+            <div class="hidden lg:flex lg:flex-col lg:items-center lg:justify-start lg:pt-9">
+              <svg width="80" height="12" viewBox="0 0 80 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="6" x2="68" y2="6" stroke="#1A56DB" stroke-width="1.5" stroke-dasharray="6 4"/>
+                <circle cx="74" cy="6" r="4" fill="#1A56DB"/>
+              </svg>
+            </div>
+          )}
+        </>
+      ))}
+    </div>
+  </div>
+</section>

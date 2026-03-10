@@ -1,0 +1,37 @@
+---
+import { altosAIContactInfo } from "~/data/altos-ai";
+---
+
+<section id="contato" class="bg-[#FAFCFD] py-24 lg:py-32" aria-label="Contato">
+  <div class="mx-auto max-w-7xl px-6 lg:px-20">
+    <!-- Dark rounded banner -->
+    <div class="animate-on-scroll overflow-hidden rounded-[20px] bg-altos-dark px-10 py-16 lg:px-16 lg:py-20">
+      <div class="flex flex-col gap-12 lg:flex-row lg:items-center lg:justify-between">
+        <!-- Left: text -->
+        <div class="lg:max-w-[540px]">
+          <h2
+            class="font-[var(--font-jakarta)] text-[40px] font-extrabold leading-tight text-white"
+          >
+            Pronto para construir algo que
+            <span style="background: linear-gradient(80deg, #5bbdcc 5%, #a8dce8 50%, #4a9ab8); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;"> realmente funciona?</span>
+          </h2>
+          <p class="mt-5 text-base leading-relaxed text-[#E8F4F7]/55">
+            Sem compromisso. Entendemos seu problema, apresentamos uma proposta clara e só
+            avançamos se fizer sentido para os dois lados.
+          </p>
+        </div>
+
+        <!-- Right: CTA -->
+        <div class="flex flex-col items-start gap-4 lg:items-end">
+          <a
+            href={`mailto:${altosAIContactInfo.email}`}
+            class="inline-flex items-center justify-center rounded-[10px] bg-altos-teal py-[18px] px-11 text-base font-semibold text-[#0F2B3C] shadow-sm transition-all hover:bg-[#4A8A9D] hover:-translate-y-0.5"
+          >
+            Solicitar Orçamento Gratuito
+          </a>
+          <p class="text-sm text-white/40">Resposta em até 24 horas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

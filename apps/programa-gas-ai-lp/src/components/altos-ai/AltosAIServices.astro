@@ -1,0 +1,159 @@
+---
+import { ServiceCardGlow } from "~/components/altos-ai/ServiceCardGlow";
+import AnimatedServiceIcon from "~/components/ui/AnimatedServiceIcon";
+import { altosAIServices, altosAIShowcaseBullets } from "~/data/altos-ai";
+
+const largeCards = altosAIServices.slice(0, 2);
+const smallCards = altosAIServices.slice(2);
+---
+
+<section id="servicos" class="bg-[#FAFCFD] py-24 lg:py-32" aria-label="Serviços">
+  <div class="mx-auto max-w-7xl px-6 lg:px-20">
+    <!-- Header -->
+    <div class="mb-16 animate-on-scroll">
+      <div class="mb-4 flex items-center gap-3">
+        <div class="h-px w-8 bg-altos-teal"></div>
+        <span class="text-xs font-medium uppercase tracking-[0.12em] text-altos-teal">SERVIÇOS</span>
+      </div>
+      <h2
+        class="font-[var(--font-jakarta)] text-4xl font-extrabold tracking-tight text-altos-dark lg:text-5xl"
+        style="max-width: 640px;"
+      >
+        Cada serviço reduz seu custo.
+        <span style="background: linear-gradient(160deg, #0a1e3c, #1e6fa0 60%, #14456a); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;"> Não só entrega features</span>
+      </h2>
+      <p class="mt-4 max-w-lg text-base leading-relaxed text-altos-body">
+        Seis frentes integradas que trabalham juntas para entregar resultado real no seu negócio.
+      </p>
+    </div>
+
+    <!-- Bento grid: 2 large cards -->
+    <div class="mb-6 grid gap-6 lg:grid-cols-2">
+      {largeCards.map((service) => {
+        return (
+          <ServiceCardGlow client:visible>
+            <div class="glass-card-light flex h-full flex-col rounded-xl p-8">
+              <div class="mb-5 inline-flex size-12 items-center justify-center rounded-xl bg-altos-teal/10 text-altos-teal">
+                <AnimatedServiceIcon client:visible name={service.icon} size={24} />
+              </div>
+              <h3 class="font-[var(--font-jakarta)] text-xl font-extrabold text-altos-dark">
+                {service.title}
+              </h3>
+              <p class="mt-3 flex-1 text-sm leading-relaxed text-altos-body">
+                {service.description}
+              </p>
+              <div class="mt-6 flex flex-wrap gap-2">
+                {service.tags.map((tag) => (
+                  <span class="rounded-full border border-altos-border px-3 py-1 text-xs font-medium text-altos-body">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </ServiceCardGlow>
+        );
+      })}
+    </div>
+
+    <!-- Bento grid: 4 small cards -->
+    <div class="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {smallCards.map((service) => {
+        return (
+          <ServiceCardGlow client:visible>
+            <div class="glass-card-light flex h-full flex-col rounded-xl p-6">
+              <div class="mb-4 inline-flex size-10 items-center justify-center rounded-xl bg-altos-teal/10 text-altos-teal">
+                <AnimatedServiceIcon client:visible name={service.icon} size={20} />
+              </div>
+              <h3 class="font-[var(--font-jakarta)] text-base font-bold text-altos-dark">
+                {service.title}
+              </h3>
+              <p class="mt-2 flex-1 text-xs leading-relaxed text-altos-body">
+                {service.description}
+              </p>
+              <div class="mt-4 flex flex-wrap gap-1.5">
+                {service.tags.map((tag) => (
+                  <span class="rounded-full border border-altos-border px-2.5 py-0.5 text-xs font-medium text-altos-body">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </ServiceCardGlow>
+        );
+      })}
+    </div>
+
+  </div>
+
+  <!-- Showcase: Cansado de projetos -->
+  <div class="mx-auto max-w-7xl animate-on-scroll pt-16 pb-20 px-6 lg:px-20">
+    <div class="flex flex-col items-center gap-20 lg:flex-row">
+      <!-- Laptop mockup -->
+      <div class="animate-on-scroll relative order-2 lg:order-1 lg:flex-1">
+        <div class="relative overflow-hidden rounded-2xl border border-[#0D2D3A1F] bg-altos-dark shadow-[0_24px_64px_#0D2D3A2E]">
+          <!-- Browser chrome -->
+          <div class="flex items-center gap-2 border-b border-white/10 bg-altos-dark px-4 py-3">
+            <div class="flex gap-1.5">
+              <div class="size-3 rounded-full bg-[#FF5F56]"></div>
+              <div class="size-3 rounded-full bg-[#FFBD2E]"></div>
+              <div class="size-3 rounded-full bg-[#27C93F]"></div>
+            </div>
+            <div class="ml-4 flex-1 rounded-md bg-white/10 px-3 py-1 text-xs text-white/40">
+              altosrh.com.br
+            </div>
+          </div>
+          <!-- Screenshot area -->
+          <div class="relative aspect-[16/10] overflow-hidden bg-altos-surface">
+            <img
+              src="/altos-ai/showcase-preview.png"
+              alt="Plataforma de onboarding com IA desenvolvida pela Altos AI — painel de acompanhamento de colaboradores"
+              class="h-full w-full object-cover object-top"
+              width="640"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Text + bullets -->
+      <div class="animate-on-scroll order-1 flex flex-col gap-6 lg:order-2 lg:flex-1">
+        <div>
+          <h2 class="font-[var(--font-jakarta)] text-[44px] font-extrabold leading-[115%] tracking-[-0.035em] text-altos-dark">
+            Do problema ao produto.
+          </h2>
+          <h2 class="font-[var(--font-jakarta)] text-[40px] font-extrabold leading-[115%] tracking-[-0.02em]" style="background: linear-gradient(110deg, #1e6fa0 10%, #0a2d50 55%, #14456a); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Com IA onde ela faz diferença.
+          </h2>
+        </div>
+        <p class="text-[16px] leading-[165%] text-altos-body">
+          Construímos software sob medida com inteligência artificial integrada — automações, análise de dados e assistentes que tornam seu produto mais inteligente desde o primeiro deploy.
+        </p>
+
+        <ul class="space-y-4">
+          {altosAIShowcaseBullets.map((bullet) => {
+            return (
+              <li class="flex items-center gap-3">
+                <div class="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-[#5BA4B81F] text-altos-teal">
+                  <AnimatedServiceIcon client:visible name={bullet.icon} size={16} />
+                </div>
+                <span class="font-[var(--font-jakarta)] text-[15px] font-medium text-altos-dark">{bullet.text}</span>
+              </li>
+            );
+          })}
+        </ul>
+
+        <a
+          href="#contato"
+          class="inline-flex h-11 w-fit items-center justify-center gap-2 rounded-xl bg-altos-dark px-7 text-sm font-semibold text-white shadow-[0_4px_16px_#0D2D3A40] transition-all hover:-translate-y-0.5 hover:bg-altos-dark/90 hover:shadow-xl"
+        >
+          Falar com o time
+          <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

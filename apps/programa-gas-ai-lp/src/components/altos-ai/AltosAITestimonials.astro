@@ -1,0 +1,82 @@
+---
+import { altosAITestimonials } from "~/data/altos-ai";
+
+const featured = altosAITestimonials.find((t) => t.featured);
+const others = altosAITestimonials.filter((t) => !t.featured);
+---
+
+<section class="bg-white py-24 lg:py-32" aria-label="Depoimentos">
+  <div class="mx-auto max-w-7xl px-6 lg:px-20">
+    <!-- Header -->
+    <div class="mb-16 animate-on-scroll">
+      <div class="flex items-center gap-3">
+        <div class="h-px w-8 bg-altos-teal"></div>
+        <span class="text-xs font-medium uppercase tracking-[0.12em] text-altos-teal"
+          >O QUE DIZEM SOBRE NÓS</span
+        >
+      </div>
+    </div>
+
+    <!-- Testimonials layout -->
+    <div class="flex flex-col gap-14 lg:flex-row">
+      <!-- Featured large quote (flex-1.3) -->
+      {featured && (
+        <div
+          class="animate-on-scroll flex flex-col lg:flex-[1.3]"
+        >
+          <!-- Big quote mark -->
+          <div
+            class="mb-6 select-none font-[var(--font-jakarta)] font-black leading-none text-altos-teal/35"
+            style="font-size: 80px; line-height: 1;"
+            aria-hidden="true"
+          >
+            &ldquo;
+          </div>
+
+          <!-- Quote -->
+          <blockquote
+            class="flex-1 font-[var(--font-jakarta)] text-[22px] font-semibold italic leading-relaxed text-altos-dark"
+          >
+            {featured.quote}
+          </blockquote>
+
+          <!-- Divider + Author -->
+          <div class="mt-4 flex flex-col border-t border-[#C8DFE6] pt-2">
+            <div class="pt-2 text-[15px] font-medium text-altos-dark">{featured.name}</div>
+            <div class="text-sm text-altos-body">{featured.role}, {featured.company}</div>
+          </div>
+        </div>
+      )}
+
+      <!-- Two smaller quotes stacked (flex-1) -->
+      <div class="flex flex-col gap-10 pt-8 lg:flex-1">
+        {others.map((testimonial, i) => (
+          <div
+            class="animate-on-scroll flex flex-col"
+            style={`animation-delay: ${i * 100}ms;`}
+          >
+            <!-- Quote mark -->
+            <div
+              class="mb-4 select-none font-[var(--font-jakarta)] font-black leading-none text-altos-teal/25"
+              style="font-size: 48px; line-height: 1;"
+              aria-hidden="true"
+            >
+              &ldquo;
+            </div>
+
+            <!-- Quote -->
+            <blockquote class="flex-1 font-[var(--font-geist)] text-[17px] leading-relaxed text-[#2C2C2C]">
+              {testimonial.quote}
+            </blockquote>
+
+            <!-- Divider + Author -->
+            <div class="mt-6 flex flex-col border-t border-[#C8DFE6] pt-2">
+              <div class="pt-2 text-[15px] font-medium text-altos-dark">{testimonial.name}</div>
+              <div class="text-sm text-altos-body">{testimonial.role}, {testimonial.company}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

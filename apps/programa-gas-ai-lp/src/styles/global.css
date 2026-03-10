@@ -1,0 +1,272 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@acme/tailwind-config/theme";
+
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "@fontsource-variable/plus-jakarta-sans";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+@custom-variant auto (&:where(.auto, .auto *));
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@theme inline {
+  --font-jakarta: "Plus Jakarta Sans Variable", sans-serif;
+
+  --animate-first: first 15s ease infinite;
+  --animate-second: second 20s ease infinite;
+  --animate-third: third 25s ease infinite;
+  --animate-fourth: fourth 20s ease infinite;
+  --animate-fifth: fifth 15s ease infinite;
+
+  --color-landing-gradient-start: oklch(0.65 0.2 260);
+  --color-landing-gradient-end: oklch(0.55 0.22 290);
+  --color-landing-glow: oklch(0.6 0.18 275 / 0.15);
+  --color-landing-surface: oklch(0.97 0.005 265);
+  --color-landing-dark: oklch(0.18 0.04 270);
+
+  --animate-float: float 20s ease-in-out infinite;
+  --animate-float-delayed: float 20s ease-in-out 7s infinite;
+  --animate-float-slow: float 25s ease-in-out 3s infinite;
+  --animate-fade-in-up: fade-in-up 0.6s ease-out both;
+  --animate-counter-fade: counter-fade 0.4s ease-out both;
+
+  --color-pg-dark: #0D1B2A;
+  --color-pg-darker: #0A1525;
+  --color-pg-blue: #1A56DB;
+  --color-pg-teal: #5BB8D4;
+  --color-pg-light: #F4F7FA;
+  --color-pg-card-border: #E2E8F0;
+  --color-pg-body: #4A5568;
+
+  --animate-slide-in-left: slide-in-left 0.7s ease-out both;
+  --animate-slide-in-right: slide-in-right 0.7s ease-out both;
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-process-line: process-line 3s ease-out both;
+}
+
+@layer base {
+  :root {
+    --font-geist-sans: "Geist Variable";
+    --font-geist-mono: "Geist Mono Variable";
+    /* Defaults for BackgroundGradientAnimation — prevents flash before hydration */
+    --gradient-background-start: rgb(255, 255, 255);
+    --gradient-background-end: rgb(240, 247, 249);
+  }
+  * {
+    @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  html {
+    @apply overflow-x-hidden;
+  }
+  body {
+    @apply bg-background text-foreground min-h-svh w-full;
+    font-family: var(--font-geist-sans), sans-serif;
+    letter-spacing: var(--tracking-normal);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* BackgroundGradientAnimation blob keyframes */
+@keyframes first {
+  0% {
+    transform: translate(0%, 0%);
+  }
+  50% {
+    transform: translate(10%, -20%);
+  }
+  100% {
+    transform: translate(0%, 0%);
+  }
+}
+
+@keyframes second {
+  0% {
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    transform: translate(-20%, -30%);
+  }
+  100% {
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes third {
+  0% {
+    transform: translate(50%, 50%);
+  }
+  50% {
+    transform: translate(30%, 20%);
+  }
+  100% {
+    transform: translate(50%, 50%);
+  }
+}
+
+@keyframes fourth {
+  0% {
+    transform: translate(-50%, 50%);
+  }
+  50% {
+    transform: translate(-30%, 20%);
+  }
+  100% {
+    transform: translate(-50%, 50%);
+  }
+}
+
+@keyframes fifth {
+  0% {
+    transform: translate(50%, -50%);
+  }
+  50% {
+    transform: translate(20%, -30%);
+  }
+  100% {
+    transform: translate(50%, -50%);
+  }
+}
+
+/* Landing page animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+  50% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+  75% {
+    transform: translate(20px, 10px) scale(1.02);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes counter-fade {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes process-line {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+/* Scroll-driven animation support */
+@supports (animation-timeline: view()) {
+  .animate-on-scroll {
+    animation: fade-in-up 0.6s ease-out both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+}
+
+/* Fallback for browsers without scroll-driven animations */
+@supports not (animation-timeline: view()) {
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition:
+      opacity 0.6s ease-out,
+      transform 0.6s ease-out;
+  }
+  .animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .pg-gradient-text {
+    background: linear-gradient(135deg, #5BB8D4, #1A56DB);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass-card-light {
+    background: oklch(1 0 0 / 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid oklch(0 0 0 / 0.06);
+  }
+}

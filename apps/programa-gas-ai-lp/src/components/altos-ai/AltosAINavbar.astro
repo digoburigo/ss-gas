@@ -1,0 +1,126 @@
+---
+import MobileMenu from "../MobileMenu";
+
+const navLinks = [
+  { href: "#servicos", label: "Serviços" },
+  { href: "#processo", label: "Processo" },
+  { href: "#portfolio", label: "Portfólio" },
+  { href: "#contato", label: "Sobre" },
+];
+---
+
+<header
+  class="fixed top-0 right-0 left-0 z-[100] border-b border-transparent transition-all duration-300"
+  id="altos-navbar"
+  data-scrolled="false"
+>
+  <nav
+    class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-20"
+    aria-label="Navegação principal"
+  >
+    <!-- Logo -->
+    <a href="/" class="flex items-center" aria-label="Altos AI - Página inicial">
+      <img
+        src="/altos-ai/altos-logo-horizontal.png"
+        alt="Altos AI"
+        class="h-8 w-auto transition-all duration-300"
+        id="navbar-logo"
+        width="120"
+        height="32"
+      />
+    </a>
+
+    <!-- Desktop nav -->
+    <div class="hidden items-center gap-8 md:flex">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="nav-link text-sm font-medium text-[#0F2B3C]/70 transition-colors hover:text-[#0F2B3C]"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- Desktop CTA -->
+    <div class="hidden items-center md:flex">
+      <a
+        href="#contato"
+        class="nav-cta inline-flex h-9 items-center rounded-md bg-altos-teal px-5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#4A8A9D] hover:-translate-y-0.5"
+      >
+        Solicitar Orçamento
+      </a>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="md:hidden">
+      <MobileMenu client:load navLinks={navLinks} />
+    </div>
+  </nav>
+</header>
+
+<script>
+  const navbar = document.querySelector("#altos-navbar") as HTMLElement | null;
+  const navbarLogo = document.querySelector("#navbar-logo") as HTMLElement | null;
+  const navLinks = document.querySelectorAll(".nav-link");
+  const navCta = document.querySelector(".nav-cta") as HTMLElement | null;
+
+  if (navbar) {
+    const updateNavbar = () => {
+      const scrolled = window.scrollY > 20;
+
+      if (scrolled) {
+        navbar.dataset.scrolled = "true";
+        navbar.classList.add(
+          "bg-[#0F2B3C]/95",
+          "backdrop-blur-xl",
+          "border-white/10",
+          "shadow-sm"
+        );
+        navbar.classList.remove("border-transparent");
+
+        if (navbarLogo) {
+          navbarLogo.classList.add("brightness-0", "invert");
+        }
+
+        navLinks.forEach((link) => {
+          link.classList.remove("text-[#0F2B3C]/70", "hover:text-[#0F2B3C]");
+          link.classList.add("text-white/60", "hover:text-white");
+        });
+
+        if (navCta) {
+          navCta.classList.add("bg-white", "text-altos-dark", "hover:bg-altos-surface");
+          navCta.classList.remove("bg-altos-teal", "text-white", "hover:bg-[#4A8A9D]");
+        }
+      } else {
+        navbar.dataset.scrolled = "false";
+        navbar.classList.remove(
+          "bg-[#0F2B3C]/95",
+          "backdrop-blur-xl",
+          "border-white/10",
+          "shadow-sm"
+        );
+        navbar.classList.add("border-transparent");
+
+        if (navbarLogo) {
+          navbarLogo.classList.remove("brightness-0", "invert");
+        }
+
+        navLinks.forEach((link) => {
+          link.classList.add("text-[#0F2B3C]/70", "hover:text-[#0F2B3C]");
+          link.classList.remove("text-white/60", "hover:text-white");
+        });
+
+        if (navCta) {
+          navCta.classList.remove("bg-white", "text-altos-dark", "hover:bg-altos-surface");
+          navCta.classList.add("bg-altos-teal", "text-white", "hover:bg-[#4A8A9D]");
+        }
+      }
+    };
+
+    window.addEventListener("scroll", updateNavbar, { passive: true });
+    updateNavbar();
+  }
+</script>

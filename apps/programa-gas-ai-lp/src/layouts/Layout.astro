@@ -1,0 +1,155 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "programagas.ai | Programação de Gás com IA | Sem desvios, sem multas",
+  description = "Plataforma de programação de gás com inteligência artificial para distribuidoras e indústrias. Elimine planilhas, reduza desvios em 73% e evite multas contratuais.",
+} = Astro.props;
+
+const canonicalUrl = "https://programagas.ai";
+const ogImage = `${canonicalUrl}/og-image.png`;
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  address: {
+    "@type": "PostalAddress",
+    addressCountry: "BR",
+    addressRegion: "SC",
+  },
+  areaServed: "BR",
+  description:
+    "Plataforma SaaS de programação de consumo de gás com IA para distribuidoras e indústrias brasileiras.",
+  email: "contato@programagas.ai",
+  foundingDate: "2024",
+  name: "programagas.ai",
+  sameAs: [
+    "https://linkedin.com/company/programagasai",
+  ],
+  telephone: "+55-47-99999-9999",
+  url: canonicalUrl,
+};
+
+const softwareAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  applicationCategory: "BusinessApplication",
+  description,
+  name: "programagas.ai",
+  offers: {
+    "@type": "Offer",
+    priceCurrency: "BRL",
+  },
+  operatingSystem: "Web",
+  url: canonicalUrl,
+};
+
+const webPageSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  description,
+  name: title,
+  url: canonicalUrl,
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A plataforma usa inteligência artificial para interpretar contratos de fornecimento, gerar programações de consumo otimizadas e monitorar desvios em tempo real, eliminando planilhas manuais.",
+      },
+      name: "Como o programagas.ai funciona?",
+    },
+    {
+      "@type": "Question",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Nossos clientes reduziram desvios em até 73% no primeiro trimestre de uso. O modelo preditivo tem 98% de acurácia comprovada em produção.",
+      },
+      name: "Qual a acurácia da programação com IA?",
+    },
+    {
+      "@type": "Question",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Sim. O assistente IA integrado responde perguntas sobre contratos, programa volumes e gera relatórios prontos para auditoria, sem curva de aprendizado.",
+      },
+      name: "A plataforma tem assistente de IA?",
+    },
+    {
+      "@type": "Question",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A demonstração é gratuita e feita com seus dados reais. Basta agendar pelo formulário e nossa equipe entra em contato em até 24h.",
+      },
+      name: "Como faço para testar a plataforma?",
+    },
+    {
+      "@type": "Question",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Sim. A plataforma envia alertas em tempo real de desvios de programação antes que gerem penalidades contratuais.",
+      },
+      name: "Como o sistema evita multas por desvio?",
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="pt-BR" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="author" content="programagas.ai" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="theme-color" content="#0D1B2A" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="programagas.ai | Plataforma de programação de gás com IA" />
+    <meta property="og:site_name" content="programagas.ai" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="programagas.ai | Programação de Gás com IA" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(softwareAppSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(webPageSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  </head>
+  <body class="font-sans antialiased">
+    <slot />
+  </body>
+</html>

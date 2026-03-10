@@ -1,0 +1,110 @@
+---
+import AnimatedCounter from "~/components/AnimatedCounter.tsx";
+import HeroChart from "~/components/programa-gas/HeroChart.tsx";
+import { pgHero, pgTrustStats } from "~/data/programa-gas";
+---
+
+<section class="relative min-h-screen pt-16 overflow-hidden" style="background-color: #0D1B2A;">
+  <!-- Subtle grid background -->
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+          <path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)"/>
+    </svg>
+  </div>
+
+  <!-- Glow blobs -->
+  <div class="pointer-events-none absolute top-1/4 left-1/4 h-96 w-96 rounded-full opacity-10 blur-3xl" style="background: #1A56DB;" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full opacity-8 blur-3xl" style="background: #5BB8D4;" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-7xl px-6 py-20 lg:py-28">
+    <div class="grid items-center gap-12 lg:grid-cols-[55fr_45fr]">
+      <!-- Left: Copy -->
+      <div class="space-y-8">
+        <h1 class="text-4xl font-extrabold leading-[1.1] text-white lg:text-5xl xl:text-6xl" style="font-family: 'Plus Jakarta Sans Variable', sans-serif;">
+          {pgHero.headline}
+        </h1>
+
+        <p class="max-w-xl text-lg leading-relaxed" style="color: rgba(255,255,255,0.65);">
+          {pgHero.description}
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+          <a
+            href={pgHero.ctaPrimary.href}
+            class="rounded-lg px-6 py-3 text-base font-semibold text-white shadow-lg transition-all hover:opacity-90 hover:shadow-xl"
+            style="background-color: #1A56DB;"
+          >
+            {pgHero.ctaPrimary.label}
+          </a>
+          <a
+            href={pgHero.ctaSecondary.href}
+            class="rounded-lg border px-6 py-3 text-base font-semibold text-white transition-all hover:bg-white/10"
+            style="border-color: rgba(255,255,255,0.25);"
+          >
+            {pgHero.ctaSecondary.label}
+          </a>
+        </div>
+      </div>
+
+      <!-- Right: Dashboard mockup -->
+      <div class="relative">
+        <div
+          class="rounded-2xl p-6 shadow-2xl"
+          style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);"
+        >
+          <!-- Mockup header -->
+          <div class="mb-6 flex items-center justify-between">
+            <div>
+              <p class="text-lg font-bold text-white">QDC — MARÇO 2025</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="size-2 rounded-full" style="background: #1A56DB;"></span>
+              <span class="size-2 rounded-full" style="background: #5BB8D4;"></span>
+            </div>
+          </div>
+
+          <!-- Bar chart -->
+          <div class="mb-6">
+            <HeroChart client:visible />
+          </div>
+
+          <!-- Metric cards -->
+          <div class="grid grid-cols-3 gap-3">
+            <div class="rounded-xl p-3 text-center" style="background: rgba(26, 86, 219, 0.2);">
+              <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color: rgba(255,255,255,0.5);">ACURÁCIA</p>
+              <p class="text-xl font-bold" style="color: #5BB8D4;">97.3%</p>
+            </div>
+            <div class="rounded-xl p-3 text-center" style="background: rgba(255,255,255,0.05);">
+              <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color: rgba(255,255,255,0.5);">MULTAS</p>
+              <p class="text-xl font-bold text-white">R$0</p>
+            </div>
+            <div class="rounded-xl p-3 text-center" style="background: rgba(255,255,255,0.05);">
+              <p class="text-xs font-semibold uppercase tracking-wider mb-1" style="color: rgba(255,255,255,0.5);">DESVIOS</p>
+              <p class="text-xl font-bold text-white">2</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust bar -->
+    <div
+      class="mt-20 grid grid-cols-2 gap-8 border-t pt-10 lg:grid-cols-4"
+      style="border-color: rgba(255,255,255,0.1);"
+    >
+      {pgTrustStats.map((stat) => (
+        <div class="text-center">
+          <p class="text-3xl font-extrabold lg:text-4xl" style="color: #5BB8D4; font-family: 'Plus Jakarta Sans Variable', sans-serif;">
+            {stat.value ? stat.value : <AnimatedCounter target={stat.target ?? 0} suffix={stat.suffix ?? ""} client:visible />}
+          </p>
+          <p class="mt-1 text-sm" style="color: rgba(255,255,255,0.55);">{stat.label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

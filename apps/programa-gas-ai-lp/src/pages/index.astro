@@ -1,0 +1,46 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import PGNavbar from "~/components/programa-gas/PGNavbar.astro";
+import PGHero from "~/components/programa-gas/PGHero.astro";
+import PGProblem from "~/components/programa-gas/PGProblem.astro";
+import PGFeatures from "~/components/programa-gas/PGFeatures.astro";
+import PGHowItWorks from "~/components/programa-gas/PGHowItWorks.astro";
+import PGTestimonials from "~/components/programa-gas/PGTestimonials.astro";
+import PGCTABanner from "~/components/programa-gas/PGCTABanner.astro";
+import PGFooter from "~/components/programa-gas/PGFooter.astro";
+---
+
+<Layout>
+  <PGNavbar />
+
+  <main>
+    <PGHero />
+    <PGProblem />
+    <PGFeatures />
+    <PGHowItWorks />
+    <PGTestimonials />
+    <PGCTABanner />
+  </main>
+
+  <PGFooter />
+</Layout>
+
+<script>
+  if (!CSS.supports("animation-timeline", "view()")) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    for (const el of document.querySelectorAll(".animate-on-scroll")) {
+      observer.observe(el);
+    }
+  }
+</script>

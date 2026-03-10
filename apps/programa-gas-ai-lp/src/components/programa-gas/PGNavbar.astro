@@ -1,0 +1,57 @@
+---
+import { pgNavLinks } from "~/data/programa-gas";
+import MobileMenu from "~/components/MobileMenu.tsx";
+import PGLogo from "~/components/programa-gas/PGLogo.astro";
+---
+
+<header
+  id="pg-navbar"
+  class="fixed top-0 right-0 left-0 z-50 transition-all duration-300"
+  style="background-color: #0D1B2A;"
+>
+  <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+    <PGLogo />
+
+    <!-- Desktop nav -->
+    <nav class="hidden items-center gap-8 md:flex">
+      {pgNavLinks.map((link) => (
+        <a
+          href={link.href}
+          class="text-sm font-medium text-white/70 transition-colors hover:text-white"
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="hidden items-center gap-3 md:flex">
+      <a
+        href="#contato"
+        class="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
+        style="background-color: #1A56DB;"
+      >
+        Agende uma Demo
+      </a>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="relative md:hidden">
+      <MobileMenu navLinks={pgNavLinks} client:load />
+    </div>
+  </div>
+</header>
+
+<script>
+  const navbar = document.getElementById("pg-navbar");
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 20) {
+      navbar?.style.setProperty("background-color", "rgba(13, 27, 42, 0.95)");
+      navbar?.style.setProperty("backdrop-filter", "blur(12px)");
+      navbar?.style.setProperty("border-bottom", "1px solid rgba(255,255,255,0.06)");
+    } else {
+      navbar?.style.setProperty("background-color", "#0D1B2A");
+      navbar?.style.setProperty("backdrop-filter", "none");
+      navbar?.style.setProperty("border-bottom", "none");
+    }
+  });
+</script>
