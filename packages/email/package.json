@@ -23,7 +23,7 @@
 		"nodemailer": "^8.0.2",
 		"react": "catalog:react19",
 		"react-dom": "catalog:react19",
-		"resend": "^6.9.3"
+		"resend": "^6.9.4"
 	},
 	"devDependencies": {
 		"@acme/tsconfig": "workspace:*",

@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@remotion/cli": "4.0.436",
-    "@remotion/player": "4.0.435",
+    "@remotion/player": "4.0.436",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "remotion": "4.0.436"
