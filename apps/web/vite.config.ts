@@ -1,13 +1,13 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import tanstackRouter from "@tanstack/router-plugin/vite";
-import react from "@vitejs/plugin-react";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import Icons from "unplugin-icons/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
-import tsConfigPaths from "vite-tsconfig-paths";
 import * as z from "zod";
 
 /**
@@ -42,80 +42,57 @@ const envSchema = z.object({
     }),
 });
 
-const ReactCompilerConfig = {};
-
 const env = z.parse(envSchema, process.env);
 const webUrl = new URL(env.PUBLIC_WEB_URL);
 const host = webUrl.hostname;
-const port = parseInt(webUrl.port, 10);
+const port = Number.parseInt(webUrl.port, 10);
 
-export default defineConfig({
-  plugins: [
-    tsConfigPaths({
-      projects: ["./tsconfig.json"],
-    }),
-    devtools(),
-    tanstackRouter({
-      routeToken: "layout",
-      autoCodeSplitting: true,
-    }),
-    tailwindcss(),
-    react({
-      babel: {
-        plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
-      },
-    }),
-    Icons({ compiler: "jsx", jsx: "react" }),
-    VitePWA({
-      registerType: "autoUpdate",
-      workbox: {
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-      },
-      manifest: {
-        name: "programagas.ai",
-        short_name: "programagas.ai",
-        description: "Plataforma de programação de gás com IA",
-        theme_color: "#0c0c0c",
-      },
-      pwaAssets: { disabled: false, config: true },
-      devOptions: { enabled: true },
-    }),
-  ],
-  // base: env.PUBLIC_BASE_PATH,
-  envPrefix: "PUBLIC_",
-  server: {
-    host,
-    port,
-    strictPort: true,
-  },
-  // build: {
-  //   rollupOptions: {
-  //     output: {
-  //       /**
-  //        * Modified from:
-  //        * https://github.com/vitejs/vite/discussions/9440#discussioncomment-11430454
-  //        */
-  //       manualChunks(id) {
-  //         if (id.includes("node_modules")) {
-  //           const modulePath = id.split("node_modules/")[1];
-  //           const topLevelFolder = modulePath?.split("/")[0];
-  //           if (topLevelFolder !== ".pnpm") {
-  //             return topLevelFolder;
-  //           }
-  //           const scopedPackageName = modulePath?.split("/")[1];
-  //           const chunkName =
-  //             scopedPackageName?.split("@")[
-  //               scopedPackageName.startsWith("@") ? 1 : 0
-  //             ];
-  //           return chunkName;
-  //         }
-  //       },
-  //     },
-  //   },
-  // },
-  resolve: {
-    alias: {
-      "~": path.resolve(__dirname, "./src"),
+export default defineConfig(({ command }) => {
+  const isDev = command === "serve";
+
+  return {
+    plugins: [
+      ...(isDev ? [devtools()] : []),
+      tanstackRouter({
+        routeToken: "layout",
+        autoCodeSplitting: true,
+      }),
+      tailwindcss(),
+      react({
+        exclude: [/zenstack\/schema\.ts$/],
+      }),
+      babel({
+        plugins: [["@babel/plugin-syntax-typescript", { isTSX: true }]],
+        presets: [reactCompilerPreset()],
+      }),
+      Icons({ compiler: "jsx", jsx: "react" }),
+      VitePWA({
+        registerType: "autoUpdate",
+        workbox: {
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        },
+        manifest: {
+          name: "programagas.ai",
+          short_name: "programagas.ai",
+          description: "Plataforma de programação de gás com IA",
+          theme_color: "#0c0c0c",
+        },
+        pwaAssets: { disabled: false, config: true },
+        devOptions: { enabled: true },
+      }),
+    ],
+    // base: env.PUBLIC_BASE_PATH,
+    envPrefix: "PUBLIC_",
+    server: {
+      host,
+      port,
+      strictPort: true,
     },
-  },
+    resolve: {
+      alias: {
+        "~": path.resolve(__dirname, "./src"),
+      },
+      tsconfigPaths: true,
+    },
+  };
 });
