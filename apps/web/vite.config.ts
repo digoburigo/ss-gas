@@ -41,6 +41,11 @@ const envSchema = z.object({
     .refine((val) => val.startsWith("/"), {
       message: 'Base path must start with "/"',
     }),
+
+  ANALYZE: z
+    .string()
+    .optional()
+    .transform((v) => v === "true"),
 });
 
 const env = z.parse(envSchema, process.env);
@@ -53,14 +58,10 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [
-      ...(isDev
-        ? [devtools()]
-        : [
-            visualizer({
-              filename: "dist/stats.html",
-              gzipSize: true,
-            }),
-          ]),
+      ...(isDev ? [devtools()] : []),
+      ...(env.ANALYZE
+        ? [visualizer({ filename: "dist/stats.html", gzipSize: true })]
+        : []),
       tanstackRouter({
         routeToken: "layout",
         autoCodeSplitting: true,
@@ -77,7 +78,26 @@ export default defineConfig(({ command }) => {
       VitePWA({
         registerType: "autoUpdate",
         workbox: {
-          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+          globPatterns: [
+            "**/*.{html,css,webmanifest}",
+            "**/*.{png,svg,ico,jpg,jpeg,webp,avif}",
+            "**/*.{woff,woff2,ttf,eot}",
+          ],
+
+          maximumFileSizeToCacheInBytes: 1.5 * 1024 * 1024,
+          runtimeCaching: [
+            {
+              handler: "StaleWhileRevalidate",
+              options: {
+                cacheName: "js-chunks",
+                expiration: {
+                  maxAgeSeconds: 60 * 60 * 24 * 30,
+                  maxEntries: 60,
+                },
+              },
+              urlPattern: /\/assets\/.*\.js$/,
+            },
+          ],
         },
         manifest: {
           name: "programagas.ai",
@@ -90,9 +110,22 @@ export default defineConfig(({ command }) => {
       }),
     ],
     build: {
+      sourcemap: false,
       rollupOptions: {
         output: {
           manualChunks(id) {
+            if (!id.includes("node_modules")) {
+              return;
+            }
+
+            // PlateJS editor (~30+ packages)
+            if (
+              id.includes("/node_modules/platejs/") ||
+              id.includes("/node_modules/@platejs/")
+            ) {
+              return "vendor-plate";
+            }
+
             // Recharts + D3 dependencies (~300KB)
             if (
               id.includes("/node_modules/recharts/") ||
@@ -112,6 +145,21 @@ export default defineConfig(({ command }) => {
               id.includes("/node_modules/pdfjs-dist/")
             ) {
               return "vendor-react-pdf";
+            }
+
+            // html2canvas-pro
+            if (id.includes("/node_modules/html2canvas-pro/")) {
+              return "vendor-html2canvas";
+            }
+
+            // pdf-lib
+            if (id.includes("/node_modules/pdf-lib/")) {
+              return "vendor-pdf-lib";
+            }
+
+            // react-player
+            if (id.includes("/node_modules/react-player/")) {
+              return "vendor-react-player";
             }
           },
         },
