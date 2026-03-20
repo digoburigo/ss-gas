@@ -35,6 +35,11 @@ catalogs:
 
 linkWorkspacePackages: true
 
+packageExtensions:
+  "@zenstackhq/tanstack-query@*":
+    peerDependencies:
+      react: "*"
+
 onlyBuiltDependencies:
   - "@tailwindcss/oxide"
   - esbuild
