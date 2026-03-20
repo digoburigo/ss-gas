@@ -66,6 +66,7 @@
     "@acme/server": "workspace:*",
     "@acme/tailwind-config": "workspace:*",
     "@acme/tsconfig": "workspace:*",
+    "@babel/plugin-syntax-typescript": "^7.28.6",
     "@faker-js/faker": "^10.3.0",
     "@iconify/json": "^2.2.452",
     "@rolldown/plugin-babel": "^0.2.2",
