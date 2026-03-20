@@ -72,7 +72,7 @@ export function CauseDistributionChart({
         ) : chartData.length > 0 ? (
           <div className="flex items-center gap-8">
             <div className="h-[300px] w-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <PieChart>
                   <Pie
                     data={chartData}

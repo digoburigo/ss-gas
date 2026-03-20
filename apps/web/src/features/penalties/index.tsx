@@ -101,7 +101,13 @@ function formatNumber(value: number): string {
   });
 }
 
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string | Date): string {
+  if (dateStr instanceof Date) {
+    const d = String(dateStr.getDate()).padStart(2, "0");
+    const m = String(dateStr.getMonth() + 1).padStart(2, "0");
+    const y = dateStr.getFullYear();
+    return `${d}/${m}/${y}`;
+  }
   const [y, m, d] = dateStr.split("-");
   return `${d}/${m}/${y}`;
 }

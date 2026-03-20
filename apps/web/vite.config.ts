@@ -72,9 +72,9 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
       manifest: {
-        name: "clinic",
-        short_name: "clinic",
-        description: "clinic",
+        name: "programagas.ai",
+        short_name: "programagas.ai",
+        description: "Plataforma de programação de gás com IA",
         theme_color: "#0c0c0c",
       },
       pwaAssets: { disabled: false, config: true },
