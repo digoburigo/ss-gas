@@ -88,6 +88,7 @@
     "prettier": "catalog:",
     "react-grab": "0.1.28",
     "react-scan": "^0.5.3",
+    "rollup-plugin-visualizer": "^7.0.1",
     "shx": "0.4.0",
     "typescript": "catalog:",
     "unplugin-icons": "^23.0.1",

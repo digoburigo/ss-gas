@@ -8,6 +8,7 @@ import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import Icons from "unplugin-icons/vite";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import { visualizer } from "rollup-plugin-visualizer";
 import * as z from "zod";
 
 /**
@@ -52,7 +53,14 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [
-      ...(isDev ? [devtools()] : []),
+      ...(isDev
+        ? [devtools()]
+        : [
+            visualizer({
+              filename: "dist/stats.html",
+              gzipSize: true,
+            }),
+          ]),
       tanstackRouter({
         routeToken: "layout",
         autoCodeSplitting: true,
@@ -81,6 +89,34 @@ export default defineConfig(({ command }) => {
         devOptions: { enabled: true },
       }),
     ],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            // Recharts + D3 dependencies (~300KB)
+            if (
+              id.includes("/node_modules/recharts/") ||
+              id.includes("/node_modules/d3-")
+            ) {
+              return "vendor-recharts";
+            }
+
+            // DnD Kit
+            if (id.includes("/node_modules/@dnd-kit/")) {
+              return "vendor-dnd-kit";
+            }
+
+            // React PDF + pdfjs-dist
+            if (
+              id.includes("/node_modules/react-pdf/") ||
+              id.includes("/node_modules/pdfjs-dist/")
+            ) {
+              return "vendor-react-pdf";
+            }
+          },
+        },
+      },
+    },
     // base: env.PUBLIC_BASE_PATH,
     envPrefix: "PUBLIC_",
     server: {
