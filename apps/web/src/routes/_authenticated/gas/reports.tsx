@@ -7,6 +7,7 @@ import {
   BarChart3,
   Database,
   Download,
+  FileDown,
   FileSpreadsheet,
   LayoutDashboard,
   Loader2,
@@ -136,7 +137,10 @@ function getCurrentMonth(): string {
 
 function formatValue(value: number | null | undefined): string {
   if (value === null || value === undefined) return "-";
-  return value.toLocaleString("pt-BR");
+  return value.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
 
 function formatCurrency(value: number): string {
@@ -341,7 +345,7 @@ function DashboardTab() {
     return { startMonth: start, endMonth: end };
   }, [dateRange, latestMonth]);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: [
       "gas",
       "reports",
@@ -368,6 +372,7 @@ function DashboardTab() {
       }
       return response.data;
     },
+    retry: 1,
   });
 
   // Build unit-grouped bar chart data (Chart 1)
@@ -533,7 +538,15 @@ function DashboardTab() {
               />
             )}
 
-            <div className="ml-auto">
+            <div className="ml-auto flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => window.print()}
+                disabled={isLoading || !data}
+              >
+                <FileDown className="mr-2 h-4 w-4" />
+                Exportar PDF
+              </Button>
               <Button
                 variant="outline"
                 onClick={handleDownloadDashboard}
@@ -560,6 +573,22 @@ function DashboardTab() {
         <div className="flex h-[400px] items-center justify-center">
           <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
         </div>
+      ) : error ? (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center gap-3 py-12">
+              <Database className="text-muted-foreground/50 h-12 w-12" />
+              <p className="text-muted-foreground text-lg font-medium">
+                Nenhum dado encontrado para o período selecionado
+              </p>
+              <p className="text-muted-foreground/70 max-w-md text-center text-sm">
+                Verifique se existem contratos ativos, lançamentos de consumo
+                real e programações cadastradas para o período. Tente ajustar o
+                filtro de período ou selecionar um contrato diferente.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         <>
           {/* Chart 1: Consumo mensal Planejado vs Realizado por unidade */}
@@ -1174,6 +1203,25 @@ function PetrobrasReportTab() {
       setIsDownloading(false);
     }
   };
+
+  if (error && !consolidatedData) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col items-center gap-3 py-12">
+            <Database className="text-muted-foreground/50 h-12 w-12" />
+            <p className="text-muted-foreground text-lg font-medium">
+              Nenhum dado encontrado para o mês selecionado
+            </p>
+            <p className="text-muted-foreground/70 max-w-md text-center text-sm">
+              Verifique se existem contratos ativos e lançamentos diários
+              cadastrados para este mês. Tente selecionar um mês diferente.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">

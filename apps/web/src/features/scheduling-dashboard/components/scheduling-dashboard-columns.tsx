@@ -133,8 +133,8 @@ export function createColumns(
           return <span className="text-muted-foreground">—</span>;
         }
         return (
-          <span className="truncate font-mono text-sm">
-            {volume.toLocaleString("pt-BR")} m³
+          <span className="truncate font-mono text-sm tabular-nums">
+            {volume.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m³
           </span>
         );
       },

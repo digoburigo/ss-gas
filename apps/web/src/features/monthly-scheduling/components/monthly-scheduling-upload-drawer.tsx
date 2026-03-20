@@ -255,12 +255,15 @@ export function MonthlySchedulingUploadDrawer({
 
   const handleDownloadTemplate = async () => {
     try {
-      const response = await api.gas["monthly-scheduling"].template.get();
-      if (response.error) {
+      const response = await fetch(
+        `${import.meta.env.PUBLIC_SERVER_URL}/api/gas/monthly-scheduling/template`,
+        { credentials: "include" },
+      );
+      if (!response.ok) {
         toast.error("Erro ao baixar template");
         return;
       }
-      const blob = response.data as unknown as Blob;
+      const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

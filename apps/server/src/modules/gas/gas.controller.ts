@@ -3911,7 +3911,7 @@ Se uma data for invalida, adicione um erro.
 Se um volume for invalido ou negativo, adicione um erro.`;
 
 			try {
-				const model = "anthropic/claude-sonnet-4-5-20250514";
+				const model = "anthropic/claude-sonnet-4-6";
 
 				const { text: responseText } = await generateText({
 					model: aiGateway(model),
@@ -4086,6 +4086,31 @@ Se um volume for invalido ou negativo, adicione um erro.`;
 								: "Erro ao salvar registro",
 					});
 				}
+			}
+
+			// Save import log to audit trail
+			if (created.length > 0) {
+				await db.gasAuditLog.create({
+					data: {
+						entityType: "GasDailyPlan",
+						entityId: orgId,
+						action: "create",
+						field: "monthly_scheduling",
+						oldValue: null,
+						newValue: JSON.stringify({
+							totalRows: importLog.totalRows,
+							imported: created.length,
+							errors: errors.length,
+							skipped: importLog.skipped,
+						}),
+						userId,
+						metadata: JSON.stringify({
+							type: "monthly_scheduling_import",
+							importedRows: created.length,
+							errorRows: errors.length,
+						}),
+					},
+				}).catch(() => {});
 			}
 
 			return {
@@ -4332,7 +4357,7 @@ Se uma data for invalida, adicione um erro.
 Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 
 			try {
-				const model = "anthropic/claude-sonnet-4-5-20250514";
+				const model = "anthropic/claude-sonnet-4-6";
 
 				const { text: responseText } = await generateText({
 					model: aiGateway(model),
@@ -4695,6 +4720,31 @@ Se um consumo/QDR for invalido ou negativo, adicione um erro.`;
 								: "Erro ao salvar registro",
 					});
 				}
+			}
+
+			// Save import log to audit trail
+			if (created.length > 0) {
+				await db.gasAuditLog.create({
+					data: {
+						entityType: "GasRealConsumption",
+						entityId: orgId,
+						action: "create",
+						field: "actual_consumption",
+						oldValue: null,
+						newValue: JSON.stringify({
+							totalRows: importLog.totalRows,
+							imported: created.length,
+							errors: errors.length,
+							skipped: importLog.skipped,
+						}),
+						userId,
+						metadata: JSON.stringify({
+							type: "actual_consumption_import",
+							importedRows: created.length,
+							errorRows: errors.length,
+						}),
+					},
+				}).catch(() => {});
 			}
 
 			return {

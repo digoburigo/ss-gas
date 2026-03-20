@@ -151,6 +151,28 @@ async function buildGasContext(organizationId: string): Promise<string> {
 		}
 	}
 
+	// Add penalty configuration from contracts
+	const contractsWithPenalties = contracts.filter(
+		(c) => c.penaltyForUnderConsumption || c.penaltyForOverConsumption || c.pvemaTolerancePercent,
+	);
+	if (contractsWithPenalties.length > 0) {
+		const penaltyConfig = contractsWithPenalties.map((c) => ({
+			contrato: c.name,
+			penalSubconsumo: c.penaltyForUnderConsumption,
+			penalSobreconsumo: c.penaltyForOverConsumption,
+			metodoCalculo: c.penaltyCalculationMethod,
+			toleranciaPVEMA: c.pvemaTolerancePercent,
+			toleranciaPVEME: c.pvemeTolerancePercent,
+			sobredemandaTeto1: c.overdemandTier1MaxPercent,
+			sobredemandaTeto2: c.overdemandTier2MaxPercent,
+			tarifaTUSD: c.tusdTariffPerUnit,
+			cmcMinimoUso: c.cmcMinUsagePercent,
+		}));
+		sections.push(
+			`CONFIGURACAO DE PENALIDADES:\n${JSON.stringify(penaltyConfig, null, 2)}`,
+		);
+	}
+
 	return sections.join("\n\n---\n\n");
 }
 
@@ -195,7 +217,7 @@ export const gasChatController = new Elysia({
 			const context = await buildGasContext(organizationId);
 
 			const result = streamText({
-				model: gateway("anthropic/claude-sonnet-4-5-20250514"),
+				model: gateway("anthropic/claude-sonnet-4-6"),
 				system: `${SYSTEM_PROMPT}\n\nDADOS ATUAIS DO CLIENTE:\n\n${context}`,
 				messages: body.messages.map((m) => ({
 					role: m.role as "user" | "assistant",

@@ -39,7 +39,7 @@
 			"cache": false,
 			"persistent": true
 		},
-		"@acme/nextjs#dev": {
+		"@acme/email#dev": {
 			"cache": false,
 			"persistent": true
 		},
@@ -51,13 +51,15 @@
 			"cache": false,
 			"persistent": true
 		},
-		"format": {
-			"outputs": [".cache/.prettiercache"],
-			"outputLogs": "new-only"
+		"test": {
+			"dependsOn": ["^build"],
+			"outputs": [],
+			"inputs": ["src/**", "vitest.config.*", "vitest.*.ts"]
 		},
-		"lint": {
-			"dependsOn": ["^topo", "^build"],
-			"outputs": [".cache/.eslintcache"]
+		"test:coverage": {
+			"dependsOn": ["^build"],
+			"outputs": ["coverage/**"],
+			"inputs": ["src/**", "vitest.config.*", "vitest.*.ts"]
 		},
 		"typecheck": {
 			"dependsOn": ["^topo", "^build"],
@@ -73,7 +75,7 @@
 			"cache": false,
 			"interactive": true
 		},
-		"studio": {
+		"db:studio": {
 			"cache": false,
 			"persistent": true
 		},
@@ -89,7 +91,9 @@
 		"AUTH_REDIRECT_PROXY_URL",
 		"AUTH_SECRET",
 		"PORT",
-		"PUBLIC_SERVER_URL"
+		"PUBLIC_SERVER_URL",
+		"VITE_DEV_AUTO_EMAIL",
+		"VITE_DEV_AUTO_PASSWORD"
 	],
 	"globalPassThroughEnv": [
 		"NODE_ENV",
@@ -98,6 +102,8 @@
 		"VERCEL_ENV",
 		"VERCEL_URL",
 		"npm_lifecycle_event",
-		"PUBLIC_SERVER_URL"
+		"PUBLIC_SERVER_URL",
+		"VITE_DEV_AUTO_EMAIL",
+		"VITE_DEV_AUTO_PASSWORD"
 	]
 }

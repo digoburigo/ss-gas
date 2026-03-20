@@ -22,7 +22,7 @@
     "@acme/email": "workspace:*",
     "@acme/zen-v3": "workspace:*",
     "@ai-sdk/gateway": "^3.0.66",
-    "@anthropic-ai/sdk": "^0.79.0",
+    "@anthropic-ai/sdk": "^0.80.0",
     "@better-upload/server": "^3.0.14",
     "@bogeychan/elysia-logger": "^0.1.10",
     "@elysiajs/cors": "^1.4.1",

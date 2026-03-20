@@ -3,36 +3,21 @@ import {
   AlertTriangle,
   AudioWaveform,
   Ban,
-  Bell,
+  BarChart3,
   BellRing,
-  Bug,
   Building2,
-  Calendar,
   CalendarRange,
   ClipboardList,
   Command,
-  Construction,
   FileSignature,
-  FileX,
   Flame,
   GalleryVerticalEnd,
   Gauge,
-  HelpCircle,
   History,
-  LayoutDashboard,
-  Lock,
-  Monitor,
-  Package,
-  Palette,
-  ServerOff,
   Settings,
   Shield,
   ShieldAlert,
-  ShieldCheck,
   Target,
-  UserCog,
-  UserX,
-  Wrench,
 } from "lucide-react";
 
 import type { SidebarData } from "../types";
@@ -62,95 +47,77 @@ export const sidebarData: SidebarData = {
   ],
   navGroups: [
     {
-      title: "General",
+      title: "Geral",
       items: [
         {
-          title: "Dashboard",
-          url: "/",
-          icon: LayoutDashboard,
-        },
-        {
-          title: "Gás",
+          title: "Painel",
+          url: "/gas",
           icon: Flame,
-          items: [
-            {
-              title: "Painel",
-              url: "/gas",
-            },
-            {
-              title: "Contratos",
-              url: "/gas/contracts",
-              icon: FileSignature,
-            },
-            {
-              title: "Alertas",
-              url: "/gas/contract-alerts",
-              icon: BellRing,
-            },
-            {
-              title: "Unidades Consumidoras",
-              url: "/gas/consumer-units",
-              icon: Gauge,
-            },
-            {
-              title: "Programação Diária",
-              url: "/gas/scheduling",
-              icon: Calendar,
-            },
-            {
-              title: "Painel de Programação",
-              url: "/gas/scheduling-dashboard",
-              icon: ClipboardList,
-            },
-            {
-              title: "Programação Mensal",
-              url: "/gas/monthly-scheduling",
-              icon: CalendarRange,
-            },
-            {
-              title: "Consumo Real",
-              url: "/gas/actual-consumption",
-              icon: Activity,
-            },
-            {
-              title: "Taxa de Acurácia",
-              url: "/gas/scheduling-accuracy",
-              icon: Target,
-            },
-            {
-              title: "Alertas de Desvio",
-              url: "/gas/deviation-alerts",
-              icon: AlertTriangle,
-            },
-            {
-              title: "Penalidades",
-              url: "/gas/penalties",
-              icon: Ban,
-            },
-            {
-              title: "Relatórios",
-              url: "/gas/reports",
-            },
-            {
-              title: "Administração",
-              url: "/gas/admin",
-            },
-            {
-              title: "Parâmetros Admin",
-              url: "/gas/admin-parameters",
-              icon: ShieldAlert,
-            },
-            {
-              title: "Histórico de Auditoria",
-              url: "/gas/audit-log",
-              icon: History,
-            },
-          ],
         },
         {
-          title: "Produtos",
-          url: "/products",
-          icon: Package,
+          title: "Contratos",
+          url: "/gas/contracts",
+          icon: FileSignature,
+        },
+        {
+          title: "Alertas",
+          url: "/gas/contract-alerts",
+          icon: BellRing,
+        },
+        {
+          title: "Unidades Consumidoras",
+          url: "/gas/consumer-units",
+          icon: Gauge,
+        },
+        {
+          title: "Programação Diária",
+          url: "/gas/scheduling-dashboard",
+          icon: ClipboardList,
+        },
+        {
+          title: "Programação Mensal",
+          url: "/gas/monthly-scheduling",
+          icon: CalendarRange,
+        },
+        {
+          title: "Consumo Real",
+          url: "/gas/actual-consumption",
+          icon: Activity,
+        },
+        {
+          title: "Taxa de Acurácia",
+          url: "/gas/scheduling-accuracy",
+          icon: Target,
+        },
+        {
+          title: "Alertas de Desvio",
+          url: "/gas/deviation-alerts",
+          icon: AlertTriangle,
+        },
+        {
+          title: "Penalidades",
+          url: "/gas/penalties",
+          icon: Ban,
+        },
+        {
+          title: "Relatórios",
+          url: "/gas/reports",
+          icon: BarChart3,
+        },
+        {
+          title: "Administração",
+          url: "/gas/admin",
+          icon: Settings,
+        },
+        {
+          title: "Parâmetros Admin",
+          url: "/gas/admin-parameters",
+          icon: ShieldAlert,
+        },
+        {
+          title: "Histórico de Auditoria",
+          url: "/gas/audit-log",
+          icon: History,
         },
       ],
     },
@@ -167,109 +134,6 @@ export const sidebarData: SidebarData = {
               icon: Building2,
             },
           ],
-        },
-      ],
-    },
-    {
-      title: "Pages",
-      items: [
-        {
-          title: "Auth",
-          icon: ShieldCheck,
-          items: [
-            {
-              title: "Sign In",
-              url: "/sign-in",
-            },
-            {
-              title: "Sign In (2 Col)",
-              url: "/sign-in-2",
-            },
-            {
-              title: "Sign Up",
-              url: "/sign-up",
-            },
-            {
-              title: "Forgot Password",
-              url: "/forgot-password",
-            },
-            {
-              title: "OTP",
-              url: "/otp",
-            },
-          ],
-        },
-        {
-          title: "Errors",
-          icon: Bug,
-          items: [
-            {
-              title: "Unauthorized",
-              url: "/errors/unauthorized",
-              icon: Lock,
-            },
-            {
-              title: "Forbidden",
-              url: "/errors/forbidden",
-              icon: UserX,
-            },
-            {
-              title: "Not Found",
-              url: "/errors/not-found",
-              icon: FileX,
-            },
-            {
-              title: "Internal Server Error",
-              url: "/errors/internal-server-error",
-              icon: ServerOff,
-            },
-            {
-              title: "Maintenance Error",
-              url: "/errors/maintenance-error",
-              icon: Construction,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: "Other",
-      items: [
-        {
-          title: "Settings",
-          icon: Settings,
-          items: [
-            {
-              title: "Profile",
-              url: "/settings",
-              icon: UserCog,
-            },
-            {
-              title: "Account",
-              url: "/settings/account",
-              icon: Wrench,
-            },
-            {
-              title: "Appearance",
-              url: "/settings/appearance",
-              icon: Palette,
-            },
-            {
-              title: "Notifications",
-              url: "/settings/notifications",
-              icon: Bell,
-            },
-            {
-              title: "Display",
-              url: "/settings/display",
-              icon: Monitor,
-            },
-          ],
-        },
-        {
-          title: "Help Center",
-          url: "/help-center",
-          icon: HelpCircle,
         },
       ],
     },

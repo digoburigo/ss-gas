@@ -3,7 +3,7 @@
   "private": true,
   "engines": {
     "node": "^24.12.0",
-    "pnpm": "^10.31.0"
+    "pnpm": "^10.32.1"
   },
   "packageManager": "pnpm@10.32.1",
   "scripts": {
@@ -15,7 +15,7 @@
     "clean:workspaces": "turbo run clean",
     "auth:generate": "pnpm -F @acme/auth generate",
     "db:push": "turbo -F @acme/zen-v3 push",
-    "db:studio": "turbo -F @acme/zen-v3 studio",
+    "db:studio": "turbo -F @acme/zen-v3 db:studio",
     "dev": "turbo watch dev --continue",
     "dev:spa": "turbo watch dev -F @acme/web... -F @acme/server...",
     "dev:web": "turbo watch dev -F @acme/web...",
@@ -24,10 +24,11 @@
     "dev:expo:ios": "turbo watch dev:ios -F @acme/expo... -F @acme/server...",
     "dev:expo:android": "turbo watch dev:android -F @acme/expo...",
     "dev:lp": "turbo watch dev -F @acme/programa-gas-ai-lp",
-    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
-    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
-    "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
-    "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
+    "fmt": "oxfmt .",
+    "fmt:check": "oxfmt --check .",
+    "lint": "oxlint",
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
     "typecheck": "turbo run typecheck",
@@ -37,18 +38,26 @@
     "ruler:apply": "pnpm dlx @intellectronica/ruler@latest apply --local-only",
     "pkgs:check": "pnpm dlx npm-check-updates --deep --concurrency 16",
     "pkgs:update": "pnpm dlx npm-check-updates --deep --concurrency 16 --upgrade",
+    "db:generate": "pnpm -F @acme/zen-v3 db:generate",
+    "db:migrate": "pnpm -F @acme/zen-v3 db:migrate",
+    "db:reset": "pnpm -F @acme/zen-v3 db:reset",
+    "db:seed": "pnpm -F @acme/server db:seed",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "test:web": "turbo run test -F @acme/web",
+    "test:server": "turbo run test -F @acme/server",
     "video:dev": "turbo watch dev -F @acme/video",
     "video:render": "pnpm -F @acme/video render"
   },
   "devDependencies": {
-    "@acme/prettier-config": "workspace:*",
-    "@turbo/gen": "2.8.17",
+    "@turbo/gen": "2.8.20",
     "dotenv-cli": "^11.0.0",
-    "prettier": "catalog:",
-    "turbo": "2.8.17",
-    "typescript": "catalog:"
+    "oxfmt": "^0.41.0",
+    "oxlint": "^1.56.0",
+    "turbo": "2.8.20",
+    "typescript": "catalog:",
+    "ultracite": "7.3.2"
   },
-  "prettier": "@acme/prettier-config",
   "pnpm": {
     "overrides": {
       "lightningcss": "1.30.1"

@@ -604,7 +604,7 @@ export function ContractUploadDrawer({
           </div>
 
           {/* Right side - Extracted data form */}
-          <div className="flex w-1/2 flex-col">
+          <div className="flex w-1/2 flex-col overflow-hidden">
             <div className="bg-muted/30 border-b px-4 py-2">
               <div className="flex items-center justify-between">
                 <Label className="text-sm font-medium">Dados Extraídos</Label>
@@ -621,7 +621,7 @@ export function ContractUploadDrawer({
               </div>
             </div>
 
-            <ScrollArea className="flex-1">
+            <ScrollArea className="min-h-0 flex-1">
               <div className="p-4">
                 {!uploadedFile ? (
                   <div className="text-muted-foreground flex h-64 flex-col items-center justify-center text-center">

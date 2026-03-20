@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useClientQueries } from "@zenstackhq/tanstack-query/react";
 import {
   Copy,
-  Edit2,
   FileText,
   Loader2,
+  Pencil,
   Plus,
   Star,
   Trash2,
@@ -32,10 +32,38 @@ import { Input } from "@acme/ui/input";
 import { Label } from "@acme/ui/label";
 import { NativeSelect, NativeSelectOption } from "@acme/ui/native-select";
 import { Skeleton } from "@acme/ui/skeleton";
-import { Textarea } from "@acme/ui/textarea";
 import { schema } from "@acme/zen-v3/zenstack/schema";
 
 import { contractTypes } from "../data/data";
+
+interface TemplateValues {
+  qdcContracted: number;
+  volumeUnit: string;
+  transportToleranceUpperPercent: number;
+  transportToleranceLowerPercent: number;
+  moleculeTolerancePercent: number;
+  takeOrPayPercent: number;
+  priceCurrency: string;
+}
+
+const defaultTemplateValues: TemplateValues = {
+  qdcContracted: 1000,
+  volumeUnit: "m3",
+  transportToleranceUpperPercent: 10,
+  transportToleranceLowerPercent: 20,
+  moleculeTolerancePercent: 5,
+  takeOrPayPercent: 80,
+  priceCurrency: "BRL",
+};
+
+function parseTemplateValues(json: string): TemplateValues {
+  try {
+    const parsed = JSON.parse(json);
+    return { ...defaultTemplateValues, ...parsed };
+  } catch {
+    return defaultTemplateValues;
+  }
+}
 
 interface TemplateFormData {
   name: string;
@@ -49,21 +77,170 @@ const emptyTemplate: TemplateFormData = {
   name: "",
   description: "",
   contractType: "",
-  templateValues: JSON.stringify(
-    {
-      qdcContracted: 1000,
-      volumeUnit: "m3",
-      transportToleranceUpperPercent: 10,
-      transportToleranceLowerPercent: 20,
-      moleculeTolerancePercent: 5,
-      takeOrPayPercent: 80,
-      priceCurrency: "BRL",
-    },
-    null,
-    2,
-  ),
+  templateValues: JSON.stringify(defaultTemplateValues, null, 2),
   isDefault: false,
 };
+
+const VOLUME_UNITS = [
+  { value: "m3", label: "m³" },
+  { value: "MMBtu", label: "MMBtu" },
+];
+
+const CURRENCIES = [
+  { value: "BRL", label: "BRL (R$)" },
+  { value: "USD", label: "USD ($)" },
+];
+
+function TemplateValuesForm({
+  values,
+  onChange,
+}: {
+  values: TemplateValues;
+  onChange: (values: TemplateValues) => void;
+}) {
+  const update = (field: keyof TemplateValues, value: string | number) => {
+    onChange({ ...values, [field]: value });
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-muted-foreground text-sm font-medium">
+        Valores Padrão do Contrato
+      </p>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="qdcContracted">QDC Contratado</Label>
+          <Input
+            id="qdcContracted"
+            type="number"
+            value={values.qdcContracted}
+            onChange={(e) =>
+              update("qdcContracted", Number(e.target.value))
+            }
+            placeholder="1000"
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="volumeUnit">Unidade de Volume</Label>
+          <NativeSelect
+            id="volumeUnit"
+            value={values.volumeUnit}
+            onChange={(e) => update("volumeUnit", e.target.value)}
+          >
+            {VOLUME_UNITS.map((u) => (
+              <NativeSelectOption key={u.value} value={u.value}>
+                {u.label}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="transportToleranceUpperPercent">
+            Tolerância Transporte Superior (%)
+          </Label>
+          <Input
+            id="transportToleranceUpperPercent"
+            type="number"
+            value={values.transportToleranceUpperPercent}
+            onChange={(e) =>
+              update("transportToleranceUpperPercent", Number(e.target.value))
+            }
+            min={0}
+            max={100}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="transportToleranceLowerPercent">
+            Tolerância Transporte Inferior (%)
+          </Label>
+          <Input
+            id="transportToleranceLowerPercent"
+            type="number"
+            value={values.transportToleranceLowerPercent}
+            onChange={(e) =>
+              update("transportToleranceLowerPercent", Number(e.target.value))
+            }
+            min={0}
+            max={100}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="moleculeTolerancePercent">
+            Tolerância Molécula (%)
+          </Label>
+          <Input
+            id="moleculeTolerancePercent"
+            type="number"
+            value={values.moleculeTolerancePercent}
+            onChange={(e) =>
+              update("moleculeTolerancePercent", Number(e.target.value))
+            }
+            min={0}
+            max={100}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="takeOrPayPercent">Take or Pay (%)</Label>
+          <Input
+            id="takeOrPayPercent"
+            type="number"
+            value={values.takeOrPayPercent}
+            onChange={(e) =>
+              update("takeOrPayPercent", Number(e.target.value))
+            }
+            min={0}
+            max={100}
+          />
+        </div>
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="priceCurrency">Moeda</Label>
+        <NativeSelect
+          id="priceCurrency"
+          value={values.priceCurrency}
+          onChange={(e) => update("priceCurrency", e.target.value)}
+        >
+          {CURRENCIES.map((c) => (
+            <NativeSelectOption key={c.value} value={c.value}>
+              {c.label}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+      </div>
+    </div>
+  );
+}
+
+function TemplateValuesSummary({ values }: { values: TemplateValues }) {
+  return (
+    <div className="bg-muted mt-3 grid grid-cols-2 gap-x-6 gap-y-1 rounded p-3 text-xs sm:grid-cols-4">
+      <div>
+        <span className="text-muted-foreground">QDC:</span>{" "}
+        <span className="font-medium">
+          {values.qdcContracted.toLocaleString("pt-BR")} {values.volumeUnit}
+        </span>
+      </div>
+      <div>
+        <span className="text-muted-foreground">Take or Pay:</span>{" "}
+        <span className="font-medium">{values.takeOrPayPercent}%</span>
+      </div>
+      <div>
+        <span className="text-muted-foreground">Tol. Transp.:</span>{" "}
+        <span className="font-medium">
+          +{values.transportToleranceUpperPercent}% / -{values.transportToleranceLowerPercent}%
+        </span>
+      </div>
+      <div>
+        <span className="text-muted-foreground">Tol. Molécula:</span>{" "}
+        <span className="font-medium">{values.moleculeTolerancePercent}%</span>
+      </div>
+    </div>
+  );
+}
 
 export function ContractTemplatesTab() {
   const client = useClientQueries(schema);
@@ -292,50 +469,42 @@ export function ContractTemplatesTab() {
                           {template.description}
                         </p>
                       )}
-                      <div className="bg-muted mt-3 rounded p-2">
-                        <pre className="max-h-32 overflow-auto text-xs">
-                          {JSON.stringify(
-                            JSON.parse(template.templateValues),
-                            null,
-                            2,
-                          )}
-                        </pre>
-                      </div>
+                      <TemplateValuesSummary values={parseTemplateValues(template.templateValues)} />
                     </div>
                     <div className="ml-4 flex items-center gap-1">
                       {!template.isDefault && (
                         <Button
                           variant="ghost"
-                          size="icon"
+                          size="sm"
                           onClick={() => handleSetDefault(template.id)}
-                          title="Definir como padrão"
                         >
-                          <Star className="h-4 w-4" />
+                          <Star className="mr-1 h-4 w-4" />
+                          Padrão
                         </Button>
                       )}
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => handleDuplicate(template)}
-                        title="Duplicar"
                       >
-                        <Copy className="h-4 w-4" />
+                        <Copy className="mr-1 h-4 w-4" />
+                        Duplicar
                       </Button>
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => handleEdit(template)}
-                        title="Editar"
                       >
-                        <Edit2 className="h-4 w-4" />
+                        <Pencil className="mr-1 h-4 w-4" />
+                        Editar
                       </Button>
                       <Button
-                        variant="ghost"
-                        size="icon"
+                        variant="destructive"
+                        size="sm"
                         onClick={() => setDeleteConfirmId(template.id)}
-                        title="Excluir"
                       >
-                        <Trash2 className="h-4 w-4 text-red-500" />
+                        <Trash2 className="mr-1 h-4 w-4" />
+                        Excluir
                       </Button>
                     </div>
                   </div>
@@ -397,22 +566,15 @@ export function ContractTemplatesTab() {
                 ))}
               </NativeSelect>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="templateValues">Valores do Template (JSON)</Label>
-              <Textarea
-                id="templateValues"
-                value={formData.templateValues}
-                onChange={(e) =>
-                  setFormData({ ...formData, templateValues: e.target.value })
-                }
-                rows={10}
-                className="font-mono text-sm"
-                placeholder='{"qdcContracted": 1000, ...}'
-              />
-              <p className="text-muted-foreground text-xs">
-                JSON com os valores padrão para campos do contrato.
-              </p>
-            </div>
+            <TemplateValuesForm
+              values={parseTemplateValues(formData.templateValues)}
+              onChange={(values) =>
+                setFormData({
+                  ...formData,
+                  templateValues: JSON.stringify(values, null, 2),
+                })
+              }
+            />
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"

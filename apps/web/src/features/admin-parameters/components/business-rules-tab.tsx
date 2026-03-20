@@ -343,16 +343,17 @@ export function BusinessRulesTab() {
                                 <TooltipTrigger asChild>
                                   <Button
                                     variant="ghost"
-                                    size="icon"
+                                    size="sm"
                                     onClick={() =>
                                       handleReset(defaultParam.key)
                                     }
                                   >
-                                    <RefreshCcw className="h-4 w-4" />
+                                    <RefreshCcw className="mr-1 h-4 w-4" />
+                                    Restaurar
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  Restaurar padrão
+                                  Restaurar valor padrão
                                 </TooltipContent>
                               </Tooltip>
                             )}
@@ -393,35 +394,27 @@ export function BusinessRulesTab() {
                                 }
                               />
                             )}
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleSave(defaultParam.key)}
-                                  disabled={isUpdating || isCreating}
-                                >
-                                  {isUpdating || isCreating ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <Check className="h-4 w-4 text-green-500" />
-                                  )}
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Salvar</TooltipContent>
-                            </Tooltip>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => setEditingKey(null)}
-                                >
-                                  <X className="h-4 w-4 text-red-500" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Cancelar</TooltipContent>
-                            </Tooltip>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleSave(defaultParam.key)}
+                              disabled={isUpdating || isCreating}
+                            >
+                              {isUpdating || isCreating ? (
+                                <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                              ) : (
+                                <Check className="mr-1 h-4 w-4" />
+                              )}
+                              Salvar
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setEditingKey(null)}
+                            >
+                              <X className="mr-1 h-4 w-4" />
+                              Cancelar
+                            </Button>
                           </>
                         ) : (
                           <>
@@ -431,33 +424,30 @@ export function BusinessRulesTab() {
                                 defaultParam.valueType,
                               )}
                             </span>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleEdit(defaultParam.key)}
-                                >
-                                  <Pencil className="h-4 w-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Editar</TooltipContent>
-                            </Tooltip>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(defaultParam.key)}
+                            >
+                              <Pencil className="mr-1 h-4 w-4" />
+                              Editar
+                            </Button>
                             {!isDefault && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Button
                                     variant="ghost"
-                                    size="icon"
+                                    size="sm"
                                     onClick={() =>
                                       handleReset(defaultParam.key)
                                     }
                                   >
-                                    <RefreshCcw className="h-4 w-4" />
+                                    <RefreshCcw className="mr-1 h-4 w-4" />
+                                    Restaurar
                                   </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                  Restaurar padrão
+                                  Restaurar valor padrão
                                 </TooltipContent>
                               </Tooltip>
                             )}
