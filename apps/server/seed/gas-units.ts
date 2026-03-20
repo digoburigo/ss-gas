@@ -267,9 +267,9 @@ export async function seedGasUnits(
 
 	console.log("✅ Equipment constants created");
 
-	// Operator assignment: User B → Criciúma unit
+	// Operator assignments: User B → all 3 units
 	if (ctx.bUserMemberId) {
-		console.log("👷 Assigning User B (operator) to Criciúma unit...");
+		console.log("👷 Assigning User B (operator) to all units...");
 		await userDb.gasUnitOperator.create({
 			data: {
 				memberId: ctx.bUserMemberId,
@@ -277,7 +277,21 @@ export async function seedGasUnits(
 				notes: "Operador responsável pela unidade de Criciúma",
 			},
 		});
-		console.log("✅ Operator assignment created");
+		await userDb.gasUnitOperator.create({
+			data: {
+				memberId: ctx.bUserMemberId,
+				unitId: joinvilleUnit.id,
+				notes: "Operador responsável pela unidade de Joinville",
+			},
+		});
+		await userDb.gasUnitOperator.create({
+			data: {
+				memberId: ctx.bUserMemberId,
+				unitId: blumenauUnit.id,
+				notes: "Operador responsável pela unidade de Blumenau",
+			},
+		});
+		console.log("✅ Operator assignments created");
 	}
 
 	return {

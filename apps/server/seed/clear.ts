@@ -15,6 +15,12 @@ export async function clearDatabase(db: typeof Db): Promise<void> {
 	// Contract audit log (FK → gasContract)
 	await db.gasContractAuditLog.deleteMany();
 
+	// Tariff history (FK → gasContract)
+	await db.gasTariffHistory.deleteMany();
+
+	// Contract versions (FK → gasContract)
+	await db.gasContractVersion.deleteMany();
+
 	// Unit ↔ Contract join table (FK → gasUnit + gasContract)
 	await db.gasUnitContract.deleteMany();
 
@@ -52,5 +58,6 @@ export async function clearDatabase(db: typeof Db): Promise<void> {
 		db.verification.deleteMany(),
 	]);
 	await db.organization.deleteMany();
+	await db.userNotificationPreferences.deleteMany();
 	await db.user.deleteMany();
 }

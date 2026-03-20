@@ -99,6 +99,27 @@ export async function seedCore(
 		},
 	});
 
+	// Notification preferences for both users
+	console.log("🔔 Creating notification preferences...");
+	await db.userNotificationPreferences.createMany({
+		data: [
+			{
+				userId: aUser.user.id,
+				missingEntryAlertsEnabled: true,
+				preferredNotificationHour: 18,
+				escalationEnabled: true,
+				escalationDelayHours: 2,
+			},
+			{
+				userId: bUser.user.id,
+				missingEntryAlertsEnabled: true,
+				preferredNotificationHour: 9,
+				escalationEnabled: false,
+				escalationDelayHours: 4,
+			},
+		],
+	});
+
 	console.log("✅ Core data seeded");
 
 	return {

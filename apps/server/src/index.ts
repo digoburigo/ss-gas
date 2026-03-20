@@ -28,7 +28,8 @@ export const app = new Elysia({
 	)
 	.use(loggerPlugin)
 	.onError(({ error, code, log: ctxLog }) => {
-		ctxLog.error({ code, err: error }, "Unhandled error");
+		const logger = ctxLog ?? log;
+		logger.error({ code, err: error }, "Unhandled error");
 	})
 	.use(
 		cors({

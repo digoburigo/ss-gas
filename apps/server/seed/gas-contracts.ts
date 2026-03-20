@@ -190,7 +190,7 @@ export async function seedGasContracts(
 
 	await userDb.gasContractAlertRecipient.createMany({
 		data: [
-			{ alertId: expirationAlert.id, email: "diretoria@empresa.com.br", name: "Diretoria" },
+			{ alertId: expirationAlert.id, email: "a@a.com", name: "User A" },
 			{ alertId: expirationAlert.id, email: "juridico@empresa.com.br", name: "Jurídico" },
 		],
 	});
@@ -234,7 +234,7 @@ export async function seedGasContracts(
 
 	await userDb.gasContractAlertRecipient.createMany({
 		data: [
-			{ alertId: schedulingAlert.id, email: "operacao.cri@empresa.com.br", name: "Operação CRI" },
+			{ alertId: schedulingAlert.id, email: "b@b.com", name: "User B" },
 			{ alertId: schedulingAlert.id, email: "operacao.joi@empresa.com.br", name: "Operação JOI" },
 			{ alertId: schedulingAlert.id, email: "operacao.blu@empresa.com.br", name: "Operação BLU" },
 		],

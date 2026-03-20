@@ -1,5 +1,7 @@
 import type { db as Db } from "@acme/zen-v3";
+import type { ContractRefs } from "./gas-contracts";
 import type { CoreContext } from "./core";
+import type { UnitRefs } from "./gas-units";
 
 interface AuditEntry {
 	entityType: string;
@@ -21,16 +23,6 @@ interface AuditEntry {
 const USERS = [
 	{ name: "User A", email: "a@a.com" },
 	{ name: "User B", email: "b@b.com" },
-];
-
-const UNIT_NAMES = ["Criciúma", "Joinville", "Blumenau"];
-const EQUIPMENT_NAMES = [
-	"Atomizador CRI",
-	"Linha 1 CRI",
-	"Linha 2 CRI",
-	"Atomizador JOI",
-	"ATM 250 BLU",
-	"Secador 2 BLU",
 ];
 
 function fakeId(): string {
@@ -56,9 +48,27 @@ function pick<T>(arr: readonly T[]): T {
 function buildEntries(
 	ctx: CoreContext,
 	userIds: string[],
+	unitRefs: UnitRefs,
+	contractRefs: ContractRefs,
 ): AuditEntry[] {
 	const entries: AuditEntry[] = [];
 	const orgId = ctx.org.id;
+
+	// Real entity IDs
+	const unitMap = [
+		{ name: "Criciúma", id: unitRefs.criciumaUnit.id },
+		{ name: "Joinville", id: unitRefs.joinvilleUnit.id },
+		{ name: "Blumenau", id: unitRefs.blumenauUnit.id },
+	];
+
+	const equipmentMap = [
+		{ name: "Atomizador CRI", id: unitRefs.criciumaAtomizer.id },
+		{ name: "Linha 1 CRI", id: unitRefs.criciumaLines[0]?.id ?? "" },
+		{ name: "Linha 2 CRI", id: unitRefs.criciumaLines[1]?.id ?? "" },
+		{ name: "Atomizador JOI", id: unitRefs.joinvilleAtomizer.id },
+		{ name: "ATM 250 BLU", id: unitRefs.blumenauAtm250.id },
+		{ name: "Secador 2 BLU", id: unitRefs.blumenauDryer.id },
+	];
 
 	function userCtx(): { userId: string; userName: string; userEmail: string } {
 		const idx = Math.floor(Math.random() * USERS.length);
@@ -75,7 +85,7 @@ function buildEntries(
 		const loginDay = daysAgo(Math.floor(Math.random() * 30));
 		entries.push({
 			entityType: "session",
-			entityId: u.userId!,
+			entityId: u.userId,
 			entityName: u.userName,
 			action: "login",
 			field: null,
@@ -97,7 +107,7 @@ function buildEntries(
 		logoutTime.setHours(logoutTime.getHours() + Math.floor(Math.random() * 8) + 1);
 		entries.push({
 			entityType: "session",
-			entityId: u.userId!,
+			entityId: u.userId,
 			entityName: u.userName,
 			action: "logout",
 			field: null,
@@ -116,13 +126,13 @@ function buildEntries(
 		});
 	}
 
-	// --- Contract changes (8 entries) ---
-	const contractId = fakeId();
+	// --- Contract changes (8 entries) — use real contract IDs ---
+	const mainContractId = contractRefs.mainContractId;
 	const contractName = "Contrato Principal de Gás Natural";
 
 	entries.push({
 		entityType: "contract",
-		entityId: contractId,
+		entityId: mainContractId,
 		entityName: contractName,
 		action: "create",
 		field: null,
@@ -143,7 +153,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "contract",
-		entityId: contractId,
+		entityId: mainContractId,
 		entityName: contractName,
 		action: "update",
 		field: "qdcContracted",
@@ -160,7 +170,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "contract",
-		entityId: contractId,
+		entityId: mainContractId,
 		entityName: contractName,
 		action: "update",
 		field: "transportToleranceUpperPercent",
@@ -177,7 +187,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "contract",
-		entityId: contractId,
+		entityId: mainContractId,
 		entityName: contractName,
 		action: "update",
 		field: null,
@@ -194,11 +204,11 @@ function buildEntries(
 		createdAt: daysAgo(10),
 	});
 
-	// Create a second contract
-	const contract2Id = fakeId();
+	// Secondary contract — use real ID
+	const secondaryContractId = contractRefs.secondaryContractId;
 	entries.push({
 		entityType: "contract",
-		entityId: contract2Id,
+		entityId: secondaryContractId,
 		entityName: "Contrato Secundário SC",
 		action: "create",
 		field: null,
@@ -217,7 +227,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "contract",
-		entityId: contract2Id,
+		entityId: secondaryContractId,
 		entityName: "Contrato Secundário SC",
 		action: "update",
 		field: "active",
@@ -232,7 +242,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "contract",
-		entityId: contract2Id,
+		entityId: secondaryContractId,
 		entityName: "Contrato Secundário SC",
 		action: "update",
 		field: "active",
@@ -245,6 +255,7 @@ function buildEntries(
 		createdAt: daysAgo(3),
 	});
 
+	// Deleted contract — keep fakeId since it represents a removed entity
 	entries.push({
 		entityType: "contract",
 		entityId: fakeId(),
@@ -260,19 +271,18 @@ function buildEntries(
 		createdAt: daysAgo(7),
 	});
 
-	// --- Unit changes (6 entries) ---
-	for (const unitName of UNIT_NAMES) {
-		const unitId = fakeId();
+	// --- Unit changes (6 entries) — use real unit IDs ---
+	for (const unit of unitMap) {
 		entries.push({
 			entityType: "unit",
-			entityId: unitId,
-			entityName: unitName,
+			entityId: unit.id,
+			entityName: unit.name,
 			action: "create",
 			field: null,
 			oldValue: null,
 			newValue: null,
 			changes: JSON.stringify({
-				name: { old: null, new: unitName },
+				name: { old: null, new: unit.name },
 				active: { old: null, new: true },
 			}),
 			...userCtx(),
@@ -282,10 +292,9 @@ function buildEntries(
 		});
 	}
 
-	const updatedUnitId = fakeId();
 	entries.push({
 		entityType: "unit",
-		entityId: updatedUnitId,
+		entityId: unitRefs.criciumaUnit.id,
 		entityName: "Criciúma",
 		action: "update",
 		field: "description",
@@ -302,7 +311,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "unit",
-		entityId: fakeId(),
+		entityId: unitRefs.joinvilleUnit.id,
 		entityName: "Joinville",
 		action: "update",
 		field: "active",
@@ -317,7 +326,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "unit",
-		entityId: fakeId(),
+		entityId: unitRefs.joinvilleUnit.id,
 		entityName: "Joinville",
 		action: "update",
 		field: "active",
@@ -330,19 +339,19 @@ function buildEntries(
 		createdAt: daysAgo(2),
 	});
 
-	// --- Equipment changes (8 entries) ---
-	for (const eqName of EQUIPMENT_NAMES.slice(0, 4)) {
+	// --- Equipment changes (8 entries) — use real equipment IDs ---
+	for (const eq of equipmentMap.slice(0, 4)) {
 		entries.push({
 			entityType: "parameter",
-			entityId: fakeId(),
-			entityName: eqName,
+			entityId: eq.id,
+			entityName: eq.name,
 			action: "create",
 			field: null,
 			oldValue: null,
 			newValue: null,
 			changes: JSON.stringify({
-				name: { old: null, new: eqName },
-				type: { old: null, new: eqName.includes("Linha") ? "line" : "atomizer" },
+				name: { old: null, new: eq.name },
+				type: { old: null, new: eq.name.includes("Linha") ? "line" : "atomizer" },
 				active: { old: null, new: true },
 			}),
 			...userCtx(),
@@ -354,7 +363,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "parameter",
-		entityId: fakeId(),
+		entityId: unitRefs.criciumaAtomizer.id,
 		entityName: "Atomizador CRI",
 		action: "update",
 		field: "consumptionRate",
@@ -371,7 +380,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "parameter",
-		entityId: fakeId(),
+		entityId: unitRefs.criciumaLines[1]?.id ?? "",
 		entityName: "Linha 2 CRI",
 		action: "update",
 		field: "active",
@@ -386,7 +395,7 @@ function buildEntries(
 
 	entries.push({
 		entityType: "parameter",
-		entityId: fakeId(),
+		entityId: unitRefs.blumenauAtm250.id,
 		entityName: "ATM 250 BLU",
 		action: "update",
 		field: null,
@@ -402,6 +411,7 @@ function buildEntries(
 		createdAt: daysAgo(6),
 	});
 
+	// Deleted equipment — keep fakeId since it represents a removed entity
 	entries.push({
 		entityType: "parameter",
 		entityId: fakeId(),
@@ -418,9 +428,10 @@ function buildEntries(
 	});
 
 	// --- Scheduling / Plan changes (10 entries) ---
+	const unitNames = ["Criciúma", "Joinville", "Blumenau"];
 	for (let i = 0; i < 5; i++) {
 		const planId = fakeId();
-		const unitName = pick(UNIT_NAMES);
+		const unitName = pick(unitNames);
 		const day = 25 - i * 4;
 		const dateStr = formatDateOffset(day);
 
@@ -463,7 +474,7 @@ function buildEntries(
 	// --- Consumption entries (8 entries) ---
 	for (let i = 0; i < 4; i++) {
 		const consumptionId = fakeId();
-		const unitName = pick(UNIT_NAMES);
+		const unitName = pick(unitNames);
 		const day = 22 - i * 5;
 		const dateStr = formatDateOffset(day);
 		const qdr = Math.floor(Math.random() * 6000) + 2000;
@@ -668,6 +679,8 @@ function formatDateOffset(daysAgo: number): string {
 export async function seedGasAudit(
 	db: typeof Db,
 	ctx: CoreContext,
+	unitRefs: UnitRefs,
+	contractRefs: ContractRefs,
 ): Promise<void> {
 	console.log("📋 Seeding audit log data...");
 
@@ -688,7 +701,7 @@ export async function seedGasAudit(
 		(u) => users.find((dbUser) => dbUser.email === u.email)?.id ?? "",
 	);
 
-	const entries = buildEntries(ctx, userIds);
+	const entries = buildEntries(ctx, userIds, unitRefs, contractRefs);
 
 	// Batch insert for performance
 	await db.gasAuditLog.createMany({
